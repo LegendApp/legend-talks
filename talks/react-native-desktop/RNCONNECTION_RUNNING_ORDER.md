@@ -52,8 +52,8 @@ RN screenshot should match the video's final frame. Video playback is not wired
 until the clip arrives; there is no simulated footage or private benchmark video.
 
 The filmstrip holds for 2.8 seconds, moves for 1.1 seconds, and wraps offscreen.
-The centered card is largest; neighbors shrink and dim. First advance freezes
-it; second advance continues to methodology. Previews remain static. Native
+RN occupies the top-left grid slot. The centered filmstrip card is largest;
+neighbors shrink and dim. Advance continues directly to methodology. Previews remain static. Native
 transition appearance still needs rehearsal in Slides. The existing app-demo
 clips on slides 2 and 19 also remain pending.
 

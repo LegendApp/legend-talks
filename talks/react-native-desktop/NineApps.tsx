@@ -16,11 +16,9 @@ function useFilmstripClock(enabled: boolean) {
   const preview = usePresentationValue("isPreview");
   const preparing = usePresentationValue("isPreparing");
   const startedAt = usePresentationValue("startedAt");
-  const step = usePresentationValue("stepIndex");
-  const stepStartedAt = usePresentationValue("stepStartedAt");
   const [clock, setClock] = useState({ epoch: startedAt, elapsed: 0 });
   useEffect(() => {
-    if (!enabled || !active || preview || preparing || step > 0 || startedAt === undefined) return;
+    if (!enabled || !active || preview || preparing || startedAt === undefined) return;
     let frame = 0;
     const tick = () => {
       setClock({ epoch: startedAt, elapsed: Math.max(0, performance.now() - startedAt) });
@@ -28,9 +26,8 @@ function useFilmstripClock(enabled: boolean) {
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [enabled, active, preview, preparing, step, startedAt]);
+  }, [enabled, active, preview, preparing, startedAt]);
   if (preview || preparing || startedAt === undefined) return 0;
-  if (step > 0) return Math.max(0, (stepStartedAt ?? startedAt) - startedAt);
   return clock.epoch === startedAt ? clock.elapsed : 0;
 }
 
@@ -41,10 +38,9 @@ export default function NineAppsFrame({ children }: PresentationTemplateProps) {
 
 export function NineApps({ mode }: { mode: SceneMode }) {
   const elapsed = useFilmstripClock(mode === "filmstrip");
-  const step = usePresentationValue("stepIndex");
   const position = filmstripPosition(elapsed);
   const title = mode === "hero" ? "I built a chat history app." : mode === "grid" ? "Then I built it nine times." : "Same app. Nine implementations.";
-  return <FocusRegion id="nine-apps-stage" style={{ width: 1920, height: 1080, backgroundColor: "#091321", overflow: "hidden" }}>
+  return <FocusRegion id="nine-apps-stage" style={{ width: 1920, height: 1080, overflow: "hidden" }}>
     <Text style={{ position: "absolute", left: 112, top: 65, color: "#f8fafc", fontSize: 64, fontWeight: "700" }}>{title}</Text>
     {appOrder.map((id, index) => {
       const card = appCardLayout(index, mode, position);
@@ -69,9 +65,5 @@ export function NineApps({ mode }: { mode: SceneMode }) {
         </View>
       </SharedElement>;
     })}
-    <Text style={{ position: "absolute", left: 112, bottom: 58, fontSize: 25, color: "#94a3b8" }}>
-      {mode === "hero" ? "Open → scroll → switch conversations" : mode === "grid" ? "Same conversation. Same features. Different frameworks." : "Same conversation. Same features. Nine ways to build it."}
-    </Text>
-    {mode === "filmstrip" && <Text style={{ position: "absolute", right: 112, bottom: 58, fontSize: 22, color: "#67e8f9" }}>{step > 0 ? "Paused · advance to continue the talk" : "Advance to pause"}</Text>}
   </FocusRegion>;
 }

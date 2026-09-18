@@ -1,8 +1,7 @@
 export const appOrder = ["react-native", "appkit", "swiftui", "electron", "tauri", "deno-webview", "deno-cef", "flutter", "gpui"] as const;
 export type AppId = typeof appOrder[number];
 export type SceneMode = "hero" | "grid" | "filmstrip";
-// Keep RN in the middle of the grid and first in the filmstrip.
-const gridPositions = [4, 0, 1, 2, 3, 5, 6, 7, 8];
+// Keep RN first in reading order and first in the filmstrip.
 export const filmstripHoldMs = 2800;
 export const filmstripMoveMs = 1100;
 export const filmstripLeadInMs = 1400;
@@ -19,7 +18,7 @@ export function filmstripPosition(elapsed: number) {
 export function appCardLayout(index: number, mode: SceneMode, position = 0) {
   if (mode === "hero") return { x: 960, y: 560, width: 1160, opacity: 1, depth: index === 0 ? 100 : 9 - index };
   if (mode === "grid") {
-    const slot = gridPositions[index];
+    const slot = index;
     return { x: 960 + (slot % 3 - 1) * 440, y: 550 + (Math.floor(slot / 3) - 1) * 265, width: 380, opacity: 1, depth: 10 };
   }
   const count = appOrder.length;

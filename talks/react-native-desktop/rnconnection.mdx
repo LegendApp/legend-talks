@@ -51,7 +51,7 @@ transition: none
 
 <NineApps mode="hero" />
 
-<!-- 2:00–2:15. Real RN app video goes here when supplied: opening, scrolling, switching. Currently a labeled media placeholder, not simulated footage. End on a still that matches the RN grid screenshot. Advance: the RN card becomes the center of the grid and eight windows fan out from behind it. -->
+<!-- 2:00–2:15. Real RN app video goes here when supplied: opening, scrolling, switching. Currently a labeled media placeholder, not simulated footage. End on a still that matches the RN grid screenshot. Advance: the RN card moves to the top-left of the grid and eight windows fan out from behind it. -->
 
 ---
 template: ./NineApps.tsx
@@ -63,11 +63,10 @@ transition:
 
 <NineApps mode="grid" />
 
-<!-- 2:15–2:30. “Then I built it nine times.” Hold long enough to count them. RN stays in the center. Every screenshot should use the same conversation, viewport, and appearance. Assets are pending; the labels name the nine actual implementations. Advance unfolds the grid into a filmstrip. -->
+<!-- 2:15–2:30. “Then I built it nine times.” Hold long enough to count them. RN is at the top-left. Every screenshot should use the same conversation, viewport, and appearance. Assets are pending; the labels name the nine actual implementations. Advance unfolds the grid into a filmstrip. -->
 
 ---
 template: ./NineApps.tsx
-steps: 2
 transition:
   type: focus
   from: nine-apps-stage
@@ -77,8 +76,7 @@ transition:
 <NineApps mode="filmstrip" />
 
 <!-- 2:30–2:45. RN starts centered. The strip holds each app for 2.8 seconds and glides for 1.1 seconds, looping through all nine. Center cards grow; their neighbors shrink and dim. This is a visual tour, not a timing comparison. Shared slide epochs synchronize playback; previews stay still.
-1: Let the filmstrip run while explaining the comparison. Advance pauses it.
-2: Inspect the centered implementation. Advance again continues to methodology. Media is intentionally pending; do not present these slots as screenshots.
+Let the filmstrip run while explaining the comparison. Advance continues directly to methodology. Media is intentionally pending; do not present these slots as screenshots.
 -->
 
 ---
