@@ -24,25 +24,28 @@ export function MetricBuckets() {
       {metrics.map(metric => {
         const sorted = [...rows].sort((a, b) => a[metric.key] - b[metric.key]);
         return <View key={metric.key} style={{ width: 406 }}>
-          <Text style={{ color: "#ffffff", fontSize: 36, fontWeight: "600", textAlign: "center", marginBottom: 20 }}>{metric.title}</Text>
+          <Text style={{ color: "#b8c2ce", fontSize: 34, lineHeight: 42, fontWeight: "500", textAlign: "center", marginBottom: 20 }}>{metric.title}</Text>
           {metric.bands.map((label, index) => {
             const entries = sorted.filter(row => {
               const value = row[metric.key];
               return value >= (index === 0 ? 0 : metric.limits[index - 1]!) && value < (metric.limits[index] ?? Infinity);
             });
-            return <View key={label} style={{ paddingHorizontal: 14, paddingVertical: 12, marginBottom: 12,
-              borderRadius: 18, borderWidth: 1, borderColor: index === 0 ? "#6ca6b9" : "#344658",
-              backgroundColor: index === 0 ? "#122f3d" : "#101e2d" }}>
-              <Text style={{ fontSize: 23, lineHeight: 30, color: index === 0 ? "#a5edff" : "#dae3eb", marginBottom: 7 }}>{label}</Text>
-              {entries.map(row => {
-                const rn = row.name === "React Native";
-                return <SceneMotionView key={row.name} duration={450} pose={{ opacity: spotlight && !rn ? 0.35 : 1 }}
-                  style={{ height: 38, flexDirection: "row", alignItems: "center", paddingHorizontal: 6,
-                    borderRadius: 7, backgroundColor: rn ? "#285165" : "transparent" }}>
-                  <Text numberOfLines={1} style={{ flex: 1, fontSize: 24, color: rn ? "#a5edff" : "#f1f5f9", fontWeight: rn ? "700" : "400" }}>{row.name}</Text>
-                  <Text style={{ fontSize: 24, color: rn ? "#a5edff" : "#f1f5f9", fontWeight: rn ? "700" : "400", fontVariant: ["tabular-nums"] }}>{row[metric.key].toFixed(1)}</Text>
-                </SceneMotionView>;
-              })}
+            return <View key={label} style={{ marginBottom: 16 }}>
+              <Text style={{ fontSize: 23, lineHeight: 30, color: "#aebac8", marginBottom: 8, paddingHorizontal: 4 }}>{label}</Text>
+              <View style={{ paddingHorizontal: 12, paddingVertical: 8, borderRadius: 16,
+                borderWidth: 1, borderColor: index === 0 ? "#587889" : "#354656",
+                backgroundColor: index === 0 ? "#122a38" : "#101e2d" }}>
+                {entries.map(row => {
+                  const rn = row.name === "React Native";
+                  return <View key={row.name} style={{ height: 38, flexDirection: "row", alignItems: "center", paddingHorizontal: 8 }}>
+                    {rn && <SceneMotionView duration={450} pose={{ opacity: spotlight ? 1 : 0.3 }}
+                      style={{ position: "absolute", inset: 0, borderRadius: 8, borderWidth: 1,
+                        borderColor: "#8bd7ec", backgroundColor: "#285165" }} />}
+                    <Text numberOfLines={1} style={{ flex: 1, fontSize: 24, color: "#ffffff", fontWeight: rn ? "700" : "400" }}>{row.name}</Text>
+                    <Text style={{ fontSize: 24, color: "#ffffff", fontWeight: rn ? "700" : "400", fontVariant: ["tabular-nums"] }}>{row[metric.key].toFixed(1)}</Text>
+                  </View>;
+                })}
+              </View>
             </View>;
           })}
         </View>;
