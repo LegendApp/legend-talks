@@ -1,4 +1,4 @@
-import { SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
+import { SceneMotionView } from "@legend-apps/presentation";
 import { View, type StyleProp, type ViewStyle } from "react-native";
 
 /** Shared chart material; grouped colors crossfade on the UI thread. */
@@ -8,12 +8,8 @@ export function ChartBar({ highlighted = false, groupColor, grouped = false, sty
   grouped?: boolean;
   style?: StyleProp<ViewStyle>;
 }) {
-  const active = usePresentationValue("isActive");
-  const preparing = usePresentationValue("isPreparing");
-  const preview = usePresentationValue("isPreview");
-  const visible = preview || (active && !preparing);
   const color = highlighted ? "#67e8f9" : "#b8c2ce";
-  return <SceneMotionView duration={450} pose={{ scaleX: visible ? 1 : 0, opacity: 0.65 }}
+  return <SceneMotionView duration={450} initialPose={{ scaleX: 0 }} pose={{ scaleX: 1, opacity: 0.65 }}
     style={[style, { minWidth: 2, borderRadius: 5, overflow: "hidden", transformOrigin: "left center" }]}>
     {groupColor ? <>
       <SceneMotionView pose={{ opacity: grouped ? 0 : 1 }} style={{ position: "absolute", inset: 0, backgroundColor: color }} />
