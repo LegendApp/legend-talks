@@ -23,12 +23,12 @@ export function NineApps({ mode }: { mode: SceneMode }) {
   const tour = tourStep(step);
   const selected = mode === "filmstrip" ? appOrder.indexOf(tour.app) : 0;
   const camera = detailCamera(mode === "filmstrip" ? tour.detail : "app");
-  const title = mode === "hero" ? "I built a chat history app." : mode === "grid" ? "Then I built it nine times." : "Same app. Nine implementations.";
+  const title = mode === "hero" ? "I built a chat history app" : mode === "grid" ? "Then I built it nine times" : "Same app. Nine implementations.";
   return <FocusRegion id="nine-apps-stage" style={{ width: 1920, height: 1080, overflow: "hidden" }}>
     <MovingTitle style={{ position: "absolute", left: 112, top: 65, width: 1696, zIndex: 2000 }}>
-      <Text style={{ color: "#f8fafc", fontSize: 64, fontWeight: "700" }}>{title}</Text>
+      <Text style={{ color: "#f8fafc", fontSize: 64, fontWeight: "700", textAlign: "center" }}>{title}</Text>
     </MovingTitle>
-    {mode === "filmstrip" && <Text style={{ position: "absolute", left: 112, top: 145, color: "#f1f5f9", fontSize: 28, zIndex: 2000 }}>{names[tour.app]} · {renderingGroup(tour.app)}{tour.detail === "sidebar" ? " · Sidebar" : tour.detail === "composer" ? " · Composer" : ""}</Text>}
+    {mode === "filmstrip" && <Text style={{ position: "absolute", left: 112, top: 145, width: 1696, textAlign: "center", color: "#f1f5f9", fontSize: 28, zIndex: 2000 }}>{names[tour.app]} · {renderingGroup(tour.app)}{tour.detail === "sidebar" ? " · Sidebar" : tour.detail === "composer" ? " · Composer" : ""}</Text>}
     <SceneMotionView pose={camera} duration={650} style={{ width: 1920, height: 1080 }}>
     {appOrder.map((id, index) => {
       const card = appCardLayout(index, mode);
