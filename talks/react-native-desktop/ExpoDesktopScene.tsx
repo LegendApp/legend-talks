@@ -75,13 +75,17 @@ half4 main(float2 p) {
         float3 pipe=tint*(body*0.42+ridge*0.75+glow)+float3(0.63,0.87,1.0)*rim*1.05;
         float alpha=clamp(body*0.5+rim*0.65+glow,0.0,0.96)*fade;
         outColor=over(float4(min(pipe*fade,float3(alpha)),alpha),outColor);
-        // Particles follow the same centerline from project to device.
+        // Stable size/brightness variation gives each light its own identity
+        // while all particles continue down the same project-to-device path.
         for(int j=0;j<9;j++) {
           float travel=fract(float(j)/9.0+time*0.18+i*0.071);
           float2 dotPosition=float2(pathX(travel,i),188.0+travel*284.0);
           float distance=length(p-dotPosition);
-          float intensity=0.70+0.30*sin(time*2.0+float(j));
-          float spark=(exp(-distance*distance/15.0)+exp(-distance*0.12)*0.48)*intensity;
+          float seed=fract(sin(float(j)*127.1+i*71.7+19.3)*43758.5453);
+          float brightness=fract(sin(float(j)*53.9+i*143.3+7.1)*17341.17);
+          float size=mix(1.4,5.2,seed);
+          float intensity=mix(0.22,1.1,brightness)*(0.88+0.12*sin(time*2.0+float(j)));
+          float spark=(exp(-distance*distance/(size*size))+exp(-distance/(size*2.6))*0.40)*intensity;
           float alpha=clamp(spark,0.0,0.96)*fade;
           outColor=over(float4(float3(0.72,0.92,1.0)*alpha,alpha),outColor);
         }
