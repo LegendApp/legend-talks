@@ -17,22 +17,23 @@ float4 material(float2 p,float2 size,float radius,float3 tint) {
   float mask=1.0-smoothstep(-0.8,0.8,d);
   float rim=exp(-abs(d+2.2)*0.58);
   float inner=exp(-abs(d+8.0)*0.19);
+  float halo=exp(-max(d,0.0)*0.09)*(1.0-mask)*0.34;
   float reflection=(p.x*0.30+p.y+size.y*0.62)/20.0;
   float highlight=exp(-reflection*reflection);
   float directional=0.5+0.5*cos(atan(p.y,p.x)*2.0-0.8);
   float3 color=tint*(0.8+highlight*0.65)
-    +float3(0.58,0.82,1.0)*rim*(0.32+directional*0.68)
+    +float3(0.68,0.90,1.0)*rim*(0.48+directional*0.85)
     +float3(0.13,0.33,0.50)*inner;
-  return float4(color*mask,mask*0.94);
+  return float4(color*mask+float3(0.25,0.63,0.95)*halo,clamp(mask*0.97+halo,0.0,1.0));
 }
 float pathX(float t,float i) {
   float start=848.0+(i-2.0)*35.0;
   float end=180.0+i*325.0;
   if(i>=3.0) {
     float bridge=1140.0+(i-3.0)*355.0;
-    float upper=clamp(t/0.578,0.0,1.0);
-    float lower=clamp((t-0.578)/0.422,0.0,1.0);
-    return t<0.578 ? mix(start,bridge,upper*upper*(3.0-2.0*upper))
+    float upper=clamp(t/0.482,0.0,1.0);
+    float lower=clamp((t-0.482)/0.518,0.0,1.0);
+    return t<0.482 ? mix(start,bridge,upper*upper*(3.0-2.0*upper))
       : mix(bridge,end,lower*lower*(3.0-2.0*lower));
   }
   float ease=t*t*(3.0-2.0*t);
@@ -59,9 +60,9 @@ half4 main(float2 p) {
       float endpoint=180.0+i*325.0;
       float3 tint=k<3 ? float3(0.24,0.43,0.70) : float3(0.04,0.67,0.90);
       // Broad, curved tubes, with a transparent core and two refractive rims.
-      if(p.y>=123.0 && p.y<=475.0) {
-        float t=clamp((p.y-124.0)/348.0,0.0,1.0);
-        float slope=(pathX(min(1.0,t+0.001),i)-pathX(max(0.0,t-0.001),i))/0.696;
+      if(p.y>=187.0 && p.y<=475.0) {
+        float t=clamp((p.y-188.0)/284.0,0.0,1.0);
+        float slope=(pathX(min(1.0,t+0.001),i)-pathX(max(0.0,t-0.001),i))/0.568;
         float d=(p.x-pathX(t,i))/sqrt(1.0+slope*slope);
         float radius=15.0+desktop*3.0;
         float n=d/radius;
@@ -69,18 +70,18 @@ half4 main(float2 p) {
         float rim=exp(-abs(abs(d)-radius*0.86)*0.85);
         float ridgeAxis=(n+0.45)*5.0;
         float ridge=exp(-ridgeAxis*ridgeAxis)*body;
-        float glow=exp(-abs(d)*0.085)*0.15;
-        float fade=smoothstep(123.0,131.0,p.y)*(1.0-smoothstep(463.0,475.0,p.y));
-        float3 pipe=tint*(body*0.32+ridge*0.55+glow)+float3(0.63,0.87,1.0)*rim*0.80;
+        float glow=exp(-abs(d)*0.045)*0.32;
+        float fade=smoothstep(185.0,193.0,p.y)*(1.0-smoothstep(463.0,475.0,p.y));
+        float3 pipe=tint*(body*0.42+ridge*0.75+glow)+float3(0.63,0.87,1.0)*rim*1.05;
         float alpha=clamp(body*0.5+rim*0.65+glow,0.0,0.96)*fade;
         outColor=over(float4(min(pipe*fade,float3(alpha)),alpha),outColor);
         // Particles follow the same centerline from project to device.
         for(int j=0;j<9;j++) {
           float travel=fract(float(j)/9.0+time*0.18+i*0.071);
-          float2 dotPosition=float2(pathX(travel,i),124.0+travel*348.0);
+          float2 dotPosition=float2(pathX(travel,i),188.0+travel*284.0);
           float distance=length(p-dotPosition);
           float intensity=0.70+0.30*sin(time*2.0+float(j));
-          float spark=(exp(-distance*distance/10.0)+exp(-distance*0.20)*0.32)*intensity;
+          float spark=(exp(-distance*distance/15.0)+exp(-distance*0.12)*0.48)*intensity;
           float alpha=clamp(spark,0.0,0.96)*fade;
           outColor=over(float4(float3(0.72,0.92,1.0)*alpha,alpha),outColor);
         }
@@ -130,12 +131,12 @@ half4 main(float2 p) {
   }
   if(desktop < 0.5) {
     // Glass project tile with a small document plate above the native label.
-    outColor=over(material(p-float2(848,73),float2(135,72),23.0,float3(0.07,0.16,0.27)),outColor);
-    outColor=over(material(p-float2(848,52),float2(30,35),5.0,float3(0.08,0.29,0.48)),outColor);
+    outColor=over(material(p-float2(848,100),float2(145,88),23.0,float3(0.07,0.16,0.27)),outColor);
+    outColor=over(material(p-float2(848,76),float2(30,35),5.0,float3(0.08,0.29,0.48)),outColor);
   } else {
     // The two desktop pipes pass behind this bright connecting glass bridge.
     float2 q=p-float2(1317.5,325.0);
-    float halo=exp(-abs(roundedBox(q,float2(213,41),31.0))*0.075)*0.27;
+    float halo=exp(-abs(roundedBox(q,float2(213,41),31.0))*0.045)*0.42;
     outColor=over(float4(float3(0.04,0.72,1.0)*halo,halo),outColor);
     outColor=over(material(q,float2(213,41),31.0,float3(0.02,0.28,0.39)),outColor);
   }
@@ -155,13 +156,16 @@ export function ExpoDesktopLayers() {
   const step = usePresentationValue("stepIndex");
   return <View style={{ width: 1696, height: 735, marginTop: 16, alignSelf: "center" }}>
     <GlassNetwork desktop={false} />
-    <Text style={{ position: "absolute", left: 808, top: 25, width: 80, fontFamily: "Menlo", fontSize: 32,
+    <Text style={{ position: "absolute", left: 808, top: 49, width: 80, fontFamily: "Menlo", fontSize: 32,
       color: "#e6f7ff", textAlign: "center" }}>{"</>"}</Text>
-    <Text style={{ position: "absolute", left: 688, top: 99, width: 320, fontSize: 27, fontWeight: "600",
+    <Text style={{ position: "absolute", left: 688, top: 129, width: 320, fontSize: 27, fontWeight: "600",
       color: "#ffffff", textAlign: "center" }}>Your Expo project</Text>
     <SceneMotionView hidden={step < 1} pose={{ opacity: step >= 1 ? 1 : 0 }} duration={800}
       style={{ position: "absolute", left: 0, top: 0, width: 1696, height: 690 }}>
       <GlassNetwork desktop />
+      <Text accessibilityLabel="Apple logo" style={{ position: "absolute", left: 1105, top: 491, width: 100,
+        fontFamily: "Helvetica Neue", fontSize: 72, lineHeight: 88, color: "#83d6ff", textAlign: "center",
+        textShadowColor: "#418de0", textShadowRadius: 12, textShadowOffset: { width: 0, height: 0 } }}>{"\uF8FF"}</Text>
       <Text style={{ position: "absolute", left: 1105, top: 304, width: 425, fontSize: 34, lineHeight: 42,
         fontWeight: "600", color: "#ffffff", textAlign: "center" }}>Expo Desktop</Text>
       {["macOS", "Windows"].map((name, index) => <Text key={name} style={{ position: "absolute", top: 656,
