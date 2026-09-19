@@ -1,6 +1,6 @@
 # RN Connection running order
 
-46 slides: 42 main-talk slides and four optional backups. Timings are deliberately
+47 slides: 43 main-talk slides and four optional backups. Timings are deliberately
 unset until rehearsal; the expanded story and 21-step visual tour need a fresh pace check.
 
 ## Story
@@ -17,20 +17,20 @@ speed, memory efficiency and native content UI. AppKit's individual wins remain 
 | Slide | Title |
 | --- | --- |
 | 1 | React Native is the best way to build desktop apps |
-| 2 | I came here to test a list. → I found a whole platform. — 2 steps |
-| 3 | Then I made apps I wanted. |
-| 4 | “React Native is a compromise.” |
-| 5 | So I kept building. |
+| 2 | I came here to test a list → I found an incredible platform — 2 steps |
+| 3 | Then I made apps I wanted |
+| 4 | “React Native is a compromise” |
+| 5 | So I kept building |
 | 6 | Different apps. Shared foundations. |
-| 7 | Was I just imagining it? → So I measured it. — 2 steps |
+| 7 | Was I just imagining it? → So I measured it — 2 steps |
 | 8 | Three ways to draw a desktop app |
 | 9 | Measure what the user sees |
 | 10 | Hello World · first content |
 | 11 | Hello World · installed size |
 | 12 | Hello World · memory |
-| 13 | But hello world isn’t a real app. |
-| 14 | I built a chat history app. |
-| 15 | Then I built it nine times. |
+| 13 | But hello world isn’t a real app |
+| 14 | I built a chat history app |
+| 15 | Then I built it nine times |
 | 16 | Same app. Nine implementations. — 21 manual steps |
 | 17 | Chat History · first content |
 | 18 | Chat History · memory |
@@ -45,8 +45,8 @@ speed, memory efficiency and native content UI. AppKit's individual wins remain 
 | 27 | Native behavior |
 | 28 | And then you get React |
 | 29 | React Native everywhere |
-| 30 | Three objections — one quote per step |
-| 31 | That last one is fixable. |
+| 30 | What’s holding desktop back — three boxes, then strike Performance |
+| 31 | That last one is fixable |
 | 32 | Built on Expo Desktop |
 | 33 | Legend Frame → Electron’s ambition. React Native’s foundation. — 2 steps |
 | 34 | From development to shipping |
@@ -55,13 +55,14 @@ speed, memory efficiency and native content UI. AppKit's individual wins remain 
 | 37 | One more app |
 | 38 | Legend Slides |
 | 39 | Legend Slides · 0.0.1 |
-| 40 | Now I need help with the ecosystem. |
-| 41 | Does your library support desktop? → macOS + Windows — 2 steps |
-| 42 | A first choice for desktop |
-| 43 | What we measured |
-| 44 | Native content ≠ native window |
-| 45 | Legend Markdown |
-| 46 | The full comparison |
+| 40 | One box left — strike desktop modules, then zoom into existing modules |
+| 41 | Now I need help with the ecosystem |
+| 42 | Does your library support desktop? → macOS + Windows — 2 steps |
+| 43 | A first choice for desktop |
+| 44 | What we measured |
+| 45 | Native content ≠ native window |
+| 46 | Legend Markdown |
+| 47 | The full comparison |
 
 ## Media and release preparation
 
@@ -125,17 +126,47 @@ release and library status before presenting. The framework is now named Legend 
 ## Visual storytelling pass
 
 Text cards have been removed. Discovery, measurement, the framework reveal and
-maintainer invitation use two deliberate typography steps. The three objections
-appear one at a time. Speaker notes retain the detailed qualifications.
+maintainer invitation use two deliberate typography steps. The three objections appear together; Performance is crossed out on step two. Speaker notes retain the detailed qualifications.
 
-Shared foundations: three real app icons → connections → capability names.
+Shared foundations: Music, Chat History, Code, Diff and Markdown → sculpted roots and native capabilities (two steps).
 Rendering primer: three matching windows progressively reveal platform controls,
 browser content and a drawing surface. Labels identify these as schematic models.
 Expo Desktop: mobile/web → desktop targets → Frame capabilities. Compatibility:
-one sparse status row per step. These four diagrams each have three steps.
+one sparse status row per step. The rendering, Expo Desktop and compatibility diagrams each have three steps.
 
 The release slide uses the real Slides icon, version and GitHub destination.
 Other short flows use typography and arrows without decorative window glyphs.
 All new interpolation uses host SceneMotionView on the UI thread; preview states
 are static and reverse navigation uses the same step targets. Native visual review
 remains outstanding because another task owns the active macOS automation session.
+
+## Chart continuity
+
+All benchmark charts share a 1696 × 710 layout, 34-point labels and values,
+43-point rows and 30-point bars. Full charts use the same row spacing and origin;
+installed-size grouping retains its focused arrangements inside that same frame.
+Framework names identify sibling shared label, bar and value elements across
+metrics. Text translates without stretching; bars interpolate width and vertical
+position together. Unmatched chart entrances still grow from zero. Metric axes
+remain independently scaled, and the Hello World size chart retains 0–320 MiB.
+
+Shared transitions now use the native animation driver. Within-slide group
+rearrangements use a host UI-thread position component whose destination remains
+measurable for the next shared transition. Geometry regression tests cover label
+proportions, fixed bar origins, width interpolation and row movement. Native
+visual verification remains pending; the active macOS session belongs to another task.
+
+The Chat History hero/grid/tour titles and tour subtitle remain centered. The
+fake-glass composer effect fades in from clear over five seconds, without a
+caption. The subsequent full-slide expansion remains a separate step.
+
+The shared foundation is now a live Skia glass-root sculpture with a braided
+trunk. A UI-thread clock drives shader-only thickness and brightness pulses;
+previews hold a fixed time and inactive slides stop advancing. Ten readable
+capability labels occupy two rows outside the shader. Music uses a temporary
+note symbol; Markdown uses the local folded-M icon. Native whole-slide visual
+verification is pending. The SkSL was compiled and rendered with CanvasKit.
+
+### Three-box callback
+
+Before the framework: show Performance / Existing modules / New modules for desktop things, then strike Performance on the second step. After the framework and Slides reveal: return with Performance crossed out, strike New modules on step two, then zoom into Existing modules on step three to introduce the ecosystem audit and maintainer invitation. Cross-outs mean the demonstrated concern has an answer, not universal performance wins or complete API parity.
