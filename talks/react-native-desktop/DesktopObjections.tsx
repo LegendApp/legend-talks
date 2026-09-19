@@ -42,7 +42,7 @@ half4 main(float2 position) {
   float2 p = position-float2(350.0,300.0);
   float clock = time+phase;
   float elapsed = min(mix(time,6.0,settled),6.0);
-  float resolve = success*smoothstep(3.0,5.5,elapsed);
+  float resolve = broken*success*smoothstep(3.0,5.5,elapsed);
   float impact = broken*step(0.38,elapsed);
   float flight = clamp(elapsed-0.38,0.0,2.62);
   float travel = 1.0-exp(-flight*3.8);
@@ -103,7 +103,7 @@ half4 main(float2 position) {
     float e = stroke(p,c,end,second);
     float distance = min(d+10000.0*(1.0-step(0.001,first)),e+10000.0*(1.0-step(0.001,second)));
     float roughness = sin(p.x*0.15+p.y*0.22)*0.8+sin(p.y*0.43)*0.6;
-    float pulse = success*(1.0-resolve)*(0.5+0.5*sin(elapsed*7.0));
+    float pulse = success*(0.5+0.5*sin(time*mix(7.0,3.5,resolve)));
     float thickness = mix(17.0,11.0,resolve)+pulse*3.5;
     float line = 1.0-smoothstep(thickness+roughness,thickness+4.0+roughness,distance);
     float core = exp(-distance*distance*0.035);
@@ -111,26 +111,26 @@ half4 main(float2 position) {
     float flash = impact*exp(-flight*12.0);
     float alpha = clamp(line+glow,0.0,1.0);
     float3 tint = mix(float3(1.0,0.045,0.025),float3(0.12,0.95,0.38),resolve);
-    float shimmer = success*(1.0-resolve)*pow(0.5+0.5*sin(p.x*0.045+p.y*0.025-elapsed*12.0),8.0);
+    float shimmer = success*pow(0.5+0.5*sin(p.x*0.045+p.y*0.025-time*mix(12.0,5.0,resolve)),8.0);
     float3 color = mix(tint,float3(1.0,0.96,0.8),clamp(core*0.6+shimmer*0.7,0.0,1.0));
     float4 slash = float4(color*alpha,alpha);
     result = slash+result*(1.0-slash.a);
-    // Emit sparks from points along both strokes, then let them die away
-    // while the same stroke endpoints converge into a success checkmark.
-    if (success > 0.5 && elapsed > 0.38 && elapsed < 5.5) {
+    // Shape time settles, but the lifecycle-controlled GPU clock keeps the
+    // success check shimmering and emitting green sparks while active.
+    if (success > 0.5 && elapsed > 0.38) {
       for (int k=0; k<24; k++) {
         float id = float(k);
         float seed = hash(id+71.0);
-        float age = fract((elapsed-0.38)*0.85+seed);
+        float age = fract(time*0.85+seed);
         float along = hash(id+23.0);
         float2 origin = k < 12 ? mix(a,b,along) : mix(c,end,along);
         float angle = hash(id+107.0)*6.283185;
         float2 velocity = float2(cos(angle),sin(angle))*(45.0+seed*100.0);
         float2 center = origin+velocity*age+float2(0.0,age*age*45.0);
         float dist = length(p-center);
-        float life = sin(age*3.141593)*(1.0-smoothstep(3.0,5.5,elapsed));
+        float life = sin(age*3.141593)*(0.75+pulse*0.25);
         float spark = (exp(-dist*dist/5.0)+0.25*exp(-dist*0.24))*life;
-        float4 particle = float4(mix(tint,float3(1.0,0.92,0.64),0.6)*spark,spark);
+        float4 particle = float4(mix(tint,mix(float3(1.0,0.92,0.64),float3(0.65,1.0,0.78),resolve),0.45)*spark,spark);
         result = particle+result*(1.0-particle.a);
       }
     }
