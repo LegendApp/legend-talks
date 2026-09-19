@@ -65,13 +65,31 @@ fn simulate(@builtin(global_invocation_id) gid: vec3u) {
     let ring=floor(id/32.0);
     let angle=id*2.39996+clock.time*0.025*(1.0+ring*0.04);
     let radius=0.07+sqrt(id/256.0)*0.4;
-    next[i]=vec4f(0.5+cos(angle)*radius,0.5+sin(angle)*radius,seed,0.0);
+    var pos=vec2f(0.5+cos(angle)*radius,0.5+sin(angle)*radius);
+    if(MODE==3u) {
+      // Particle destinations trace the face, two eyes, and a smiling mouth.
+      var face=vec2f(0.0);
+      if(i<144u) {
+        let a=id/144.0*2.0*PI;
+        face=vec2f(cos(a),sin(a))*0.34;
+      } else if(i<176u) {
+        let eye=select(-0.115,0.115,i>=160u);
+        let a=f32(i%16u)/16.0*2.0*PI;
+        face=vec2f(eye,-0.09)+vec2f(cos(a)*0.025,sin(a)*0.04);
+      } else {
+        let a=0.18+(id-176.0)/79.0*(PI-0.36);
+        face=vec2f(cos(a)*0.205,sin(a)*0.17+0.025);
+      }
+      let destination=vec2f(0.5+face.x/(clock.aspect*0.7),0.5+face.y);
+      pos=mix(pos,destination,smoothstep(10.0,13.0,clock.time));
+    }
+    next[i]=vec4f(pos,seed,0.0);
   }
 }
-struct VertexOutput { @builtin(position) position: vec4f, @location(0) uv: vec2f }
+struct VertexOutput { @builtin(position) position: vec4f, @location(0) uv: vec2f, @location(1) @interpolate(flat) id: u32 }
 @vertex fn vertexMain(@builtin(vertex_index) index: u32) -> VertexOutput {
   let uv=vec2f(f32((index<<1u)&2u),f32(index&2u));
-  return VertexOutput(vec4f(uv*vec2f(2,-2)+vec2f(-1,1),0,1),uv);
+  return VertexOutput(vec4f(uv*vec2f(2,-2)+vec2f(-1,1),0,1),uv,0u);
 }
 @vertex fn particleVertex(@builtin(vertex_index) index: u32, @builtin(instance_index) id: u32) -> VertexOutput {
   let corners=array<vec2f,6>(vec2f(-1,-1),vec2f(1,-1),vec2f(-1,1),vec2f(-1,1),vec2f(1,-1),vec2f(1,1));
@@ -79,10 +97,17 @@ struct VertexOutput { @builtin(position) position: vec4f, @location(0) uv: vec2f
   // Constellation is circular in pixel space; roots occupy the entire surface.
   if(MODE==3u) { pos=vec2f(0.5+(pos.x-0.5)*0.7,pos.y); }
   let radius=select(0.006,0.011,MODE==3u);
-  return VertexOutput(vec4f((pos+corner*vec2f(radius/clock.aspect,radius))*vec2f(2,-2)+vec2f(-1,1),0,1),corner);
+  return VertexOutput(vec4f((pos+corner*vec2f(radius/clock.aspect,radius))*vec2f(2,-2)+vec2f(-1,1),0,1),corner,id);
 }
 @fragment fn particleFragment(in: VertexOutput) -> @location(0) vec4f {
   let glow=exp(-dot(in.uv,in.uv)*4.0);
+  if(MODE==3u) {
+    let green=smoothstep(0.8+hash(f32(in.id))*2.5,6.8,clock.time);
+    var color=mix(vec3f(0.95,0.98,1.0),vec3f(0.20,0.95,0.48),green);
+    color=mix(color,select(vec3f(1.0,0.76,0.12),vec3f(0.11,0.08,0.035),in.id>=144u),smoothstep(10.0,13.0,clock.time));
+    let alpha=glow*(1.0-smoothstep(12.8,14.0,clock.time));
+    return vec4f(color*alpha,alpha);
+  }
   return vec4f(vec3f(0.24,0.8,1.0)*glow,glow);
 }
 `;
@@ -163,21 +188,31 @@ const shades = [
   let alpha=clamp(1.0-smoothstep(0.0,0.003,border),0.0,1.0)*reveal;
   return vec4f(c*alpha,alpha);
   `,
-  // Connections illuminate outward. Dots are individual instanced particles.
+  // White → green network, a success shockwave, then a particle-built smile.
   `
   var c=vec3f(0);
-  let progress=fract(clock.time*0.08);
+  let network=1.0-smoothstep(10.0,12.0,clock.time);
   let p=vec2f((uv.x-0.5)/0.7+0.5,uv.y);
   for(var i=0u;i<64u;i++) {
     let a=previous[i*4u].xy;
     let b=previous[(i*4u+13u)%256u].xy;
     let distance=line(p,a,b);
-    let lit=smoothstep(0.0,0.04,progress-length(a-vec2f(0.5)));
-    c+=mix(vec3f(0.007,0.018,0.026),vec3f(0.04,0.19,0.27),lit)*exp(-distance*650.0);
+    let green=smoothstep(1.5+hash(f32(i))*2.0,7.0,clock.time);
+    c+=mix(vec3f(0.10,0.12,0.14),vec3f(0.015,0.18,0.07),green)*exp(-distance*650.0)*network;
   }
-  let ring=abs(length((uv-vec2f(0.5))*vec2f(1.43,1))-progress);
-  c+=vec3f(0.015,0.1,0.15)*exp(-ring*90.0);
-  return vec4f(c,clamp(max(c.r,max(c.g,c.b))*2.0,0.0,0.8));
+  let q=(uv-vec2f(0.5))*vec2f(clock.aspect,1.0);
+  let wave=clamp((clock.time-8.0)/2.0,0.0,1.0);
+  let shock=exp(-abs(length(q)-wave*1.3)*100.0)*sin(wave*PI);
+  c+=vec3f(0.18,0.95,0.46)*shock;
+  let face=smoothstep(12.2,14.0,clock.time);
+  let mask=(1.0-smoothstep(0.337,0.342,length(q)))*face;
+  let eye=min(length((q-vec2f(-0.115,-0.09))/vec2f(0.025,0.04)),length((q-vec2f(0.115,-0.09))/vec2f(0.025,0.04)));
+  let mouth=abs(length((q-vec2f(0,0.025))/vec2f(0.205,0.17))-1.0);
+  let ink=max(1.0-smoothstep(0.90,1.05,eye),(1.0-smoothstep(0.065,0.10,mouth))*smoothstep(0.04,0.065,q.y));
+  var yellow=mix(vec3f(1.0,0.87,0.23),vec3f(1.0,0.65,0.055),clamp(q.y+0.5,0.0,1.0));
+  yellow=mix(yellow,vec3f(0.13,0.085,0.025),ink);
+  let baseAlpha=clamp(max(c.r,max(c.g,c.b))*2.0,0.0,0.85);
+  return vec4f(yellow*mask+c*(1.0-mask),mask+baseAlpha*(1.0-mask));
   `,
   // Persistent ping-pong simulation: droplets repel and bounce within bounds.
   `

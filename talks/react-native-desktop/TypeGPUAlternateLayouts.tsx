@@ -1,5 +1,6 @@
-import type { ReactNode } from "react";
-import { Image, Text, View } from "react-native";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { usePresentationValue } from "@legend-apps/presentation";
+import { Animated, Easing, Image, Text, View } from "react-native";
 
 export function AlternateRoots({ children, icons }: { children: ReactNode; icons: string[] }) {
   return <View style={{ width: 1696, height: 700, marginTop: 30 }}>
@@ -28,12 +29,39 @@ export function AlternateWindows({ children }: { children: ReactNode }) {
   </View>;
 }
 
+function LibraryLabel() {
+  const active = usePresentationValue("isActive");
+  const preview = usePresentationValue("isPreview");
+  const preparing = usePresentationValue("isPreparing");
+  const [time] = useState(() => new Animated.Value(0));
+  const elapsed = useRef(0);
+  const hasPlayed = useRef(false);
+  useEffect(() => {
+    if (preview && !hasPlayed.current) time.setValue(14);
+    if (!active || preview || preparing) return;
+    hasPlayed.current = true;
+    time.setValue(elapsed.current);
+    const animation = Animated.timing(time, { toValue: 14, duration: Math.max(0, 14-elapsed.current)*1000,
+      easing: Easing.linear, useNativeDriver: true, isInteraction: false });
+    animation.start();
+    return () => { time.stopAnimation(value => { elapsed.current = value; }); };
+  }, [active, preview, preparing, time]);
+  const green = time.interpolate({ inputRange: [0, 7, 8, 14], outputRange: [0, 0, 1, 1], extrapolate: "clamp" });
+  const visible = time.interpolate({ inputRange: [0, 10, 11.5, 14], outputRange: [1, 1, 0, 0], extrapolate: "clamp" });
+  return <Animated.View pointerEvents="none" style={{ position: "absolute", left: 738, top: 295, width: 220, height: 60,
+    borderRadius: 16, borderWidth: 1, borderColor: "#b4d6dd", backgroundColor: "#102333", opacity: visible, justifyContent: "center" }}>
+    <Text style={{ color: "#ffffff", fontSize: 28, fontWeight: "600", textAlign: "center" }}>Your library</Text>
+    <Animated.View style={{ position: "absolute", inset: -1, borderRadius: 16, borderWidth: 1, borderColor: "#5af394",
+      backgroundColor: "#123827", opacity: green, justifyContent: "center" }}>
+      <Text style={{ color: "#5af394", fontSize: 28, fontWeight: "600", textAlign: "center" }}>Your library</Text>
+    </Animated.View>
+  </Animated.View>;
+}
+
 export function AlternateEcosystem({ children }: { children: ReactNode }) {
   return <View style={{ width: 1696, height: 700, marginTop: 30 }}>
     {children}
-    <View style={{ position: "absolute", left: 630, top: 275, width: 436, padding: 22, borderRadius: 20, borderWidth: 1, borderColor: "#96dfff", backgroundColor: "#102333" }}>
-      <Text style={{ color: "#f8fafc", fontSize: 38, fontWeight: "600", textAlign: "center" }}>Your library</Text>
-    </View>
+    <LibraryLabel />
     <Text style={{ color: "#f8fafc", fontSize: 32, textAlign: "center", marginTop: 10 }}>Make desktop part of the support matrix</Text>
   </View>;
 }
