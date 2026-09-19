@@ -1,6 +1,6 @@
 import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms } from "@legend-apps/presentation";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet } from "react-native";
 import { composerRect, detailCamera } from "./NineAppsTour";
 
 // Deliberately excessive procedural imitation, not an OS material or benchmark capture.
@@ -25,11 +25,12 @@ export function FakeGlassTakeover({ visible, expanded }: { visible: boolean; exp
   return <SceneMotionView duration={800} hidden={!visible}
     pose={{ x: expanded ? 0 : cx - 960, y: expanded ? 0 : cy - 540,
       scaleX: expanded ? 1920 / 800 : composerRect.width * camera.scaleX / 800,
-      scaleY: expanded ? 1080 / 160 : composerRect.height * camera.scaleY / 160,
-      opacity: visible ? 1 : 0 }}
-    style={{ position: "absolute", zIndex: 3000, left: 560, top: 460, width: 800, height: 160, borderRadius: 22, overflow: "hidden", borderWidth: 2, borderColor: "white" }}>
-    {visible && <FakeGlassShader />}
-    <Text style={{ position: "absolute", left: 26, top: 20, color: "white", fontSize: 22, fontWeight: "700" }}>Totally native. Obviously.</Text>
+      scaleY: expanded ? 1080 / 160 : composerRect.height * camera.scaleY / 160 }}
+    style={{ position: "absolute", zIndex: 3000, left: 560, top: 460, width: 800, height: 160, borderRadius: 22, overflow: "hidden" }}>
+    {visible && <SceneMotionView duration={5000} initialPose={{ opacity: 0 }} pose={{ opacity: 1 }}
+      style={[StyleSheet.absoluteFill, { borderRadius: 22, overflow: "hidden", borderWidth: 2, borderColor: "white" }]}>
+      <FakeGlassShader />
+    </SceneMotionView>}
   </SceneMotionView>;
 }
 
