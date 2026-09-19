@@ -38,29 +38,7 @@ export function StoryMoment({ kind }: { kind: "discovery" | "question" | "frame"
   </View>;
 }
 
-export function RendererFamilies() {
-  const step = usePresentationValue("stepIndex");
-  return <View style={{ flexDirection: "row", gap: 50, marginTop: 42 }}>
-    {[{ name: "Platform views", labels: "AppKit · SwiftUI\nReact Native", inner: "OS controls" },
-      { name: "Browser content", labels: "Electron · Tauri · Deno", inner: "HTML + CSS" },
-      { name: "Framework-drawn", labels: "Flutter · Compose · GPUI", inner: "GPU drawing surface" }].map((family, index) => <View key={family.name} style={{ flex: 1, gap: 24, alignItems: "center" }}>
-        <View style={{ width: "100%", height: 285, borderWidth: 2, borderColor: "#8093a5", borderRadius: 16, overflow: "hidden", backgroundColor: "#102031" }}>
-          <View style={{ height: 36, paddingLeft: 16, justifyContent: "center", borderBottomWidth: 1, borderColor: "#8093a5" }}><Text style={{ color: ink }}>● ● ●</Text></View>
-          <Reveal show={step >= index}>
-            <View style={{ height: 245, padding: 26, justifyContent: "center", gap: 20 }}>
-              {index === 0 ? <View style={{ flexDirection: "row", gap: 16 }}>
-                <View style={{ width: 75, height: 90, borderRadius: 8, backgroundColor: "#40647c" }} />
-                <View style={{ flex: 1, justifyContent: "space-between", paddingVertical: 5 }}>{[0, 1, 2].map(i => <View key={i} style={{ height: 17, borderRadius: 8, backgroundColor: i === 0 ? accent : "#668297" }} />)}</View>
-              </View> : <Text style={{ color: accent, fontSize: 64, textAlign: "center" }}>{index === 1 ? "</>" : "△  ◯  ▱"}</Text>}
-              <Text style={{ color: ink, fontSize: 28, textAlign: "center" }}>{family.inner}</Text>
-            </View>
-          </Reveal>
-        </View>
-        <Text style={{ color: ink, fontSize: 36, fontWeight: "600" }}>{family.name}</Text>
-        <Reveal show={step >= index}><Text style={{ color: accent, fontSize: 27, lineHeight: 38, textAlign: "center" }}>{family.labels}</Text></Reveal>
-      </View>)}
-  </View>;
-}
+export { RendererFamilies } from "./RendererWindows";
 
 export function ExpoDesktopLayers() {
   const step = usePresentationValue("stepIndex");
