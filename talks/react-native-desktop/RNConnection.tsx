@@ -1,6 +1,6 @@
 import { ChartBar } from "./ChartBar";
 import { FlowGlyph } from "./RNConnectionVisuals";
-import { SceneMotionView, Background, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
+import { Background, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
 import { Animated, Easing, Text, View, type StyleProp, type ViewStyle } from "react-native";
 import { Fragment, useEffect, useState, type ReactNode } from "react";
 import { AnimatedAtmosphere } from "./packs/backgrounds";
@@ -104,19 +104,13 @@ function ChartRow({ name, value, maximum, metric }: {
   maximum: number;
   metric: Metric;
 }) {
-  const active = usePresentationValue("isActive");
-  const preparing = usePresentationValue("isPreparing");
-  const preview = usePresentationValue("isPreview");
   const highlighted = name === "React Native";
-  const visible = preview || (active && !preparing);
 
   return (
     <View style={{ flexDirection: "row", alignItems: "center", height: 43, gap: 24 }}>
       <Text style={{ width: 280, fontSize: 27, color: highlighted ? "#67e8f9" : "#cbd5e1", fontWeight: highlighted ? "700" : "400" }}>{name}</Text>
       <View style={{ flex: 1, height: 28 }}>
-        <SceneMotionView duration={320} pose={{ opacity: visible ? 1 : 0 }} style={{ width: `${value / maximum * 100}%`, minWidth: 2, height: 28 }}>
-          <ChartBar highlighted={highlighted} style={{ width: "100%", height: 28 }} />
-        </SceneMotionView>
+        <ChartBar highlighted={highlighted} style={{ width: `${value / maximum * 100}%`, height: 28 }} />
       </View>
       <Text style={{ width: 180, textAlign: "right", fontSize: 27, color: highlighted ? "#67e8f9" : "#e2e8f0", fontVariant: ["tabular-nums"] }}>{value.toFixed(1)} {units[metric]}</Text>
     </View>
