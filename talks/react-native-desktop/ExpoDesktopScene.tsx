@@ -1,4 +1,4 @@
-import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
+import { Canvas, Fill, Path, Shader, Skia } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 
@@ -46,6 +46,27 @@ float pathX(float t,float i) {
   float ease=t*t*(3.0-2.0*t);
   return mix(start,end,ease);
 }
+// Distance to the curved centerline, rather than its local tangent. The
+// tangent approximation flares out at the tight bend below the project tile.
+float pipeDistance(float2 p,float i) {
+  float distanceSquared=1e10;
+  float side=1.0;
+  float2 a=float2(pathX(0.0,i),188.0);
+  for(int segment=1;segment<=32;segment++) {
+    float t=float(segment)/32.0;
+    float2 b=float2(pathX(t,i),188.0+t*320.0);
+    float2 ab=b-a;
+    float h=clamp(dot(p-a,ab)/dot(ab,ab),0.0,1.0);
+    float2 delta=p-(a+h*ab);
+    float candidate=dot(delta,delta);
+    if(candidate<distanceSquared) {
+      distanceSquared=candidate;
+      side=sign(delta.x*ab.y-delta.y*ab.x);
+    }
+    a=b;
+  }
+  return sqrt(distanceSquared)*side;
+}
 float3 wallpaper(float2 p,float2 size,float seed) {
   float2 uv=p/size;
   float curve=0.34*sin(uv.x*2.0+seed)-uv.x*0.45;
@@ -69,8 +90,7 @@ half4 main(float2 p) {
       // Broad, curved tubes, with a transparent core and two refractive rims.
       if(p.y>=187.0 && p.y<=511.0) {
         float t=clamp((p.y-188.0)/320.0,0.0,1.0);
-        float slope=(pathX(min(1.0,t+0.001),i)-pathX(max(0.0,t-0.001),i))/0.640;
-        float d=(p.x-pathX(t,i))/sqrt(1.0+slope*slope);
+        float d=pipeDistance(p,i);
         float radius=(21.0+desktop*4.0)*(1.0+0.07*sin(t*8.0+i));
         float n=d/radius;
         float body=1.0-smoothstep(0.94,1.04,abs(n));
@@ -151,10 +171,9 @@ half4 main(float2 p) {
     }
   }
   if(desktop < 0.5) {
-    // Glass project tile with a small document plate above the native label.
+    // Glass project tile behind the Expo mark and native label.
     outColor=over(material(p-float2(919,108),float2(192,88),23.0,float3(0.025,0.085,0.16)),outColor);
     outColor=over(material(p-float2(912,100),float2(190,88),23.0,float3(0.07,0.16,0.27)),outColor);
-    outColor=over(material(p-float2(912,76),float2(30,35),5.0,float3(0.08,0.29,0.48)),outColor);
   } else {
     // The two desktop pipes pass behind this bright connecting glass bridge.
     float2 q=p-float2(1476,350.0);
@@ -168,10 +187,14 @@ half4 main(float2 p) {
 const effect = Skia.RuntimeEffect.Make(expoDesktopShader);
 if (!effect) throw new Error("Could not compile Expo Desktop glass scene");
 
+// Expo brand mark from https://github.com/simple-icons/simple-icons/blob/develop/icons/expo.svg
+const expoLogo = "M0 20.084c.043.53.23 1.063.718 1.778.58.849 1.576 1.315 2.303.567.49-.505 5.794-9.776 8.35-13.29a.761.761 0 011.248 0c2.556 3.514 7.86 12.785 8.35 13.29.727.748 1.723.282 2.303-.567.57-.835.728-1.42.728-2.046 0-.426-8.26-15.798-9.092-17.078-.8-1.23-1.044-1.498-2.397-1.542h-1.032c-1.353.044-1.597.311-2.398 1.542C8.267 3.991.33 18.758 0 19.77Z";
+
 function GlassNetwork({ desktop }: { desktop: boolean }) {
   const uniforms = useAnimatedShaderUniforms({ desktop: desktop ? 1 : 0 }, 2);
   return <Canvas pointerEvents="none" style={{ width: 1824, height: 691 }}>
     <Fill><Shader source={effect!} uniforms={uniforms} /></Fill>
+    {!desktop && <Path path={expoLogo} color="#e6f7ff" transform={[{ translateX: 880 }, { translateY: 44 }, { scale: 64 / 24 }]} />}
   </Canvas>;
 }
 
@@ -179,8 +202,6 @@ export function ExpoDesktopLayers() {
   const step = usePresentationValue("stepIndex");
   return <View style={{ width: 1824, height: 771, marginTop: 0, alignSelf: "center" }}>
     <GlassNetwork desktop={false} />
-    <Text style={{ position: "absolute", left: 872, top: 49, width: 80, fontFamily: "Menlo", fontSize: 32,
-      color: "#e6f7ff", textAlign: "center" }}>{"</>"}</Text>
     <Text style={{ position: "absolute", left: 752, top: 129, width: 320, fontSize: 27, fontWeight: "600",
       color: "#ffffff", textAlign: "center" }}>Your Expo project</Text>
     <SceneMotionView hidden={step < 1} pose={{ opacity: step >= 1 ? 1 : 0 }} duration={800}
