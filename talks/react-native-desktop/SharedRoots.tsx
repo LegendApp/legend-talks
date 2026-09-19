@@ -1,5 +1,5 @@
 import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
-import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
+import { useAnimatedShaderUniforms } from "@legend-apps/presentation";
 import { Image, Text, View } from "react-native";
 
 const features = ["Multiple windows", "Native menus", "Files & folders", "Local data", "Keyboard shortcuts", "Drag & drop", "Notifications", "Audio & media", "System dialogs", "OS integration"];
@@ -25,7 +25,7 @@ float3 ribbon(float distance, float radius, float along, float phase, float3 tin
 float ease(float t) { return t * t * (3.0 - 2.0 * t); }
 half4 main(float2 p) {
   float x = p.x - 848.0;
-  float y = p.y;
+  float y = p.y * (450.0 / 550.0);
   float3 color = float3(0);
   // Upright tips curve into wide shoulders, then gather into the trunk.
   if (y < 245.0) {
@@ -88,25 +88,23 @@ if (!effect) throw new Error("Could not compile shared foundation roots");
 
 function RootSculpture() {
   const uniforms = useAnimatedShaderUniforms({}, 2);
-  return <Canvas style={{ width: 1696, height: 450 }}><Fill><Shader source={effect!} uniforms={uniforms} /></Fill></Canvas>;
+  return <Canvas style={{ width: 1696, height: 550 }}><Fill><Shader source={effect!} uniforms={uniforms} /></Fill></Canvas>;
 }
 
 export function SharedRoots({ icons }: { icons: string[] }) {
-  const step = usePresentationValue("stepIndex");
   const names = ["Music", "Chat History", "Code", "Diff", "Markdown"];
-  return <View style={{ width: 1696, height: 710, alignSelf: "center", marginTop: 24 }}>
-    {names.map((name, index) => <View key={name} style={{ position: "absolute", left: 60 + index * 314, top: 0, width: 320, alignItems: "center", gap: 8 }}>
+  return <View style={{ width: 1696, height: 770, alignSelf: "center", marginTop: 8 }}>
+    {names.map((name, index) => <View key={name} style={{ position: "absolute", left: 60 + index * 314, top: -8, width: 320, alignItems: "center", gap: 4 }}>
       {index === 0
-        ? <Text accessibilityLabel="Music icon placeholder" style={{ color: "#c4a0ff", fontSize: 94, lineHeight: 112 }}>♫</Text>
-        : <Image source={{ uri: icons[index - 1] }} style={{ width: 112, height: 112 }} />}
+        ? <Text accessibilityLabel="Music icon placeholder" style={{ color: "#c4a0ff", fontSize: 82, lineHeight: 96 }}>♫</Text>
+        : <Image source={{ uri: icons[index - 1] }} style={{ width: 96, height: 96 }} />}
       <Text style={{ color: "#f8fafc", fontSize: 30, fontWeight: "600" }}>{name}</Text>
     </View>)}
-    <SceneMotionView hidden={step === 0} pose={{ opacity: step > 0 ? 1 : 0, y: step > 0 ? 0 : 16 }} duration={1000}
-      style={{ position: "absolute", left: 0, top: 162, width: 1696 }}>
-      {step > 0 && <RootSculpture />}
-      <View style={{ flexDirection: "row", flexWrap: "wrap", paddingHorizontal: 48, rowGap: 16, marginTop: 12 }}>
+    <View style={{ position: "absolute", left: 0, top: 128, width: 1696 }}>
+      <RootSculpture />
+      <View style={{ flexDirection: "row", flexWrap: "wrap", paddingHorizontal: 48, rowGap: 12, marginTop: 8 }}>
         {features.map(feature => <Text key={feature} style={{ width: 320, color: "#f8fafc", fontSize: 27, fontWeight: "500", textAlign: "center" }}>{feature}</Text>)}
       </View>
-    </SceneMotionView>
+    </View>
   </View>;
 }
