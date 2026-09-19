@@ -16,9 +16,9 @@ export function MediaSlot({ label, kind = "video", height = 490 }: { label: stri
   );
 }
 
-export function AppMontage() {
+export function AppMontage({ apps = ["Music", "Code", "Diff"] }: { apps?: string[] }) {
   return <View style={{ flexDirection: "row", gap: 24, marginTop: 32 }}>
-    {["Music", "Code", "Diff"].map((label) => <View key={label} style={{ flex: 1 }}><MediaSlot label={label} height={400} /></View>)}
+    {apps.map((label) => <View key={label} style={{ flex: 1 }}><MediaSlot label={label} height={400} /></View>)}
   </View>;
 }
 
@@ -76,7 +76,7 @@ export function NativeDataDiagram() {
 
 export function PlatformDiagram({ scope = false }: { scope?: boolean }) {
   return <View style={{ alignItems: "center", marginTop: 20 }}>
-    <Text style={{ color: white, fontSize: 38 }}>{scope ? "Legend Framework" : "Shared React logic"}</Text>
+    <Text style={{ color: white, fontSize: 38 }}>{scope ? "Legend Frame" : "Shared React logic"}</Text>
     <View style={{ width: 2, height: 45, backgroundColor: line }} />
     <View style={{ width: 1050, height: 2, backgroundColor: line }} />
     <View style={{ flexDirection: "row", gap: 70 }}>

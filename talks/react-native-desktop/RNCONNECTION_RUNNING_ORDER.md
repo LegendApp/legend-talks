@@ -1,48 +1,67 @@
 # RN Connection running order
 
-39 slides including backups. Timing needs a new rehearsal after expanding the visual comparison.
+46 slides: 42 main-talk slides and four optional backups. Timings are deliberately
+unset until rehearsal; the expanded story and 21-step visual tour need a fresh pace check.
+
+## Story
+
+Discovery while testing Legend List → Photos and Music → the compromise objection →
+Chat History, Code and Diff on shared foundations → rendering primer → Hello World →
+real-app visual tour and measurements → technical verdict → React Native everywhere →
+three objections → Expo Desktop → Legend Frame → Slides 0.0.1 → ecosystem invitation.
+
+The technical thesis stands separately from familiarity: among the cross-platform
+approaches tested on macOS, React Native offers the best overall combination of
+speed, memory efficiency and native content UI. AppKit's individual wins remain visible.
 
 | Slide | Title |
 | --- | --- |
 | 1 | React Native is the best way to build desktop apps |
-| 2 | Apps I wanted to exist |
-| 3 | Fast to open · Fast to use |
-| 4 | Measure what the user sees |
-| 5 | Hello World · first content |
-| 6 | Hello World · installed size |
-| 7 | Hello World · memory |
-| 8 | But hello world isn’t a real app. |
-| 9 | I built a chat history app. |
-| 10 | Then I built it nine times. |
-| 11 | Same app. Nine implementations. — 21 manual steps |
-| 12 | Chat History · first content |
-| 13 | Chat History · memory |
-| 14 | Chat History · jump to top |
-| 15 | Chat History · switch conversation |
-| 16 | Chat History · app size |
-| 17 | The combination matters |
-| 18 | You can have all three |
-| 19 | React composes a native app |
-| 20 | Keep the big data native |
-| 21 | No WebView required |
-| 22 | Native behavior |
-| 23 | And then you get React |
-| 24 | React Native everywhere |
-| 25 | Bring the ecosystem |
-| 26 | A desktop app needs more |
-| 27 | Introducing Legend Framework |
-| 28 | From development to shipping |
-| 29 | Desktop tools for React |
-| 30 | Early · Useful · Growing |
-| 31 | One more app |
-| 32 | Legend Slides |
-| 33 | Legend Slides · 0.0.1 |
-| 34 | Build for desktop |
-| 35 | A first choice for desktop |
-| 36 | What we measured |
-| 37 | Native content ≠ native window |
-| 38 | Legend Markdown |
-| 39 | The full comparison |
+| 2 | I came here to test a list. |
+| 3 | Then I made apps I wanted. |
+| 4 | “React Native is a compromise.” |
+| 5 | So I kept building. |
+| 6 | Different apps. Shared foundations. |
+| 7 | Was I just imagining it? |
+| 8 | Three ways to draw a desktop app |
+| 9 | Measure what the user sees |
+| 10 | Hello World · first content |
+| 11 | Hello World · installed size |
+| 12 | Hello World · memory |
+| 13 | But hello world isn’t a real app. |
+| 14 | I built a chat history app. |
+| 15 | Then I built it nine times. |
+| 16 | Same app. Nine implementations. — 21 manual steps |
+| 17 | Chat History · first content |
+| 18 | Chat History · memory |
+| 19 | Chat History · jump to top |
+| 20 | Chat History · switch conversation |
+| 21 | Chat History · app size |
+| 22 | The combination matters |
+| 23 | You can have all three |
+| 24 | React composes a native app |
+| 25 | Keep the big data native |
+| 26 | No WebView required |
+| 27 | Native behavior |
+| 28 | And then you get React |
+| 29 | React Native everywhere |
+| 30 | Three objections kept coming up. |
+| 31 | That last one is fixable. |
+| 32 | Built on Expo Desktop |
+| 33 | Introducing Legend Frame |
+| 34 | From development to shipping |
+| 35 | Desktop tools for React |
+| 36 | Early · Useful · Growing |
+| 37 | One more app |
+| 38 | Legend Slides |
+| 39 | Legend Slides · 0.0.1 |
+| 40 | Now I need help with the ecosystem. |
+| 41 | Make desktop part of the support matrix. |
+| 42 | A first choice for desktop |
+| 43 | What we measured |
+| 44 | Native content ≠ native window |
+| 45 | Legend Markdown |
+| 46 | The full comparison |
 
 ## Media and release preparation
 
@@ -53,8 +72,8 @@ The tour is controlled entirely by presentation steps, with no autoplay:
 React Native → AppKit → SwiftUI → Electron → Tauri → Deno → Flutter → Compose → GPUI.
 RN, Electron, and Flutter each get sidebar and composer close-ups, then zoom out.
 GPUI ends the tour: overview → composer → authored fake-glass overlay → full-slide
-takeover. Its newer native composer is acknowledged; the joke is not attributed
-to GPUI's implementation. Next advance starts the Chat History results.
+takeover. The custom native composer overlay has been removed; use new captures
+showing GPUI's own translucent composer. The joke is not a stock GPUI effect. Next advance starts the Chat History results.
 
 RN occupies the top-left grid slot and starts at the left of the carousel.
 The featured card is largest and stacks above its neighbors. Back retraces the
@@ -80,12 +99,10 @@ benchmark.ts are not dependencies.
 
 ## Validation
 
-- Real Legend Slides compiler: 39 slides, zero errors, zero warnings.
+- Real Legend Slides compiler: 46 slides, zero errors, zero warnings.
 - Repository `bun run typecheck`: passed.
-- All 39 slides have speaker notes; data includes nine chat and nine greeting apps.
-- Native inspection attempted with an app-scoped agent-device session. Snapshot
-  and screenshot requests timed out; no native visual or navigation verification
-  is claimed. Rehearse the actual app before presenting.
+- Every slide has speaker notes. Story and benchmark ordering checked.
+- Native visual and navigation verification remains outstanding.
 
 September 18: excluded Legend Shell as a duplicate RN host. The original report
 snapshot preserves provenance; presentation data uses nine frameworks. RN Hello
@@ -94,8 +111,13 @@ World size is now 7.2 MiB after the September 18 optimized ARM64 rebuild
 report snapshot is archived evidence. Timing/memory have not been replaced by the later RN-only checks. Both existing RN binaries were verified ARM64-only.
 
 Chat History's size chart uses app-bundle bytes only, excluding external grammar
-packs for every framework. All nine current bundles were remeasured; exact bytes
+packs for every framework. All nine bundles were measured on September 18, before the GPUI/Flutter native-layer removals; new sizes are pending. Historical exact bytes
 and build dates are in `rnconnection-assets/chat-installed-sizes.json` (the chart
 uses `appBytes`, not `combinedInstalledBytes`). RN is 17.8 MiB app-only. Separate
 grammars remain recorded for provenance but are not plotted. Performance
 measurements are unchanged.
+
+Opening footage also needs Photos and Music, followed by Chat History, Code and Diff.
+Compatibility copy is a local integration snapshot, not a completed library audit.
+Expo-shaped adapters are subsets; Margelo Runtimes uses pinned patches. Refresh
+release and library status before presenting. The framework is now named Legend Frame.
