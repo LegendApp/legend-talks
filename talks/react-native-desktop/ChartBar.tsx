@@ -15,6 +15,6 @@ export function ChartBar({ highlighted = false, groupColor, grouped = false, sty
       <SceneMotionView pose={{ opacity: grouped ? 0 : 0.65 }} style={{ position: "absolute", inset: 0, backgroundColor: color }} />
       <SceneMotionView pose={{ opacity: grouped ? 0.65 : 0 }} style={{ position: "absolute", inset: 0, backgroundColor: groupColor }} />
     </> : <View style={{ position: "absolute", inset: 0, backgroundColor: color, opacity: 0.65 }} />}
-    <View pointerEvents="none" style={{ position: "absolute", inset: 0, borderRadius: 5, borderWidth: 1, borderColor: "rgba(255,255,255,0.72)" }} />
+    <View pointerEvents="none" style={{ position: "absolute", inset: 0, borderRadius: 5, borderWidth: 1, borderColor: "rgba(255,255,255,0.60)" }} />
   </SceneMotionView>;
 }
