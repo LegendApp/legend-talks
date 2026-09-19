@@ -1,10 +1,12 @@
-import { Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { GlassMaterial } from "./GlassMaterial";
+import { Animated, Easing, Text, View } from "react-native";
 import { SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
 import benchmarks from "./rnconnection-assets/benchmarks.json";
 
 const groups = [
   { title: "Native platform", names: ["AppKit", "SwiftUI"], color: "#a5b4fc" },
-  { title: "Runtime / engine included", names: ["GPUI", "React Native", "Tauri", "Flutter", "Deno WebView"], color: "#67e8f9" },
+  { title: "Runtime / engine included", names: ["GPUI", "React Native", "Tauri", "Flutter", "Deno WebView"], color: "#5eead4" },
   { title: "Bundled browser", names: ["Electron", "Deno CEF"], color: "#c4b5fd" },
 ];
 const rows = [...benchmarks.hello].sort((a, b) => a.size - b.size);
@@ -25,6 +27,22 @@ export function HelloSizeJourney() {
   const scene = Math.max(0, Math.min(4, step));
   const focus = scene >= 2 ? focusOrder[scene - 2] : -1;
   const grouped = scene !== 0;
+  const active = usePresentationValue("isActive");
+  const preview = usePresentationValue("isPreview");
+  const [colorProgress] = useState(() => new Animated.Value(grouped ? 1 : 0));
+  useEffect(() => {
+    const target = grouped ? 1 : 0;
+    if (!active || preview) {
+      colorProgress.setValue(target);
+      return;
+    }
+    const animation = Animated.timing(colorProgress, {
+      toValue: target, duration: 650, easing: Easing.inOut(Easing.cubic),
+      useNativeDriver: false, isInteraction: false,
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [grouped, active, preview, colorProgress]);
 
   return <View style={{ width: chartWidth, height: chartHeight, marginTop: 24, alignSelf: "center", overflow: "hidden" }}>
     {groups.map((group, groupIndex) => {
@@ -49,7 +67,8 @@ export function HelloSizeJourney() {
           return <SceneMotionView key={name} pose={{ y }}
             style={{ position: "absolute", left: 0, top: 0, width: chartWidth, height: 43, justifyContent: "center" }}>
             <Text style={{ position: "absolute", left: 0, fontSize: 34, lineHeight: 42, color: name === "React Native" ? "#ffffff" : "#d4d4d4", fontWeight: name === "React Native" ? "600" : "400" }}>{name}</Text>
-            <View style={{ position: "absolute", left: 285, width: Math.max(2, size / fullMaximum * barSpace), height: 30, backgroundColor: group.color }} />
+            <GlassMaterial tint={colorProgress.interpolate({ inputRange: [0, 1], outputRange: [name === "React Native" ? "#67e8f9" : "#525252", group.color] })}
+              style={{ position: "absolute", left: 285, width: Math.max(2, size / fullMaximum * barSpace), height: 30 }} />
             <Text style={{ position: "absolute", right: 0, width: 190, fontSize: 34, lineHeight: 42, textAlign: "right", color: "#e5e5e5", fontVariant: ["tabular-nums"] }}>{size.toFixed(1)} MiB</Text>
           </SceneMotionView>;
         })}
