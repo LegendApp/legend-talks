@@ -49,10 +49,10 @@ export function HelloSizeJourney() {
             : 55 + rows.findIndex((row) => row.name === name) * 57 - groupStarts[groupIndex];
           return <SceneMotionView key={name} pose={{ y }}
             style={{ position: "absolute", left: 0, top: 0, width: chartWidth, height: 43, justifyContent: "center" }}>
-            <Text style={{ position: "absolute", left: 0, fontSize: 34, lineHeight: 42, color: name === "React Native" ? "#ffffff" : "#d4d4d4", fontWeight: name === "React Native" ? "600" : "400" }}>{name}</Text>
+            <Text style={{ position: "absolute", left: 0, fontSize: 34, lineHeight: 42, color: name === "React Native" ? "#ffffff" : "#f1f5f9", fontWeight: name === "React Native" ? "600" : "400" }}>{name}</Text>
             <ChartBar highlighted={name === "React Native"} groupColor={group.color} grouped={grouped}
               style={{ position: "absolute", left: 285, width: Math.max(2, size / fullMaximum * barSpace), height: 30 }} />
-            <Text style={{ position: "absolute", right: 0, width: 190, fontSize: 34, lineHeight: 42, textAlign: "right", color: "#e5e5e5", fontVariant: ["tabular-nums"] }}>{size.toFixed(1)} MiB</Text>
+            <Text style={{ position: "absolute", right: 0, width: 190, fontSize: 34, lineHeight: 42, textAlign: "right", color: "#f1f5f9", fontVariant: ["tabular-nums"] }}>{size.toFixed(1)} MiB</Text>
           </SceneMotionView>;
         })}
       </SceneMotionView>;

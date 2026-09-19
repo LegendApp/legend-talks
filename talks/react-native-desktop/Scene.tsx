@@ -19,7 +19,7 @@ export function Scene({ background, children, eyebrow, title, footer }: {
       {title ? <Text style={styles.title}>{title}</Text> : null}
       <View className="flex-1 justify-center">{children}</View>
       <View className="mt-6 flex-row items-center justify-between border-t border-slate-700 pt-5">
-        <Text className="text-xl text-slate-400">{footer ?? "REACT NATIVE / DESKTOP"}</Text>
+        <Text className="text-xl text-slate-100">{footer ?? "REACT NATIVE / DESKTOP"}</Text>
         <View className="h-1 w-16 bg-cyan-300" />
       </View>
     </View>
@@ -40,8 +40,8 @@ export function Frameworks() {
     <View className="flex-row flex-wrap gap-x-12 gap-y-8">
       {benchmark.map(({ name }, index) => (
         <View className="flex-row items-center gap-5" style={styles.framework} key={name}>
-          <Text className="text-2xl text-slate-500">{String(index + 1).padStart(2, "0")}</Text>
-          <Text className="text-4xl font-semibold" style={{ color: name === "React Native" ? accent : "#e2e8f0" }}>{name}</Text>
+          <Text className="text-2xl text-slate-100">{String(index + 1).padStart(2, "0")}</Text>
+          <Text className="text-4xl font-semibold" style={{ color: name === "React Native" ? accent : "#f1f5f9" }}>{name}</Text>
         </View>
       ))}
     </View>
@@ -52,24 +52,24 @@ export function BenchmarkChart({ metric }: { metric: BenchmarkMetric }) {
   const { label, maximum, unit } = chartLabels[metric];
   return (
     <View className="gap-3">
-      <Text className="mb-4 text-2xl text-slate-400">{label} · p50 · lower is better</Text>
+      <Text className="mb-4 text-2xl text-slate-100">{label} · p50 · lower is better</Text>
       {sortedBenchmarks[metric].map((row) => {
         const highlighted = row.name === "React Native";
         return (
           <View className="flex-row items-center gap-6" key={row.name}>
-            <Text className="text-3xl" style={[styles.chartLabel, { color: highlighted ? accent : "#cbd5e1" }]}>{row.name}</Text>
+            <Text className="text-3xl" style={[styles.chartLabel, { color: highlighted ? accent : "#f1f5f9" }]}>{row.name}</Text>
             <View className="h-8 flex-1 bg-slate-900">
               <View style={{ height: "100%", width: `${row[metric] / maximum * 100}%`, backgroundColor: highlighted ? accent : "#526580" }} />
             </View>
-            <Text className="text-right text-3xl" style={[styles.chartValue, { color: highlighted ? accent : "#e2e8f0" }]}>
+            <Text className="text-right text-3xl" style={[styles.chartValue, { color: highlighted ? accent : "#f1f5f9" }]}>
               {row[metric].toFixed(1)} {unit}
             </Text>
           </View>
         );
       })}
       <View className="mt-1 flex-row justify-between" style={styles.axis}>
-        <Text className="text-xl text-slate-500">0</Text>
-        <Text className="text-xl text-slate-500">{maximum} {unit}</Text>
+        <Text className="text-xl text-slate-100">0</Text>
+        <Text className="text-xl text-slate-100">{maximum} {unit}</Text>
       </View>
     </View>
   );
@@ -83,8 +83,8 @@ export function ChatIllustration({ glassBackdrop = false }: { glassBackdrop?: bo
     <View className="overflow-hidden rounded-3xl border border-slate-600 bg-slate-950" style={styles.chat}>
       <View className="h-16 flex-row items-center gap-3 border-b border-slate-700 px-8">
         {["#fb7185", "#fbbf24", "#4ade80"].map((color) => <View className="h-4 w-4 rounded-full" key={color} style={{ backgroundColor: color }} />)}
-        <Text className="ml-8 text-2xl text-slate-300">Chat History</Text>
-        <Text className="ml-auto text-xl text-slate-500">Illustrated demo</Text>
+        <Text className="ml-8 text-2xl text-slate-100">Chat History</Text>
+        <Text className="ml-auto text-xl text-slate-100">Illustrated demo</Text>
       </View>
       <View className="flex-1 flex-row">
         <View className="gap-3 border-r border-slate-600 p-6" style={styles.sidebar}>
@@ -94,7 +94,7 @@ export function ChatIllustration({ glassBackdrop = false }: { glassBackdrop?: bo
               <Text className="text-2xl text-slate-100" style={index === 2 && glassBackdrop ? styles.hidden : undefined}>{title}</Text>
             </View>
           ))}
-          <Text className="mt-auto text-xl text-slate-400">Codex + Claude</Text>
+          <Text className="mt-auto text-xl text-slate-100">Codex + Claude</Text>
         </View>
         <View className="flex-1 overflow-hidden p-12">
           <View style={styles.orbCyan} />
@@ -103,9 +103,9 @@ export function ChatIllustration({ glassBackdrop = false }: { glassBackdrop?: bo
           <Text className="mb-8 text-xl uppercase tracking-widest text-cyan-100">You</Text>
           <Text className="text-5xl font-semibold text-white">Can we add a little glass?</Text>
           <View className="mt-10 gap-5 rounded-2xl border border-white/30 bg-slate-950/70 p-8" style={glassBackdrop ? styles.hidden : undefined}>
-            <Text className="text-xl uppercase tracking-widest text-slate-300">Assistant</Text>
+            <Text className="text-xl uppercase tracking-widest text-slate-100">Assistant</Text>
             <Text className="text-4xl text-white">Of course. How hard could it be?</Text>
-            <Text className="text-2xl text-slate-300">Blur. Refraction. Highlights. Just a few details.</Text>
+            <Text className="text-2xl text-slate-100">Blur. Refraction. Highlights. Just a few details.</Text>
           </View>
         </View>
       </View>
@@ -142,11 +142,11 @@ export function DataPath() {
           <View className="flex-1 gap-6 border-t-2 border-cyan-300 pt-8" key={number}>
             <Text className="text-2xl text-cyan-300">{number}</Text>
             <Text className="text-4xl font-semibold text-white">{title}</Text>
-            <Text className="text-2xl leading-relaxed text-slate-400">{detail}</Text>
+            <Text className="text-2xl leading-relaxed text-slate-100">{detail}</Text>
           </View>
         ))}
       </View>
-      <Text className="text-4xl text-slate-200">The large document stays native. React asks for what is visible.</Text>
+      <Text className="text-4xl text-slate-100">The large document stays native. React asks for what is visible.</Text>
     </View>
   );
 }
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   accent: { color: accent },
   title: { color: "#f8fafc", fontSize: 72, lineHeight: 84, fontWeight: "700", marginTop: 20, marginBottom: 28 },
   statement: { color: "#f8fafc", fontSize: 96, lineHeight: 112, fontWeight: "700", maxWidth: 1500 },
-  detail: { color: "#94a3b8", fontSize: 36, lineHeight: 50, maxWidth: 1450 },
+  detail: { color: "#f1f5f9", fontSize: 36, lineHeight: 50, maxWidth: 1450 },
   framework: { width: 512, height: 100 },
   chartLabel: { width: 260 },
   chartValue: { width: 192, fontVariant: ["tabular-nums"] },

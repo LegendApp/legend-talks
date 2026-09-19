@@ -65,7 +65,7 @@ export function Points({ items }: { items: string[] }) {
     <View style={{ gap: 24, marginTop: 24, alignItems: "center" }}>
       {items.map((item) => (
         <View key={item}>
-          <Text style={{ color: "#e5e5e5", fontSize: 40, lineHeight: 56, textAlign: "center" }}>{item}</Text>
+          <Text style={{ color: "#f1f5f9", fontSize: 40, lineHeight: 56, textAlign: "center" }}>{item}</Text>
         </View>
       ))}
     </View>
@@ -108,11 +108,11 @@ function ChartRow({ name, value, maximum, metric }: {
 
   return (
     <View style={{ flexDirection: "row", alignItems: "center", height: 43, gap: 24 }}>
-      <Text style={{ width: 280, fontSize: 27, color: highlighted ? "#67e8f9" : "#cbd5e1", fontWeight: highlighted ? "700" : "400" }}>{name}</Text>
+      <Text style={{ width: 280, fontSize: 27, color: highlighted ? "#67e8f9" : "#f1f5f9", fontWeight: highlighted ? "700" : "400" }}>{name}</Text>
       <View style={{ flex: 1, height: 28 }}>
         <ChartBar highlighted={highlighted} style={{ width: `${value / maximum * 100}%`, height: 28 }} />
       </View>
-      <Text style={{ width: 180, textAlign: "right", fontSize: 27, color: highlighted ? "#67e8f9" : "#e2e8f0", fontVariant: ["tabular-nums"] }}>{value.toFixed(1)} {units[metric]}</Text>
+      <Text style={{ width: 180, textAlign: "right", fontSize: 27, color: highlighted ? "#67e8f9" : "#f1f5f9", fontVariant: ["tabular-nums"] }}>{value.toFixed(1)} {units[metric]}</Text>
     </View>
   );
 }
@@ -136,14 +136,14 @@ export function Tradeoffs() {
   return (
     <View style={{ gap: 10, marginTop: 20 }}>
       <View style={{ flexDirection: "row", padding: 12 }}>
-        {[["Implementation", 340], ["First content", 250], ["Memory", 220], ["Content UI", 700]].map(([label, width]) => <Text key={label} style={{ width: Number(width), fontSize: 24, color: "#94a3b8" }}>{label}</Text>)}
+        {[["Implementation", 340], ["First content", 250], ["Memory", 220], ["Content UI", 700]].map(([label, width]) => <Text key={label} style={{ width: Number(width), fontSize: 24, color: "#f1f5f9" }}>{label}</Text>)}
       </View>
       {benchmarks.chat.map((row) => (
         <View key={row.name} style={{ flexDirection: "row", padding: 12, borderRadius: 8, backgroundColor: row.name === "React Native" ? "#102326" : "transparent" }}>
           <Text style={{ width: 340, fontSize: 25, color: "#f8fafc", fontWeight: row.name === "React Native" ? "700" : "400" }}>{row.name}</Text>
-          <Text style={{ width: 250, fontSize: 25, color: "#e2e8f0" }}>{row.content.toFixed(1)} ms</Text>
-          <Text style={{ width: 220, fontSize: 25, color: "#e2e8f0" }}>{row.memory.toFixed(1)} MiB</Text>
-          <Text style={{ fontSize: 25, color: "#e2e8f0" }}>{row.name === "GPUI" ? "Canvas; native composer added later" : row.ui}</Text>
+          <Text style={{ width: 250, fontSize: 25, color: "#f1f5f9" }}>{row.content.toFixed(1)} ms</Text>
+          <Text style={{ width: 220, fontSize: 25, color: "#f1f5f9" }}>{row.memory.toFixed(1)} MiB</Text>
+          <Text style={{ fontSize: 25, color: "#f1f5f9" }}>{row.name === "GPUI" ? "Canvas; native composer added later" : row.ui}</Text>
         </View>
       ))}
     </View>

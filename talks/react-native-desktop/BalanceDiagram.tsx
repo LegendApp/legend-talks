@@ -78,7 +78,7 @@ function Glass({ fail = false, children }: { fail?: boolean; children: ReactNode
       <Fill color="transparent" />
       <Path path={badge.ribbon} style="stroke" strokeWidth={56} strokeCap="round" color="rgba(215,232,250,0.55)" />
       <Path path={badge.ribbon} style="stroke" strokeWidth={53} strokeCap="round" color={badge.color} />
-      <TextPath path={badge.textPath} text={badge.label} font={categoryFont} color="#eef0f5" />
+      <TextPath path={badge.textPath} text={badge.label} font={categoryFont} color="#ffffff" />
     </Group>)}
   </Canvas>;
 }
@@ -128,7 +128,7 @@ function Framework({ name, x, y }: { name: string; x: number; y: number }) {
   const font = frameworkFont;
   const width = font.measureText(name).width;
   return <SkiaText text={name} font={font} x={x - width / 2} y={y + 11}
-    color="#eef0f5" />;
+    color="#ffffff" />;
 }
 
 export function BalanceDiagram() {

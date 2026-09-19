@@ -15,7 +15,7 @@ export default function TalkTemplate({ children, slide }: PresentationTemplatePr
             {typeof slide.eyebrow === "string" && <Text className="mb-5 text-2xl font-semibold uppercase tracking-widest text-cyan-300">{slide.eyebrow}</Text>}
             <View style={{ flex: 1, justifyContent: "center" }}>{children}</View>
             <View className="mt-6 flex-row items-center justify-between border-t border-slate-700 pt-5">
-              <Text className="text-xl text-slate-400">{typeof slide.footer === "string" ? slide.footer : "REACT NATIVE / DESKTOP"}</Text>
+              <Text className="text-xl text-slate-100">{typeof slide.footer === "string" ? slide.footer : "REACT NATIVE / DESKTOP"}</Text>
               <View className="h-1 w-16 bg-cyan-300" />
             </View>
           </>
