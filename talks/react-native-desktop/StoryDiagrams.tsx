@@ -4,7 +4,6 @@ import { Image, Text, View } from "react-native";
 
 const ink = "#f8fafc";
 const accent = "#8be5ff";
-const line = "rgba(139,229,255,0.65)";
 
 function Reveal({ show, children }: { show: boolean; children: ReactNode }) {
   return <SceneMotionView hidden={!show} pose={{ opacity: show ? 1 : 0, y: show ? 0 : 22 }} duration={450}>{children}</SceneMotionView>;
@@ -40,23 +39,7 @@ export function StoryMoment({ kind }: { kind: "discovery" | "question" | "frame"
 
 export { RendererFamilies } from "./RendererWindows";
 
-export function ExpoDesktopLayers() {
-  const step = usePresentationValue("stepIndex");
-  return <View style={{ alignItems: "center", marginTop: 28 }}>
-    <Text style={{ color: ink, fontSize: 48, fontWeight: "600" }}>Your Expo project</Text>
-    <View style={{ width: 2, height: 50, backgroundColor: line }} />
-    <View style={{ width: 1080, height: 2, backgroundColor: line }} />
-    <View style={{ flexDirection: "row" }}>{["Mobile", "Web", "macOS", "Windows"].map((name, index) => <Reveal key={name} show={index < 2 || step > 0}>
-      <View style={{ width: 360, alignItems: "center", gap: 22 }}>
-        <View style={{ height: 62, width: 2, backgroundColor: line }} />
-        <Text style={{ color: index < 2 ? ink : accent, fontSize: 40 }}>{name}</Text>
-      </View>
-    </Reveal>)}</View>
-    <View style={{ marginTop: 40 }}><Reveal show={step > 0}><Text style={{ color: accent, fontSize: 32 }}>Expo Desktop → native desktop projects</Text></Reveal></View>
-    <View style={{ marginTop: 30 }}><Reveal show={step > 1}><Text style={{ color: ink, fontSize: 34 }}>Legend Frame → desktop APIs + runtime + builds</Text></Reveal></View>
-    <Text style={{ color: ink, fontSize: 23, marginTop: 40 }}>Community project · github.com/shirakaba/expo-desktop</Text>
-  </View>;
-}
+export { ExpoDesktopLayers } from "./ExpoDesktopScene";
 
 export function CompatibilitySnapshot() {
   const step = usePresentationValue("stepIndex");
