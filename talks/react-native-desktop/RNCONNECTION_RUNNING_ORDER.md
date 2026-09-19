@@ -172,7 +172,7 @@ verification is pending. The SkSL was compiled and rendered with CanvasKit.
 
 ### Three-box callback
 
-Before the framework: show Performance / Existing modules / New modules for desktop things, then strike Performance on the second step. After the framework and Slides reveal: return with Performance crossed out, strike New modules on step two, then zoom into Existing modules on step three to introduce the ecosystem audit and maintainer invitation. Cross-outs mean the demonstrated concern has an answer, not universal performance wins or complete API parity.
+Before the framework: show Performance / Existing modules / Desktop modules, then strike Performance on the second step. After the framework and Slides reveal: return with Performance checked, shatter Desktop modules into a green check on step two, then zoom into Existing modules on step three to introduce the ecosystem audit and maintainer invitation. Cross-outs mean the demonstrated concern has an answer, not universal performance wins or complete API parity.
 
 
 ## TypeGPU alternates

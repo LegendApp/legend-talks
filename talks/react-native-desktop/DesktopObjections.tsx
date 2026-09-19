@@ -9,7 +9,6 @@ uniform float time;
 uniform float broken;
 uniform float settled;
 uniform float phase;
-uniform float success;
 uniform float centerX;
 float hash(float n) { return fract(sin(n * 127.1 + 311.7) * 43758.5453); }
 float2 rotatePoint(float2 p, float a) {
@@ -43,7 +42,7 @@ half4 main(float2 position) {
   float2 p = position-float2(centerX,300.0);
   float clock = time+phase;
   float elapsed = min(mix(time,6.0,settled),6.0);
-  float resolve = broken*success*smoothstep(1.2,2.2,elapsed);
+  float resolve = broken*smoothstep(1.2,2.2,elapsed);
   float impact = broken*step(0.38,elapsed);
   float flight = max(elapsed-0.38,0.0);
   float travel = 1.0-exp(-flight*3.8);
@@ -101,7 +100,7 @@ half4 main(float2 position) {
     float e = stroke(p,c,end,second);
     float distance = min(d+10000.0*(1.0-step(0.001,first)),e+10000.0*(1.0-step(0.001,second)));
     float roughness = sin(p.x*0.15+p.y*0.22)*0.8+sin(p.y*0.43)*0.6;
-    float pulse = success*(0.5+0.5*sin(time*mix(7.0,3.5,resolve)));
+    float pulse = (0.5+0.5*sin(time*mix(7.0,3.5,resolve)));
     float thickness = mix(17.0,11.0,resolve)+pulse*3.5;
     float line = 1.0-smoothstep(thickness+roughness,thickness+4.0+roughness,distance);
     float core = exp(-distance*distance*0.035);
@@ -109,13 +108,13 @@ half4 main(float2 position) {
     float flash = impact*exp(-flight*12.0);
     float alpha = clamp(line+glow,0.0,1.0);
     float3 tint = mix(float3(1.0,0.045,0.025),float3(0.12,0.95,0.38),resolve);
-    float shimmer = success*pow(0.5+0.5*sin(p.x*0.045+p.y*0.025-time*mix(12.0,5.0,resolve)),8.0);
+    float shimmer = pow(0.5+0.5*sin(p.x*0.045+p.y*0.025-time*mix(12.0,5.0,resolve)),8.0);
     float3 color = mix(tint,float3(1.0,0.96,0.8),clamp(core*0.6+shimmer*0.7,0.0,1.0));
     float4 slash = float4(color*alpha,alpha);
     result = slash+result*(1.0-slash.a);
     // Shape time settles, but the lifecycle-controlled GPU clock keeps the
     // success check shimmering and emitting green sparks while active.
-    if (success > 0.5 && elapsed > 0.38) {
+    if (elapsed > 0.38) {
       for (int k=0; k<24; k++) {
         float id = float(k);
         float seed = hash(id+71.0);
@@ -142,7 +141,7 @@ const glassEffect = Skia.RuntimeEffect.Make(objectionGlassShader);
 if (!glassEffect) throw new Error("Could not compile objection glass");
 
 function GlassPanel({ crossed, settled, index }: { crossed: boolean; settled: boolean; index: number }) {
-  const uniforms = useAnimatedShaderUniforms({ broken: crossed ? 1 : 0, settled: settled ? 1 : 0, phase: index * 1.7, success: index === 0 ? 1 : 0, centerX: crossed ? 396 + index * 564 : 350 }, crossed ? 6 : 2);
+  const uniforms = useAnimatedShaderUniforms({ broken: crossed ? 1 : 0, settled: settled ? 1 : 0, phase: index * 1.7, centerX: crossed ? 396 + index * 564 : 350 }, crossed ? 6 : 2);
   // Crossed panels draw across the full stage and below its bottom. The shader
   // origin stays on this panel while fragments can cross neighboring columns.
   return <Canvas pointerEvents="none" style={{ position: "absolute", left: crossed ? -142 - index * 564 : -96, top: -108, width: crossed ? 1920 : 700, height: crossed ? 1080 : 600 }}>
@@ -150,27 +149,33 @@ function GlassPanel({ crossed, settled, index }: { crossed: boolean; settled: bo
   </Canvas>;
 }
 
+/** Both resolved objections use the exact same glass, strike, sparks and check. */
+function ObjectionCard({ label, index, crossed, settled, zoom }: {
+  label: string; index: number; crossed: boolean; settled: boolean; zoom: boolean;
+}) {
+  const center = index === 1;
+  return <SceneMotionView duration={850}
+    pose={{ x: zoom && !center ? (index === 0 ? -450 : 450) : 0,
+      y: zoom && center ? 35 : 0,
+      scaleX: zoom && center ? 1.65 : 1, scaleY: zoom && center ? 1.65 : 1,
+      opacity: zoom && !center ? 0 : 1 }}
+    style={{ position: "absolute", left: 30 + index * 564, top: 105, width: 508, height: 384 }}>
+    {/* Re-crossing replays the animation; zooming preserves its current clock. */}
+    <GlassPanel key={String(crossed)} crossed={crossed} settled={settled} index={index} />
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 24 }}>
+      <Text style={{ color: "#ffffff", fontSize: 42, fontWeight: "600", textAlign: "center", lineHeight: 54,
+        textShadowColor: "#07121f", textShadowRadius: 8, textShadowOffset: { width: 0, height: 2 } }}>{label}</Text>
+    </View>
+  </SceneMotionView>;
+}
+
 export function DesktopObjections({ returning = false }: { returning?: boolean }) {
   const step = usePresentationValue("stepIndex");
   const zoom = returning && step >= 2;
   const crossed = [returning || step >= 1, false, returning && step >= 1];
   return <View style={{ width: 1696, height: 660, marginTop: 45, alignSelf: "center" }}>
-    {["Performance", "Existing modules", "New modules for\ndesktop things"].map((label, index) => {
-      const center = index === 1;
-      return <SceneMotionView key={label} duration={850}
-        pose={{ x: zoom && !center ? (index === 0 ? -450 : 450) : 0,
-          y: zoom && center ? 35 : 0,
-          scaleX: zoom && center ? 1.65 : 1, scaleY: zoom && center ? 1.65 : 1,
-          opacity: zoom && !center ? 0 : 1 }}
-        style={{ position: "absolute", left: 30 + index * 564, top: 105, width: 508, height: 384 }}>
-        {/* Remount only when crossed state changes: replay on re-cross, restore
-            intact glass on reverse, and preserve the strike during the zoom. */}
-        <GlassPanel key={String(crossed[index])} crossed={crossed[index]!} settled={returning && index === 0} index={index} />
-        <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 24 }}>
-          <Text style={{ color: "#ffffff", fontSize: 42, fontWeight: "600", textAlign: "center", lineHeight: 54,
-            textShadowColor: "#07121f", textShadowRadius: 8, textShadowOffset: { width: 0, height: 2 } }}>{label}</Text>
-        </View>
-      </SceneMotionView>;
-    })}
+    {["Performance", "Existing modules", "Desktop modules"].map((label, index) =>
+      <ObjectionCard key={label} label={label} index={index} crossed={crossed[index]!}
+        settled={returning && index === 0} zoom={zoom} />)}
   </View>;
 }
