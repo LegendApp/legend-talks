@@ -1,6 +1,6 @@
 # RN Connection running order
 
-47 slides: 43 main-talk slides and four optional backups. Timings are deliberately
+52 slides: 43 main-talk slides, four optional backups, and five TypeGPU alternates. Timings are deliberately
 unset until rehearsal; the expanded story and 21-step visual tour need a fresh pace check.
 
 ## Story
@@ -170,3 +170,33 @@ verification is pending. The SkSL was compiled and rendered with CanvasKit.
 ### Three-box callback
 
 Before the framework: show Performance / Existing modules / New modules for desktop things, then strike Performance on the second step. After the framework and Slides reveal: return with Performance crossed out, strike New modules on step two, then zoom into Existing modules on step three to introduce the ecosystem audit and maintainer invitation. Cross-outs mean the demonstrated concern has an answer, not universal performance wins or complete API parity.
+
+
+## TypeGPU alternates
+
+The original main talk and backups remain intact. Slides 48–52 are comparison
+variants, not part of the rehearsed running order:
+
+| Slide | Alternate |
+| --- | --- |
+| 48 | Shared foundations: 2,048 GPU particles travel through the roots |
+| 49 | Three rendering styles: perspective glass windows and dimensional controls |
+| 50 | Fake glass: composer-sized surface expands through a procedural wave field |
+| 51 | Existing modules: 256-node illustrative library constellation |
+| 52 | Background: 16 interacting droplets with persistent GPU state |
+
+These use TypeGPU for typed shader composition and uniform layout, and a new
+host-compiled UI-thread WebGPU path for frame submission and compute dispatch.
+The older TypeGPU host still uses a JS frame loop; these slides do not use it.
+Previews render a deterministic still. Outgoing views hold their last frame;
+prepared slides do not submit frames. The background follows viewport size and
+the Appearance intensity setting.
+
+The droplet simulation uses ping-pong storage buffers with repulsion and wall
+bounces. The glass takeover uses procedural waves, not a fluid solver. The
+constellation does not represent audited library compatibility. The windows
+are shader illustrations, not actual native widgets.
+
+Validation: deck compilation, TypeScript, host React compiler/worklet transform,
+lifecycle tests, and individual Metal/WebGPU shader renders. Native Slides
+navigation and visual verification remain outstanding.

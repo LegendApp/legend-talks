@@ -13,6 +13,8 @@ presenter:
   showNotes: true
 ---
 
+import { rootsProgram, windowsProgram, takeoverProgram, ecosystemProgram, dropletsProgram } from "./TypeGPUAlternates"
+import { AlternateRoots, AlternateWindows, AlternateEcosystem } from "./TypeGPUAlternateLayouts"
 import { Chart, Tradeoffs } from "./RNConnection"
 import { AppMontage, BalanceDiagram, CapabilityDiagram, MeasurementDiagram, MediaSlot, NativeDataDiagram, PlatformDiagram, RenderingDiagram } from "./RNConnectionVisuals"
 import { HelloSizeJourney } from "./HelloSizeJourney"
@@ -551,3 +553,66 @@ eyebrow: 'Backup / tradeoffs'
 <Tradeoffs />
 
 <!-- macOS Chat History results. AppKit is a strong macOS-specific choice. RN combines low memory and fast first content with native content UI and a cross-platform foundation. GPUI's experimental native composer overlay has been removed. The table describes current rendering, while its timing and memory values remain historical measurements. Windows was not benchmarked. -->
+
+---
+title: "Alternate · Shared foundations · TypeGPU"
+eyebrow: "Alternate / TypeGPU"
+---
+
+# Different apps. Shared foundations. {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<AlternateRoots icons={[chatIcon, codeIcon, diffIcon, markdownIcon]}>
+  <TypeGPUShader code={rootsProgram} particles particleCount={2048} />
+</AlternateRoots>
+
+<!-- TYPEGPU ALTERNATE: compare with the shared foundations slide. A compute pass advances 2,048 individual particles along the roots into five apps. This is an illustrative flow of shared capabilities, not runtime traffic or measured activity. Music still uses a placeholder glyph. The original slide remains unchanged. -->
+
+---
+title: "Alternate · Three ways · TypeGPU"
+eyebrow: "Alternate / TypeGPU"
+---
+
+# Three ways to draw a desktop app {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<AlternateWindows>
+  <TypeGPUShader code={windowsProgram} />
+</AlternateWindows>
+
+<!-- TYPEGPU ALTERNATE: shallow perspective and dimensional shading distinguish assembled native controls, a single scanned browser page and traced renderer paths. These are schematic shader illustrations, not actual embedded OS controls or a benchmark. -->
+
+---
+title: "Alternate · Fake glass · TypeGPU"
+template: false
+steps: 2
+eyebrow: "Alternate / TypeGPU"
+---
+
+<TypeGPUShader code={takeoverProgram} width={1920} height={1080} previewTime={7} />
+
+<!-- TYPEGPU ALTERNATE: initially a composer-sized glass surface. Advance to expand it into the scene through an exaggerated radial ripple and refracted grid. This is procedural wave shading, not a fluid solver or actual native liquid glass. Compare its motion with the existing composer takeover. -->
+
+---
+title: "Alternate · Existing modules · TypeGPU"
+eyebrow: "Alternate / TypeGPU"
+---
+
+# Now I need help with the ecosystem {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<AlternateEcosystem>
+  <TypeGPUShader code={ecosystemProgram} particles />
+</AlternateEcosystem>
+
+<!-- TYPEGPU ALTERNATE: 256 generic nodes and connections illuminate outward from Your library. This is a conceptual network, not an audit or a compatibility status claim about specific packages. Ask maintainers to test macOS and Windows, upstream fixes and document support. -->
+
+---
+title: "Alternate · Interacting background · TypeGPU"
+eyebrow: "Alternate / TypeGPU"
+---
+
+<Background>
+  <TypeGPUShader code={dropletsProgram} background />
+</Background>
+
+# A first choice for desktop {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-8xl mb-0"}
+
+<!-- TYPEGPU ALTERNATE: sixteen droplets have persistent positions and velocities in ping-pong GPU storage buffers. They repel at close range and bounce at the edges; a metaball surface shades their merged silhouettes and refracts the procedural grid. It is a small particle simulation, not an incompressible-fluid solver. Use this slide to compare background readability and motion. -->
