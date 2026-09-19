@@ -44,14 +44,15 @@
 
 ## Media and release preparation
 
-Slides 4–6 now form a shared-element hero → grid → looping filmstrip sequence.
+Slides 4–6 now form a shared-element hero → grid → finite filmstrip sequence.
 Media is intentionally represented by labeled slots until Jay supplies assets.
 `NineApps.tsx` owns the slots; add deck-local screenshot imports to its
 `screenshots` map. Supply one RN video and nine matching app screenshots. The
 RN screenshot should match the video's final frame. Video playback is not wired
 until the clip arrives; there is no simulated footage or private benchmark video.
 
-The filmstrip holds for 2.8 seconds, moves for 1.1 seconds, and wraps offscreen.
+The filmstrip holds for 1.5 seconds, moves for 0.5 seconds, and stops at the last app.
+RN begins at the left margin, with the other apps to its right; Deno combines both variants and Compose Multiplatform fills the ninth slot.
 RN occupies the top-left grid slot. The centered filmstrip card is largest;
 neighbors shrink and dim. Advance continues directly to methodology. Previews remain static. Native
 transition appearance still needs rehearsal in Slides. The existing app-demo

@@ -72,24 +72,24 @@ template: ./NineApps.tsx
 transition:
   type: focus
   from: nine-apps-stage
-  duration: 1100
+  duration: 550
 ---
 
 <NineApps mode="grid" />
 
-<!-- 2:15–2:30. “Then I built it nine times.” Hold long enough to count them. RN is at the top-left. Every screenshot should use the same conversation, viewport, and appearance. Assets are pending; the labels name the nine actual implementations. Advance unfolds the grid into a filmstrip. -->
+<!-- 2:15–2:30. “Then I built it nine times.” Hold long enough to count them. RN is at the top-left. Every screenshot should use the same conversation, viewport, and appearance. Assets are pending; the lineup combines the two Deno variants as Deno and includes Compose Multiplatform. Advance unfolds the grid into a filmstrip. -->
 
 ---
 template: ./NineApps.tsx
 transition:
   type: focus
   from: nine-apps-stage
-  duration: 1100
+  duration: 550
 ---
 
 <NineApps mode="filmstrip" />
 
-<!-- 2:30–2:45. RN starts centered. The strip holds each app for 2.8 seconds and glides for 1.1 seconds, looping through all nine. Center cards grow; their neighbors shrink and dim. This is a visual tour, not a timing comparison. Shared slide epochs synchronize playback; previews stay still.
+<!-- 2:30–2:45. RN starts at the left margin with every other app to its right. The strip holds each app for 1.5 seconds and glides for 0.5 seconds, stopping at the last app. Center cards grow; their neighbors shrink and dim. This is a visual tour, not a timing comparison. The filmstrip animates on the UI thread; previews stay still.
 Let the filmstrip run while explaining the comparison. Advance continues directly to methodology. Media is intentionally pending; do not present these slots as screenshots.
 -->
 
