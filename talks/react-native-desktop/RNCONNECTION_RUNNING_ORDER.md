@@ -17,12 +17,12 @@ speed, memory efficiency and native content UI. AppKit's individual wins remain 
 | Slide | Title |
 | --- | --- |
 | 1 | React Native is the best way to build desktop apps |
-| 2 | I came here to test a list. |
+| 2 | I came here to test a list. → I found a whole platform. — 2 steps |
 | 3 | Then I made apps I wanted. |
 | 4 | “React Native is a compromise.” |
 | 5 | So I kept building. |
 | 6 | Different apps. Shared foundations. |
-| 7 | Was I just imagining it? |
+| 7 | Was I just imagining it? → So I measured it. — 2 steps |
 | 8 | Three ways to draw a desktop app |
 | 9 | Measure what the user sees |
 | 10 | Hello World · first content |
@@ -45,10 +45,10 @@ speed, memory efficiency and native content UI. AppKit's individual wins remain 
 | 27 | Native behavior |
 | 28 | And then you get React |
 | 29 | React Native everywhere |
-| 30 | Three objections kept coming up. |
+| 30 | Three objections — one quote per step |
 | 31 | That last one is fixable. |
 | 32 | Built on Expo Desktop |
-| 33 | Introducing Legend Frame |
+| 33 | Legend Frame → Electron’s ambition. React Native’s foundation. — 2 steps |
 | 34 | From development to shipping |
 | 35 | Desktop tools for React |
 | 36 | Early · Useful · Growing |
@@ -56,7 +56,7 @@ speed, memory efficiency and native content UI. AppKit's individual wins remain 
 | 38 | Legend Slides |
 | 39 | Legend Slides · 0.0.1 |
 | 40 | Now I need help with the ecosystem. |
-| 41 | Make desktop part of the support matrix. |
+| 41 | Does your library support desktop? → macOS + Windows — 2 steps |
 | 42 | A first choice for desktop |
 | 43 | What we measured |
 | 44 | Native content ≠ native window |
@@ -121,3 +121,21 @@ Opening footage also needs Photos and Music, followed by Chat History, Code and 
 Compatibility copy is a local integration snapshot, not a completed library audit.
 Expo-shaped adapters are subsets; Margelo Runtimes uses pinned patches. Refresh
 release and library status before presenting. The framework is now named Legend Frame.
+
+## Visual storytelling pass
+
+Text cards have been removed. Discovery, measurement, the framework reveal and
+maintainer invitation use two deliberate typography steps. The three objections
+appear one at a time. Speaker notes retain the detailed qualifications.
+
+Shared foundations: three real app icons → connections → capability names.
+Rendering primer: three matching windows progressively reveal platform controls,
+browser content and a drawing surface. Labels identify these as schematic models.
+Expo Desktop: mobile/web → desktop targets → Frame capabilities. Compatibility:
+one sparse status row per step. These four diagrams each have three steps.
+
+The release slide uses the real Slides icon, version and GitHub destination.
+Other short flows use typography and arrows without decorative window glyphs.
+All new interpolation uses host SceneMotionView on the UI thread; preview states
+are static and reverse navigation uses the same step targets. Native visual review
+remains outstanding because another task owns the active macOS automation session.

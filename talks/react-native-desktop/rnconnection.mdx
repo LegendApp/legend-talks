@@ -13,12 +13,16 @@ presenter:
   showNotes: true
 ---
 
-import { Chart, Flow, Tradeoffs } from "./RNConnection"
-import { AppMontage, BalanceDiagram, CapabilityDiagram, ComparisonWall, MeasurementDiagram, MediaSlot, NativeDataDiagram, PlatformDiagram, RenderingDiagram } from "./RNConnectionVisuals"
+import { Chart, Tradeoffs } from "./RNConnection"
+import { AppMontage, BalanceDiagram, CapabilityDiagram, MeasurementDiagram, MediaSlot, NativeDataDiagram, PlatformDiagram, RenderingDiagram } from "./RNConnectionVisuals"
 import { HelloSizeJourney } from "./HelloSizeJourney"
-import { StoryCards, SharedFoundation, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot } from "./StoryDiagrams"
+import { StoryMoment, SharedFoundation, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot, SlidesRelease, WordFlow } from "./StoryDiagrams"
 import { NineApps } from "./NineApps"
 import { MovingTitle } from "./MovingTitle"
+import chatIcon from "./rnconnection-assets/chat-history-icon.png";
+import codeIcon from "./rnconnection-assets/code-icon.png";
+import diffIcon from "./rnconnection-assets/diff-icon.png";
+import slidesIcon from "./rnconnection-assets/slides-icon.png";
 
 <MovingTitle>
 
@@ -29,16 +33,14 @@ import { MovingTitle } from "./MovingTitle"
 <!-- Open with the claim, then promise evidence. This is a judgment about the combination of speed, memory efficiency, and native UI among the cross-platform approaches I tested. It is not a universal claim about every application or operating system. Keep the qualification conversational, not apologetic. -->
 
 ---
+title: "I came here to test a list."
+steps: 2
 eyebrow: Story
 ---
 
-<MovingTitle>
+<MovingTitle><StoryMoment kind="discovery" /></MovingTitle>
 
-# I came here to test a list. {class="text-center font-semibold tracking-tight text-7xl"}
-
-</MovingTitle>
-
-<Flow labels={["Legend List", "React Native macOS", "Wait… this is good."]} />
+<!-- Steps: 1. I came here to test a list. 2. I found a whole platform. Let the discovery land before the app footage. -->
 
 <!-- I was testing Legend List on desktop. I came to find out whether my list worked, and found a platform I wanted to build on. Start with the surprise; the benchmarks come later. -->
 
@@ -85,6 +87,7 @@ eyebrow: Story
 <!-- Three more launched apps: Chat History to browse conversations, Code to open and work with source files, Diff to inspect changes. Show launch and a useful interaction, not just a window. The shared foundation made the next app easier to build. -->
 
 ---
+steps: 3
 eyebrow: Story
 ---
 
@@ -94,25 +97,24 @@ eyebrow: Story
 
 </MovingTitle>
 
-<SharedFoundation />
+<SharedFoundation icons={[chatIcon, codeIcon, diffIcon]} />
 
 <!-- Conceptually, each app has its own React interface and manifest selecting native capabilities. Shared packages provide things like windows, menus, file dialogs, storage, and specialized native editors/parsers. A reusable native host and build tooling assemble an app. This is code reuse across separate applications, not one giant app or every module shipped everywhere. Source: apps/*/app.manifest.ts, packages/, shell/, scripts/. Save the framework name and public SDK story for the reveal. -->
 
 ---
+title: "Was I just imagining it?"
+steps: 2
 eyebrow: Story
 ---
 
-<MovingTitle>
+<MovingTitle><StoryMoment kind="question" /></MovingTitle>
 
-# Was I just imagining it? {class="text-center font-semibold tracking-tight text-7xl"}
-
-</MovingTitle>
-
-<StoryCards items={[{"title": "The question", "body": "How close can React Native get to native performance?"}, {"title": "The test", "body": "Small framework overhead. Then a real application."}]} />
+<!-- Steps: 1. Hold the question while speaking. 2. So I measured it. Then proceed to the rendering primer and benchmarks. -->
 
 <!-- People were telling me native would be faster. So I compared implementations rather than arguing from reputation. My thesis is about the best combination of speed, memory and real native UI among the cross-platform approaches I tested; React familiarity is a separate advantage. -->
 
 ---
+steps: 3
 eyebrow: Story
 ---
 
@@ -371,7 +373,7 @@ footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 
 </MovingTitle>
 
-<Flow labels={["React", "Native views", "Operating system"]} />
+<WordFlow labels={["React", "Native views", "Operating system"]} />
 
 <!-- The trick is not that JavaScript is suddenly the fastest parser. RN lets native code own large data and expose a focused interface. React need not hydrate every byte into a giant JS object graph. Other frameworks can also call native code; the point is the composition available here. -->
 
@@ -449,16 +451,14 @@ footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 <!-- This is the ideal development experience. Share models, state, data access, and appropriate components; adapt navigation, layout, controls, and services. Web uses web rendering; do not call it AppKit UI in a browser. These macOS apps do not by themselves prove shipping support on all targets. A verified cross-platform example can replace part of the explanation later. -->
 
 ---
+title: "Three objections kept coming up."
+steps: 3
 eyebrow: Story
 ---
 
-<MovingTitle>
+<MovingTitle><StoryMoment kind="objections" /></MovingTitle>
 
-# Three objections kept coming up. {class="text-center font-semibold tracking-tight text-7xl"}
-
-</MovingTitle>
-
-<StoryCards items={[{"title": "“I’d build native.”", "body": "The measurements challenge the automatic performance argument."}, {"title": "“Electron has an ecosystem.”", "body": "React Native has one too. Desktop coverage is uneven."}, {"title": "“Desktop RN is hard to start.”", "body": "Project setup and missing native modules are real friction."}]} />
+<!-- Steps: one quote at a time. 1. I’d build native: recall the speed and memory evidence, including AppKit wins. 2. Electron has an ecosystem: acknowledge uneven desktop coverage. 3. It’s hard to get started: this is the problem the framework addresses. -->
 
 <!-- Return to the conversations from the opening. Do not claim AppKit lost: it wins several measurements. The evidence rebuts RN as an inherent performance compromise. Familiarity helps with objection two, but a large mobile ecosystem is not yet a complete desktop ecosystem. Objection three is the problem I decided to solve. -->
 
@@ -477,6 +477,7 @@ eyebrow: Story
 <!-- After building these apps I kept assembling the same desktop pieces. Starting a project should not mean spending weeks wiring windows, menus, shortcuts, files, storage and OS services. This is why I started extracting a framework. -->
 
 ---
+steps: 3
 eyebrow: Story
 ---
 
@@ -491,16 +492,14 @@ eyebrow: Story
 <!-- Credit the community Expo Desktop project and React Native macOS/Windows. Expo Desktop is out-of-tree desktop support for Expo, not a claim of official universal Expo module support. It owns creation and native project generation; Expo CLI owns Metro, the terminal and mobile/web workflows. Legend Frame supplies desktop APIs, runtime compatibility and build orchestration. Local framework targets Expo SDK 54, RN 0.81 and expo-desktop beta.6. Sources: https://github.com/shirakaba/expo-desktop and legend-framework/docs/expo-desktop-integration.md. Explain ownership conceptually, not CLI launch workarounds. -->
 
 ---
+title: "Introducing Legend Frame"
+steps: 2
 eyebrow: Story
 ---
 
-<MovingTitle>
+<MovingTitle><StoryMoment kind="frame" /></MovingTitle>
 
-# Introducing Legend Frame {class="text-center font-semibold tracking-tight text-7xl"}
-
-</MovingTitle>
-
-<StoryCards items={[{"title": "The goal", "body": "Much of Electron’s feature set, with React Native."}, {"title": "The foundation", "body": "Native UI · Hermes · desktop APIs"}]} />
+<!-- Steps: reveal Legend Frame, then Electron’s ambition. React Native’s foundation. Say the goal aloud: much of Electron’s feature set in React Native, not complete parity today. -->
 
 <!-- This is the framework announcement. Goal: much of Electron’s feature set in React Native. It is not Electron API or Node runtime compatibility, and full parity is not finished. Current package name @legendapp/frame; CLI frame. Source: https://github.com/LegendApp/legend-framework. The existing apps informed it; do not claim every app already uses the final SDK. -->
 
@@ -515,7 +514,7 @@ footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 
 </MovingTitle>
 
-<Flow labels={["Prebuilt runtime", "Custom dev build", "Standalone app"]} />
+<WordFlow labels={["Prebuilt runtime", "Custom dev build", "Standalone app"]} />
 
 <!-- Explain the development model from the framework README. Metro and Fast Refresh for JS; a new native dependency may require a new binary. Node/Bun are development tools, while application JavaScript runs in Hermes. Public hosted runtimes are not yet established by the inspected README; distinguish the intended distribution experience from currently available local SDK transfer. -->
 
@@ -578,23 +577,17 @@ footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 <!-- MEDIA TO CAPTURE: Show the presenter window, source editing, and separate audience output. Keep this to one deliberate demonstration. Explain that this actual deck is MDX with native components; do not promise PowerPoint export. Verify installed-app compiler packaging before demonstrating it. Current release/compiler dependencies should be reflected in the release documentation. -->
 
 ---
+title: "Legend Slides · 0.0.1"
 eyebrow: 'Launch announcement'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
-<MovingTitle>
-
-# Legend Slides · 0.0.1 {class="text-center font-semibold tracking-tight text-7xl"}
-
-</MovingTitle>
-
-<StoryCards items={[{title: "Open source · Version 0.0.1", body: "github.com/LegendApp/legend-apps"}]} />
-
-[Source on GitHub](https://github.com/LegendApp/legend-apps)
+<SlidesRelease icon={slidesIcon} />
 
 <!-- PLANNED LAUNCH COPY: once the release is public, say: Today I'm releasing version 0.0.1, and it's open source. Before rehearsal, verify the public repo and release URL. Until then, describe this as the upcoming release, not already available. The visible GitHub destination is the current repository remote, not a verified public release page. This source repository link is intentionally distinct from the framework link. Add a QR only after the final release destination is verified. -->
 
 ---
+steps: 3
 eyebrow: Story
 ---
 
@@ -609,16 +602,14 @@ eyebrow: Story
 <!-- Return explicitly to objection two. This is a local integration snapshot, not a completed audit of every library. Expo clipboard, secure storage and linking are supported subsets through Frame adapters, with upstream Expo backends on mobile and desktop implementations here; do not label the complete Expo packages desktop-compatible. Margelo Runtimes background Hermes work is validated locally on macOS with pinned patches/adapters; threaded UI and all worker-native APIs are not established. Windows integrations need native validation. I am working on getting desktop support added to the rest of the Margelo libraries; this is ongoing, not a release guarantee. Evidence: legend-framework/docs/expo-api-adapters.md, docs/runtimes.md, docs/external-libraries.md. Refresh versioned statuses before the talk. -->
 
 ---
+title: "Make desktop part of the support matrix."
+steps: 2
 eyebrow: Story
 ---
 
-<MovingTitle>
+<MovingTitle><StoryMoment kind="invite" /></MovingTitle>
 
-# Make desktop part of the support matrix. {class="text-center font-semibold tracking-tight text-7xl"}
-
-</MovingTitle>
-
-<Flow labels={["Audit a library", "Add desktop support", "Test + upstream it"]} />
+<!-- Steps: ask Does your library support desktop? Then reveal macOS and Windows. Make the invitation personal. -->
 
 <!-- The ask: help audit major Expo and React Native libraries. For each record package/version, macOS and Windows separately, supported APIs, a minimal reproducible smoke test, and an upstream issue or PR. Distinguish works upstream, works with patches, a partial adapter, and unsupported. Maintainers: try your own library, remove unnecessary platform restrictions, implement missing native pieces and add CI/docs. Nitro support alone does not port every Nitro library. An audit is work we are inviting, not something this slide claims we have already finished. -->
 
