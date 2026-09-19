@@ -1,5 +1,6 @@
+import { ChartBar } from "./ChartBar";
 import { FlowGlyph } from "./RNConnectionVisuals";
-import { Background, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
+import { SceneMotionView, Background, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
 import { Animated, Easing, Text, View, type StyleProp, type ViewStyle } from "react-native";
 import { Fragment, useEffect, useState, type ReactNode } from "react";
 import { AnimatedAtmosphere } from "./packs/backgrounds";
@@ -97,22 +98,25 @@ export function Flow({ labels }: { labels: string[] }) {
 type Metric = "content" | "memory" | "size" | "jump" | "switch";
 const units: Record<Metric, string> = { content: "ms", memory: "MiB", size: "MiB", jump: "ms", switch: "ms" };
 
-function ChartRow({ name, value, maximum, metric, index }: {
+function ChartRow({ name, value, maximum, metric }: {
   name: string;
   value: number;
   maximum: number;
   metric: Metric;
-  index: number;
 }) {
-  const progress = useRevealProgress(index * 25, 320);
+  const active = usePresentationValue("isActive");
+  const preparing = usePresentationValue("isPreparing");
+  const preview = usePresentationValue("isPreview");
   const highlighted = name === "React Native";
-  const width = progress.interpolate({ inputRange: [0, 1], outputRange: ["0%", `${value / maximum * 100}%`] });
+  const visible = preview || (active && !preparing);
 
   return (
     <View style={{ flexDirection: "row", alignItems: "center", height: 43, gap: 24 }}>
       <Text style={{ width: 280, fontSize: 27, color: highlighted ? "#67e8f9" : "#cbd5e1", fontWeight: highlighted ? "700" : "400" }}>{name}</Text>
       <View style={{ flex: 1, height: 28 }}>
-        <Animated.View style={{ width, minWidth: 2, height: 28, borderRadius: 5, backgroundColor: highlighted ? "#67e8f9" : "#525252" }} />
+        <SceneMotionView duration={320} pose={{ opacity: visible ? 1 : 0 }} style={{ width: `${value / maximum * 100}%`, minWidth: 2, height: 28 }}>
+          <ChartBar highlighted={highlighted} style={{ width: "100%", height: 28 }} />
+        </SceneMotionView>
       </View>
       <Text style={{ width: 180, textAlign: "right", fontSize: 27, color: highlighted ? "#67e8f9" : "#e2e8f0", fontVariant: ["tabular-nums"] }}>{value.toFixed(1)} {units[metric]}</Text>
     </View>
@@ -127,8 +131,8 @@ export function Chart({ metric, workload = "chat" }: { metric: Metric; workload?
   const maximum = Math.max(...rows.map((row) => row.value));
   return (
     <View style={{ gap: 12, marginTop: 32 }}>
-      {rows.map(({ name, value }, index) => (
-        <ChartRow key={`${metric}-${workload}-${name}`} name={name} value={value} maximum={maximum} metric={metric} index={index} />
+      {rows.map(({ name, value }) => (
+        <ChartRow key={`${metric}-${workload}-${name}`} name={name} value={value} maximum={maximum} metric={metric} />
       ))}
     </View>
   );

@@ -1,3 +1,4 @@
+import { ChartBar } from "./ChartBar";
 import { Text, View } from "react-native";
 import { SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
 import benchmarks from "./rnconnection-assets/benchmarks.json";
@@ -49,10 +50,8 @@ export function HelloSizeJourney() {
           return <SceneMotionView key={name} pose={{ y }}
             style={{ position: "absolute", left: 0, top: 0, width: chartWidth, height: 43, justifyContent: "center" }}>
             <Text style={{ position: "absolute", left: 0, fontSize: 34, lineHeight: 42, color: name === "React Native" ? "#ffffff" : "#d4d4d4", fontWeight: name === "React Native" ? "600" : "400" }}>{name}</Text>
-            <View style={{ position: "absolute", left: 285, width: Math.max(2, size / fullMaximum * barSpace), height: 30, borderRadius: 5, overflow: "hidden", opacity: 0.65 }}>
-              <SceneMotionView pose={{ opacity: grouped ? 0 : 1 }} style={{ position: "absolute", inset: 0, backgroundColor: name === "React Native" ? "#67e8f9" : "#525252" }} />
-              <SceneMotionView pose={{ opacity: grouped ? 1 : 0 }} style={{ position: "absolute", inset: 0, backgroundColor: group.color }} />
-            </View>
+            <ChartBar highlighted={name === "React Native"} groupColor={group.color} grouped={grouped}
+              style={{ position: "absolute", left: 285, width: Math.max(2, size / fullMaximum * barSpace), height: 30 }} />
             <Text style={{ position: "absolute", right: 0, width: 190, fontSize: 34, lineHeight: 42, textAlign: "right", color: "#e5e5e5", fontVariant: ["tabular-nums"] }}>{size.toFixed(1)} MiB</Text>
           </SceneMotionView>;
         })}
