@@ -1,5 +1,6 @@
 import { FilmstripMotionView, FocusRegion, SceneMotionView, SharedElement, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
 import { FakeGlassTakeover } from "./FakeGlassTakeover";
+import { DeckBackground } from "./DeckBackground";
 import { detailCamera, renderingGroup, tourStep } from "./NineAppsTour";
 import { MovingTitle } from "./MovingTitle";
 import { Image, Text, View } from "react-native";
@@ -15,7 +16,7 @@ const screenshots: Partial<Record<AppId, string>> = {};
 
 // Full-stage template avoids the standard Markdown content padding.
 export default function NineAppsFrame({ children }: PresentationTemplateProps) {
-  return <View style={{ flex: 1 }}>{children}</View>;
+  return <><DeckBackground /><View style={{ flex: 1 }}>{children}</View></>;
 }
 
 export function NineApps({ mode }: { mode: SceneMode }) {

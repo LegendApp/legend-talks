@@ -1,18 +1,15 @@
 export { Chart } from "./BenchmarkChart";
 import { FlowGlyph } from "./RNConnectionVisuals";
-import { Background, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
+import { usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
 import { Animated, Easing, Text, View, type StyleProp, type ViewStyle } from "react-native";
 import { Fragment, useEffect, useState, type ReactNode } from "react";
-import { AnimatedAtmosphere } from "./packs/backgrounds";
+import { DeckBackground } from "./DeckBackground";
 import benchmarks from "./rnconnection-assets/benchmarks.json";
 
 export default function Frame({ children }: PresentationTemplateProps) {
   return (
     <>
-      <Background priority={-1}>
-        {/* Variants: "droplets", "glass", "fluid", "smoke", "wireframe"; 1 is normal brightness/speed. */}
-        <AnimatedAtmosphere variant="droplets" brightness={0.7} speed={0.6} />
-      </Background>
+      <DeckBackground />
       <View style={{ flex: 1, paddingHorizontal: 112, paddingVertical: 96, justifyContent: "center" }}>
         {children}
       </View>
