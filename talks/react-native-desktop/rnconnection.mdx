@@ -2,7 +2,8 @@
 title: React Native is the best way to build desktop apps
 width: 1920
 height: 1080
-transition: fade
+transition:
+  source: ./TitleTransition.ts
 template: ./RNConnection.tsx
 theme:
   backgroundColor: "#000000"
@@ -17,8 +18,13 @@ import { AppMontage, BalanceDiagram, CapabilityDiagram, ComparisonWall, Measurem
 import { HelloSizeJourney } from "./HelloSizeJourney"
 import chatImage from "./rnconnection-assets/chat-history.png"
 import { NineApps } from "./NineApps"
+import { MovingTitle } from "./MovingTitle"
+
+<MovingTitle>
 
 # React Native is the best way to build desktop apps {class="text-center font-semibold tracking-tight text-8xl mb-0"}
+
+</MovingTitle>
 
 <!-- 0:00–0:25. Open with the claim, then promise evidence. This is a judgment about the combination of speed, memory efficiency, and native UI among the cross-platform approaches I tested. It is not a universal claim about every application or operating system. Keep the qualification conversational, not apologetic. -->
 
@@ -27,7 +33,11 @@ eyebrow: 'Already shipping'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # Apps I wanted to exist {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <AppMontage />
 
@@ -38,7 +48,11 @@ eyebrow: 'The experience'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # Fast to open · Fast to use {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <MediaSlot label="Launch → open a large conversation → scroll" />
 
@@ -84,7 +98,11 @@ eyebrow: 'Ground rules'
 footer: 'September 17 report · macOS / Apple M4 · implementation comparison'
 ---
 
+<MovingTitle>
+
 # Measure what the user sees {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <MeasurementDiagram />
 
@@ -95,7 +113,11 @@ eyebrow: 'Hello World / first content'
 footer: 'Median ms · 10 measured rounds · small differences near recording cadence are ties'
 ---
 
+<MovingTitle>
+
 # Hello World · first content {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <Chart workload="hello" metric="content" />
 
@@ -107,7 +129,11 @@ steps: 5
 footer: 'Greeting workload · newer installed-size snapshot · MiB'
 ---
 
+<MovingTitle>
+
 # Hello World · installed size {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <HelloSizeJourney />
 
@@ -118,7 +144,11 @@ eyebrow: 'Chat History / first content'
 footer: 'Median ms · controlled timing run · all nine implementations'
 ---
 
+<MovingTitle>
+
 # Chat History · first content {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <Chart metric="content" />
 
@@ -129,7 +159,11 @@ eyebrow: 'Chat History / initial memory'
 footer: 'Settled physical footprint · MiB · includes attributed helper processes'
 ---
 
+<MovingTitle>
+
 # Chat History · memory {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <Chart metric="memory" />
 
@@ -140,7 +174,11 @@ eyebrow: 'Chat History / jump to top'
 footer: 'Median action-to-visible-result ms · lower is better'
 ---
 
+<MovingTitle>
+
 # Chat History · jump to top {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <Chart metric="jump" />
 
@@ -151,7 +189,11 @@ eyebrow: 'Chat History / switch'
 footer: 'Median action-to-visible-result ms · lower is better'
 ---
 
+<MovingTitle>
+
 # Chat History · switch conversation {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <Chart metric="switch" />
 
@@ -162,7 +204,11 @@ eyebrow: 'Chat History / app size'
 footer: 'Measured September 18 · app bundles only · external grammars excluded · MiB'
 ---
 
+<MovingTitle>
+
 # Chat History · app size {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <Chart metric="size" />
 
@@ -174,7 +220,11 @@ steps: 2
 footer: 'Measured on macOS · current GPUI composer postdates these timing/memory results'
 ---
 
+<MovingTitle>
+
 # The combination matters {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <BalanceDiagram />
 
@@ -185,7 +235,11 @@ eyebrow: 'The technical case'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # You can have all three {class="text-center font-semibold tracking-tight text-8xl mb-0"}
+
+</MovingTitle>
 
 <!-- 7:25–8:00. State the agreed thesis confidently: based on Hello World and a real Chat History app, RN offers the best combination of speed, memory efficiency, and native UI among the cross-platform approaches I tested. This is a judgment based on the measurements, not an objectively universal winner. The full nine-app results are visible, including competing wins. -->
 
@@ -194,7 +248,11 @@ eyebrow: 'Why it works'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # React composes a native app {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <Flow labels={["React", "Native views", "Operating system"]} />
 
@@ -205,7 +263,11 @@ eyebrow: 'Architecture / illustrative code'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # Keep the big data native {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <NativeDataDiagram />
 
@@ -216,7 +278,11 @@ eyebrow: 'Regular React Native'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # No WebView required {class="text-center font-semibold tracking-tight text-8xl mb-0"}
+
+</MovingTitle>
 
 <!-- 9:25–10:00. Do not say no IPC anywhere or no boundaries. This describes the core UI architecture, not every optional integration. Music can use a WebView for Spotify; helpers and OS services can involve processes. RN runs application JS in Hermes in this framework, not an embedded Node runtime. -->
 
@@ -225,7 +291,11 @@ eyebrow: 'Beyond the window border'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # Native behavior {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <MediaSlot label="Diff: drop a file · Music: media keys" />
 
@@ -236,7 +306,11 @@ eyebrow: 'And then / developer experience'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # And then you get React {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <MediaSlot label="Edit a component → Fast Refresh" />
 
@@ -247,7 +321,11 @@ eyebrow: 'The broader vision'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # React Native everywhere {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <PlatformDiagram />
 
@@ -258,7 +336,11 @@ eyebrow: 'An invitation to maintainers'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # Bring the ecosystem {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <Flow labels={["Library", "Platform support", "Tests + docs"]} />
 
@@ -269,7 +351,11 @@ eyebrow: 'From apps to a framework'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # A desktop app needs more {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <CapabilityDiagram />
 
@@ -280,7 +366,11 @@ eyebrow: 'The framework'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # Introducing Legend Framework {class="text-center font-semibold tracking-tight text-8xl mb-0"}
+
+</MovingTitle>
 
 <!-- 13:40–14:20. This is the framework announcement, distinct from the Slides app announcement. Position the goal rather than claiming full Electron parity. Mention the Expo Desktop integration and credit the underlying RN desktop projects; Legend adds desktop capabilities and workflow around them. -->
 
@@ -289,7 +379,11 @@ eyebrow: 'Build'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # From development to shipping {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <Flow labels={["Prebuilt runtime", "Custom dev build", "Standalone app"]} />
 
@@ -300,7 +394,11 @@ eyebrow: 'Integrate / ship'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # Desktop tools for React {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <MediaSlot label="Menus → file dialog → second window" />
 
@@ -311,7 +409,11 @@ eyebrow: 'Current scope / September 17 draft'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # Early · Useful · Growing {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <PlatformDiagram scope />
 
@@ -322,7 +424,11 @@ eyebrow: 'The reveal'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # One more app {class="text-center font-semibold tracking-tight text-8xl mb-0"}
+
+</MovingTitle>
 
 <!-- 16:30–17:00. Pause. Let the reveal land. The early montage intentionally did not include Slides. Transition to the presenter interface or a rehearsed recording without risking the audience output. -->
 
@@ -331,7 +437,11 @@ eyebrow: 'Built with the same idea'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # Legend Slides {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <MediaSlot label="Presenter + audience windows → live source edit" />
 
@@ -342,7 +452,11 @@ eyebrow: 'Launch announcement'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # Legend Slides · 0.0.1 {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <MediaSlot kind="screenshot" label="Public release page" />
 
@@ -353,7 +467,11 @@ eyebrow: 'Make this bigger than these apps'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # Build for desktop {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <Flow labels={["Try an app", "Build an app", "Share a library"]} />
 
@@ -364,7 +482,11 @@ eyebrow: 'React Native is the best way to build desktop apps'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # A first choice for desktop {class="text-center font-semibold tracking-tight text-8xl mb-0"}
+
+</MovingTitle>
 
 <!-- 19:15–20:00. Close: React Native isn't just a way to bring a mobile app to desktop. It's a compelling way to build a desktop app in the first place. Restate that the comparisons convinced you on technical grounds; RN everywhere makes the opportunity larger. End here. The following slides are optional Q&A backups, not the continuation of the main talk. -->
 
@@ -373,7 +495,11 @@ eyebrow: 'Backup'
 footer: 'Greeting workload · MiB · settled physical footprint'
 ---
 
+<MovingTitle>
+
 # Hello World · memory {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <Chart workload="hello" metric="memory" />
 
@@ -384,7 +510,11 @@ eyebrow: 'Backup / methodology'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # What we measured {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <MeasurementDiagram />
 
@@ -395,7 +525,11 @@ eyebrow: 'Backup / terminology'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # Native content ≠ native window {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <RenderingDiagram />
 
@@ -406,7 +540,11 @@ eyebrow: 'Optional app example'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
+<MovingTitle>
+
 # Legend Markdown {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <MediaSlot label="Edit a block → format → save" />
 
@@ -416,7 +554,11 @@ footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 eyebrow: 'Backup / tradeoffs'
 ---
 
+<MovingTitle>
+
 # The full comparison {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
 
 <Tradeoffs />
 

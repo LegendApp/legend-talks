@@ -1,4 +1,5 @@
 import { FocusRegion, SharedElement, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
+import { MovingTitle } from "./MovingTitle";
 import { useEffect, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { appCardLayout, appOrder, filmstripPosition, type AppId, type SceneMode } from "./NineAppsGeometry";
@@ -41,7 +42,9 @@ export function NineApps({ mode }: { mode: SceneMode }) {
   const position = filmstripPosition(elapsed);
   const title = mode === "hero" ? "I built a chat history app." : mode === "grid" ? "Then I built it nine times." : "Same app. Nine implementations.";
   return <FocusRegion id="nine-apps-stage" style={{ width: 1920, height: 1080, overflow: "hidden" }}>
-    <Text style={{ position: "absolute", left: 112, top: 65, color: "#f8fafc", fontSize: 64, fontWeight: "700" }}>{title}</Text>
+    <MovingTitle style={{ position: "absolute", left: 112, top: 65, width: 1696 }}>
+      <Text style={{ color: "#f8fafc", fontSize: 64, fontWeight: "700" }}>{title}</Text>
+    </MovingTitle>
     {appOrder.map((id, index) => {
       const card = appCardLayout(index, mode, position);
       const height = card.width * 0.625;
