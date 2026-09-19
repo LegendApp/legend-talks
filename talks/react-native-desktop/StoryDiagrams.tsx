@@ -15,14 +15,14 @@ export function StoryMoment({ kind }: { kind: "discovery" | "question" | "frame"
   const step = usePresentationValue("stepIndex");
   if (kind === "discovery") return <View style={{ height: 340, justifyContent: "center" }}>
     <SceneMotionView pose={{ y: step > 0 ? -68 : 0 }} duration={550}>
-      <Text style={{ color: ink, fontSize: 80, fontWeight: "600", textAlign: "center" }}>I came here to test a list.</Text>
+      <Text style={{ color: ink, fontSize: 80, fontWeight: "600", textAlign: "center" }}>I came here to test a list</Text>
     </SceneMotionView>
     <View style={{ position: "absolute", top: 205, left: 0, right: 0 }}><Reveal show={step > 0}>
-      <Text style={{ color: accent, fontSize: 80, fontWeight: "600", textAlign: "center" }}>I found a whole platform.</Text>
+      <Text style={{ color: accent, fontSize: 80, fontWeight: "600", textAlign: "center" }}>I found an incredible platform</Text>
     </Reveal></View>
   </View>;
-  const quotes = kind === "question" ? ["Was I just imagining it?", "So I measured it."]
-    : kind === "objections" ? ["“I’d build native.”", "“Electron has an ecosystem.”", "“It’s hard to get started.”"]
+  const quotes = kind === "question" ? ["Was I just imagining it?", "So I measured it"]
+    : kind === "objections" ? ["“I’d build native”", "“Electron has an ecosystem”", "“It’s hard to get started”"]
     : kind === "frame" ? ["Legend Frame", "Electron’s ambition.\nReact Native’s foundation."]
     : ["Does your library\nsupport desktop?", "Does your library\nsupport desktop?"];
   const current = Math.min(step, quotes.length - 1);
