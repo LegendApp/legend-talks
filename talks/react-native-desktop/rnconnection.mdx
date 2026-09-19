@@ -17,6 +17,7 @@ import { Chart, Tradeoffs } from "./RNConnection"
 import { AppMontage, BalanceDiagram, CapabilityDiagram, MeasurementDiagram, MediaSlot, NativeDataDiagram, PlatformDiagram, RenderingDiagram } from "./RNConnectionVisuals"
 import { HelloSizeJourney } from "./HelloSizeJourney"
 import { StoryMoment, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot, SlidesRelease, WordFlow } from "./StoryDiagrams"
+import { DesktopObjections } from "./DesktopObjections"
 import { SharedRoots } from "./SharedRoots"
 import markdownIcon from "./rnconnection-assets/markdown-icon.png";
 import { NineApps } from "./NineApps"
@@ -38,7 +39,7 @@ eyebrow: Story
 
 <MovingTitle><StoryMoment kind="discovery" /></MovingTitle>
 
-<!-- Steps: 1. I came here to test a list 2. I found an incredible platform Let the discovery land before the app footage. -->
+<!-- Steps: 1. I came here to test a list. 2. I found an incredible platform. Let the discovery land before the app footage. -->
 
 <!-- I was testing Legend List on desktop. I came to find out whether my list worked, and found a platform I wanted to build on. Start with the surprise; the benchmarks come later. -->
 
@@ -178,7 +179,7 @@ transition:
 
 <NineApps mode="grid" />
 
-<!-- Then I built it nine times Native views first, browsers next, canvases last. RN starts at the top-left. Same content and matching captures. The next slide is the manually controlled visual tour; quantitative results follow it. -->
+<!-- Then I built it nine times. Native views first, browsers next, canvases last. RN starts at the top-left. Same content and matching captures. The next slide is the manually controlled visual tour; quantitative results follow it. -->
 
 ---
 template: ./NineApps.tsx
@@ -212,8 +213,8 @@ transition:
 17: Compose Multiplatform. Move quickly.
 18: GPUI, the last app. The composer is now drawn by GPUI, using transparency rather than backdrop blur. Use a fresh screenshot: older captures show a removed AppKit overlay.
 19: Zoom into GPUI's translucent composer. Now for my own interpretation of liquid glass. The next effect is an authored joke, not GPUI's rendering.
-20: Add the deliberately excessive fake glass over the composer. This is an authored joke overlay, not benchmark footage or a stock GPUI capability.
-21: Grow it until it takes over the whole slide. Totally native. Obviously. Let the joke breathe. Next advance moves directly into the real-app results.
+20: Over five seconds, fade from the clear composer into the deliberately excessive fake glass. This is an authored joke overlay, not benchmark footage or a stock GPUI capability.
+21: Grow it until it takes over the whole slide. No caption: let the visual joke speak for itself. Next advance moves directly into the real-app results.
 -->
 
 ---
@@ -357,16 +358,16 @@ footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 <!-- This is the ideal development experience. Share models, state, data access, and appropriate components; adapt navigation, layout, controls, and services. Web uses web rendering; do not call it AppKit UI in a browser. These macOS apps do not by themselves prove shipping support on all targets. A verified cross-platform example can replace part of the explanation later. -->
 
 ---
-title: "Three objections kept coming up."
-steps: 3
+title: "What’s holding desktop back"
+steps: 2
 eyebrow: Story
 ---
 
-<MovingTitle><StoryMoment kind="objections" /></MovingTitle>
+# What’s holding desktop back {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
 
-<!-- Steps: one quote at a time. 1. I’d build native: recall the speed and memory evidence, including AppKit wins. 2. Electron has an ecosystem: acknowledge uneven desktop coverage. 3. It’s hard to get started: this is the problem the framework addresses. -->
+<DesktopObjections />
 
-<!-- Return to the conversations from the opening. Do not claim AppKit lost: it wins several measurements. The evidence rebuts RN as an inherent performance compromise. Familiarity helps with objection two, but a large mobile ecosystem is not yet a complete desktop ecosystem. Objection three is the problem I decided to solve. -->
+<!-- Step 1: three concerns — Performance, Existing modules, New modules for desktop things. Step 2: slash through Performance. The measurements rebut the idea that RN is inherently a performance compromise; do not claim it beats AppKit in every measurement. Existing mobile libraries need desktop coverage, and desktop-specific APIs need modules of their own. Leave those two boxes open as we introduce the framework. -->
 
 ---
 eyebrow: Story
@@ -463,6 +464,18 @@ footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 <SlidesRelease icon={slidesIcon} />
 
 <!-- PLANNED LAUNCH COPY: once the release is public, say: Today I'm releasing version 0.0.1, and it's open source. Before rehearsal, verify the public repo and release URL. Until then, describe this as the upcoming release, not already available. The visible GitHub destination is the current repository remote, not a verified public release page. This source repository link is intentionally distinct from the framework link. Add a QR only after the final release destination is verified. -->
+
+---
+title: "One box left"
+steps: 3
+eyebrow: Story
+---
+
+# One box left {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<DesktopObjections returning />
+
+<!-- Step 1: return to the same three boxes with Performance already crossed out. Step 2: slash through New modules for desktop things — Frame supplies the desktop foundation we just demonstrated. This means an actionable solution, not that every API and platform is finished. Step 3: zoom into Existing modules. Pause and turn to the audience: this is where I need your help. -->
 
 ---
 steps: 3
