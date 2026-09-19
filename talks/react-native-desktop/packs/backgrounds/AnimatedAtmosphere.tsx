@@ -1,4 +1,4 @@
-import { useAnimatedShaderUniforms, useBackgroundSize } from "@legend-apps/presentation";
+import { useAnimatedShaderUniforms, useBackgroundSize, useBackgroundIntensity } from "@legend-apps/presentation";
 import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
 import { StyleSheet, View } from "react-native";
 
@@ -210,6 +210,7 @@ const effects = Object.fromEntries(Object.entries(sources).map(([name, source]) 
 
 /** One persistent canvas, driven by the host's UI-thread clock. Previews stay still. */
 export function AnimatedAtmosphere({ variant = "fluid", brightness = 1, speed = 1, slideChangeBoost }: AtmosphereProps & { variant?: AtmosphereVariant }) {
+  const intensity = useBackgroundIntensity();
   const { width, height } = useBackgroundSize();
   // Decks are evaluated at runtime, so props can bypass the TypeScript union.
   const effect = variant === "smoke" ? effects.smoke
@@ -220,7 +221,7 @@ export function AnimatedAtmosphere({ variant = "fluid", brightness = 1, speed = 
   const motionSpeed = Number.isFinite(speed) ? Math.max(0, speed) : 1;
   const uniforms = useAnimatedShaderUniforms({
     resolution: [Math.max(1, width), Math.max(1, height)],
-    brightness: Number.isFinite(brightness) ? Math.max(0, brightness) : 1,
+    brightness: (Number.isFinite(brightness) ? Math.max(0, brightness) : 1) * intensity,
   }, 8, {
     speed: motionSpeed * idleSpeed,
     slideChangeBoost: motionSpeed * (slideChangeBoost ?? idleSpeed * 2),
