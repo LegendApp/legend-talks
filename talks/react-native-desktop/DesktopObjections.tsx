@@ -42,7 +42,7 @@ half4 main(float2 position) {
   float2 p = position-float2(350.0,300.0);
   float clock = time+phase;
   float elapsed = min(mix(time,6.0,settled),6.0);
-  float resolve = broken*success*smoothstep(3.0,5.5,elapsed);
+  float resolve = broken*success*smoothstep(1.2,2.2,elapsed);
   float impact = broken*step(0.38,elapsed);
   float flight = clamp(elapsed-0.38,0.0,2.62);
   float travel = 1.0-exp(-flight*3.8);
