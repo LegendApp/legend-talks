@@ -44,12 +44,12 @@ half4 main(float2 position) {
   float elapsed = min(mix(time,6.0,settled),6.0);
   float resolve = broken*success*smoothstep(1.2,2.2,elapsed);
   float impact = broken*step(0.38,elapsed);
-  float flight = clamp(elapsed-0.38,0.0,2.62);
+  float flight = max(elapsed-0.38,0.0);
   float travel = 1.0-exp(-flight*3.8);
   float4 result = float4(0.0);
   if (impact < 0.5) {
     result = glass(p,clock);
-  } else {
+  } else if (flight < 4.0) {
     // Cut the actual panel into 18 irregular radial shards. Inverse-transform
     // each shard so its original glass reflection travels with the fragment.
     for (int i=0; i<18; i++) {
@@ -61,8 +61,8 @@ half4 main(float2 position) {
       float random = hash(id+phase);
       float2 direction = float2(cos(a+width*0.5),sin(a+width*0.5));
       float distance = (30.0+random*145.0)*travel;
-      float2 offset = direction*distance + float2(0.0,flight*flight*38.0*random);
-      float spin = (random-0.5)*travel*1.1;
+      float2 offset = direction*(distance+flight*35.0) + float2(0.0,flight*flight*(140.0+70.0*random));
+      float spin = (random-0.5)*(travel*1.1+flight*1.6);
       float2 original = rotatePoint(p-offset,-spin);
       float theta = atan(original.y,original.x);
       float wedge = step(a,theta)*(1.0-step(a+width,theta));
@@ -70,9 +70,7 @@ half4 main(float2 position) {
         float4 shard = glass(original,0.38+phase);
         float edgeDistance = length(original)*min(theta-a,a+width-theta);
         float edge = exp(-edgeDistance*0.85);
-        float fade = 1.0-smoothstep(0.9,2.5,flight)*(0.5+random*0.35);
         shard.rgb += float3(0.52,0.82,1.0)*edge*shard.a;
-        shard *= fade;
         result = shard + result*(1.0-shard.a);
       }
     }
@@ -82,15 +80,14 @@ half4 main(float2 position) {
       float a = id*2.39996;
       float random = hash(id+41.0);
       float2 center = float2(cos(a),sin(a))*(180.0+travel*(80.0+random*140.0));
-      center.y += flight*flight*65.0;
+      center.y += flight*flight*(160.0+random*80.0);
       float2 q = rotatePoint(p-center,a+flight*3.0);
       float triangle = max(abs(q.x)*0.866+q.y*0.5,-q.y)-(4.0+random*7.0);
-      float alpha = (1.0-smoothstep(-0.5,0.7,triangle))*(1.0-smoothstep(0.5,1.6,flight));
+      float alpha = 1.0-smoothstep(-0.5,0.7,triangle);
       float4 chip = float4(float3(0.58,0.84,1.0)*alpha,alpha);
       result = chip+result*(1.0-chip.a);
     }
   }
-  result *= 1.0-resolve*0.9;
   if (broken > 0.5) {
     // Deliberately overshoot the panel: two furious strokes, then the impact.
     float first = clamp(elapsed/0.17,0.0,1.0);
@@ -145,7 +142,8 @@ if (!glassEffect) throw new Error("Could not compile objection glass");
 
 function GlassPanel({ crossed, settled, index }: { crossed: boolean; settled: boolean; index: number }) {
   const uniforms = useAnimatedShaderUniforms({ broken: crossed ? 1 : 0, settled: settled ? 1 : 0, phase: index * 1.7, success: index === 0 ? 1 : 0 }, crossed ? 6 : 2);
-  return <Canvas pointerEvents="none" style={{ position: "absolute", left: -96, top: -108, width: 700, height: 600 }}>
+  // Extend below the stage so falling shards leave the screen, not a small panel canvas.
+  return <Canvas pointerEvents="none" style={{ position: "absolute", left: -96, top: -108, width: 700, height: crossed ? 1080 : 600 }}>
     <Fill><Shader source={glassEffect!} uniforms={uniforms} /></Fill>
   </Canvas>;
 }
