@@ -89,7 +89,7 @@ nine. Native screenshots should show the actual OS sidebar/composer material.
 Video playback remains unwired until the clip arrives.
 
 The 0.0.1 announcement is planned launch copy. Verify public release availability
-and GitHub destinations before presenting; the speaker notes mark this dependency.
+and GitHub destinations before presenting; this is a production prerequisite for the spoken launch copy.
 Windows status and public SDK availability must be refreshed before the talk.
 
 Benchmark values are copied from the September 17 report into
@@ -100,7 +100,7 @@ benchmark.ts are not dependencies.
 
 ## Validation
 
-- Real Legend Slides compiler: 46 slides, zero errors, zero warnings.
+- Real Legend Slides compiler: 52 slides, zero errors, zero warnings.
 - Repository `bun run typecheck`: passed.
 - Every slide has speaker notes. Story and benchmark ordering checked.
 - Native visual and navigation verification remains outstanding.
@@ -200,3 +200,24 @@ are shader illustrations, not actual native widgets.
 Validation: deck compilation, TypeScript, host React compiler/worklet transform,
 lifecycle tests, and individual Metal/WebGPU shader renders. Native Slides
 navigation and visual verification remain outstanding.
+
+
+## Speaker-note voice pass
+
+The spoken draft now follows the comment style in the two Chain React 2026
+versions, with App.js 2026 and Jay's opening/closing sections of the React Native
+London 2025 desktop talk as additional references: short spoken paragraphs,
+concrete examples, direct first-person claims, occasional dry humor, and numbered
+cues for reveals. The audience content and slide order have not changed.
+
+The 21-step app tour has one-based cues matching its actual camera sequence.
+The three-box story crosses out Performance before the framework section,
+then New modules on the return, then focuses Existing modules for the audience.
+The five TypeGPU alternates have replacement narration rather than renderer
+implementation instructions.
+
+Keep production checks out of the main spoken script: supply the remaining app
+footage, replace schematic captures, refresh GPUI/Flutter assets and sizes,
+confirm public 0.0.1 availability and GitHub destinations, and refresh platform
+and library-support statuses. The current notes are launch-day rehearsal copy,
+not evidence that these pending tasks have been completed.
