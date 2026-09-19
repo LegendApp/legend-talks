@@ -38,24 +38,6 @@ export function StoryMoment({ kind }: { kind: "discovery" | "question" | "frame"
   </View>;
 }
 
-export function SharedFoundation({ icons }: { icons: string[] }) {
-  const step = usePresentationValue("stepIndex");
-  return <View style={{ alignItems: "center", marginTop: 30 }}>
-    <View style={{ flexDirection: "row", width: 1260 }}>
-      {[["Chat History", icons[0]], ["Code", icons[1]], ["Diff", icons[2]]].map(([name, icon]) => <View key={name} style={{ width: 420, alignItems: "center", gap: 14 }}>
-        <Image source={{ uri: icon }} style={{ width: 160, height: 160 }} />
-        <Text style={{ color: ink, fontSize: 36 }}>{name}</Text>
-        <Reveal show={step > 0}><View style={{ height: 90, width: 2, backgroundColor: line }} /></Reveal>
-      </View>)}
-    </View>
-    <Reveal show={step > 0}><View style={{ width: 842, height: 2, backgroundColor: line }} /></Reveal>
-    <Text style={{ color: ink, fontSize: 40, marginTop: 28 }}>One shared native foundation</Text>
-    <View style={{ marginTop: 32 }}><Reveal show={step > 1}>
-      <Text style={{ color: accent, fontSize: 30 }}>Windows      Menus      Files      Storage      Editors</Text>
-    </Reveal></View>
-  </View>;
-}
-
 export function RendererFamilies() {
   const step = usePresentationValue("stepIndex");
   return <View style={{ flexDirection: "row", gap: 50, marginTop: 42 }}>

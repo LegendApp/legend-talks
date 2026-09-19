@@ -16,7 +16,9 @@ presenter:
 import { Chart, Tradeoffs } from "./RNConnection"
 import { AppMontage, BalanceDiagram, CapabilityDiagram, MeasurementDiagram, MediaSlot, NativeDataDiagram, PlatformDiagram, RenderingDiagram } from "./RNConnectionVisuals"
 import { HelloSizeJourney } from "./HelloSizeJourney"
-import { StoryMoment, SharedFoundation, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot, SlidesRelease, WordFlow } from "./StoryDiagrams"
+import { StoryMoment, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot, SlidesRelease, WordFlow } from "./StoryDiagrams"
+import { SharedRoots } from "./SharedRoots"
+import markdownIcon from "./rnconnection-assets/markdown-icon.png";
 import { NineApps } from "./NineApps"
 import { MovingTitle } from "./MovingTitle"
 import chatIcon from "./rnconnection-assets/chat-history-icon.png";
@@ -71,15 +73,15 @@ eyebrow: Story
 <!-- Three more launched apps: Chat History to browse conversations, Code to open and work with source files, Diff to inspect changes. Show launch and a useful interaction, not just a window. The shared foundation made the next app easier to build. -->
 
 ---
-steps: 3
+steps: 2
 eyebrow: Story
 ---
 
 # Different apps. Shared foundations. {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
 
-<SharedFoundation icons={[chatIcon, codeIcon, diffIcon]} />
+<SharedRoots icons={[chatIcon, codeIcon, diffIcon, markdownIcon]} />
 
-<!-- Conceptually, each app has its own React interface and manifest selecting native capabilities. Shared packages provide things like windows, menus, file dialogs, storage, and specialized native editors/parsers. A reusable native host and build tooling assemble an app. This is code reuse across separate applications, not one giant app or every module shipped everywhere. Source: apps/*/app.manifest.ts, packages/, shell/, scripts/. Save the framework name and public SDK story for the reveal. -->
+<!-- Steps: five app icons, then reveal the sculpted shared roots and capabilities together. The roots and branches pulse in thickness and brightness on the GPU. Music currently uses a temporary note symbol. Markdown is an example/preview unless its release is confirmed. Conceptually, each app has its own React interface and manifest selecting native capabilities. Shared packages provide things like windows, menus, file dialogs, storage, and specialized native editors/parsers. A reusable native host and build tooling assemble an app. This is code reuse across separate applications, not one giant app or every module shipped everywhere. Source: apps/*/app.manifest.ts, packages/, shell/, scripts/. Save the framework name and public SDK story for the reveal. -->
 
 ---
 title: "Was I just imagining it?"
