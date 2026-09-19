@@ -2,7 +2,7 @@ import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 
-// One bounded GPU surface per panel. Reflections, shape motion, cracks, and
+// One bounded GPU surface per panel. Reflections, cracks, and
 // ballistic glass fragments are analytic; no captured views or JS frame updates.
 export const objectionGlassShader = `
 uniform float time;
@@ -25,21 +25,12 @@ float stroke(float2 p, float2 a, float2 b, float progress) {
 float4 glass(float2 p, float clock) {
   float d = box(p);
   float mask = 1.0-smoothstep(-0.7, 0.7, d);
-  // A breathing, sculpted droplet under the glass, not a flat two-tone fill.
-  float2 q = p - float2(sin(clock*0.5+phase)*34.0, cos(clock*0.6+phase)*22.0);
-  float angle = atan(q.y, q.x);
-  float radius = 105.0 + 13.0*sin(angle*3.0+clock*0.65+phase) + 7.0*cos(angle*2.0-clock*0.4);
-  float orb = length(q)-radius*(1.0+0.065*sin(clock*1.3+phase));
-  float orbBody = 1.0-smoothstep(-16.0, 14.0, orb);
-  float orbRim = exp(-abs(orb)*0.20);
   float rim = exp(-abs(d+3.0)*0.35);
   float inner = exp(-abs(d+14.0)*0.10);
   float directional = 0.45 + 0.55*pow(0.5+0.5*sin(atan(p.y,p.x)*2.0-0.7), 3.0);
   float reflectionAxis = (p.x*0.30+p.y+93.0+sin(clock*0.35+phase)*12.0)/27.0;
   float reflection = exp(-reflectionAxis*reflectionAxis);
   float3 color = float3(0.025,0.07,0.115)
-    + float3(0.015,0.11,0.19)*orbBody
-    + float3(0.15,0.51,0.72)*orbRim*(0.35+directional)
     + float3(0.50,0.81,1.0)*rim*directional
     + float3(0.08,0.28,0.39)*inner
     + float3(0.11,0.18,0.23)*reflection;
@@ -105,9 +96,9 @@ half4 main(float2 position) {
     float e = stroke(p,float2(298.0,-245.0),float2(-309.0,246.0),second);
     float distance = min(d+10000.0*(1.0-step(0.001,first)),e+10000.0*(1.0-step(0.001,second)));
     float roughness = sin(p.x*0.15+p.y*0.22)*0.8+sin(p.y*0.43)*0.6;
-    float line = 1.0-smoothstep(7.0+roughness,10.0+roughness,distance);
-    float core = exp(-distance*distance*0.13);
-    float glow = exp(-distance*0.065)*0.60;
+    float line = 1.0-smoothstep(17.0+roughness,21.0+roughness,distance);
+    float core = exp(-distance*distance*0.035);
+    float glow = exp(-distance*0.045)*0.60;
     float flash = impact*exp(-flight*12.0);
     float alpha = clamp(line+glow,0.0,1.0);
     float3 red = float3(1.0,0.045,0.025)+float3(0.0,0.65,0.48)*core;
