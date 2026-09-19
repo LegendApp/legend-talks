@@ -26,8 +26,8 @@ const glassSource = deformationSource + `
     float light = 0.55 + 0.45 * cos(angle + 2.2);
     float rim = exp(-abs(distance) * 0.38);
     float innerRim = exp(-abs(distance + 5.0) * 0.16) * inside;
-    float satin = (0.10 + 0.075 * (1.0 - depth) + 0.025 * sin(angle + t * 0.15)) * inside;
-    float alpha = clamp(satin + rim * (0.12 + light * 0.20) + innerRim * 0.07, 0.0, 0.88);
+    float satin = (0.72 + 0.075 * (1.0 - depth) + 0.025 * sin(angle + t * 0.15)) * inside;
+    float alpha = clamp(satin + rim * (0.12 + light * 0.20) + innerRim * 0.07, 0.0, 0.96);
     float3 color = mix(tint, float3(0.66, 0.75, 0.84), clamp(rim * light * 0.55 + innerRim * 0.12, 0.0, 1.0));
     return half4(color * alpha, alpha);
   }
