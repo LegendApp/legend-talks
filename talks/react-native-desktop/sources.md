@@ -57,3 +57,14 @@ competitor screenshots. The glass escalation begins as a restrained custom Skia
 approximation and then becomes intentionally excessive. The quiet reset shows real native source; Slides does not yet embed
 `NSGlassEffectView`. The 384-sidebars scene is real TypeGPU shader code, without
 an invented FPS or throughput claim.
+
+## Four-metric overview
+
+`MetricBuckets.tsx` uses the September 19 full reference table in
+[React Native benchmark results](../../../../../chat-history-comparison/docs/REACT_NATIVE_BENCHMARK_RESULTS.md).
+RN: September 19; Compose: September 18; remaining timings/footprints: September 17.
+App-only installed sizes exclude external grammar packs and may describe later builds.
+This overview is intentionally separate from the synchronized charts.
+Bands are editorial practical thresholds, not statistical equivalence: load <500/<1000 ms;
+initial footprint <100/<400 MiB; app size <25/<150 MiB; switch <250/<500 ms.
+Each boundary belongs to the higher band. Actual medians remain visible in every band.

@@ -17,6 +17,7 @@ import { rootsProgram, windowsProgram, takeoverProgram, ecosystemProgram, drople
 import { AlternateRoots, AlternateWindows, AlternateEcosystem } from "./TypeGPUAlternateLayouts"
 import { Chart, Tradeoffs } from "./RNConnection"
 import { AppMontage, BalanceDiagram, CapabilityDiagram, MeasurementDiagram, MediaSlot, NativeDataDiagram, PlatformDiagram, RenderingDiagram } from "./RNConnectionVisuals"
+import { MetricBuckets } from "./MetricBuckets"
 import { HelloSizeJourney } from "./HelloSizeJourney"
 import { StoryMoment, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot, SlidesRelease, WordFlow } from "./StoryDiagrams"
 import { DesktopObjections } from "./DesktopObjections"
@@ -496,6 +497,35 @@ AppKit and Tauri are smaller than React Native. So again, it doesn't win every c
 These are just the app bundles. I've excluded the external syntax grammar packs from every app.
 
 Small app, low memory, fast interactions. That's a pretty good combination.
+-->
+
+---
+eyebrow: 'Chat History / four metrics'
+steps: 2
+---
+
+# In the leading group on every metric {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<MetricBuckets />
+
+<!--
+1. Here's everything together. Load time, memory, app size, and switching conversations.
+
+Look at the groups. A few hundred milliseconds to load, or over a second. Tens of megabytes of memory, or hundreds.
+
+I've put the cutoffs right on the slide. These are practical bands, not a claim that everything in a band is tied. AppKit is still much smaller, and it switches faster.
+
+Load time means stable first content. Memory is the initial settled physical footprint, including helpers. File size is the installed app without external grammar packs.
+
+This overview adds Compose and uses the latest published RN measurement. RN was measured on September 19, Compose on September 18, and the others on September 17. These are mixed builds and dates, not a fresh simultaneous rerun. The earlier charts keep the original comparison values.
+
+2. Now just follow React Native.
+
+It's in the first group every time.
+
+It doesn't win every number. But I don't have to choose between a fast app, a small app, and an app that doesn't eat all my memory.
+
+And I still get real native UI.
 -->
 
 ---

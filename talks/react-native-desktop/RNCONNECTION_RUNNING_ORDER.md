@@ -1,6 +1,6 @@
 # RN Connection running order
 
-53 slides: 44 main-talk slides, four optional backups, and five TypeGPU alternates. Timings are deliberately
+54 slides: 45 main-talk slides, four optional backups, and five TypeGPU alternates. Timings are deliberately
 unset until rehearsal; the expanded story and 20-step visual tour need a fresh pace check.
 
 ## Story
@@ -38,32 +38,33 @@ speed, memory efficiency and native content UI. AppKit's individual wins remain 
 | 20 | Chat History · jump to top |
 | 21 | Chat History · switch conversation |
 | 22 | Chat History · app size |
-| 23 | The combination matters |
-| 24 | You can have all three |
-| 25 | React composes a native app |
-| 26 | Keep the big data native |
-| 27 | No WebView required |
-| 28 | Native behavior |
-| 29 | And then you get React |
-| 30 | React Native everywhere |
-| 31 | What’s holding desktop back — three boxes, then strike Performance |
-| 32 | That last one is fixable |
-| 33 | Built on Expo Desktop |
-| 34 | Legend Frame → Electron’s ambition. React Native’s foundation. — 2 steps |
-| 35 | From development to shipping |
-| 36 | Desktop tools for React |
-| 37 | Early · Useful · Growing |
-| 38 | One more app |
-| 39 | Legend Slides |
-| 40 | Legend Slides · 0.0.1 |
-| 41 | One box left — strike desktop modules, then zoom into existing modules |
-| 42 | Now I need help with the ecosystem |
-| 43 | Does your library support desktop? → macOS + Windows — 2 steps |
-| 44 | A first choice for desktop |
-| 45 | What we measured |
-| 46 | Native content ≠ native window |
-| 47 | Legend Markdown |
-| 48 | The full comparison |
+| 23 | In the leading group on every metric — overview, then highlight RN |
+| 24 | The combination matters |
+| 25 | You can have all three |
+| 26 | React composes a native app |
+| 27 | Keep the big data native |
+| 28 | No WebView required |
+| 29 | Native behavior |
+| 30 | And then you get React |
+| 31 | React Native everywhere |
+| 32 | What’s holding desktop back — three boxes, then strike Performance |
+| 33 | That last one is fixable |
+| 34 | Built on Expo Desktop |
+| 35 | Legend Frame → Electron’s ambition. React Native’s foundation. — 2 steps |
+| 36 | From development to shipping |
+| 37 | Desktop tools for React |
+| 38 | Early · Useful · Growing |
+| 39 | One more app |
+| 40 | Legend Slides |
+| 41 | Legend Slides · 0.0.1 |
+| 42 | One box left — strike desktop modules, then zoom into existing modules |
+| 43 | Now I need help with the ecosystem |
+| 44 | Does your library support desktop? → macOS + Windows — 2 steps |
+| 45 | A first choice for desktop |
+| 46 | What we measured |
+| 47 | Native content ≠ native window |
+| 48 | Legend Markdown |
+| 49 | The full comparison |
 
 ## Media and release preparation
 
@@ -85,7 +86,7 @@ Media remains explicitly labeled as pending. Add matching screenshots to the map
 in `NineApps.tsx`; tune normalized sidebar/composer crops in `NineAppsTour.ts`.
 Supply one RN video and nine screenshots. Use a consistent Deno WebView capture;
 the performance charts still distinguish Deno WebView and CEF and do not include
-Compose measurements. Do not imply the visual lineup exactly matches the measured
+Compose measurements. The new four-metric overview includes Compose and the September 19 RN update, explicitly labeled as mixed dates/builds. Do not imply the visual lineup exactly matches the measured
 nine. Native screenshots should show the actual OS sidebar/composer material.
 Video playback remains unwired until the clip arrives.
 
@@ -181,11 +182,11 @@ variants, not part of the rehearsed running order:
 
 | Slide | Alternate |
 | --- | --- |
-| 49 | Shared foundations: 2,048 GPU particles travel through the roots |
-| 50 | Three rendering styles: perspective glass windows and dimensional controls |
-| 51 | Fake glass: composer-sized surface expands through a procedural wave field |
-| 52 | Existing modules: 256-node illustrative library constellation |
-| 53 | Background: 16 interacting droplets with persistent GPU state |
+| 50 | Shared foundations: 2,048 GPU particles travel through the roots |
+| 51 | Three rendering styles: perspective glass windows and dimensional controls |
+| 52 | Fake glass: composer-sized surface expands through a procedural wave field |
+| 53 | Existing modules: 256-node illustrative library constellation |
+| 54 | Background: 16 interacting droplets with persistent GPU state |
 
 These use TypeGPU for typed shader composition and uniform layout, and a new
 host-compiled UI-thread WebGPU path for frame submission and compute dispatch.
