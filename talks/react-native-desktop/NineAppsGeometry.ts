@@ -1,4 +1,4 @@
-export const appOrder = ["react-native", "appkit", "swiftui", "electron", "tauri", "deno", "compose", "flutter", "gpui"] as const;
+export const appOrder = ["react-native", "appkit", "swiftui", "electron", "tauri", "deno", "flutter", "compose", "gpui"] as const;
 export type AppId = typeof appOrder[number];
 export type SceneMode = "hero" | "grid" | "filmstrip";
 export function appCardLayout(index: number, mode: SceneMode, position = 0) {

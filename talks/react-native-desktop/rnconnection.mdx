@@ -59,41 +59,6 @@ footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 <!-- 1:20–2:00. The interesting part of the clips is the action after launch. We are not just making an empty window appear. Bridge from the subjective experience to measurement: these apps felt fast, but how did this choice compare to other ways of building desktop software? -->
 
 ---
-template: ./NineApps.tsx
-transition: none
----
-
-<NineApps mode="hero" />
-
-<!-- 2:00–2:15. Real RN app video goes here when supplied: opening, scrolling, switching. Currently a labeled media placeholder, not simulated footage. End on a still that matches the RN grid screenshot. Advance: the RN card moves to the top-left of the grid and eight windows fan out from behind it. -->
-
----
-template: ./NineApps.tsx
-transition:
-  type: focus
-  from: nine-apps-stage
-  duration: 550
----
-
-<NineApps mode="grid" />
-
-<!-- 2:15–2:30. “Then I built it nine times.” Hold long enough to count them. RN is at the top-left. Every screenshot should use the same conversation, viewport, and appearance. Assets are pending; the lineup combines the two Deno variants as Deno and includes Compose Multiplatform. Advance unfolds the grid into a filmstrip. -->
-
----
-template: ./NineApps.tsx
-transition:
-  type: focus
-  from: nine-apps-stage
-  duration: 550
----
-
-<NineApps mode="filmstrip" />
-
-<!-- 2:30–2:45. RN starts at the left margin with every other app to its right. The strip holds each app for 1.5 seconds and glides for 0.5 seconds, stopping at the last app. Center cards grow; their neighbors shrink and dim. This is a visual tour, not a timing comparison. The filmstrip animates on the UI thread; previews stay still.
-Let the filmstrip run while explaining the comparison. Advance continues directly to methodology. Media is intentionally pending; do not present these slots as screenshots.
--->
-
----
 eyebrow: 'Ground rules'
 footer: 'September 17 report · macOS / Apple M4 · implementation comparison'
 ---
@@ -138,6 +103,90 @@ footer: 'Greeting workload · newer installed-size snapshot · MiB'
 <HelloSizeJourney />
 
 <!-- Advance sequence: full chart → packaging groups → native platform close-up → bundled browser close-up → runtime/engine close-up. The next advance goes directly to the next slide. Reverse navigation retraces the sequence. Focused groups move to the center while the others leave the frame. Bar lengths retain the same 0–320 MiB scale throughout; there is no rescaling or accompanying diagram. Tauri uses system WebKit; Deno WebView bundles Deno but uses system WebKit. Native platform sizes are rounded to 0.1 MiB, so do not imply an exact tie. RN now measures 7.2 MiB (7,499,962 bytes) after a verified ARM64 rebuild with executable/Hermes symbols stripped, dead-code stripping, ThinLTO, and -Oz. The original report snapshot recorded 16.3 MiB; this size correction is from September 18. The original timing/memory measurements predate these compiler settings. No grammar pack is needed. Installed logical bytes excluding system frameworks, not compressed download sizes. As in the report, sizes are from newer revisions than timings/memory. -->
+
+---
+eyebrow: 'Hello World / memory'
+footer: 'Greeting workload · MiB · settled physical footprint'
+---
+
+<MovingTitle>
+
+# Hello World · memory {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
+
+<Chart workload="hello" metric="memory" />
+
+<!-- Baseline settled memory. Standalone RN 23.3 MiB, AppKit 15.5, SwiftUI 18.3. These are not the memory figures for the chat app. -->
+
+---
+eyebrow: 'From baseline to real work'
+---
+
+<MovingTitle>
+
+# But hello world isn’t a real app. {class="text-center font-semibold tracking-tight text-7xl"}
+
+</MovingTitle>
+
+<!-- Hello World tells us the cost of bringing the framework along. It does not tell us how the app behaves with real data, scrolling, switching conversations, or a complete interface. So I took Chat History and built it nine times. -->
+
+---
+template: ./NineApps.tsx
+transition: none
+---
+
+<NineApps mode="hero" />
+
+<!-- A real workload: show Chat History opening and being used. The video will be supplied later. End on a still matching the RN grid screenshot. -->
+
+---
+template: ./NineApps.tsx
+transition:
+  type: focus
+  from: nine-apps-stage
+  duration: 550
+---
+
+<NineApps mode="grid" />
+
+<!-- Then I built it nine times. Native views first, browsers next, canvases last. RN starts at the top-left. Same content and matching captures. The next slide is the manually controlled visual tour; quantitative results follow it. -->
+
+---
+template: ./NineApps.tsx
+steps: 21
+transition:
+  type: focus
+  from: nine-apps-stage
+  duration: 550
+---
+
+<NineApps mode="filmstrip" />
+
+<!-- Each advance is deliberate; the carousel never moves on its own. Back retraces every close-up and app. Assets remain schematic placeholders until matching screenshots arrive. Sidebar/composer crop coordinates are normalized in NineAppsTour.ts and should be tuned to those captures.
+
+1: React Native. Full app. This is the native-view group.
+2: Zoom into the sidebar. Show the actual OS Liquid Glass material in the supplied capture.
+3: Pan to the composer. The same native material, where you interact with the app.
+4: Zoom back out.
+5: AppKit. Same native material; move quickly.
+6: SwiftUI. Same native material; move quickly.
+7: Electron. First browser implementation. Discuss the actual screenshot, not a universal limit of the framework.
+8: Browser sidebar close-up. This doesn't feel like a Mac app to me. The observation is about this implementation's appearance.
+9: Browser composer close-up. Contrast its imitation with the OS material; browser apps can also integrate native controls.
+10: Zoom back out.
+11: Tauri. System WebView; inspect the actual capture.
+12: Deno. Use the chosen Deno WebView capture consistently; the benchmark charts distinguish WebView and CEF separately.
+13: Flutter. First canvas implementation.
+14: Canvas sidebar close-up.
+15: Canvas composer close-up. Compare the actual rendered material.
+16: Zoom back out to Flutter.
+17: Compose Multiplatform. Move quickly.
+18: GPUI, the last app. Its newer native composer is an exception to the canvas group and postdates the controlled measurements.
+19: Zoom into GPUI's composer. Now for my own interpretation of liquid glass. This setup must not imply GPUI's real composer is fake.
+20: Add the deliberately excessive fake glass over the composer. This is an authored joke overlay, not benchmark footage or a stock GPUI capability.
+21: Grow it until it takes over the whole slide. Totally native. Obviously. Let the joke breathe. Next advance moves directly into the real-app results.
+-->
 
 ---
 eyebrow: 'Chat History / first content'
@@ -489,21 +538,6 @@ footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 </MovingTitle>
 
 <!-- 19:15–20:00. Close: React Native isn't just a way to bring a mobile app to desktop. It's a compelling way to build a desktop app in the first place. Restate that the comparisons convinced you on technical grounds; RN everywhere makes the opportunity larger. End here. The following slides are optional Q&A backups, not the continuation of the main talk. -->
-
----
-eyebrow: 'Backup'
-footer: 'Greeting workload · MiB · settled physical footprint'
----
-
-<MovingTitle>
-
-# Hello World · memory {class="text-center font-semibold tracking-tight text-7xl"}
-
-</MovingTitle>
-
-<Chart workload="hello" metric="memory" />
-
-<!-- Baseline settled memory. Standalone RN 23.3 MiB, AppKit 15.5, SwiftUI 18.3. These are not the memory figures for the chat app. -->
 
 ---
 eyebrow: 'Backup / methodology'
