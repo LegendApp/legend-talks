@@ -1,11 +1,11 @@
 # RN Connection running order
 
-52 slides: 43 main-talk slides, four optional backups, and five TypeGPU alternates. Timings are deliberately
+53 slides: 44 main-talk slides, four optional backups, and five TypeGPU alternates. Timings are deliberately
 unset until rehearsal; the expanded story and 20-step visual tour need a fresh pace check.
 
 ## Story
 
-Discovery while testing Legend List → Photos and Music → the compromise objection →
+Discovery while testing Legend List → Photos and Music → tweeting about the Electron comparison → “Native would be faster” → the compromise objection →
 Chat History, Code and Diff on shared foundations → rendering primer → Hello World →
 real-app visual tour and measurements → technical verdict → React Native everywhere →
 three objections → Expo Desktop → Legend Frame → Slides 0.0.1 → ecosystem invitation.
@@ -17,52 +17,53 @@ speed, memory efficiency and native content UI. AppKit's individual wins remain 
 | Slide | Title |
 | --- | --- |
 | 1 | React Native is the best way to build desktop apps |
-| 2 | I came here to test a list → I found an incredible platform — 2 steps |
+| 2 | I came here to test LegendList → I found an incredible platform — 2 steps |
 | 3 | Then I made apps I wanted |
-| 4 | “React Native is a compromise” |
-| 5 | So I kept building |
-| 6 | Different apps. Shared foundations. |
-| 7 | Was I just imagining it? → So I measured it — 2 steps |
-| 8 | Three ways to draw a desktop app |
-| 9 | Measure what the user sees |
-| 10 | Hello World · first content |
-| 11 | Hello World · installed size |
-| 12 | Hello World · memory |
-| 13 | But hello world isn’t a real app |
-| 14 | I built a chat history app |
-| 15 | Then I built it nine times |
-| 16 | Same app. Nine implementations. — 20 manual steps |
-| 17 | Chat History · first content |
-| 18 | Chat History · memory |
-| 19 | Chat History · jump to top |
-| 20 | Chat History · switch conversation |
-| 21 | Chat History · app size |
-| 22 | The combination matters |
-| 23 | You can have all three |
-| 24 | React composes a native app |
-| 25 | Keep the big data native |
-| 26 | No WebView required |
-| 27 | Native behavior |
-| 28 | And then you get React |
-| 29 | React Native everywhere |
-| 30 | What’s holding desktop back — three boxes, then strike Performance |
-| 31 | That last one is fixable |
-| 32 | Built on Expo Desktop |
-| 33 | Legend Frame → Electron’s ambition. React Native’s foundation. — 2 steps |
-| 34 | From development to shipping |
-| 35 | Desktop tools for React |
-| 36 | Early · Useful · Growing |
-| 37 | One more app |
-| 38 | Legend Slides |
-| 39 | Legend Slides · 0.0.1 |
-| 40 | One box left — strike desktop modules, then zoom into existing modules |
-| 41 | Now I need help with the ecosystem |
-| 42 | Does your library support desktop? → macOS + Windows — 2 steps |
-| 43 | A first choice for desktop |
-| 44 | What we measured |
-| 45 | Native content ≠ native window |
-| 46 | Legend Markdown |
-| 47 | The full comparison |
+| 4 | “Native would be faster” |
+| 5 | “React Native is a compromise” |
+| 6 | So I kept building |
+| 7 | Different apps. Shared foundations. |
+| 8 | Was I just imagining it? → So I measured it — 2 steps |
+| 9 | Three ways to draw a desktop app |
+| 10 | Measure what the user sees |
+| 11 | Hello World · first content |
+| 12 | Hello World · installed size |
+| 13 | Hello World · memory |
+| 14 | But hello world isn’t a real app |
+| 15 | I built a chat history app |
+| 16 | Then I built it nine times |
+| 17 | Same app. Nine implementations. — 20 manual steps |
+| 18 | Chat History · first content |
+| 19 | Chat History · memory |
+| 20 | Chat History · jump to top |
+| 21 | Chat History · switch conversation |
+| 22 | Chat History · app size |
+| 23 | The combination matters |
+| 24 | You can have all three |
+| 25 | React composes a native app |
+| 26 | Keep the big data native |
+| 27 | No WebView required |
+| 28 | Native behavior |
+| 29 | And then you get React |
+| 30 | React Native everywhere |
+| 31 | What’s holding desktop back — three boxes, then strike Performance |
+| 32 | That last one is fixable |
+| 33 | Built on Expo Desktop |
+| 34 | Legend Frame → Electron’s ambition. React Native’s foundation. — 2 steps |
+| 35 | From development to shipping |
+| 36 | Desktop tools for React |
+| 37 | Early · Useful · Growing |
+| 38 | One more app |
+| 39 | Legend Slides |
+| 40 | Legend Slides · 0.0.1 |
+| 41 | One box left — strike desktop modules, then zoom into existing modules |
+| 42 | Now I need help with the ecosystem |
+| 43 | Does your library support desktop? → macOS + Windows — 2 steps |
+| 44 | A first choice for desktop |
+| 45 | What we measured |
+| 46 | Native content ≠ native window |
+| 47 | Legend Markdown |
+| 48 | The full comparison |
 
 ## Media and release preparation
 
@@ -179,11 +180,11 @@ variants, not part of the rehearsed running order:
 
 | Slide | Alternate |
 | --- | --- |
-| 48 | Shared foundations: 2,048 GPU particles travel through the roots |
-| 49 | Three rendering styles: perspective glass windows and dimensional controls |
-| 50 | Fake glass: composer-sized surface expands through a procedural wave field |
-| 51 | Existing modules: 256-node illustrative library constellation |
-| 52 | Background: 16 interacting droplets with persistent GPU state |
+| 49 | Shared foundations: 2,048 GPU particles travel through the roots |
+| 50 | Three rendering styles: perspective glass windows and dimensional controls |
+| 51 | Fake glass: composer-sized surface expands through a procedural wave field |
+| 52 | Existing modules: 256-node illustrative library constellation |
+| 53 | Background: 16 interacting droplets with persistent GPU state |
 
 These use TypeGPU for typed shader composition and uniform layout, and a new
 host-compiled UI-thread WebGPU path for frame submission and compute dispatch.
