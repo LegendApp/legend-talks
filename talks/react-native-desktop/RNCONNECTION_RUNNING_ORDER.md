@@ -158,8 +158,9 @@ proportions, fixed bar origins, width interpolation and row movement. Native
 visual verification remains pending; the active macOS session belongs to another task.
 
 The Chat History hero/grid/tour titles and tour subtitle remain centered. The
-TypeGPU glass ripple fades in from clear and expands across the slide in one
-five-second motion, without a caption or a second advance.
+TypeGPU glass builds from clear to exaggerated ripples inside the composer for
+five seconds, then expands across the slide over eight seconds. Both phases run
+on one advance, without a caption.
 
 The shared foundation is now a live Skia glass-root sculpture with a braided
 trunk. A UI-thread clock drives shader-only thickness and brightness pulses;
