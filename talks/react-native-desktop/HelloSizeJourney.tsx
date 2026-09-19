@@ -1,6 +1,6 @@
-import { ChartBar } from "./ChartBar";
+import { BenchmarkRow, chartLayout } from "./BenchmarkChart";
 import { Text, View } from "react-native";
-import { SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
+import { SceneMotionView, ScenePositionView, usePresentationValue } from "@legend-apps/presentation";
 import benchmarks from "./rnconnection-assets/benchmarks.json";
 
 const groups = [
@@ -15,9 +15,7 @@ const groupStarts = groups.map((_, index) => 55 + groups.slice(0, index).reduce(
   (offset, group) => offset + rows.filter((row) => group.names.includes(row.name)).length * groupedRowSpacing + groupSpacing, 0,
 ));
 const focusOrder = [0, 2, 1];
-const chartWidth = 1696;
-const chartHeight = 710;
-const barSpace = 1210;
+const { width: chartWidth, height: chartHeight } = chartLayout;
 const fullMaximum = 320;
 
 /** Focus changes only vertical composition; every bar keeps its original length. */
@@ -27,7 +25,7 @@ export function HelloSizeJourney() {
   const focus = scene >= 2 ? focusOrder[scene - 2] : -1;
   const grouped = scene !== 0;
 
-  return <View style={{ width: chartWidth, height: chartHeight, marginTop: 24, alignSelf: "center", overflow: "hidden" }}>
+  return <View style={{ width: chartWidth, height: chartHeight, marginTop: chartLayout.marginTop, alignSelf: "center", overflow: "hidden" }}>
     {groups.map((group, groupIndex) => {
       const members = rows.filter((row) => group.names.includes(row.name));
       const focused = focus === groupIndex;
@@ -37,25 +35,19 @@ export function HelloSizeJourney() {
       const focusedStart = (chartHeight - (members.length * 68 + 48)) / 2 + 48;
       const groupY = focus < 0 ? groupStarts[groupIndex]
         : focusedStart + (groupIndex - focus) * chartHeight;
-      return <SceneMotionView key={group.title} hidden={hidden} duration={scene === 3 ? 1100 : 650}
-        pose={{ y: groupY }}
-        style={{ position: "absolute", left: 0, top: 0, width: chartWidth }}>
-        <SceneMotionView hidden={!grouped} pose={{ y: -50, opacity: grouped ? 1 : 0 }}
-          style={{ position: "absolute", left: 0, top: 0 }}>
-          <Text style={{ fontSize: 36, lineHeight: 44, color: group.color, fontWeight: "500" }}>{group.title}</Text>
-        </SceneMotionView>
+      return <View key={group.title}>
+        <ScenePositionView y={groupY - 50} duration={scene === 3 ? 1100 : 650} style={{ left: 0, width: chartWidth }}>
+          <SceneMotionView hidden={!grouped || hidden} pose={{ opacity: grouped && !hidden ? 1 : 0 }}>
+            <Text style={{ fontSize: 36, lineHeight: 44, color: group.color, fontWeight: "500" }}>{group.title}</Text>
+          </SceneMotionView>
+        </ScenePositionView>
         {members.map(({ name, size }, index) => {
-          const y = grouped ? index * (focus >= 0 ? 68 : groupedRowSpacing)
-            : 55 + rows.findIndex((row) => row.name === name) * 57 - groupStarts[groupIndex];
-          return <SceneMotionView key={name} pose={{ y }}
-            style={{ position: "absolute", left: 0, top: 0, width: chartWidth, height: 43, justifyContent: "center" }}>
-            <Text style={{ position: "absolute", left: 0, fontSize: 34, lineHeight: 42, color: name === "React Native" ? "#ffffff" : "#f1f5f9", fontWeight: name === "React Native" ? "600" : "400" }}>{name}</Text>
-            <ChartBar highlighted={name === "React Native"} groupColor={group.color} grouped={grouped}
-              style={{ position: "absolute", left: 285, width: Math.max(2, size / fullMaximum * barSpace), height: 30 }} />
-            <Text style={{ position: "absolute", right: 0, width: 190, fontSize: 34, lineHeight: 42, textAlign: "right", color: "#f1f5f9", fontVariant: ["tabular-nums"] }}>{size.toFixed(1)} MiB</Text>
-          </SceneMotionView>;
+          const y = grouped ? groupY + index * (focus >= 0 ? 68 : groupedRowSpacing)
+            : chartLayout.top + rows.findIndex(row => row.name === name) * chartLayout.rowSpacing;
+          return <BenchmarkRow key={name} name={name} value={size} maximum={fullMaximum} metric="size" y={y}
+            groupColor={group.color} grouped={grouped} duration={scene === 3 ? 1100 : 650} />;
         })}
-      </SceneMotionView>;
+      </View>;
     })}
   </View>;
 }

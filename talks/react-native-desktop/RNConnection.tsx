@@ -1,4 +1,4 @@
-import { ChartBar } from "./ChartBar";
+export { Chart } from "./BenchmarkChart";
 import { FlowGlyph } from "./RNConnectionVisuals";
 import { Background, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
 import { Animated, Easing, Text, View, type StyleProp, type ViewStyle } from "react-native";
@@ -90,43 +90,6 @@ export function Flow({ labels }: { labels: string[] }) {
             <Text style={{ color: "#ffffff", fontSize: 38, lineHeight: 48, fontWeight: "500", textAlign: "center" }}>{label}</Text>
           </Reveal>
         </Fragment>
-      ))}
-    </View>
-  );
-}
-
-type Metric = "content" | "memory" | "size" | "jump" | "switch";
-const units: Record<Metric, string> = { content: "ms", memory: "MiB", size: "MiB", jump: "ms", switch: "ms" };
-
-function ChartRow({ name, value, maximum, metric }: {
-  name: string;
-  value: number;
-  maximum: number;
-  metric: Metric;
-}) {
-  const highlighted = name === "React Native";
-
-  return (
-    <View style={{ flexDirection: "row", alignItems: "center", height: 43, gap: 24 }}>
-      <Text style={{ width: 280, fontSize: 27, color: highlighted ? "#67e8f9" : "#f1f5f9", fontWeight: highlighted ? "700" : "400" }}>{name}</Text>
-      <View style={{ flex: 1, height: 28 }}>
-        <ChartBar highlighted={highlighted} style={{ width: `${value / maximum * 100}%`, height: 28 }} />
-      </View>
-      <Text style={{ width: 180, textAlign: "right", fontSize: 27, color: highlighted ? "#67e8f9" : "#f1f5f9", fontVariant: ["tabular-nums"] }}>{value.toFixed(1)} {units[metric]}</Text>
-    </View>
-  );
-}
-
-export function Chart({ metric, workload = "chat" }: { metric: Metric; workload?: "chat" | "hello" }) {
-  const rows = (workload === "chat" ? benchmarks.chat : benchmarks.hello)
-    .map((row) => ({ name: row.name, value: (row as unknown as Record<string, number>)[metric] }))
-    .filter((row) => Number.isFinite(row.value))
-    .sort((a, b) => a.value - b.value);
-  const maximum = Math.max(...rows.map((row) => row.value));
-  return (
-    <View style={{ gap: 12, marginTop: 32 }}>
-      {rows.map(({ name, value }) => (
-        <ChartRow key={`${metric}-${workload}-${name}`} name={name} value={value} maximum={maximum} metric={metric} />
       ))}
     </View>
   );
