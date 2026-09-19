@@ -9,6 +9,7 @@ uniform float time;
 uniform float broken;
 uniform float settled;
 uniform float phase;
+uniform float success;
 float hash(float n) { return fract(sin(n * 127.1 + 311.7) * 43758.5453); }
 float2 rotatePoint(float2 p, float a) {
   float c = cos(a), s = sin(a);
@@ -40,9 +41,10 @@ float4 glass(float2 p, float clock) {
 half4 main(float2 position) {
   float2 p = position-float2(350.0,300.0);
   float clock = time+phase;
-  float elapsed = min(mix(time,3.0,settled),3.0);
+  float elapsed = min(mix(time,6.0,settled),6.0);
+  float resolve = success*smoothstep(3.0,5.5,elapsed);
   float impact = broken*step(0.38,elapsed);
-  float flight = max(0.0,elapsed-0.38);
+  float flight = clamp(elapsed-0.38,0.0,2.62);
   float travel = 1.0-exp(-flight*3.8);
   float4 result = float4(0.0);
   if (impact < 0.5) {
@@ -88,22 +90,50 @@ half4 main(float2 position) {
       result = chip+result*(1.0-chip.a);
     }
   }
+  result *= 1.0-resolve*0.9;
   if (broken > 0.5) {
     // Deliberately overshoot the panel: two furious strokes, then the impact.
     float first = clamp(elapsed/0.17,0.0,1.0);
     float second = clamp((elapsed-0.21)/0.17,0.0,1.0);
-    float d = stroke(p,float2(-302.0,-240.0),float2(306.0,238.0),first);
-    float e = stroke(p,float2(298.0,-245.0),float2(-309.0,246.0),second);
+    float2 a = mix(float2(-302.0,-240.0),float2(-92.0,108.0),resolve);
+    float2 b = mix(float2(306.0,238.0),float2(-25.0,178.0),resolve);
+    float2 c = mix(float2(298.0,-245.0),float2(104.0,66.0),resolve);
+    float2 end = mix(float2(-309.0,246.0),float2(-25.0,178.0),resolve);
+    float d = stroke(p,a,b,first);
+    float e = stroke(p,c,end,second);
     float distance = min(d+10000.0*(1.0-step(0.001,first)),e+10000.0*(1.0-step(0.001,second)));
     float roughness = sin(p.x*0.15+p.y*0.22)*0.8+sin(p.y*0.43)*0.6;
-    float line = 1.0-smoothstep(17.0+roughness,21.0+roughness,distance);
+    float pulse = success*(1.0-resolve)*(0.5+0.5*sin(elapsed*7.0));
+    float thickness = mix(17.0,11.0,resolve)+pulse*3.5;
+    float line = 1.0-smoothstep(thickness+roughness,thickness+4.0+roughness,distance);
     float core = exp(-distance*distance*0.035);
-    float glow = exp(-distance*0.045)*0.60;
+    float glow = exp(-distance*0.045)*(0.60+pulse*0.25);
     float flash = impact*exp(-flight*12.0);
     float alpha = clamp(line+glow,0.0,1.0);
-    float3 red = float3(1.0,0.045,0.025)+float3(0.0,0.65,0.48)*core;
-    float4 slash = float4(red*alpha,alpha);
+    float3 tint = mix(float3(1.0,0.045,0.025),float3(0.12,0.95,0.38),resolve);
+    float shimmer = success*(1.0-resolve)*pow(0.5+0.5*sin(p.x*0.045+p.y*0.025-elapsed*12.0),8.0);
+    float3 color = mix(tint,float3(1.0,0.96,0.8),clamp(core*0.6+shimmer*0.7,0.0,1.0));
+    float4 slash = float4(color*alpha,alpha);
     result = slash+result*(1.0-slash.a);
+    // Emit sparks from points along both strokes, then let them die away
+    // while the same stroke endpoints converge into a success checkmark.
+    if (success > 0.5 && elapsed > 0.38 && elapsed < 5.5) {
+      for (int k=0; k<24; k++) {
+        float id = float(k);
+        float seed = hash(id+71.0);
+        float age = fract((elapsed-0.38)*0.85+seed);
+        float along = hash(id+23.0);
+        float2 origin = k < 12 ? mix(a,b,along) : mix(c,end,along);
+        float angle = hash(id+107.0)*6.283185;
+        float2 velocity = float2(cos(angle),sin(angle))*(45.0+seed*100.0);
+        float2 center = origin+velocity*age+float2(0.0,age*age*45.0);
+        float dist = length(p-center);
+        float life = sin(age*3.141593)*(1.0-smoothstep(3.0,5.5,elapsed));
+        float spark = (exp(-dist*dist/5.0)+0.25*exp(-dist*0.24))*life;
+        float4 particle = float4(mix(tint,float3(1.0,0.92,0.64),0.6)*spark,spark);
+        result = particle+result*(1.0-particle.a);
+      }
+    }
     result.rgb += float3(0.38,0.58,0.68)*flash*exp(-length(p)*0.009);
     result.a = max(result.a,flash*exp(-length(p)*0.009));
   }
@@ -114,7 +144,7 @@ const glassEffect = Skia.RuntimeEffect.Make(objectionGlassShader);
 if (!glassEffect) throw new Error("Could not compile objection glass");
 
 function GlassPanel({ crossed, settled, index }: { crossed: boolean; settled: boolean; index: number }) {
-  const uniforms = useAnimatedShaderUniforms({ broken: crossed ? 1 : 0, settled: settled ? 1 : 0, phase: index * 1.7 }, crossed ? 3 : 2);
+  const uniforms = useAnimatedShaderUniforms({ broken: crossed ? 1 : 0, settled: settled ? 1 : 0, phase: index * 1.7, success: index === 0 ? 1 : 0 }, crossed ? 6 : 2);
   return <Canvas pointerEvents="none" style={{ position: "absolute", left: -96, top: -108, width: 700, height: 600 }}>
     <Fill><Shader source={glassEffect!} uniforms={uniforms} /></Fill>
   </Canvas>;
