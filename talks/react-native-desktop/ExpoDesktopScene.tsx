@@ -15,16 +15,23 @@ float4 over(float4 a,float4 b) { return a+b*(1.0-a.a); }
 float4 material(float2 p,float2 size,float radius,float3 tint) {
   float d=roundedBox(p,size,radius);
   float mask=1.0-smoothstep(-0.8,0.8,d);
-  float rim=exp(-abs(d+2.2)*0.58);
-  float inner=exp(-abs(d+8.0)*0.19);
-  float halo=exp(-max(d,0.0)*0.09)*(1.0-mask)*0.34;
-  float reflection=(p.x*0.30+p.y+size.y*0.62)/20.0;
-  float highlight=exp(-reflection*reflection);
-  float directional=0.5+0.5*cos(atan(p.y,p.x)*2.0-0.8);
-  float3 color=tint*(0.8+highlight*0.65)
-    +float3(0.68,0.90,1.0)*rim*(0.48+directional*0.85)
-    +float3(0.13,0.33,0.50)*inner;
-  return float4(color*mask+float3(0.25,0.63,0.95)*halo,clamp(mask*0.97+halo,0.0,1.0));
+  float rim=exp(-abs(d+1.7)*0.7);
+  float bevel=exp(-abs(d+7.5)*0.24);
+  float innerRim=exp(-abs(d+15.0)*0.7);
+  float halo=exp(-max(d,0.0)*0.065)*(1.0-mask)*0.32;
+  float2 uv=p/size;
+  float reflectionAxis=(uv.y+0.68+uv.x*0.18)*7.0;
+  float reflection=exp(-reflectionAxis*reflectionAxis);
+  float sweep=uv.x*0.5+uv.y+0.12*sin(uv.x*4.0);
+  float ribbon=exp(-abs(sweep+0.52)*17.0);
+  float caustic=exp(-abs(sweep-0.55)*24.0);
+  float directional=0.35+0.65*pow(0.5+0.5*cos(atan(p.y,p.x)*2.0-0.65),2.0);
+  float3 color=tint*(0.65+reflection*0.85)
+    +float3(0.76,0.91,1.0)*rim*directional
+    +float3(0.28,0.57,0.80)*bevel*(0.4+reflection)
+    +float3(0.17,0.42,0.58)*innerRim
+    +float3(0.16,0.31,0.43)*ribbon+float3(0.07,0.20,0.31)*caustic;
+  return float4(color*mask+float3(0.25,0.63,0.95)*halo,clamp(mask*0.96+halo,0.0,1.0));
 }
 float pathX(float t,float i) {
   float start=848.0+(i-2.0)*35.0;
@@ -64,30 +71,40 @@ half4 main(float2 p) {
         float t=clamp((p.y-188.0)/284.0,0.0,1.0);
         float slope=(pathX(min(1.0,t+0.001),i)-pathX(max(0.0,t-0.001),i))/0.568;
         float d=(p.x-pathX(t,i))/sqrt(1.0+slope*slope);
-        float radius=15.0+desktop*3.0;
+        float radius=(21.0+desktop*4.0)*(1.0+0.07*sin(t*8.0+i));
         float n=d/radius;
-        float body=1.0-smoothstep(0.82,1.03,abs(n));
-        float rim=exp(-abs(abs(d)-radius*0.86)*0.85);
-        float ridgeAxis=(n+0.45)*5.0;
-        float ridge=exp(-ridgeAxis*ridgeAxis)*body;
-        float glow=exp(-abs(d)*0.045)*0.32;
+        float body=1.0-smoothstep(0.94,1.04,abs(n));
+        // Cylindrical lighting: silver rim, broad specular ribbon, dark core,
+        // and an opposing cyan caustic make the tubes read as solid glass.
+        float rim=exp(-abs(abs(n)-0.94)*radius*0.95);
+        float innerRim=exp(-abs(abs(n)-0.70)*radius*0.65)*body;
+        float front=exp(-(n+0.48)*(n+0.48)*48.0)*body;
+        float reflection=exp(-(n-0.28)*(n-0.28)*16.0)*body;
+        float caustic=exp(-abs(n-0.78)*32.0)*body;
+        float glow=exp(-abs(d)*0.045)*0.30;
+        float wave=0.8+0.2*sin(t*12.0-time*1.4+i);
+        float grid=exp(-abs(sin((p.y+n*n*14.0)*0.037))*35.0)*body;
         float fade=smoothstep(185.0,193.0,p.y)*(1.0-smoothstep(463.0,475.0,p.y));
-        float3 pipe=tint*(body*0.42+ridge*0.75+glow)+float3(0.63,0.87,1.0)*rim*1.05;
-        float alpha=clamp(body*0.5+rim*0.65+glow,0.0,0.96)*fade;
+        float3 pipe=tint*(body*0.22+reflection*0.46+glow)
+          +float3(0.78,0.92,1.0)*(rim*0.96+front*0.80*wave)
+          +float3(0.32,0.66,0.90)*(innerRim*0.52+caustic*0.86+grid*0.14);
+        float alpha=clamp(body*0.90+rim*0.15+glow,0.0,1.0)*fade;
         outColor=over(float4(min(pipe*fade,float3(alpha)),alpha),outColor);
         // Stable size/brightness variation gives each light its own identity
         // while all particles continue down the same project-to-device path.
-        for(int j=0;j<9;j++) {
-          float travel=fract(float(j)/9.0+time*0.18+i*0.071);
+        for(int j=0;j<16;j++) {
+          float travel=fract(float(j)/16.0+time*0.18+i*0.071);
           float2 dotPosition=float2(pathX(travel,i),188.0+travel*284.0);
-          float distance=length(p-dotPosition);
           float seed=fract(sin(float(j)*127.1+i*71.7+19.3)*43758.5453);
           float brightness=fract(sin(float(j)*53.9+i*143.3+7.1)*17341.17);
-          float size=mix(1.4,5.2,seed);
-          float intensity=mix(0.22,1.1,brightness)*(0.88+0.12*sin(time*2.0+float(j)));
+          float particleSlope=(pathX(min(1.0,travel+0.001),i)-pathX(max(0.0,travel-0.001),i))/0.568;
+          dotPosition+=normalize(float2(1.0,-particleSlope))*(seed-0.5)*19.0;
+          float distance=length(p-dotPosition);
+          float size=mix(1.6,5.7,seed);
+          float intensity=mix(0.38,1.45,brightness)*(0.88+0.12*sin(time*2.0+float(j)));
           float spark=(exp(-distance*distance/(size*size))+exp(-distance/(size*2.6))*0.40)*intensity;
           float alpha=clamp(spark,0.0,0.96)*fade;
-          outColor=over(float4(float3(0.72,0.92,1.0)*alpha,alpha),outColor);
+          outColor=over(float4(float3(0.90,0.97,1.0)*alpha,alpha),outColor);
         }
       }
       // Devices share a bottom baseline, as in the selected concept.
@@ -135,6 +152,7 @@ half4 main(float2 p) {
   }
   if(desktop < 0.5) {
     // Glass project tile with a small document plate above the native label.
+    outColor=over(material(p-float2(855,108),float2(147,88),23.0,float3(0.025,0.085,0.16)),outColor);
     outColor=over(material(p-float2(848,100),float2(145,88),23.0,float3(0.07,0.16,0.27)),outColor);
     outColor=over(material(p-float2(848,76),float2(30,35),5.0,float3(0.08,0.29,0.48)),outColor);
   } else {
@@ -142,7 +160,8 @@ half4 main(float2 p) {
     float2 q=p-float2(1317.5,325.0);
     float halo=exp(-abs(roundedBox(q,float2(213,41),31.0))*0.045)*0.42;
     outColor=over(float4(float3(0.04,0.72,1.0)*halo,halo),outColor);
-    outColor=over(material(q,float2(213,41),31.0,float3(0.02,0.28,0.39)),outColor);
+    outColor=over(material(q-float2(8,10),float2(216,44),29.0,float3(0.015,0.18,0.26)),outColor);
+    outColor=over(material(q,float2(213,41),29.0,float3(0.025,0.29,0.39)),outColor);
   }
   return half4(min(outColor.rgb,float3(outColor.a)),outColor.a);
 }`;
