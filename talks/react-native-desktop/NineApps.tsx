@@ -1,5 +1,5 @@
 import { FilmstripMotionView, FocusRegion, SceneMotionView, SharedElement, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
-import { FakeGlassTakeover } from "./FakeGlassTakeover";
+import type { ReactNode } from "react";
 import { DeckBackground } from "./DeckBackground";
 import { detailCamera, renderingGroup, tourStep } from "./NineAppsTour";
 import { MovingTitle } from "./MovingTitle";
@@ -19,7 +19,7 @@ export default function NineAppsFrame({ children }: PresentationTemplateProps) {
   return <><DeckBackground /><View style={{ flex: 1 }}>{children}</View></>;
 }
 
-export function NineApps({ mode }: { mode: SceneMode }) {
+export function NineApps({ mode, children }: { mode: SceneMode; children?: ReactNode }) {
   const step = usePresentationValue("stepIndex");
   const tour = tourStep(step);
   const selected = mode === "filmstrip" ? appOrder.indexOf(tour.app) : 0;
@@ -60,6 +60,6 @@ export function NineApps({ mode }: { mode: SceneMode }) {
       </FilmstripMotionView>;
     })}
     </SceneMotionView>
-    {mode === "filmstrip" && <FakeGlassTakeover visible={tour.detail === "fake" || tour.detail === "takeover"} expanded={tour.detail === "takeover"} />}
+    {mode === "filmstrip" && tour.detail === "takeover" && <View pointerEvents="none" style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080, zIndex: 3000 }}>{children}</View>}
   </FocusRegion>;
 }

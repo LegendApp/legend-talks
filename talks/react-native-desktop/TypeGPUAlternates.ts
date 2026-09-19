@@ -143,22 +143,24 @@ const shades = [
   `,
   // A composer-sized surface expands into a ray-lit refractive wave field.
   `
-  let grow=select(0.0,smoothstep(0.0,5.0,clock.time),clock.step>0.5);
-  let center=vec2f(0.5,mix(0.78,0.5,grow));
+  let grow=smoothstep(0.0,5.0,clock.time);
+  let reveal=smoothstep(0.0,1.5,clock.time);
+  let center=vec2f(0.5,mix(600.0/1080.0,0.5,grow));
   let p=(uv-center)*vec2f(clock.aspect,1);
   let radius=length(p);
   let wave=sin(radius*38.0-clock.time*4.0)*exp(-radius*0.75);
   let wave2=sin(p.x*11.0+p.y*8.0+clock.time*2.0);
   let normal=normalize(vec3f(p/max(radius,0.01)*cos(radius*38.0-clock.time*4.0)*0.8,1.0));
   let spec=pow(max(dot(normal,normalize(vec3f(-0.4,-0.6,1))),0.0),20.0);
-  let size=mix(vec2f(0.5,0.075),vec2f(1.7,0.85),grow);
+  let size=mix(vec2f(1696.0/2160.0,0.1406),vec2f(1.7,0.85),grow);
   let border=box(p,size,0.045+grow*0.15)-wave*grow*0.025;
   let gridP=p+normal.xy*0.035*(0.3+grow);
   let grid=min(abs(fract(gridP.x*6.0)-0.5),abs(fract(gridP.y*6.0)-0.5));
   var c=glass(border,p,vec3f(0.03,0.1,0.16));
   c+=(vec3f(0.15,0.5,0.75)*spec+vec3f(0.02,0.09,0.15)*exp(-grid*65.0)
     +vec3f(0.08,0.04,0.14)*(0.5+0.5*wave2)*grow)*(1.0-smoothstep(0.0,0.002,border));
-  return vec4f(c,clamp(1.0-smoothstep(0.0,0.003,border),0.0,1.0));
+  let alpha=clamp(1.0-smoothstep(0.0,0.003,border),0.0,1.0)*reveal;
+  return vec4f(c*alpha,alpha);
   `,
   // Connections illuminate outward. Dots are individual instanced particles.
   `

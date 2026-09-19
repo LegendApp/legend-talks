@@ -1,7 +1,7 @@
 # RN Connection running order
 
 52 slides: 43 main-talk slides, four optional backups, and five TypeGPU alternates. Timings are deliberately
-unset until rehearsal; the expanded story and 21-step visual tour need a fresh pace check.
+unset until rehearsal; the expanded story and 20-step visual tour need a fresh pace check.
 
 ## Story
 
@@ -31,7 +31,7 @@ speed, memory efficiency and native content UI. AppKit's individual wins remain 
 | 13 | But hello world isn’t a real app |
 | 14 | I built a chat history app |
 | 15 | Then I built it nine times |
-| 16 | Same app. Nine implementations. — 21 manual steps |
+| 16 | Same app. Nine implementations. — 20 manual steps |
 | 17 | Chat History · first content |
 | 18 | Chat History · memory |
 | 19 | Chat History · jump to top |
@@ -72,13 +72,13 @@ Hello-world startup, installed size, and memory come first. The explicit bridge
 The tour is controlled entirely by presentation steps, with no autoplay:
 React Native → AppKit → SwiftUI → Electron → Tauri → Deno → Flutter → Compose → GPUI.
 RN, Electron, and Flutter each get sidebar and composer close-ups, then zoom out.
-GPUI ends the tour: overview → composer → authored fake-glass overlay → full-slide
+GPUI ends the tour: overview → composer → one continuous ripple fade and full-slide
 takeover. The custom native composer overlay has been removed; use new captures
 showing GPUI's own translucent composer. The joke is not a stock GPUI effect. Next advance starts the Chat History results.
 
 RN occupies the top-left grid slot and starts at the left of the carousel.
 The featured card is largest and stacks above its neighbors. Back retraces the
-21 states. Previews hold their selected state; interpolation runs on the UI thread.
+20 states. Previews hold their selected state; interpolation runs on the UI thread.
 
 Media remains explicitly labeled as pending. Add matching screenshots to the map
 in `NineApps.tsx`; tune normalized sidebar/composer crops in `NineAppsTour.ts`.
@@ -157,8 +157,8 @@ proportions, fixed bar origins, width interpolation and row movement. Native
 visual verification remains pending; the active macOS session belongs to another task.
 
 The Chat History hero/grid/tour titles and tour subtitle remain centered. The
-fake-glass composer effect fades in from clear over five seconds, without a
-caption. The subsequent full-slide expansion remains a separate step.
+TypeGPU glass ripple fades in from clear and expands across the slide in one
+five-second motion, without a caption or a second advance.
 
 The shared foundation is now a live Skia glass-root sculpture with a braided
 trunk. A UI-thread clock drives shader-only thickness and brightness pulses;
@@ -210,7 +210,7 @@ London 2025 desktop talk as additional references: short spoken paragraphs,
 concrete examples, direct first-person claims, occasional dry humor, and numbered
 cues for reveals. The audience content and slide order have not changed.
 
-The 21-step app tour has one-based cues matching its actual camera sequence.
+The 20-step app tour has one-based cues matching its actual camera sequence.
 The three-box story crosses out Performance before the framework section,
 then New modules on the return, then focuses Existing modules for the audience.
 The five TypeGPU alternates have replacement narration rather than renderer

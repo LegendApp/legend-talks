@@ -1,6 +1,6 @@
 import { appOrder, type AppId } from "./NineAppsGeometry";
 
-export type Detail = "app" | "sidebar" | "composer" | "fake" | "takeover";
+export type Detail = "app" | "sidebar" | "composer" | "takeover";
 export type TourStep = { app: AppId; detail: Detail };
 export const tourSteps: readonly TourStep[] = [
   { app: "react-native", detail: "app" },
@@ -22,7 +22,6 @@ export const tourSteps: readonly TourStep[] = [
   { app: "compose", detail: "app" },
   { app: "gpui", detail: "app" },
   { app: "gpui", detail: "composer" },
-  { app: "gpui", detail: "fake" },
   { app: "gpui", detail: "takeover" },
 ];
 export function tourStep(step: number) { return tourSteps[Math.max(0, Math.min(tourSteps.length - 1, step))]; }
