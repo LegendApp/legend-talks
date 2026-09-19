@@ -10,6 +10,7 @@ uniform float broken;
 uniform float settled;
 uniform float phase;
 uniform float success;
+uniform float centerX;
 float hash(float n) { return fract(sin(n * 127.1 + 311.7) * 43758.5453); }
 float2 rotatePoint(float2 p, float a) {
   float c = cos(a), s = sin(a);
@@ -39,7 +40,7 @@ float4 glass(float2 p, float clock) {
   return float4(color*alpha,alpha);
 }
 half4 main(float2 position) {
-  float2 p = position-float2(350.0,300.0);
+  float2 p = position-float2(centerX,300.0);
   float clock = time+phase;
   float elapsed = min(mix(time,6.0,settled),6.0);
   float resolve = broken*success*smoothstep(1.2,2.2,elapsed);
@@ -141,9 +142,10 @@ const glassEffect = Skia.RuntimeEffect.Make(objectionGlassShader);
 if (!glassEffect) throw new Error("Could not compile objection glass");
 
 function GlassPanel({ crossed, settled, index }: { crossed: boolean; settled: boolean; index: number }) {
-  const uniforms = useAnimatedShaderUniforms({ broken: crossed ? 1 : 0, settled: settled ? 1 : 0, phase: index * 1.7, success: index === 0 ? 1 : 0 }, crossed ? 6 : 2);
-  // Extend below the stage so falling shards leave the screen, not a small panel canvas.
-  return <Canvas pointerEvents="none" style={{ position: "absolute", left: -96, top: -108, width: 700, height: crossed ? 1080 : 600 }}>
+  const uniforms = useAnimatedShaderUniforms({ broken: crossed ? 1 : 0, settled: settled ? 1 : 0, phase: index * 1.7, success: index === 0 ? 1 : 0, centerX: crossed ? 396 + index * 564 : 350 }, crossed ? 6 : 2);
+  // Crossed panels draw across the full stage and below its bottom. The shader
+  // origin stays on this panel while fragments can cross neighboring columns.
+  return <Canvas pointerEvents="none" style={{ position: "absolute", left: crossed ? -142 - index * 564 : -96, top: -108, width: crossed ? 1920 : 700, height: crossed ? 1080 : 600 }}>
     <Fill><Shader source={glassEffect!} uniforms={uniforms} /></Fill>
   </Canvas>;
 }
