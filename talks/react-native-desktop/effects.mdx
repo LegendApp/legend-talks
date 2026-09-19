@@ -1,0 +1,462 @@
+---
+title: Effects gallery
+aspectRatio: 16:9
+width: 1920
+height: 1080
+transition: none
+template: ./TalkTemplate.tsx
+background: false
+theme:
+  backgroundColor: "#080c14"
+  color: "#f8fafc"
+presenter:
+  showNext: true
+  showNotes: true
+---
+
+import { Text, View } from "react-native"
+import { AmbientAurora } from "./packs/backgrounds"
+import { Scene, BigStatement, ChatIllustration, GlassChatControls } from "./Scene"
+import { GlassCaption } from "./GlassCaption"
+import { sidebarStorm } from "./sidebarStorm"
+import { AgentDeviceScan } from "./packs/automation"
+import { NativeOrbitLottie } from "./packs/animation"
+import { BenchmarkArrival } from "./packs/charts"
+import { ChromeConveyor } from "./packs/comparison"
+import { NativeDataWindow, gpuConstellation, gpuConstellationCount, gpuInterfaceReveal, gpuInterfaceRevealCount } from "./packs/data"
+import { InfiniteDesktop } from "./packs/depth"
+import { prismaticTear, subtleFaultTiming } from "./packs/distortion"
+import { chatGlassUniforms, glassTimeline, liquidGlass, MaterialSampler } from "./packs/glass"
+import { MagneticCursor } from "./packs/interaction"
+import { PhysicsLayout } from "./packs/motion"
+import { FrameBudget, LatencyRace, MemoryGravity, ThreadPressure } from "./packs/performance"
+import { ComponentXRay, FocusSpotlight, NativeLayerPeel } from "./packs/reveal"
+import { CodeToPixels, CodeToUI, PlatformMetamorphosis } from "./packs/transform"
+import { WindowPortal } from "./packs/transitions"
+import { ShaderTypography } from "./packs/typography"
+import { SpotlightDemo, FreezeDemo, ProgressiveDemo, WipeDemo, CalloutDemo, CodeDemo, LayersDemo, SwapDemo } from "./PresentingDemos"
+
+<Scene eyebrow="Shader preset / liquid" title="Liquid" footer="Built-in preset: liquid">
+  <Effect preset="liquid" strength={24} speed={0.8} padding={48}>
+    <View className="gap-8 rounded-3xl bg-cyan-300 px-12 py-16">
+      <Text className="text-8xl font-bold text-slate-950">Liquid</Text>
+      <Text className="text-4xl text-slate-800">Flowing displacement and a subtle shimmer.</Text>
+    </View>
+  </Effect>
+</Scene>
+
+<!-- Flowing displacement and a subtle shimmer. This effect captures native content and filters the resulting image. It animates on the active slide and uses a still frame in Next. -->
+
+---
+
+<Scene eyebrow="Shader preset / ripple" title="Ripple" footer="Built-in preset: ripple">
+  <Effect preset="ripple" strength={52} speed={0.8} padding={48}>
+    <View className="gap-8 rounded-3xl bg-cyan-300 px-12 py-16">
+      <Text className="text-8xl font-bold text-slate-950">Ripple</Text>
+      <Text className="text-4xl text-slate-800">Radial waves distort the captured content.</Text>
+    </View>
+  </Effect>
+</Scene>
+
+<!-- Radial waves distort the captured content. This effect captures native content and filters the resulting image. It animates on the active slide and uses a still frame in Next. -->
+
+---
+
+<Scene eyebrow="Shader preset / glitch" title="Glitch" footer="Built-in preset: glitch">
+  <Effect preset="glitch" strength={24} speed={0.8} padding={48}>
+    <View className="gap-8 rounded-3xl bg-cyan-300 px-12 py-16">
+      <Text className="text-8xl font-bold text-slate-950">Glitch</Text>
+      <Text className="text-4xl text-slate-800">Horizontal bands and RGB separation.</Text>
+    </View>
+  </Effect>
+</Scene>
+
+<!-- Horizontal bands and RGB separation. This effect captures native content and filters the resulting image. It animates on the active slide and uses a still frame in Next. -->
+
+---
+
+<Scene eyebrow="Shader preset / pixelate" title="Pixelate" footer="Built-in preset: pixelate">
+  <Effect preset="pixelate" strength={24} speed={0} padding={48}>
+    <View className="gap-8 rounded-3xl bg-cyan-300 px-12 py-16">
+      <Text className="text-8xl font-bold text-slate-950">Pixelate</Text>
+      <Text className="text-4xl text-slate-800">The captured content resolves into square blocks.</Text>
+    </View>
+  </Effect>
+</Scene>
+
+<!-- The captured content resolves into square blocks. This effect captures native content and filters the resulting image. Pixelation is static; changing strength changes the block size. -->
+
+---
+
+<Scene eyebrow="Background / Ambient aurora" title="Ambient aurora" background={<AmbientAurora />} footer="Background · animated shader">
+  <BigStatement children="Light behind the content." detail="A full-window background, with readable native text above it." />
+</Scene>
+
+<!-- This is the only slide with the ambient background enabled. Other slides use a plain background to isolate their foreground effect. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Distortion / Prismatic tear" title="Prismatic tear">
+  <Effect shader={prismaticTear} strength={5} speed={1} padding={28} previewTime={3.14} uniforms={subtleFaultTiming}>
+    <BigStatement children={"Convenient.\nBut surely worse?"} detail="Slower. Heavier. Less native. That is the assumption." />
+  </Effect>
+</Scene>
+
+<!-- A subtle fault starts after three seconds and repeats every 4.25 seconds. The Next preview samples the visible fault. -->
+
+---
+
+<Scene eyebrow="Glass / Escalating refraction" title={<GlassCaption />} footer="Convincing first. Comically over-engineered by the end.">
+  <View style={{ height: 580, width: 1680 }}>
+    <Steps count={2}>{(step) => (
+    <Effect shader={liquidGlass} active={step >= 1} strength={96} speed={1} previewTime={glassTimeline.peak} uniforms={chatGlassUniforms}>
+      <ChatIllustration glassBackdrop />
+    </Effect>
+    )}</Steps>
+    <GlassChatControls />
+  </View>
+</Scene>
+
+<!-- 1: Start with restrained glass surfaces.
+
+2: Advance once to begin the escalating shader and caption sequence. Let it run for 24 seconds to reach the peak. Back returns to the restrained material. The controls remain sharp above the captured backdrop. -->
+
+---
+
+<Scene eyebrow="TypeGPU" title="Sidebar storm" footer="384 illustrated sidebars · one instanced draw · shader-driven motion">
+  <TypeGPU scene={sidebarStorm} width={1680} height={580} previewTime={6} />
+</Scene>
+
+<!-- 384 illustrated sidebars move in one instanced TypeGPU draw. A visual demonstration, not a throughput benchmark. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / native layers" title="Peel the app apart">
+  <NativeLayerPeel />
+</Scene>
+
+<!-- A reusable reveal for explaining how React, Fabric, AppKit views and platform services fit together. The labels are an architectural simplification, not a literal call stack. The animation restarts when the slide becomes active and remains static in presenter previews. Pack prototype: slides:reveal/native-layers. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / transformation" title="Components become interface">
+  <CodeToUI />
+</Scene>
+
+<!-- Use this when the code-to-product transition matters more than another static code sample. JSX lines move toward a native-looking Chat History window while the rows assemble. It is a visual metaphor, not a compiler diagram. Pack prototype: slides:transform/code-to-ui. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / native data" title="The large document stays native">
+  <NativeDataWindow />
+</Scene>
+
+<!-- Five small pieces of visible-row data cross from a 228 MiB native document into React. This visual explains ownership and lazy requests; it does not claim that the real application sends exactly five packets or uses this wire format. Pack prototype: slides:data/native-window. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / benchmarks" title="Let the result arrive">
+  <BenchmarkArrival />
+</Scene>
+
+<!-- The bars arrive once, in measured order, then stay readable. Values match the stable-first-content chart: RN 394, GPUI 490, Tauri 568 and Electron 792 ms. This is a motion treatment for evidence already documented in benchmark-source.md. Pack prototype: slides:charts/arrival. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / automation" title="Observe. Act. Verify.">
+  <AgentDeviceScan />
+</Scene>
+
+<!-- The scan establishes app state, the target moves to a known result, and the verification badge appears only after the action. This is an illustrative workflow rather than captured agent-device output. Pack prototype: slides:automation/device-scan. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / transitions" title="Open the native window">
+  <WindowPortal />
+</Scene>
+
+<!-- A component outline becomes a full desktop window through a focused portal transition. Use this for one major reveal rather than between every slide. The window is schematic. Pack prototype: slides:transitions/window-portal. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / comparison" title="Rectangles, then platform chrome">
+  <ChromeConveyor />
+</Scene>
+
+<!-- Generic schematic sidebars pass by before a more intentional platform-shaped design arrives. The rectangles are not attributed to any competing framework; every compared technology can produce polished UI. Pack prototype: slides:comparison/chrome-conveyor. -->
+
+---
+
+<Scene eyebrow="Effect gallery / TypeGPU" title="1,024 fragments become visible rows" footer={`${gpuConstellationCount} particles · one instanced draw · shader-driven motion`}>
+  <TypeGPU scene={gpuConstellation} width={1680} height={580} previewTime={6} />
+</Scene>
+
+<!-- A TypeGPU scene moves 1,024 fragments from a native-data cloud into five visible-row bands with one instanced draw. The motion is a visual metaphor for selective access and is not a benchmark of the real data boundary. Pack prototype: slides:data/gpu-constellation. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / speed" title="394 ms feels different from 792 ms">
+  <LatencyRace />
+</Scene>
+
+<!-- The measured stable-first-content values become a deliberately slowed race so the timing difference is easy to see. The visual duration is proportional but does not run in real time. Both cards stop at the same finish line and remain readable before the effect repeats. Pack prototype: slides:performance/latency-race. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / weight" title="Memory has weight">
+  <MemoryGravity />
+</Scene>
+
+<!-- React Native's 101.7 MB and Electron's 628.9 MB initial physical footprints compress two supports by different amounts. Gravity is a visual metaphor; the printed values are the actual p50 measurements from this comparison. Pack prototype: slides:performance/memory-gravity. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / timing" title="Heavy work misses the frame">
+  <FrameBudget />
+</Scene>
+
+<!-- This generic frame-budget explanation contrasts work that fits within 16.7 ms with work that crosses the frame boundary. The 6 ms and 24 ms workloads are illustrative and are not measurements of React Native or any compared implementation. Pack prototype: slides:performance/frame-budget. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / Lottie" title="A JSON file becomes native animation">
+  <NativeOrbitLottie />
+</Scene>
+
+<!-- This animation is generated deck-local Lottie JSON played by lottie-react-native and lottie-ios on macOS. The shared slide clock drives normalized progress, so presenter previews are static and leaving then returning restarts the animation. Pack prototype: slides:animation/lottie. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / responsive form" title="Phone-shaped becomes desktop-shaped">
+  <PlatformMetamorphosis intensity="heavy" tempo="fast" />
+</Scene>
+
+<!-- The same schematic Chat History component expands from a narrow mobile composition into a desktop window with sidebar and toolbar. The heavy, fast preset adds a small overshoot; use the light preset for a restrained product transition. This is a layout metaphor, not a claim that desktop adaptation is automatic. Pack prototype: slides:transform/platform-metamorphosis. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / execution" title="The native pulse keeps moving">
+  <ThreadPressure intensity="heavy" tempo="fast" />
+</Scene>
+
+<!-- A JS-driven indicator pauses behind an illustrative pressure interval while the native lane keeps moving. The component does not actually block the Slides JavaScript thread, so it remains safe for presenting and makes no measured performance claim. Pack prototype: slides:performance/thread-pressure. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / typography" title="Let the words become the effect">
+  <ShaderTypography intensity="heavy" tempo="slow" />
+</Scene>
+
+<!-- Skia masks an animated runtime shader into system-matched typography. Use this as a section-opening emphasis rather than a persistent title treatment. The heavy preset adds stronger color separation and scan energy. Pack prototype: slides:typography/shader. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / pointer" title="Make the interface feel magnetic">
+  <MagneticCursor intensity="light" tempo="slow" />
+</Scene>
+
+<!-- A simulated pointer draws nearby actions toward it. This slide intentionally uses the light preset: proximity feedback should feel responsive without making controls flee across the screen. A product version could feed the same field from pointer events. Pack prototype: slides:interaction/magnetic-cursor. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / architecture" title="X-ray the component tree">
+  <ComponentXRay intensity="heavy" tempo="slow" />
+</Scene>
+
+<!-- The interface separates into text, React, Fabric, native view and platform layers while a scan crosses the stack. These labels simplify the architecture for explanation and are not a literal runtime view hierarchy. Pack prototype: slides:reveal/component-xray. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / materials" title="Choose your material">
+  <MaterialSampler intensity="heavy" tempo="slow" />
+</Scene>
+
+<!-- Four local material treatments move over the same schematic backdrop. Frost, prism and gel are custom visual approximations; Platform is a reminder to use the native material when platform fidelity is the goal. Pack prototype: slides:glass/material-sampler. -->
+
+---
+
+<Scene eyebrow="Effect gallery / TypeGPU" title="4,096 particles become an interface" footer={`${gpuInterfaceRevealCount} particles · one instanced draw · shader-driven assembly`}>
+  <TypeGPU scene={gpuInterfaceReveal} width={1680} height={580} previewTime={6} />
+</Scene>
+
+<!-- One TypeGPU instanced draw spirals 4,096 fragments into a desktop-interface grid. It is an effect demonstration, not a benchmark, and it keeps the per-particle animation on the GPU rather than creating 4,096 React components. Pack prototype: slides:data/gpu-interface-reveal. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / transformation" title="Code becomes pixels">
+  <CodeToPixels intensity="heavy" tempo="fast" />
+</Scene>
+
+<!-- Source lines dissolve into a pixel stream and resolve as interface chrome. This is a visual transition between code and product, not an explanation of the React Native compiler or renderer. Pack prototype: slides:transform/code-to-pixels. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / physics" title="Give layout a little gravity">
+  <PhysicsLayout intensity="heavy" tempo="fast" />
+</Scene>
+
+<!-- Desktop panels fall into their constraints with damped spring motion. The heavy preset is intentionally theatrical; the light preset reduces rotation and bounce for real product use. Pack prototype: slides:motion/physics-layout. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / attention" title="Move the spotlight, not the slide">
+  <FocusSpotlight intensity="light" tempo="slow" />
+</Scene>
+
+<!-- A Skia shader moves a soft focus region across three stationary ideas. This light, slow preset is designed for explanation while preserving spatial context and readable previews. Pack prototype: slides:reveal/focus-spotlight. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / recursion" title="How many desktops is too many?">
+  <InfiniteDesktop intensity="heavy" tempo="fast" />
+</Scene>
+
+<!-- Ten schematic desktop windows recurse toward a vanishing point and accelerate under the heavy, fast preset. Use this for one absurd transition, not as a background for benchmark numbers. Pack prototype: slides:depth/infinite-desktop. -->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / Liquid Glass" title="Change the focus">
+  <Steps count={2}>{(step) => (
+  <LiquidGlass active={step >= 1} blur={24} refraction={8} duration={700}
+    overlay={<Text style={{ color: "white", fontSize: 64, fontWeight: "700", textAlign: "center" }}>The details can wait.
+Focus on what matters.</Text>}>
+    <ChatIllustration />
+  </LiquidGlass>
+  )}</Steps>
+</Scene>
+
+<!--
+1: Start with clear content. This is our illustrated chat, unchanged.
+
+2: Advance to frost the content. The glass bends briefly as it forms; the message above it stays sharp. Go back to clear the glass smoothly. This is a snapshot effect, not an interactive native glass control.
+-->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / Spotlight" title="One idea at a time">
+  <Steps count={4}>{(step) => (
+    <SpotlightDemo focus={[undefined, "react", "native", "gpu"][step]} />
+  )}</Steps>
+</Scene>
+
+<!--
+1: Show the complete composition.
+
+2: Focus on React. The surrounding content stays in place.
+
+3: Move attention to the native layer.
+
+4: Move attention to the GPU. Go backward to revisit each target.
+-->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / Freeze and annotate" title="Pause the motion. Explain the moment.">
+  <Steps count={3}>{(step) => (
+    <FreezeDemo paused={step === 1} />
+  )}</Steps>
+</Scene>
+
+<!--
+1: Let the orbit run. All motion is driven by one supplied clock.
+
+2: Freeze at the current moment and add the annotation.
+
+3: Resume from the frozen time; there is no catch-up jump.
+-->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / Progressive detail" title="Open up the explanation">
+  <Steps count={3}>{(step) => (
+    <ProgressiveDemo expanded={step === 1} />
+  )}</Steps>
+</Scene>
+
+<!--
+1: Begin with the simple native document abstraction.
+
+2: Expand the implementation. The summary moves aside to make room.
+
+3: Collapse back to the simple model.
+-->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / Comparison wipe" title="Keep the comparison aligned">
+  <Steps count={3}>{(step) => (
+    <WipeDemo position={[0.12, 0.5, 0.88][step]} />
+  )}</Steps>
+</Scene>
+
+<!--
+1: Begin mostly on the original. Both designs are synthetic illustrations.
+
+2: Move the divider to compare the same content side by side.
+
+3: Reveal most of the refined design. This is a visual comparison, not a benchmark.
+-->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / Anchored callouts" title="The explanation follows the object">
+  <Steps count={3}>{(step) => (
+    <CalloutDemo moved={step === 1} />
+  )}</Steps>
+</Scene>
+
+<!--
+1: The callout attaches to the native module target by ID.
+
+2: Move and resize the target. Its arrow and label follow the measured geometry.
+
+3: Return the target. No hand-authored annotation coordinates change.
+-->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / Code walkthrough" title="Read only the lines that matter">
+  <Steps count={3}>{(step) => (
+    <CodeDemo focus={step} />
+  )}</Steps>
+</Scene>
+
+<!--
+1: Focus on opening the native document and reading its count. This is illustrative code.
+
+2: Move to the lazy row request. Dim the rest of the source.
+
+3: Connect the returned metadata to a React component.
+-->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / Exploded layers" title="Take the composition apart">
+  <Steps count={3}>{(step) => (
+    <LayersDemo expanded={step === 1} />
+  )}</Steps>
+</Scene>
+
+<!--
+1: Start with one assembled composition.
+
+2: Separate the conceptual layers and explain their responsibilities. This is a diagram, not a literal capture of the view hierarchy.
+
+3: Reassemble the composition.
+-->
+
+---
+
+<Scene footer="Effects gallery · advance through steps; back to reverse" eyebrow="Effect gallery / Content replacement" title="Turn the evidence into the takeaway">
+  <Steps count={3}>{(step) => (
+    <SwapDemo summary={step === 1} />
+  )}</Steps>
+</Scene>
+
+<!--
+1: Show the measured first-content chart.
+
+2: Replace the chart with its takeaway in the same space.
+
+3: Return to the chart when someone wants the evidence.
+-->

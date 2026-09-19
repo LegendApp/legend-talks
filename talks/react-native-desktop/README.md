@@ -15,6 +15,19 @@ bun run slides run macos -- apps/slides/decks/react-native-desktop/talk.mdx
 [Sources](./sources.md) maps claims and code excerpts to their evidence.
 [Benchmark source](./benchmark-source.md) records the comparison methodology.
 
+## Standalone effects gallery
+
+Open [effects.mdx](./effects.mdx) for **40 slides, one effect demonstration per
+slide**. It includes all 32 gallery demos from the talk, the four built-in shader
+presets, ambient aurora, prismatic tear, escalating glass, and the TypeGPU sidebar
+storm. Step-driven demos retain their forward/back controls and presenter notes.
+A plain background and cut transitions isolate each effect; the aurora demo
+explicitly enables its own background. `talk.mdx` remains unchanged.
+
+```sh
+bun run slides run macos -- apps/slides/decks/react-native-desktop/effects.mdx
+```
+
 ## Editing the draft
 
 The talk moves from the compromise assumption to desktop discovery, Chat History,
