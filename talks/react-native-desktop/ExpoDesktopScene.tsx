@@ -1,6 +1,7 @@
 import { Canvas, Fill, Path, Shader, Skia } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
-import { Text, View } from "react-native";
+import { useEffect, useRef } from "react";
+import { Animated, Text, View } from "react-native";
 
 // Analytic glass pipes and devices. A shared UI-thread clock moves the light
 // particles; no snapshots, texture uploads, or per-frame JS geometry updates.
@@ -34,6 +35,8 @@ float4 material(float2 p,float2 size,float radius,float3 tint) {
     +float3(0.16,0.31,0.43)*ribbon+float3(0.07,0.20,0.31)*caustic;
   return float4(color*mask+float3(0.25,0.63,0.95)*halo,clamp(mask*0.96+halo,0.0,1.0));
 }
+// Impact at 0.85s, pipe recoil settles at 1.8s, power reaches devices at 2.6s.
+float latch() { return connected*smoothstep(0.95,1.65,time); }
 float pathX(float t,float i) {
   float start=912.0+(i-2.0)*70.0;
   float end=160.0+i*376.0;
@@ -41,8 +44,12 @@ float pathX(float t,float i) {
     float bridge=1288.0+(i-3.0)*376.0;
     float upper=clamp(t/0.50625,0.0,1.0);
     float lower=clamp((t-0.50625)/0.49375,0.0,1.0);
-    return t<0.50625 ? mix(start,bridge,upper*upper*(3.0-2.0*upper))
+    float x=t<0.50625 ? mix(start,bridge,upper*upper*(3.0-2.0*upper))
       : mix(bridge,end,lower*lower*(3.0-2.0*lower));
+    float bend=4.0*t*(1.0-t);
+    bend*=bend;
+    float recoil=connected*sin(max(time-0.85,0.0)*19.0)*exp(-max(time-0.85,0.0)*3.7);
+    return x+bend*((i-3.5)*100.0*(1.0-latch())+recoil*62.0);
   }
   float ease=t*t*(3.0-2.0*t);
   return mix(start,end,ease);
@@ -83,13 +90,19 @@ float3 wallpaper(float2 p,float2 size,float seed) {
 }
 half4 main(float2 p) {
   float4 outColor=float4(0);
+  float impact=max(time-0.85,0.0);
+  float hit=connected*step(0.85,time);
+  // Local camera tremor is shader-only; labels remain legible.
+  if(desktop>0.5) p+=hit*exp(-impact*7.0)*float2(sin(impact*91.0)*10.0,cos(impact*77.0)*6.0);
   for(int k=0;k<5;k++) {
     float i=float(k);
     if ((desktop < 0.5 && k<3) || (desktop > 0.5 && k>=3)) {
       float endpoint=160.0+i*376.0;
       float3 tint=k<3 ? float3(0.24,0.43,0.70) : float3(0.04,0.67,0.90);
       // Broad, curved tubes, with a transparent core and two refractive rims.
-      if(p.y>=187.0 && p.y<=511.0) {
+      if(p.y>=187.0 && p.y<=511.0 &&
+        p.x>=min(912.0+(i-2.0)*70.0,endpoint)-110.0 &&
+        p.x<=max(912.0+(i-2.0)*70.0,endpoint)+110.0) {
         float t=clamp((p.y-188.0)/320.0,0.0,1.0);
         float d=pipeDistance(p,i);
         float radius=(21.0+desktop*4.0)*(1.0+0.07*sin(t*8.0+i));
@@ -105,14 +118,18 @@ half4 main(float2 p) {
         float glow=exp(-abs(d)*0.045)*0.30;
         float wave=0.8+0.2*sin(t*12.0-time*1.4+i);
         float grid=exp(-abs(sin((p.y+n*n*14.0)*0.037))*35.0)*body;
-        float progress=desktop<0.5 ? 1.0 : connected*smoothstep(0.5,2.5,time);
-        float reveal=1.0-smoothstep(progress-0.015,progress+0.015,t);
-        if(desktop>0.5 && connected<0.5) reveal=0.0;
+        float gap=desktop*(1.0-latch());
+        float reveal=1.0-gap*(smoothstep(0.33,0.35,t)*(1.0-smoothstep(0.64,0.66,t)));
+        float power=desktop<0.5 ? 1.0 : mix(0.25,1.0,connected*smoothstep(1.6,2.6,time));
+        if(desktop>0.5 && t<0.35) power=1.0;
         float fade=smoothstep(185.0,193.0,p.y)*(1.0-smoothstep(499.0,511.0,p.y))*reveal;
         float3 pipe=tint*(body*0.22+reflection*0.46+glow)
           +float3(0.78,0.92,1.0)*(rim*0.96+front*0.80*wave)
           +float3(0.32,0.66,0.90)*(innerRim*0.52+caustic*0.86+grid*0.14);
-        float alpha=clamp(body*0.90+rim*0.15+glow,0.0,1.0)*fade;
+        float surge=desktop*hit*exp(-pow((t-mix(0.35,1.12,clamp((time-1.5)/1.15,0.0,1.0)))*18.0,2.0))
+          *(1.0-smoothstep(2.6,3.0,time));
+        pipe=pipe*power+float3(0.60,0.94,1.0)*surge*(body+glow)*1.8;
+        float alpha=clamp(body*0.90+rim*0.15+glow+surge*glow,0.0,1.0)*fade;
         outColor=over(float4(min(pipe*fade,float3(alpha)),alpha),outColor);
         // Stable size/brightness variation gives each light its own identity
         // while all particles continue down the same project-to-device path.
@@ -127,8 +144,24 @@ half4 main(float2 p) {
           float size=mix(1.6,5.7,seed);
           float intensity=mix(0.38,1.45,brightness)*(0.88+0.12*sin(time*2.0+float(j)));
           float spark=(exp(-distance*distance/(size*size))+exp(-distance/(size*2.6))*0.40)*intensity;
-          float alpha=clamp(spark,0.0,0.96)*fade;
+          float flowing=desktop<0.5 ? 1.0 : (1.0-step(0.35,travel))
+            +step(0.35,travel)*connected*smoothstep(1.5,2.6,time);
+          float alpha=clamp(spark,0.0,0.96)*fade*flowing;
           outColor=over(float4(float3(0.90,0.97,1.0)*alpha,alpha),outColor);
+        }
+      }
+      if(desktop>0.5) {
+        float2 broken=float2(pathX(0.34,i),296.8);
+        float outage=1.0-latch();
+        // Hot broken ends and staggered ballistic sparks, visible before the click.
+        float cap=exp(-pow((p.y-broken.y)/2.5,2.0))*exp(-pow((p.x-broken.x)/24.0,4.0))*outage;
+        outColor=over(float4(float3(1.0,0.48,0.22)*cap,cap),outColor);
+        for(int j=0;j<8;j++) {
+          float age=fract(time*0.85+float(j)*0.127+i*0.37);
+          float direction=sin(float(j)*17.3+i*4.0);
+          float2 sparkPos=broken+float2(direction*age*95.0,-age*70.0+age*age*235.0);
+          float light=exp(-length(p-sparkPos)/2.8)*(1.0-age)*outage;
+          outColor=over(float4(float3(1.0,0.60,0.28)*light,light),outColor);
         }
       }
       // Devices share a bottom baseline, as in the selected concept.
@@ -162,6 +195,11 @@ half4 main(float2 p) {
         float panes=(1.0-smoothstep(28.0,29.0,max(abs(logo.x),abs(logo.y))))*step(2.0,abs(logo.x))*step(2.0,abs(logo.y));
         screenColor=mix(screenColor,float3(0.33,0.73,1.0),panes);
       }
+      if(k>=3) {
+        float power=connected*smoothstep(2.25,2.65,time);
+        screenColor*=mix(0.14,1.0,power);
+        screenColor+=float3(0.25,0.65,0.85)*exp(-pow((time-2.55)*6.0,2.0))*connected;
+      }
       frame=over(float4(screenColor*screen,screen),frame);
       outColor=over(frame,outColor);
       if(k>=3) {
@@ -171,6 +209,7 @@ half4 main(float2 p) {
       }
       float2 glowPoint=(p-float2(endpoint,677.0))/float2(phone ? 78.0 : 160.0,10.0);
       float ground=exp(-dot(glowPoint,glowPoint))*0.3;
+      if(k>=3) ground*=mix(0.12,1.0,connected*smoothstep(2.25,2.65,time));
       outColor=over(float4(tint*ground,ground),outColor);
     }
   }
@@ -178,9 +217,38 @@ half4 main(float2 p) {
     // Glass project tile behind the Expo mark and native label.
     outColor=over(material(p-float2(912,100),float2(190,88),23.0,float3(0.07,0.16,0.27)),outColor);
   } else {
-    // The two desktop pipes pass behind this bright connecting glass bridge.
-    float2 q=p-float2(1476,350.0);
-    float appear=connected*smoothstep(0.0,0.45,time);
+    float descent=clamp(time/0.85,0.0,1.0);
+    float drop=-470.0*(1.0-descent*descent*descent);
+    float bounce=hit*sin(impact*18.0)*exp(-impact*7.0)*15.0;
+    float2 center=float2(1476,350.0+drop+bounce);
+    float stretch=1.0+0.45*sin(descent*3.14159);
+    float2 q=(p-center)/float2(1.0/sqrt(stretch),stretch);
+    float appear=connected*smoothstep(0.0,0.12,time);
+    // Meteor wake narrows into the single glass bridge; no extra panel layer.
+    float wakeY=center.y-p.y;
+    float wake=step(0.0,wakeY)*exp(-wakeY/95.0)*exp(-pow((p.x-center.x)/(70.0+wakeY*0.18),2.0))
+      *appear*(1.0-smoothstep(0.82,0.94,time))*0.65;
+    outColor=over(float4(float3(0.18,0.75,1.0)*wake,wake),outColor);
+    float radius=impact*950.0;
+    float ring=exp(-abs(length((p-float2(1476,350))/float2(1.0,0.72))-radius)/9.0)
+      *hit*exp(-impact*2.6);
+    float flash=exp(-length(p-float2(1476,350))/190.0)*hit*exp(-impact*10.0)*0.8;
+    float energy=clamp(ring+flash,0.0,0.95);
+    outColor=over(float4(float3(0.55,0.91,1.0)*energy,energy),outColor);
+    // Glass fragments burst away from the broken connection and fall out.
+    if(hit>0.5 && impact<2.2) {
+      for(int j=0;j<20;j++) {
+        float angle=float(j)*2.39996;
+        float speed=130.0+float(j)*13.0;
+        float2 debris=float2(1476,350)+float2(cos(angle)*speed*impact,sin(angle)*speed*impact+250.0*impact*impact);
+        float2 delta=p-debris;
+        float rotation=angle+impact*5.0;
+        delta=float2(delta.x*cos(rotation)-delta.y*sin(rotation),delta.x*sin(rotation)+delta.y*cos(rotation));
+        float shard=exp(-max(roundedBox(delta,float2(3.0+mod(float(j),3.0),9.0),1.0),0.0)*0.7)
+          *(1.0-smoothstep(1.1,2.2,impact))*0.75;
+        outColor=over(float4(float3(0.47,0.86,1.0)*shard,shard),outColor);
+      }
+    }
     float halo=exp(-abs(roundedBox(q,float2(221,41),31.0))*0.045)*0.42*appear;
     outColor=over(float4(float3(0.04,0.72,1.0)*halo,halo),outColor);
     outColor=over(material(q,float2(221,41),29.0,float3(0.025,0.29,0.39))*appear,outColor);
@@ -194,11 +262,32 @@ if (!effect) throw new Error("Could not compile Expo Desktop glass scene");
 const expoLogo = "M0 20.084c.043.53.23 1.063.718 1.778.58.849 1.576 1.315 2.303.567.49-.505 5.794-9.776 8.35-13.29a.761.761 0 011.248 0c2.556 3.514 7.86 12.785 8.35 13.29.727.748 1.723.282 2.303-.567.57-.835.728-1.42.728-2.046 0-.426-8.26-15.798-9.092-17.078-.8-1.23-1.044-1.498-2.397-1.542h-1.032c-1.353.044-1.597.311-2.398 1.542C8.267 3.991.33 18.758 0 19.77Z";
 
 function GlassNetwork({ desktop, connected = false }: { desktop: boolean; connected?: boolean }) {
-  const uniforms = useAnimatedShaderUniforms({ desktop: desktop ? 1 : 0, connected: connected ? 1 : 0 }, 3);
+  const uniforms = useAnimatedShaderUniforms({ desktop: desktop ? 1 : 0, connected: connected ? 1 : 0 }, 4);
   return <Canvas pointerEvents="none" style={{ width: 1824, height: 691 }}>
     <Fill><Shader source={effect!} uniforms={uniforms} /></Fill>
     {!desktop && <Path path={expoLogo} color="#e6f7ff" transform={[{ translateX: 880 }, { translateY: 44 }, { scale: 64 / 24 }]} />}
   </Canvas>;
+}
+
+function BridgeLabel() {
+  const active = usePresentationValue("isActive");
+  const preview = usePresentationValue("isPreview");
+  const preparing = usePresentationValue("isPreparing");
+  const opacity = useRef(new Animated.Value(preview ? 1 : 0)).current;
+  useEffect(() => {
+    if (preview) { opacity.setValue(1); return; }
+    if (!active || preparing) return;
+    opacity.setValue(0);
+    const animation = Animated.sequence([
+      Animated.timing(opacity, { toValue: 0, duration: 1000, useNativeDriver: true, isInteraction: false }),
+      Animated.timing(opacity, { toValue: 1, duration: 220, useNativeDriver: true, isInteraction: false }),
+    ]);
+    animation.start();
+    return () => animation.stop();
+  }, [active, preparing, preview, opacity]);
+  return <Animated.View style={{ position: "absolute", left: 1255, top: 329, width: 442, height: 42, opacity }}>
+    <Text style={{ fontSize: 34, lineHeight: 42, fontWeight: "600", color: "#ffffff", textAlign: "center" }}>Expo Desktop</Text>
+  </Animated.View>;
 }
 
 export function ExpoDesktopLayers() {
@@ -209,14 +298,12 @@ export function ExpoDesktopLayers() {
       fontWeight: "600", color: "#ffffff", textAlign: "center" }}>Expo</Text>
     <View style={{ position: "absolute", left: 0, top: 0, width: 1824, height: 726 }}>
       <GlassNetwork key={step >= 1 ? "connected" : "isolated"} desktop connected={step >= 1} />
-      <Text accessibilityLabel="Apple logo" style={{ position: "absolute", left: 1238, top: 527, width: 100,
+      <SceneMotionView pose={{ opacity: step >= 1 ? 1 : 0.16 }} duration={2800} style={{ position: "absolute", left: 1238, top: 527, width: 100, height: 88 }}>
+      <Text accessibilityLabel="Apple logo" style={{ width: 100,
         fontFamily: "Helvetica Neue", fontSize: 72, lineHeight: 88, color: "#83d6ff", textAlign: "center",
         textShadowColor: "#418de0", textShadowRadius: 12, textShadowOffset: { width: 0, height: 0 } }}>{"\uF8FF"}</Text>
-      <SceneMotionView hidden={step < 1} initialPose={{ opacity: 0 }} pose={{ opacity: step >= 1 ? 1 : 0 }} duration={450}
-        style={{ position: "absolute", left: 1255, top: 329, width: 442, height: 42 }}>
-      <Text style={{ fontSize: 34, lineHeight: 42,
-        fontWeight: "600", color: "#ffffff", textAlign: "center" }}>Expo Desktop</Text>
       </SceneMotionView>
+      {step >= 1 && <BridgeLabel />}
       {["macOS", "Windows"].map((name, index) => <Text key={name} style={{ position: "absolute", top: 692,
         left: 1158 + index * 376, width: 260, fontSize: 28, fontWeight: "500", color: "#ffffff", textAlign: "center" }}>{name}</Text>)}
     </View>
