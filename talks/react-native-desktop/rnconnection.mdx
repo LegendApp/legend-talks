@@ -681,9 +681,11 @@ And we haven't even got to the developer experience yet.
 
 Reading this chart: native UI means native content controls on desktop, not just window chrome. Full dots are supported application targets. Half-filled Web dots for Tauri, Electron and Deno mean reusable web UI; desktop APIs still need adaptation. Tauri's iOS and Android half dots reflect my reservations about the mobile experience. Both are officially supported; this is my assessment, not a finding from these desktop benchmarks.
 
-Performance bar method: Chat History first-content time, switching time, and initial physical footprint, weighted equally. For each metric use best measured value divided by that framework's value, then take their geometric mean. AppKit is 100 on this index because it leads these three metrics. Deno is the arithmetic mean of the two backend indices. This is a derived index, not a universal performance score, and excludes app size and jump timing.
+Benchmark results uses the same four Chat History bucket definitions as the earlier table: load time, memory, app size, and switching. Each little bar shows leading, middle, or trailing group with full, two-thirds, or one-third length. Those lengths encode categories, not percentages of performance. There is no combined score.
 
-The underlying measurements remain a mixed-build reference: GPUI and Tauri are new single runs, React Native is the September 19 ten-run median, and other rows are earlier measurements. The bar is descriptive of this snapshot, not a statistically established ranking.
+AppKit, React Native, and GPUI are in the leading group for all four. Differences within a bucket don't change the credit. Deno uses the worse of its two backend buckets wherever they differ.
+
+These remain mixed-build reference measurements: GPUI and Tauri are new single runs, React Native is the September 19 ten-run median, and other rows are earlier measurements. App sizes are the earlier app-only snapshot. The groups describe this snapshot, not a statistically established ranking.
 
 -->
 

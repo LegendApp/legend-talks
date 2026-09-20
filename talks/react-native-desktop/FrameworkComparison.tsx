@@ -2,20 +2,18 @@ import { SceneMotionView } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 import { ChartBar } from "./ChartBar";
 import { GlassPanels } from "./GlassPanels";
+import { bucketIndex, metrics } from "./MetricBucketDefinitions";
 import { frameworkCoverage, platforms } from "./FrameworkCoverage";
 import benchmarks from "./rnconnection-assets/benchmarks.json";
 
-// Equal-weight geometric mean of best/value for first content, switching and
-// initial memory. Deno uses the mean of its two backend scores, not cherry-picked metrics.
-const scoreMetrics = ["content", "switch", "memory"] as const;
-const best = scoreMetrics.map(metric => Math.min(...benchmarks.chat.map(row => row[metric])));
-const score = (row: typeof benchmarks.chat[number]) =>
-  Math.pow(scoreMetrics.reduce((product, metric, index) => product * best[index] / row[metric], 1), 1 / 3);
+// Show each existing benchmark bucket separately instead of inventing a speed score.
+// Deno uses the worse backend bucket where its two backends differ.
 const rows = frameworkCoverage.map(framework => {
   const samples = benchmarks.chat.filter(row => framework.name === "Deno" ? row.name.startsWith("Deno") : row.name === framework.name);
   if (!samples.length) throw new Error(`Missing benchmark for ${framework.name}`);
-  return { ...framework, score: samples.reduce((sum, row) => sum + score(row), 0) / samples.length };
+  return { ...framework, buckets: metrics.map(metric => Math.max(...samples.map(row => bucketIndex(row[metric.key], metric.key)))) };
 });
+const metricLabels = ["Load", "Memory", "Size", "Switch"];
 
 const panels = [
   { x: 270, y: 28, width: 480, height: 784, radius: 24 },
@@ -24,21 +22,25 @@ const panels = [
 ];
 
 export function FrameworkComparison() {
-  return <View accessibilityLabel="Framework comparison: performance index, native content controls, and platform coverage. Half-filled Web dots mean reusable web UI; Tauri mobile half dots reflect the presenter’s assessment of the experience." style={{ width: 1696, height: 850, alignSelf: "center" }}>
+  return <View accessibilityLabel="Framework comparison: benchmark buckets, native content controls, and platform coverage. Half-filled Web dots mean reusable web UI; Tauri mobile half dots reflect the presenter’s assessment of the experience." style={{ width: 1696, height: 850, alignSelf: "center" }}>
     <GlassPanels panels={panels} width={1696} height={850} />
-    {[{ name: "Performance", x: 270, width: 480 }, { name: "Native UI", x: 775, width: 290 }, { name: "Cross platform", x: 1095, width: 590 }].map(column =>
-      <Text key={column.name} style={{ position: "absolute", left: column.x, top: 64, width: column.width, fontSize: 36, lineHeight: 44, fontWeight: "600", color: "#f1f5f9", textAlign: "center" }}>{column.name}</Text>)}
+    {[{ name: "Benchmark results", x: 270, width: 480 }, { name: "Native UI", x: 775, width: 290 }, { name: "Cross platform", x: 1095, width: 590 }].map(column =>
+      <Text key={column.name} style={{ position: "absolute", left: column.x, top: 64, width: column.width, fontSize: 34, lineHeight: 44, fontWeight: "600", color: "#f1f5f9", textAlign: "center" }}>{column.name}</Text>)}
+    {metricLabels.map((label, index) => <Text key={label} style={{ position: "absolute", left: 290 + index * 110, top: 124, width: 102, textAlign: "center", color: "#b8c2ce", fontSize: 23 }}>{label}</Text>)}
     {platforms.map((platform, index) => <Text key={platform} style={{ position: "absolute", left: 1118 + index * 110, top: 124, width: 105, textAlign: "center", color: "#b8c2ce", fontSize: 23 }}>{platform}</Text>)}
     {rows.map((row, index) => {
       const highlighted = row.name === "React Native";
       const y = 200 + index * 66;
-      return <View key={row.name} accessibilityLabel={`${row.name}: performance index ${Math.round(row.score * 100)}, native UI ${row.native ? "yes" : "no"}, ${row.coverage.filter(value => value === 1).length} platforms${row.coverage.includes(0.5) ? ` plus ${row.coverage.filter(value => value === 0.5).length} qualified targets` : ""}`} style={{ position: "absolute", left: 0, top: y - 29, width: 1696, height: 58, justifyContent: "center" }}>
+      return <View key={row.name} accessibilityLabel={`${row.name}: benchmark groups ${row.buckets.map((bucket, index) => `${metricLabels[index]}: ${["leading", "middle", "trailing"][bucket]}`).join(", ")}, native UI ${row.native ? "yes" : "no"}, ${row.coverage.filter(value => value === 1).length} platforms${row.coverage.includes(0.5) ? ` plus ${row.coverage.filter(value => value === 0.5).length} qualified targets` : ""}`} style={{ position: "absolute", left: 0, top: y - 29, width: 1696, height: 58, justifyContent: "center" }}>
         {highlighted && <View style={{ position: "absolute", inset: 0, borderRadius: 14, borderWidth: 1, borderColor: "#65cde8b0", backgroundColor: "#20608055", shadowColor: "#35cfff", shadowOpacity: 0.42, shadowRadius: 16, shadowOffset: { width: 0, height: 0 } }} />}
         <Text style={{ width: 266, paddingLeft: 12, color: highlighted ? "#8de4ff" : "#f1f5f9", fontSize: 32, lineHeight: 40, fontWeight: highlighted ? "700" : "500" }}>{row.name}</Text>
-        <View style={{ position: "absolute", left: 294, top: 15, width: 432, height: 28, borderRadius: 14, borderWidth: 1, borderColor: "#c8e7ff35", backgroundColor: "#90b6db20" }}>
-          <SceneMotionView pointerEvents="none" initialPose={{ opacity: 0 }} pose={{ opacity: 1 }} duration={650} style={{ position: "absolute", left: 0, top: 0, width: 432 * row.score, height: 28, borderRadius: 14, backgroundColor: highlighted ? "#75e4ff" : "#b7ddff", shadowColor: highlighted ? "#52dfff" : "#8acaff", shadowOpacity: 0.65, shadowRadius: 10, shadowOffset: { width: 0, height: 0 } }} />
-          <ChartBar highlighted={highlighted} luminous rounded style={{ width: 432 * row.score, height: 28 }} />
-        </View>
+        {row.buckets.map((bucket, metricIndex) => {
+          const width = 92 * (3 - bucket) / 3;
+          return <View key={metrics[metricIndex].key} style={{ position: "absolute", left: 294 + metricIndex * 110, top: 15, width: 92, height: 28, borderRadius: 14, borderWidth: 1, borderColor: "#c8e7ff35", backgroundColor: "#90b6db20" }}>
+            <SceneMotionView pointerEvents="none" initialPose={{ opacity: 0 }} pose={{ opacity: 1 }} duration={650} style={{ position: "absolute", left: 0, top: 0, width, height: 28, borderRadius: 14, backgroundColor: highlighted ? "#75e4ff" : "#b7ddff", shadowColor: highlighted ? "#52dfff" : "#8acaff", shadowOpacity: 0.65, shadowRadius: 10, shadowOffset: { width: 0, height: 0 } }} />
+            <ChartBar highlighted={highlighted} luminous rounded style={{ width, height: 28 }} />
+          </View>;
+        })}
         <View style={{ position: "absolute", left: 896, top: 5, width: 48, height: 48, borderRadius: 24, alignItems: "center", justifyContent: "center", borderWidth: row.native ? 2 : 0, borderColor: highlighted ? "#85eeff" : "#e4f3ff", shadowColor: highlighted ? "#5be7ff" : "#94caff", shadowOpacity: row.native ? 0.65 : 0, shadowRadius: 12, shadowOffset: { width: 0, height: 0 } }}>
           <Text style={{ fontSize: 34, lineHeight: 42, color: row.native ? highlighted ? "#7ce8f7" : "#e7f5ff" : "#778ea6" }}>{row.native ? "✓" : "–"}</Text>
         </View>
