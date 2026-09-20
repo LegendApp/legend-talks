@@ -150,12 +150,13 @@ function GlassPanel({ crossed, settled, index }: { crossed: boolean; settled: bo
 }
 
 /** Both resolved objections use the exact same glass, strike, sparks and check. */
-function ObjectionCard({ label, index, crossed, settled, zoom }: {
-  label: string; index: number; crossed: boolean; settled: boolean; zoom: boolean;
+function ObjectionCard({ label, index, crossed, settled, zoomTarget }: {
+  label: string; index: number; crossed: boolean; settled: boolean; zoomTarget: number | null;
 }) {
-  const center = index === 1;
+  const zoom = zoomTarget !== null;
+  const center = index === zoomTarget;
   return <SceneMotionView duration={850}
-    pose={{ x: zoom && !center ? (index === 0 ? -450 : 450) : 0,
+    pose={{ x: zoom ? center ? (1 - index) * 564 : (index < zoomTarget! ? -450 : 450) : 0,
       y: zoom && center ? 35 : 0,
       scaleX: zoom && center ? 1.65 : 1, scaleY: zoom && center ? 1.65 : 1,
       opacity: zoom && !center ? 0 : 1 }}
@@ -171,11 +172,11 @@ function ObjectionCard({ label, index, crossed, settled, zoom }: {
 
 export function DesktopObjections({ returning = false }: { returning?: boolean }) {
   const step = usePresentationValue("stepIndex");
-  const zoom = returning && step >= 2;
+  const zoomTarget = step >= 2 ? returning ? 1 : 2 : null;
   const crossed = [returning || step >= 1, false, returning && step >= 1];
   return <View style={{ width: 1696, height: 660, marginTop: 45, alignSelf: "center" }}>
-    {["Performance", "Existing modules", "Desktop modules"].map((label, index) =>
+    {["Performance", "Existing modules", "Desktop foundations"].map((label, index) =>
       <ObjectionCard key={label} label={label} index={index} crossed={crossed[index]!}
-        settled={returning && index === 0} zoom={zoom} />)}
+        settled={returning && index === 0} zoomTarget={zoomTarget} />)}
   </View>;
 }

@@ -217,10 +217,5 @@ export function ExpoDesktopLayers() {
     </SceneMotionView>
     {["iOS", "Android", "Web"].map((name, index) => <Text key={name} style={{ position: "absolute", top: 692,
       left: 30 + index * 376, width: 260, fontSize: 28, fontWeight: "500", color: "#ffffff", textAlign: "center" }}>{name}</Text>)}
-    <View style={{ position: "absolute", top: 739, width: 1824 }}>
-      <SceneMotionView hidden={step < 2} pose={{ opacity: step >= 2 ? 1 : 0, y: step >= 2 ? 0 : 10 }} duration={500}>
-        <Text style={{ fontSize: 23, textAlign: "center", color: "#bdefff" }}>Legend Frame · desktop APIs + runtime + builds</Text>
-      </SceneMotionView>
-    </View>
   </View>;
 }

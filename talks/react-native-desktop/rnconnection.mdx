@@ -25,6 +25,7 @@ import { CrossPlatformLanes } from "./CrossPlatformLanes"
 import { MeasurementTimeline } from "./MeasurementTimeline"
 import { HelloSizeJourney } from "./HelloSizeJourney"
 import { StoryMoment, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot, SlidesRelease, WordFlow } from "./StoryDiagrams"
+import { ExpoDesktopGap, DesktopModulesChecklist } from "./DesktopFoundations"
 import { DesktopObjections } from "./DesktopObjections"
 import { SharedRoots } from "./SharedRoots"
 import markdownIcon from "./rnconnection-assets/markdown-icon.png";
@@ -849,7 +850,7 @@ So if it's this good, why isn't everyone doing this?
 
 ---
 title: "What’s holding desktop back"
-steps: 2
+steps: 3
 eyebrow: Story
 ---
 
@@ -864,36 +865,38 @@ Performance.
 
 The libraries they already use don't all support desktop.
 
-And there are desktop things they need new modules for. Windows, menus, files, all of that. Even getting a project started can be a pain.
+And then there's the desktop foundation. Getting a project started, getting it built, and all the native desktop APIs the app needs.
 
 2. Performance? We just did that.
 
 I don't think that belongs on the list of reasons to avoid React Native desktop anymore.
 
 So let's work on the other two.
+
+3. Start with desktop foundations. Before I can add a menu or another window, I need a project and a workflow.
 -->
 
 ---
-eyebrow: Story
+eyebrow: 'Desktop foundations / workflow'
 ---
 
-# That last one is fixable {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+# I want to start with Expo {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
 
-<CapabilityDiagram />
+<ExpoDesktopGap />
 
 <!--
-I'd already been solving that last one for my own apps.
+On mobile, I already have a workflow I like. Expo.
 
-Every app needed windows and menus and shortcuts and files. And I'd already pulled a lot of it into shared packages.
+I want to keep that project when I add desktop. But the desktop story isn't complete out of the box: project setup, native module compatibility, and the build workflow all need attention.
 
-But I didn't want everyone else to have to figure all of that out from scratch.
+This isn't saying no Expo modules work on desktop. Some do. It means I can't assume the whole mobile workflow and every module just work unchanged.
 
-So I decided to do the thing I apparently keep doing, and build a framework.
+So first, we need to bring desktop into that workflow.
 -->
 
 ---
-steps: 3
-eyebrow: Story
+steps: 2
+eyebrow: 'Desktop foundations / Expo Desktop'
 ---
 
 # Built on Expo Desktop {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
@@ -901,17 +904,40 @@ eyebrow: Story
 <ExpoDesktopLayers />
 
 <!--
-1. It starts with your Expo project. We already have a really good workflow for iOS, Android, and web.
+1. Start with your Expo project. iOS, Android, and web.
 
-2. Now add the desktop branches. Expo Desktop adds the native projects around that workflow, using React Native macOS and Windows.
+2. Expo Desktop adds the desktop projects around that workflow, using React Native macOS and Windows.
 
-The particles are just showing the shared project flowing out to each platform.
+It's a community project. It gives us a starting point for desktop, not automatic compatibility for every Expo module.
 
-It's a community project. It doesn't magically make every Expo module work on desktop.
+Now I can start an app. But a desktop app needs a lot more than a window.
+-->
 
-3. Then my framework adds the desktop APIs, the runtime pieces, and the build tooling on top.
+---
+steps: 3
+eyebrow: 'Desktop foundations / native capabilities'
+---
 
-So we can spend more time building the actual app.
+# A desktop app needs all of this {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<DesktopModulesChecklist />
+
+<!--
+1. Windows. Menus. Keyboard shortcuts. Files. Open and save dialogs.
+
+React makes composing the interface easy. But somebody has to write and maintain the native integrations for these things.
+
+2. Drag and drop. Clipboard. Notifications. A tray icon. Media controls.
+
+Every app I made needed another piece of this.
+
+3. Deep links. App lifecycle. Preferences. Permissions. And a way to distribute and update the app.
+
+This is a checklist of the foundation an app may need, not a claim that every feature is already finished or equally supported on every platform.
+
+I'd already pulled a lot of this into shared packages for my own apps. I didn't want everybody else to have to build it all again.
+
+So I decided to turn that into a framework.
 -->
 
 ---
@@ -925,7 +951,7 @@ eyebrow: Story
 <!--
 1. This is Legend Frame.
 
-It's the desktop foundation I've been extracting from all these apps.
+Expo Desktop gives me the starting point. Frame brings together the desktop APIs and tooling I've been extracting from all these apps.
 
 2. The goal is much of the feature set of Electron, but in React Native.
 
