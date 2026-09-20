@@ -324,8 +324,14 @@ function GlassNetwork({ desktop, connected = false }: { desktop: boolean; connec
     // One snapshot per step/lifecycle change, never per frame. Publishing the
     // connection flag and epoch together prevents a finished-state flash.
     const running = active && !preview && !preparing;
-    if (connected !== previous.current.connected || running && !previous.current.running) {
-      setSequence({ connected, startTime: preview ? 0 : clock.current.value.time });
+    const connectionChanged = connected !== previous.current.connected;
+    if (connectionChanged || running && !previous.current.running) {
+      // Activation resets the UI clock to zero. Reading it back from JS here
+      // can still return the old preview time and freeze elapsed() for seconds.
+      // Only a connection step on an already-running slide needs a timestamp.
+      const startTime = connectionChanged && previous.current.running && !preview
+        ? clock.current.value.time : 0;
+      setSequence({ connected, startTime });
     }
     previous.current = { connected, running };
   }, [connected, preview, active, preparing]);
