@@ -46,7 +46,10 @@ half4 main(float2 p) {
 const effect = Skia.RuntimeEffect.Make(maintenanceTreeShader);
 if (!effect) throw new Error("Could not compile maintenance tree");
 const emissionInterval = 300;
-const travelDuration = 1500;
+const travelDuration = 1900;
+const warmupStarts = [3000, 3900, 4675, 5325, 5875, 6325, 6675];
+const steadyStart = 6975;
+const introDuration = steadyStart + travelDuration;
 // Precompute varied routes once. A single native clock keeps emissions evenly
 // spaced; no timers, frame callbacks or per-cycle JS lane selection.
 const routes = Array.from({ length: 3 }, () => {
@@ -65,10 +68,22 @@ const trajectories = routes.map((lane, index) => {
   const inputRange = [...times].sort((a, b) => a - b);
   const phases = inputRange.map(time => ((time - start + cycleDuration) % cycleDuration) / travelDuration);
   return {
+    start,
     inputRange,
     x: phases.map(t => 848 + (branchX(lane) - 848) * ease(Math.min(t, 1))),
     y: phases.map(t => 70 + Math.min(t, 1) * 500),
     opacity: phases.map(t => t > 1 ? 0 : Math.min(1, t / 0.08, (1 - t) / 0.10)),
+  };
+});
+
+const warmupTrajectories = warmupStarts.map((start, index) => {
+  const inputRange = [0, start, ...Array.from({ length: 40 }, (_, sample) => start + (sample + 1) / 40 * travelDuration), introDuration];
+  const phases = inputRange.map(time => Math.max(0, Math.min(1, (time - start) / travelDuration)));
+  return {
+    inputRange,
+    x: phases.map(t => 848 + (branchX(routes[index]) - 848) * ease(t)),
+    y: phases.map(t => 70 + t * 500),
+    opacity: phases.map(t => Math.min(1, t / 0.08, (1 - t) / 0.10)),
   };
 });
 
@@ -77,24 +92,43 @@ function CryingStream() {
   const preview = usePresentationValue("isPreview");
   const preparing = usePresentationValue("isPreparing");
   const progress = useRef(new Animated.Value(2300)).current;
+  const intro = useRef(new Animated.Value(introDuration)).current;
   useEffect(() => {
-    if (!active || preview || preparing) { progress.setValue(2300); return; }
+    if (!active || preview || preparing) { progress.setValue(2300); intro.setValue(introDuration); return; }
     progress.setValue(0);
-    const animation = Animated.loop(Animated.timing(progress, {
-      toValue: cycleDuration, duration: cycleDuration, easing: Easing.linear,
-      useNativeDriver: true, isInteraction: false,
-    }));
+    intro.setValue(0);
+    const animation = Animated.parallel([
+      Animated.timing(intro, { toValue: introDuration, duration: introDuration, easing: Easing.linear, useNativeDriver: true, isInteraction: false }),
+      Animated.sequence([
+        Animated.timing(progress, { toValue: 0, duration: steadyStart, easing: Easing.linear, useNativeDriver: true, isInteraction: false }),
+        Animated.loop(Animated.timing(progress, {
+          toValue: cycleDuration, duration: cycleDuration, easing: Easing.linear,
+          useNativeDriver: true, isInteraction: false,
+        })),
+      ]),
+    ]);
     animation.start();
     return () => animation.stop();
-  }, [active, preview, preparing, progress]);
+  }, [active, preview, preparing, progress, intro]);
   return <>{trajectories.map((trajectory, index) => <Animated.Text key={index} style={{
-    position: "absolute", left: -21, top: -24, fontSize: 40, lineHeight: 50,
-    opacity: progress.interpolate({ inputRange: trajectory.inputRange, outputRange: trajectory.opacity }),
+    position: "absolute", left: -30, top: -35, fontSize: 58, lineHeight: 72,
+    opacity: Animated.multiply(
+      progress.interpolate({ inputRange: trajectory.inputRange, outputRange: trajectory.opacity }),
+      intro.interpolate({ inputRange: [0, steadyStart + (trajectory.start + travelDuration > cycleDuration ? travelDuration - 1 : 0), steadyStart + (trajectory.start + travelDuration > cycleDuration ? travelDuration : 1)], outputRange: [0, 0, 1], extrapolate: "clamp" }),
+    ),
     transform: [
       { translateX: progress.interpolate({ inputRange: trajectory.inputRange, outputRange: trajectory.x }) },
       { translateY: progress.interpolate({ inputRange: trajectory.inputRange, outputRange: trajectory.y }) },
     ],
-  }}>😭</Animated.Text>)}</>;
+  }}>😭</Animated.Text>)}
+    {warmupTrajectories.map((trajectory, index) => <Animated.Text key={`intro-${index}`} style={{ position: "absolute", left: -30, top: -35, fontSize: 58, lineHeight: 72,
+      opacity: intro.interpolate({ inputRange: trajectory.inputRange, outputRange: trajectory.opacity }),
+      transform: [
+        { translateX: intro.interpolate({ inputRange: trajectory.inputRange, outputRange: trajectory.x }) },
+        { translateY: intro.interpolate({ inputRange: trajectory.inputRange, outputRange: trajectory.y }) },
+      ],
+    }}>😭</Animated.Text>)}
+  </>;
 }
 
 export function AIMaintenance() {
