@@ -1,12 +1,14 @@
 import { Canvas, Fill, Path, Shader, Skia } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Animated, Easing, Text, View } from "react-native";
 
 // Analytic glass pipes and devices. A shared UI-thread clock moves the light
 // particles; no snapshots, texture uploads, or per-frame JS geometry updates.
 export const expoDesktopShader = `
 uniform float time;
+uniform float startTime;
+float elapsed() { return max(time-startTime,0.0); }
 uniform float desktop;
 uniform float connected;
 float roundedBox(float2 p, float2 size, float radius) {
@@ -36,7 +38,7 @@ float4 material(float2 p,float2 size,float radius,float3 tint) {
   return float4(color*mask+float3(0.25,0.63,0.95)*halo,clamp(mask*0.96+halo,0.0,1.0));
 }
 // Impact at 0.85s, pipe recoil settles at 1.8s, power reaches devices at 2.6s.
-float latch() { return connected*smoothstep(0.95,1.65,time); }
+float latch() { return connected*smoothstep(0.95,1.65,elapsed()); }
 float pathX(float t,float i) {
   float start=912.0+(i-2.0)*70.0;
   float end=160.0+i*376.0;
@@ -48,7 +50,7 @@ float pathX(float t,float i) {
       : mix(bridge,end,lower*lower*(3.0-2.0*lower));
     float bend=4.0*t*(1.0-t);
     bend*=bend;
-    float recoil=connected*sin(max(time-0.85,0.0)*19.0)*exp(-max(time-0.85,0.0)*3.7);
+    float recoil=connected*sin(max(elapsed()-0.85,0.0)*19.0)*exp(-max(elapsed()-0.85,0.0)*3.7);
     return x+bend*((i-3.5)*100.0*(1.0-latch())+recoil*62.0);
   }
   float ease=t*t*(3.0-2.0*t);
@@ -90,8 +92,8 @@ float3 wallpaper(float2 p,float2 size,float seed) {
 }
 half4 main(float2 p) {
   float4 outColor=float4(0);
-  float impact=max(time-0.85,0.0);
-  float hit=connected*step(0.85,time);
+  float impact=max(elapsed()-0.85,0.0);
+  float hit=connected*step(0.85,elapsed());
   // Local camera tremor is shader-only; labels remain legible.
   if(desktop>0.5) p+=hit*exp(-impact*7.0)*float2(sin(impact*91.0)*10.0,cos(impact*77.0)*6.0);
   for(int k=0;k<5;k++) {
@@ -117,25 +119,25 @@ half4 main(float2 p) {
         float reflection=exp(-(n-0.28)*(n-0.28)*16.0)*body;
         float caustic=exp(-abs(n-0.78)*32.0)*body;
         float glow=exp(-abs(d)*0.045)*0.30;
-        float wave=0.8+0.2*sin(t*12.0-time*1.4+i);
+        float wave=0.8+0.2*sin(t*12.0-elapsed()*1.4+i);
         float grid=exp(-abs(sin((p.y+n*n*14.0)*0.037))*35.0)*body;
         float gap=desktop*(1.0-latch());
         float reveal=1.0-gap*(smoothstep(0.33,0.35,t)*(1.0-smoothstep(0.64,0.66,t)));
-        float power=desktop<0.5 ? 1.0 : mix(0.65,1.0,connected*smoothstep(1.6,2.6,time));
+        float power=desktop<0.5 ? 1.0 : mix(0.65,1.0,connected*smoothstep(1.6,2.6,elapsed()));
         if(desktop>0.5 && t<0.35) power=1.0;
         float fade=smoothstep(185.0,193.0,p.y)*(1.0-smoothstep(499.0,511.0,p.y))*reveal;
         float3 pipe=tint*(body*0.22+reflection*0.46+glow)
           +mix(float3(0.78,0.92,1.0),float3(1.0,0.25,0.28),outage)*(rim*0.96+front*0.80*wave)
           +mix(float3(0.32,0.66,0.90),float3(0.95,0.08,0.12),outage)*(innerRim*0.52+caustic*0.86+grid*0.14);
-        float surge=desktop*hit*exp(-pow((t-mix(0.35,1.12,clamp((time-1.5)/1.15,0.0,1.0)))*18.0,2.0))
-          *(1.0-smoothstep(2.6,3.0,time));
+        float surge=desktop*hit*exp(-pow((t-mix(0.35,1.12,clamp((elapsed()-1.5)/1.15,0.0,1.0)))*18.0,2.0))
+          *(1.0-smoothstep(2.6,3.0,elapsed()));
         pipe=pipe*power+float3(0.60,0.94,1.0)*surge*(body+glow)*1.8;
         float alpha=clamp(body*0.90+rim*0.15+glow+surge*glow,0.0,1.0)*fade;
         outColor=over(float4(min(pipe*fade,float3(alpha)),alpha),outColor);
         // Stable size/brightness variation gives each light its own identity
         // while all particles continue down the same project-to-device path.
         for(int j=0;j<16;j++) {
-          float travel=fract(float(j)/16.0+time*0.18+i*0.071);
+          float travel=fract(float(j)/16.0+elapsed()*0.18+i*0.071);
           float2 dotPosition=float2(pathX(travel,i),188.0+travel*320.0);
           float seed=fract(sin(float(j)*127.1+i*71.7+19.3)*43758.5453);
           float brightness=fract(sin(float(j)*53.9+i*143.3+7.1)*17341.17);
@@ -143,10 +145,10 @@ half4 main(float2 p) {
           dotPosition+=normalize(float2(1.0,-particleSlope))*(seed-0.5)*19.0;
           float distance=length(p-dotPosition);
           float size=mix(1.6,5.7,seed);
-          float intensity=mix(0.38,1.45,brightness)*(0.88+0.12*sin(time*2.0+float(j)));
+          float intensity=mix(0.38,1.45,brightness)*(0.88+0.12*sin(elapsed()*2.0+float(j)));
           float spark=(exp(-distance*distance/(size*size))+exp(-distance/(size*2.6))*0.40)*intensity;
           float flowing=desktop<0.5 ? 1.0 : (1.0-step(0.35,travel))
-            +step(0.35,travel)*connected*smoothstep(1.5,2.6,time);
+            +step(0.35,travel)*connected*smoothstep(1.5,2.6,elapsed());
           float alpha=clamp(spark,0.0,0.96)*fade*flowing;
           outColor=over(float4(mix(float3(0.90,0.97,1.0),float3(1.0,0.35,0.25),outage)*alpha,alpha),outColor);
         }
@@ -158,11 +160,11 @@ half4 main(float2 p) {
           float2 broken=float2(pathX(t,i),188.0+t*320.0);
           if(length(p-broken)<220.0) {
             float cap=exp(-pow((p.y-broken.y)/4.0,2.0))*exp(-pow((p.x-broken.x)/26.0,4.0))*outage;
-            float flare=exp(-length(p-broken)/22.0)*outage*(0.45+0.15*sin(time*13.0+i));
+            float flare=exp(-length(p-broken)/22.0)*outage*(0.45+0.15*sin(elapsed()*13.0+i));
             float heat=clamp(cap+flare,0.0,0.95);
             outColor=over(float4(float3(1.0,0.18,0.08)*heat,heat),outColor);
             for(int j=0;j<18;j++) {
-              float age=fract(time*1.25+float(j)*0.618+i*0.37+float(end)*0.23);
+              float age=fract(elapsed()*1.25+float(j)*0.618+i*0.37+float(end)*0.23);
               float direction=sin(float(j)*17.3+i*4.0);
               float2 sparkPos=broken+float2(direction*age*155.0,(end==0 ? 55.0 : -125.0)*age+age*age*145.0);
               float size=2.0+mod(float(j),4.0);
@@ -205,9 +207,9 @@ half4 main(float2 p) {
         screenColor=mix(screenColor,float3(0.33,0.73,1.0),panes);
       }
       if(k>=3) {
-        float power=connected*smoothstep(2.25,2.65,time);
+        float power=connected*smoothstep(2.25,2.65,elapsed());
         screenColor*=mix(0.14,1.0,power);
-        screenColor+=float3(0.25,0.65,0.85)*exp(-pow((time-2.55)*6.0,2.0))*connected;
+        screenColor+=float3(0.25,0.65,0.85)*exp(-pow((elapsed()-2.55)*6.0,2.0))*connected;
       }
       frame=over(float4(screenColor*screen,screen),frame);
       outColor=over(frame,outColor);
@@ -218,7 +220,7 @@ half4 main(float2 p) {
       }
       float2 glowPoint=(p-float2(endpoint,677.0))/float2(phone ? 78.0 : 160.0,10.0);
       float ground=exp(-dot(glowPoint,glowPoint))*0.3;
-      if(k>=3) ground*=mix(0.12,1.0,connected*smoothstep(2.25,2.65,time));
+      if(k>=3) ground*=mix(0.12,1.0,connected*smoothstep(2.25,2.65,elapsed()));
       outColor=over(float4(tint*ground,ground),outColor);
     }
   }
@@ -226,17 +228,17 @@ half4 main(float2 p) {
     // Glass project tile behind the Expo mark and native label.
     outColor=over(material(p-float2(912,100),float2(190,88),23.0,float3(0.07,0.16,0.27)),outColor);
   } else {
-    float descent=clamp(time/0.85,0.0,1.0);
+    float descent=clamp(elapsed()/0.85,0.0,1.0);
     float drop=-470.0*(1.0-descent*descent*descent);
     float bounce=hit*sin(impact*18.0)*exp(-impact*7.0)*15.0;
     float2 center=float2(1476,350.0+drop+bounce);
     float stretch=1.0+0.45*sin(descent*3.14159);
     float2 q=(p-center)/float2(1.0/sqrt(stretch),stretch);
-    float appear=connected*smoothstep(0.0,0.12,time);
+    float appear=connected*smoothstep(0.0,0.12,elapsed());
     // Meteor wake narrows into the single glass bridge; no extra panel layer.
     float wakeY=center.y-p.y;
     float wake=step(0.0,wakeY)*exp(-wakeY/95.0)*exp(-pow((p.x-center.x)/(70.0+wakeY*0.18),2.0))
-      *appear*(1.0-smoothstep(0.82,0.94,time))*0.65;
+      *appear*(1.0-smoothstep(0.82,0.94,elapsed()))*0.65;
     outColor=over(float4(float3(0.18,0.75,1.0)*wake,wake),outColor);
     float radius=impact*950.0;
     float ring=exp(-abs(length((p-float2(1476,350))/float2(1.0,0.72))-radius)/9.0)
@@ -270,15 +272,32 @@ if (!effect) throw new Error("Could not compile Expo Desktop glass scene");
 // Expo brand mark from https://github.com/simple-icons/simple-icons/blob/develop/icons/expo.svg
 const expoLogo = "M0 20.084c.043.53.23 1.063.718 1.778.58.849 1.576 1.315 2.303.567.49-.505 5.794-9.776 8.35-13.29a.761.761 0 011.248 0c2.556 3.514 7.86 12.785 8.35 13.29.727.748 1.723.282 2.303-.567.57-.835.728-1.42.728-2.046 0-.426-8.26-15.798-9.092-17.078-.8-1.23-1.044-1.498-2.397-1.542h-1.032c-1.353.044-1.597.311-2.398 1.542C8.267 3.991.33 18.758 0 19.77Z";
 
-// Restart the clock owner, not the Canvas: retain the native drawing surface.
-function NetworkShader({ desktop, connected }: { desktop: boolean; connected: boolean }) {
-  const uniforms = useAnimatedShaderUniforms({ desktop: desktop ? 1 : 0, connected: connected ? 1 : 0 }, 4);
-  return <Shader source={effect!} uniforms={uniforms} />;
-}
-
 function GlassNetwork({ desktop, connected = false }: { desktop: boolean; connected?: boolean }) {
+  const preview = usePresentationValue("isPreview");
+  const active = usePresentationValue("isActive");
+  const preparing = usePresentationValue("isPreparing");
+  const [sequence, setSequence] = useState({ connected, startTime: 0 });
+  // This hook must stay in the native React tree, above Canvas. Skia's
+  // reconciler does not carry the presentation context into custom children.
+  const uniforms = useAnimatedShaderUniforms({
+    desktop: desktop ? 1 : 0,
+    connected: sequence.connected ? 1 : 0,
+    startTime: sequence.startTime,
+  }, 4);
+  const clock = useRef(uniforms);
+  clock.current = uniforms;
+  const previous = useRef({ connected, running: false });
+  useLayoutEffect(() => {
+    // One snapshot per step/lifecycle change, never per frame. Publishing the
+    // connection flag and epoch together prevents a finished-state flash.
+    const running = active && !preview && !preparing;
+    if (connected !== previous.current.connected || running && !previous.current.running) {
+      setSequence({ connected, startTime: preview ? 0 : clock.current.value.time });
+    }
+    previous.current = { connected, running };
+  }, [connected, preview, active, preparing]);
   return <Canvas pointerEvents="none" style={{ width: 1824, height: 691 }}>
-    <Fill><NetworkShader key={connected ? "connecting" : "broken"} desktop={desktop} connected={connected} /></Fill>
+    <Fill><Shader source={effect!} uniforms={uniforms} /></Fill>
     {!desktop && <Path path={expoLogo} color="#e6f7ff" transform={[{ translateX: 880 }, { translateY: 44 }, { scale: 64 / 24 }]} />}
   </Canvas>;
 }
