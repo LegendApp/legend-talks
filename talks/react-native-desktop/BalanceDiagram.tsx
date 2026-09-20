@@ -133,11 +133,11 @@ function Framework({ name, x, y }: { name: string; x: number; y: number }) {
 
 export function BalanceDiagram() {
   const showFail = usePresentationValue("stepIndex") > 0;
-  return <View accessible accessibilityLabel={showFail ? "Performance, Memory, Native UI: React Native and AppKit meet all three; GPUI meets Performance; SwiftUI meets Memory and Native UI. Fail: Flutter, Tauri, Electron, Deno" : "Performance, Memory, Native UI: React Native and AppKit meet all three; GPUI meets Performance; SwiftUI meets Memory and Native UI"} style={{ width: 1696, height: 740, alignSelf: "center", marginTop: 16, overflow: "hidden", transform: [{ scale: 0.94 }] }}>
+  return <View accessible accessibilityLabel={showFail ? "Performance, Memory, Native UI: React Native and AppKit meet all three; GPUI meets Performance and Memory; SwiftUI meets Memory and Native UI. Fail: Flutter, Tauri, Electron, Deno, Compose" : "Performance, Memory, Native UI: React Native and AppKit meet all three; GPUI meets Performance and Memory; SwiftUI meets Memory and Native UI"} style={{ width: 1696, height: 740, alignSelf: "center", marginTop: 16, overflow: "hidden", transform: [{ scale: 0.94 }] }}>
     <SceneMotionView duration={480} pose={{ x: showFail ? 0 : 348 }}
       style={{ position: "absolute", width: 1000, height: 740 }}>
       <Glass>
-      <Framework name="GPUI" x={275} y={165} />
+      <Framework name="GPUI" x={500} y={150} />
       <Framework name="React Native" x={500} y={335} />
       <Framework name="AppKit" x={500} y={385} />
       <Framework name="SwiftUI" x={660} y={450} />
@@ -151,6 +151,7 @@ export function BalanceDiagram() {
       <Framework name="Tauri" x={260} y={330} />
       <Framework name="Electron" x={260} y={390} />
       <Framework name="Deno" x={260} y={450} />
+      <Framework name="Compose" x={260} y={510} />
       </Glass>
     </SceneMotionView>
   </View>;

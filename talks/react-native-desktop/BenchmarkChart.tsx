@@ -39,5 +39,8 @@ export function Chart({ metric, workload = "chat" }: { metric: Metric; workload?
   const maximum = Math.max(1, ...rows.map(row => row.value));
   return <View style={{ width: chartLayout.width, height: chartLayout.height, marginTop: chartLayout.marginTop, alignSelf: "center" }}>
     {rows.map(({ name, value }, index) => <BenchmarkRow key={name} name={name} value={value} metric={metric} maximum={maximum} y={chartLayout.top + index * chartLayout.rowSpacing} />)}
+    {workload === "chat" && <Text style={{ position: "absolute", top: 636, width: chartLayout.width, textAlign: "center", fontSize: 20, lineHeight: 28, color: "#cbd5e1" }}>
+      {metric === "size" ? "Earlier app-only size snapshot · External grammars excluded" : "Mixed-build reference · GPUI/Tauri: single runs · RN: 10-run median · Other rows: Sept 17–18"}
+    </Text>}
   </View>;
 }

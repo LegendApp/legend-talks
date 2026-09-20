@@ -432,7 +432,7 @@ But we can draw whatever we want, right? So I made my own liquid glass.
 
 ---
 eyebrow: 'Chat History / first content'
-footer: 'Median ms · controlled timing run · all nine implementations'
+footer: 'Video-derived ms · mixed-build reference · GPUI and Tauri single runs'
 ---
 
 # Chat History · first content {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
@@ -442,7 +442,9 @@ footer: 'Median ms · controlled timing run · all nine implementations'
 <!--
 Okay. Actual numbers.
 
-React Native gets to first content in about 406 milliseconds. AppKit is faster at 319, and GPUI is faster at 336.
+These are the latest usable measurements, not a synchronized final benchmark. GPUI and Tauri are new single runs after storage changes; the other affected apps still need remeasurement. So I would not call their timing changes a regression against earlier medians.
+
+React Native gets to first content in about 393 milliseconds. AppKit is 319, and the new GPUI run is 366.
 
 Electron takes about 1.28 seconds. That's roughly three times as long as React Native in this app.
 
@@ -461,9 +463,11 @@ footer: 'Settled physical footprint · MiB · includes attributed helper process
 <!--
 Now memory.
 
-AppKit is about 42 MiB. React Native is 53. SwiftUI is 83.
+AppKit is about 42 MiB. React Native is 54. GPUI is now 76. SwiftUI is 83.
 
-Tauri is 364. Electron is 478.
+Tauri is now 136. Electron is 478.
+
+GPUI and Tauri have new file-backed storage. Their initial memory dropped from 289 to 76, and from 364 to 136. Those are new single runs; the other affected apps still need remeasurement.
 
 That's a big difference for an app that I might leave open all day.
 
@@ -472,7 +476,7 @@ And this is why I care about more than build size. Using the system browser can 
 
 ---
 eyebrow: 'Chat History / jump to top'
-footer: 'Median action-to-visible-result ms · lower is better'
+footer: 'Video-derived action-to-visible-result ms · mixed builds · lower is better'
 ---
 
 # Chat History · jump to top {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
@@ -482,7 +486,7 @@ footer: 'Median action-to-visible-result ms · lower is better'
 <!--
 Let's actually use it. Jump to the top of a conversation.
 
-React Native is the fastest here, at 45 milliseconds.
+React Native is about 51 milliseconds. GPUI is about 55 in its new single run. I would not treat that tiny gap as a meaningful win.
 
 This is the time from the action to the result appearing. It's not an FPS measurement.
 
@@ -491,7 +495,7 @@ But it's the kind of thing that makes an app feel instant.
 
 ---
 eyebrow: 'Chat History / switch'
-footer: 'Median action-to-visible-result ms · lower is better'
+footer: 'Video-derived action-to-visible-result ms · mixed builds · lower is better'
 ---
 
 # Chat History · switch conversation {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
@@ -501,7 +505,7 @@ footer: 'Median action-to-visible-result ms · lower is better'
 <!--
 And switch conversations.
 
-AppKit wins this one. React Native is next, at about 158 milliseconds. Electron is about 679.
+AppKit is about 88 milliseconds. React Native and GPUI are around 183 and 185. Tauri is about 226. Electron is about 679.
 
 Opening quickly is great, but I want the rest of the app to feel quick too.
 
@@ -547,7 +551,7 @@ I've put the cutoffs right on the slide. These are practical bands, not a claim 
 
 Load time means stable first content. Memory is the initial settled physical footprint, including helpers. File size is the installed app without external grammar packs.
 
-This overview adds Compose and uses the latest published RN measurement. RN was measured on September 19, Compose on September 18, and the others on September 17. These are mixed builds and dates, not a fresh simultaneous rerun. The earlier charts keep the original comparison values.
+All of the chat charts now use this mixed-build reference. GPUI and Tauri have new single runs with file-backed storage. RN is the September 19 ten-run median. Compose is September 18, and the other rows are September 17. The remaining storage updates need completed builds and remeasurement. App sizes are still the earlier snapshot.
 
 2. Now just follow React Native.
 
@@ -577,7 +581,7 @@ And native UI means native content views, not just native window buttons.
 
 AppKit gets all three. React Native gets all three.
 
-SwiftUI gets the native UI and low memory, but this implementation misses the speed cutoff. GPUI meets the performance criterion, but uses more memory here.
+SwiftUI gets the native UI and low memory, but this implementation misses the speed cutoff. GPUI now meets both the performance and low-memory criteria. It draws its own UI. Tauri still misses the first-content cutoff at 626 milliseconds.
 
 2. And then we have this group.
 
@@ -1029,7 +1033,7 @@ footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 <MeasurementDiagram />
 
 <!--
-The timings are repeated runs on an Apple M4 Mac, using ARM64 release builds. I'm showing medians.
+The timings are video-derived milliseconds on an Apple M4 Mac with ARM64 release builds. Hello World retains its earlier medians. Chat History is a mixed-build reference: GPUI and Tauri are new single runs, RN is the September 19 ten-run median, and the other rows retain September 17–18 measurements.
 
 Memory is the settled physical footprint from separate launches without recording. These aren't peak memory measurements.
 
@@ -1037,7 +1041,7 @@ The size builds are newer than the timing runs, so I keep those revisions separa
 
 The full results and report are included with the deck. These are implementations of a workload, not a proof about every app you could build with each framework.
 
-[Before presenting: refresh the GPUI and Flutter captures and sizes after the native-layer removals. Timing and memory still refer to the controlled run.]
+[Before presenting: complete the remaining storage builds and runtime measurements, repeat GPUI and Tauri, and refresh affected captures and sizes. The single-run timings cannot establish a startup regression against the earlier medians.]
 -->
 
 ---

@@ -2,14 +2,8 @@ import { SceneMotionView, usePresentationValue } from "@legend-apps/presentation
 import { Text, View } from "react-native";
 import benchmarks from "./rnconnection-assets/benchmarks.json";
 
-// September 19 reference table: RN remeasured September 19, Compose September 18,
-// others September 17. App-only sizes exclude external grammar packs.
-// Keep this mixed-date overview separate from the synchronized charts.
-const rows = [
-  ...benchmarks.chat.map(row => row.name === "React Native"
-    ? { ...row, content: 393.2, memory: 54.1, switch: 183.0 } : row),
-  { name: "Compose", content: 1277.3, memory: 786.1, size: 116.5, switch: 326.2 },
-];
+// All chat comparisons share the mixed-build reference measurements.
+const rows = benchmarks.chat;
 const metrics = [
   { key: "content", title: "Load time", unit: "ms", limits: [500, 1000], bands: ["Under 500 ms", "500–1,000 ms", "1,000 ms and up"] },
   { key: "memory", title: "Memory", unit: "MiB", limits: [100, 400], bands: ["Under 100 MiB", "100–400 MiB", "400 MiB and up"] },
@@ -52,10 +46,10 @@ export function MetricBuckets() {
       })}
     </View>
     <Text style={{ color: "#e2e8f0", fontSize: 20, lineHeight: 28, textAlign: "center", marginTop: 10 }}>
-      Chat History · Lower is better · Practical bands, not statistical ties
+      Chat History · Initial footprint · App-only sizes · Practical bands, not statistical ties
     </Text>
     <Text style={{ color: "#cbd5e1", fontSize: 18, lineHeight: 26, textAlign: "center" }}>
-      macOS M4 · Mixed September 17–19 runs/builds · Initial footprint · App-only sizes exclude external grammars
+      Mixed builds · GPUI/Tauri: single runs · RN: 10-run median · Other rows: Sept 17–18
     </Text>
   </View>;
 }

@@ -7,34 +7,50 @@
       "content": 318.9,
       "memory": 42.4,
       "jump": 79.1,
-      "switch": 88.3
+      "switch": 88.3,
+      "window": 226.9,
+      "topMemory": 49,
+      "switchedMemory": 49,
+      "measurement": "September 17"
     },
     {
       "name": "GPUI",
-      "ui": "Canvas + native composer",
+      "ui": "Canvas",
       "size": 9.9,
-      "content": 335.5,
-      "memory": 289.0,
-      "jump": 50.5,
-      "switch": 193.1
+      "content": 366.4,
+      "memory": 76.2,
+      "jump": 54.9,
+      "switch": 185,
+      "window": 249.7,
+      "topMemory": 78.3,
+      "switchedMemory": 96.7,
+      "measurement": "New file-backed storage; single run"
     },
     {
       "name": "React Native",
       "ui": "Native",
       "size": 17.8,
-      "content": 406.3,
-      "memory": 52.8,
-      "jump": 45.0,
-      "switch": 157.7
+      "content": 393.2,
+      "memory": 54.1,
+      "jump": 50.6,
+      "switch": 183,
+      "window": 235.6,
+      "topMemory": 58.7,
+      "switchedMemory": 66.8,
+      "measurement": "September 19; 10-run median"
     },
     {
       "name": "Tauri",
       "ui": "Web",
       "size": 11.5,
-      "content": 544.0,
-      "memory": 363.5,
-      "jump": 70.6,
-      "switch": 218.9
+      "content": 626.2,
+      "memory": 136.2,
+      "jump": 70.9,
+      "switch": 226.3,
+      "window": 276.2,
+      "topMemory": 143.1,
+      "switchedMemory": 166.7,
+      "measurement": "New file-backed storage; single run"
     },
     {
       "name": "SwiftUI",
@@ -43,16 +59,24 @@
       "content": 668.8,
       "memory": 82.6,
       "jump": 68.9,
-      "switch": 554.6
+      "switch": 554.6,
+      "window": 268.7,
+      "topMemory": 83.4,
+      "switchedMemory": 93.2,
+      "measurement": "September 17"
     },
     {
       "name": "Flutter",
       "ui": "Canvas",
       "size": 21.6,
-      "content": 1094.0,
+      "content": 1094,
       "memory": 340.7,
       "jump": 80.2,
-      "switch": 625.9
+      "switch": 625.9,
+      "window": 244.3,
+      "topMemory": 337.1,
+      "switchedMemory": 265.6,
+      "measurement": "September 17; before storage changes"
     },
     {
       "name": "Deno WebView",
@@ -61,7 +85,11 @@
       "content": 1268.9,
       "memory": 408.1,
       "jump": 72.9,
-      "switch": 657.0
+      "switch": 657,
+      "window": 419.2,
+      "topMemory": 415.7,
+      "switchedMemory": 582.4,
+      "measurement": "September 17; before storage changes"
     },
     {
       "name": "Electron",
@@ -70,7 +98,24 @@
       "content": 1277.7,
       "memory": 477.5,
       "jump": 70.5,
-      "switch": 679.0
+      "switch": 679,
+      "window": 261,
+      "topMemory": 476.2,
+      "switchedMemory": 445.8,
+      "measurement": "September 17; before storage changes"
+    },
+    {
+      "name": "Compose",
+      "ui": "Canvas",
+      "size": 116.5,
+      "window": 343.6,
+      "content": 1277.3,
+      "jump": 83,
+      "switch": 326.2,
+      "memory": 786.1,
+      "topMemory": 793.7,
+      "switchedMemory": 947,
+      "measurement": "September 18; before storage changes"
     },
     {
       "name": "Deno CEF",
@@ -79,7 +124,11 @@
       "content": 1294.4,
       "memory": 616.9,
       "jump": 70.5,
-      "switch": 670.1
+      "switch": 670.1,
+      "window": 310.4,
+      "topMemory": 618,
+      "switchedMemory": 580.8,
+      "measurement": "September 17; before storage changes"
     }
   ],
   "hello": [
@@ -137,5 +186,12 @@
       "content": 409.8,
       "memory": 73.0
     }
-  ]
+  ],
+  "chatReference": {
+    "status": "Mixed-build reference, not a final synchronized benchmark",
+    "timing": "Video-derived milliseconds; GPUI and Tauri single runs, RN September 19 10-run median; other measurements retained",
+    "memory": "Physical footprint in MiB, measured separately without recording",
+    "size": "Earlier app-only size snapshot; external grammar packs excluded; not remeasured with these timings",
+    "source": "User-supplied September 20 reference table; remaining storage updates await completed builds and runtime measurements"
+  }
 }
