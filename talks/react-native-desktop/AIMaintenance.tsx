@@ -1,7 +1,6 @@
 import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
-import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
-import { useLayoutEffect, useRef } from "react";
-import { Animated, Easing, Text, View } from "react-native";
+import { PlaybackKeyframeView, SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
+import { Text, View } from "react-native";
 import { MovingTitle } from "./MovingTitle";
 
 const implementations = ["React Native", "AppKit", "SwiftUI", "Electron", "Tauri", "Deno", "Flutter", "Compose", "GPUI"];
@@ -49,7 +48,6 @@ const emissionInterval = 300;
 const travelDuration = 1900;
 const warmupStarts = [3000, 3900, 4675, 5325, 5875, 6325, 6675];
 const steadyStart = 6975;
-const introDuration = steadyStart + travelDuration;
 // Precompute varied routes once. A single native clock keeps emissions evenly
 // spaced; no timers, frame callbacks or per-cycle JS lane selection.
 const routes = Array.from({ length: 3 }, () => {
@@ -61,89 +59,24 @@ const routes = Array.from({ length: 3 }, () => {
   return lanes;
 }).flat();
 const cycleDuration = routes.length * emissionInterval;
-const trajectories = routes.map((lane, index) => {
-  const start = index * emissionInterval;
-  const times = new Set([0, cycleDuration]);
-  for (let sample = 0; sample <= 40; sample++) times.add((start + sample / 40 * travelDuration) % cycleDuration);
-  const inputRange = [...times].sort((a, b) => a - b);
-  const phases = inputRange.map(time => ((time - start + cycleDuration) % cycleDuration) / travelDuration);
-  return {
-    start,
-    inputRange,
-    x: phases.map(t => 848 + (branchX(lane) - 848) * ease(Math.min(t, 1))),
-    y: phases.map(t => 70 + Math.min(t, 1) * 500),
-    opacity: phases.map(t => t > 1 ? 0 : Math.min(1, t / 0.08, (1 - t) / 0.10)),
-  };
-});
-
-const warmupTrajectories = warmupStarts.map((start, index) => {
-  const inputRange = [0, start, ...Array.from({ length: 40 }, (_, sample) => start + (sample + 1) / 40 * travelDuration), introDuration];
-  const phases = inputRange.map(time => Math.max(0, Math.min(1, (time - start) / travelDuration)));
-  return {
-    inputRange,
-    x: phases.map(t => 848 + (branchX(routes[index]) - 848) * ease(t)),
-    y: phases.map(t => 70 + t * 500),
-    opacity: phases.map(t => Math.min(1, t / 0.08, (1 - t) / 0.10)),
-  };
-});
+const trajectories = routes.map((lane) => Array.from({ length: 41 }, (_, sample) => {
+  const t = sample / 40;
+  return { time: t * travelDuration, x: 848 + (branchX(lane) - 848) * ease(t),
+    y: 70 + t * 500, opacity: Math.min(1, t / 0.08, (1 - t) / 0.10) };
+}));
 
 function CryingStream() {
-  const active = usePresentationValue("isActive");
-  const preview = usePresentationValue("isPreview");
-  const preparing = usePresentationValue("isPreparing");
-  const progress = useRef(new Animated.Value(preview && !preparing ? 2300 : 0)).current;
-  const intro = useRef(new Animated.Value(preview && !preparing ? introDuration : 0)).current;
-  const hasPlayed = useRef(false);
-  useLayoutEffect(() => {
-    if (preparing) {
-      hasPlayed.current = false;
-      progress.setValue(0);
-      intro.setValue(0);
-      return;
-    }
-    if (!active || preview) {
-      // Fresh presenter thumbnails show a still stream. Outgoing audience
-      // slides retain their last frame rather than jumping to that thumbnail.
-      if (preview && !hasPlayed.current) {
-        progress.setValue(2300);
-        intro.setValue(introDuration);
-      }
-      return;
-    }
-    hasPlayed.current = true;
-    progress.setValue(0);
-    intro.setValue(0);
-    const animation = Animated.parallel([
-      Animated.timing(intro, { toValue: introDuration, duration: introDuration, easing: Easing.linear, useNativeDriver: true, isInteraction: false }),
-      Animated.sequence([
-        Animated.timing(progress, { toValue: 0, duration: steadyStart, easing: Easing.linear, useNativeDriver: true, isInteraction: false }),
-        Animated.loop(Animated.timing(progress, {
-          toValue: cycleDuration, duration: cycleDuration, easing: Easing.linear,
-          useNativeDriver: true, isInteraction: false,
-        })),
-      ]),
-    ]);
-    animation.start();
-    return () => animation.stop();
-  }, [active, preview, preparing, progress, intro]);
-  return <>{trajectories.map((trajectory, index) => <Animated.Text key={index} style={{
-    position: "absolute", left: -30, top: -35, fontSize: 58, lineHeight: 72,
-    opacity: Animated.multiply(
-      progress.interpolate({ inputRange: trajectory.inputRange, outputRange: trajectory.opacity }),
-      intro.interpolate({ inputRange: [0, steadyStart + (trajectory.start + travelDuration > cycleDuration ? travelDuration - 1 : 0), steadyStart + (trajectory.start + travelDuration > cycleDuration ? travelDuration : 1)], outputRange: [0, 0, 1], extrapolate: "clamp" }),
-    ),
-    transform: [
-      { translateX: progress.interpolate({ inputRange: trajectory.inputRange, outputRange: trajectory.x }) },
-      { translateY: progress.interpolate({ inputRange: trajectory.inputRange, outputRange: trajectory.y }) },
-    ],
-  }}>😭</Animated.Text>)}
-    {warmupTrajectories.map((trajectory, index) => <Animated.Text key={`intro-${index}`} style={{ position: "absolute", left: -30, top: -35, fontSize: 58, lineHeight: 72,
-      opacity: intro.interpolate({ inputRange: trajectory.inputRange, outputRange: trajectory.opacity }),
-      transform: [
-        { translateX: intro.interpolate({ inputRange: trajectory.inputRange, outputRange: trajectory.x }) },
-        { translateY: intro.interpolate({ inputRange: trajectory.inputRange, outputRange: trajectory.y }) },
-      ],
-    }}>😭</Animated.Text>)}
+  return <>
+    {trajectories.map((keyframes, index) => <PlaybackKeyframeView key={index}
+      keyframes={keyframes} delay={steadyStart + index * emissionInterval} repeatDuration={cycleDuration} previewTime={12}
+      style={{ position: "absolute", left: -30, top: -35 }}>
+      <Text style={{ fontSize: 58, lineHeight: 72 }}>😭</Text>
+    </PlaybackKeyframeView>)}
+    {warmupStarts.map((delay, index) => <PlaybackKeyframeView key={`intro-${index}`}
+      keyframes={trajectories[index]} delay={delay} previewTime={12}
+      style={{ position: "absolute", left: -30, top: -35 }}>
+      <Text style={{ fontSize: 58, lineHeight: 72 }}>😭</Text>
+    </PlaybackKeyframeView>)}
   </>;
 }
 

@@ -1,6 +1,5 @@
 import { Canvas, Fill, ImageShader, Path, Shader, Skia, matchFont } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
-import { useLayoutEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
 
 // Analytic glass pipes and devices. A shared UI-thread clock moves the light
@@ -8,10 +7,11 @@ import { Text, View } from "react-native";
 export const expoDesktopShader = `
 uniform shader bridgeLabel;
 uniform float time;
-uniform float startTime;
-float elapsed() { return max(time-startTime,0.0); }
+uniform float stepTime;
+uniform float stepIndex;
+float elapsed() { return stepTime; }
 uniform float desktop;
-uniform float connected;
+float connection() { return stepIndex>=1.0 ? 1.0 : 0.0; }
 float roundedBox(float2 p, float2 size, float radius) {
   float2 q=abs(p)-size+radius;
   return length(max(q,0.0))+min(max(q.x,q.y),0.0)-radius;
@@ -39,7 +39,7 @@ float4 material(float2 p,float2 size,float radius,float3 tint) {
   return float4(color*mask+float3(0.25,0.63,0.95)*halo,clamp(mask*0.96+halo,0.0,1.0));
 }
 // Impact at 0.85s, pipe recoil settles at 1.8s, power reaches devices at 2.6s.
-float latch() { return connected*smoothstep(0.95,1.65,elapsed()); }
+float latch() { return connection()*smoothstep(0.95,1.65,elapsed()); }
 float pathX(float t,float i) {
   float start=912.0+(i-2.0)*70.0;
   float end=160.0+i*376.0;
@@ -51,7 +51,7 @@ float pathX(float t,float i) {
       : mix(bridge,end,lower*lower*(3.0-2.0*lower));
     float bend=4.0*t*(1.0-t);
     bend*=bend;
-    float recoil=connected*sin(max(elapsed()-0.85,0.0)*19.0)*exp(-max(elapsed()-0.85,0.0)*3.7);
+    float recoil=connection()*sin(max(elapsed()-0.85,0.0)*19.0)*exp(-max(elapsed()-0.85,0.0)*3.7);
     return x+bend*((i-3.5)*100.0*(1.0-latch())+recoil*62.0);
   }
   float ease=t*t*(3.0-2.0*t);
@@ -96,7 +96,7 @@ half4 main(float2 p) {
   p.y-=240.0;
   float4 outColor=float4(0);
   float impact=max(elapsed()-0.85,0.0);
-  float hit=connected*step(0.85,elapsed());
+  float hit=connection()*step(0.85,elapsed());
   // Local camera tremor is shader-only; labels remain legible.
   if(desktop>0.5) p+=hit*exp(-impact*7.0)*float2(sin(impact*91.0)*10.0,cos(impact*77.0)*6.0);
   for(int k=0;k<5;k++) {
@@ -126,7 +126,7 @@ half4 main(float2 p) {
         float grid=exp(-abs(sin((p.y+n*n*14.0)*0.037))*35.0)*body;
         float gap=desktop*(1.0-latch());
         float reveal=1.0-gap*(smoothstep(0.33,0.35,t)*(1.0-smoothstep(0.64,0.66,t)));
-        float power=desktop<0.5 ? 1.0 : mix(0.65,1.0,connected*smoothstep(1.6,2.6,elapsed()));
+        float power=desktop<0.5 ? 1.0 : mix(0.65,1.0,connection()*smoothstep(1.6,2.6,elapsed()));
         if(desktop>0.5 && t<0.35) power=1.0;
         // Use the uninterrupted scene clock: connecting must not replay entrance.
         float growth=smoothstep(0.12+i*0.045,1.5+i*0.045,time);
@@ -154,7 +154,7 @@ half4 main(float2 p) {
           float intensity=mix(0.38,1.45,brightness)*(0.88+0.12*sin(elapsed()*2.0+float(j)));
           float spark=(exp(-distance*distance/(size*size))+exp(-distance/(size*2.6))*0.40)*intensity;
           float flowing=desktop<0.5 ? 1.0 : (1.0-step(0.35,travel))
-            +step(0.35,travel)*connected*smoothstep(1.5,2.6,elapsed());
+            +step(0.35,travel)*connection()*smoothstep(1.5,2.6,elapsed());
           float alpha=clamp(spark,0.0,0.96)*fade*flowing;
           outColor=over(float4(mix(float3(0.90,0.97,1.0),float3(1.0,0.35,0.25),outage)*alpha,alpha),outColor);
         }
@@ -214,9 +214,9 @@ half4 main(float2 p) {
         screenColor=mix(screenColor,float3(0.33,0.73,1.0),panes);
       }
       if(k>=3) {
-        float power=connected*smoothstep(2.25,2.65,elapsed());
+        float power=connection()*smoothstep(2.25,2.65,elapsed());
         screenColor*=mix(0.14,1.0,power);
-        screenColor+=float3(0.25,0.65,0.85)*exp(-pow((elapsed()-2.55)*6.0,2.0))*connected;
+        screenColor+=float3(0.25,0.65,0.85)*exp(-pow((elapsed()-2.55)*6.0,2.0))*connection();
       }
       frame=over(float4(screenColor*screen,screen),frame);
       outColor=over(frame,outColor);
@@ -227,7 +227,7 @@ half4 main(float2 p) {
       }
       float2 glowPoint=(p-float2(endpoint,677.0))/float2(phone ? 78.0 : 160.0,10.0);
       float ground=exp(-dot(glowPoint,glowPoint))*0.3;
-      if(k>=3) ground*=mix(0.12,1.0,connected*smoothstep(2.25,2.65,elapsed()));
+      if(k>=3) ground*=mix(0.12,1.0,connection()*smoothstep(2.25,2.65,elapsed()));
       outColor=over(float4(tint*ground,ground),outColor);
     }
   }
@@ -241,7 +241,7 @@ half4 main(float2 p) {
     float2 center=float2(1476,350.0+drop+bounce);
     float stretch=1.0+0.45*sin(descent*3.14159);
     float2 q=(p-center)/float2(1.0/sqrt(stretch),stretch);
-    float appear=connected*smoothstep(0.0,0.12,elapsed());
+    float appear=connection()*smoothstep(0.0,0.12,elapsed());
     // Meteor wake narrows into the single glass bridge; no extra panel layer.
     float wakeY=center.y-p.y;
     float wake=step(0.0,wakeY)*exp(-wakeY/95.0)*exp(-pow((p.x-center.x)/(70.0+wakeY*0.18),2.0))
@@ -306,35 +306,9 @@ function makeBridgeLabel() {
 const bridgeLabelImage = makeBridgeLabel();
 
 function GlassNetwork({ desktop, connected = false }: { desktop: boolean; connected?: boolean }) {
-  const preview = usePresentationValue("isPreview");
-  const active = usePresentationValue("isActive");
-  const preparing = usePresentationValue("isPreparing");
-  const [sequence, setSequence] = useState({ connected, startTime: 0 });
-  // This hook must stay in the native React tree, above Canvas. Skia's
-  // reconciler does not carry the presentation context into custom children.
-  const uniforms = useAnimatedShaderUniforms({
-    desktop: desktop ? 1 : 0,
-    connected: sequence.connected ? 1 : 0,
-    startTime: sequence.startTime,
-  }, 4);
-  const clock = useRef(uniforms);
-  clock.current = uniforms;
-  const previous = useRef({ connected, running: false });
-  useLayoutEffect(() => {
-    // One snapshot per step/lifecycle change, never per frame. Publishing the
-    // connection flag and epoch together prevents a finished-state flash.
-    const running = active && !preview && !preparing;
-    const connectionChanged = connected !== previous.current.connected;
-    if (connectionChanged || running && !previous.current.running) {
-      // Activation resets the UI clock to zero. Reading it back from JS here
-      // can still return the old preview time and freeze elapsed() for seconds.
-      // Only a connection step on an already-running slide needs a timestamp.
-      const startTime = connectionChanged && previous.current.running && !preview
-        ? clock.current.value.time : 0;
-      setSequence({ connected, startTime });
-    }
-    previous.current = { connected, running };
-  }, [connected, preview, active, preparing]);
+  // The connection and its clock are both sampled from the controller by the
+  // shader. No JS timestamp reads, local reset effects or duplicated step state.
+  const uniforms = useAnimatedShaderUniforms({ desktop: desktop ? 1 : 0 }, 4);
   return <Canvas pointerEvents="none" accessibilityLabel={desktop && connected ? "Expo Desktop connects macOS and Windows" : undefined} style={{ position: "absolute", left: 0, top: -240, width: 1824, height: 1080 }}>
     <Fill><Shader source={effect!} uniforms={uniforms}>
       <ImageShader image={bridgeLabelImage} x={0} y={0} width={884} height={84} fit="fill" tx="decal" ty="decal" />
