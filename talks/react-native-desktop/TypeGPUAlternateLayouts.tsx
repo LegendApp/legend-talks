@@ -19,11 +19,15 @@ export function AlternateRoots({ children, icons }: { children: ReactNode; icons
 export function AlternateWindows({ children }: { children: ReactNode }) {
   return <View style={{ width: 1696, height: 710, marginTop: 18 }}>
     {children}
+    <View style={{ position: "absolute", top: 0, width: 1696, flexDirection: "row" }}>
+      {["Native views", "Browser content", "Canvas"].map(title => <View key={title} style={{ flex: 1, alignItems: "center" }}>
+        <Text style={{ color: "#f8fafc", fontSize: 36, fontWeight: "600" }}>{title}</Text>
+      </View>)}
+    </View>
     <View style={{ position: "absolute", bottom: 28, width: 1696, flexDirection: "row" }}>
-      {[["Native views", "OS UI toolkit"], ["Browser content", "HTML + CSS"], ["Framework-drawn", "Custom renderer"]].map(([title, caption]) =>
-        <View key={title} style={{ flex: 1, alignItems: "center", gap: 12 }}>
-          <Text style={{ color: "#f8fafc", fontSize: 36, fontWeight: "600" }}>{title}</Text>
-          <Text style={{ color: "#e5f2fa", fontSize: 28 }}>{caption}</Text>
+      {["AppKit · SwiftUI · React Native", "Electron · Tauri · Deno", "Flutter · Compose Multiplatform · GPUI"].map(frameworks =>
+        <View key={frameworks} style={{ flex: 1, alignItems: "center", paddingHorizontal: 16 }}>
+          <Text style={{ color: "#e5f2fa", fontSize: 27, lineHeight: 38, textAlign: "center" }}>{frameworks}</Text>
         </View>)}
     </View>
   </View>;

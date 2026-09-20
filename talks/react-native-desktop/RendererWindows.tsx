@@ -96,9 +96,9 @@ function GlassWindow({ family }: { family: number }) {
 }
 
 const families = [
-  ["Native views", "OS UI toolkit"],
-  ["Browser content", "HTML + CSS"],
-  ["Framework-drawn", "Custom renderer"],
+  ["Native views", "AppKit · SwiftUI · React Native"],
+  ["Browser content", "Electron · Tauri · Deno"],
+  ["Canvas", "Flutter · Compose Multiplatform · GPUI"],
 ];
 
 export function RendererFamilies() {
@@ -106,9 +106,9 @@ export function RendererFamilies() {
   return <View style={{ width: 1696, height: 650, marginTop: 50, flexDirection: "row", gap: 56, alignSelf: "center" }}>
     {families.map(([name, description], index) => <SceneMotionView key={name}
       pose={{ opacity: step >= index ? 1 : 0.2 }} duration={600} style={{ width: 528, alignItems: "center" }}>
+      <Text style={{ color: "#f8fafc", fontSize: 38, fontWeight: "600", marginBottom: 22 }}>{name}</Text>
       <GlassWindow family={index} />
-      <Text style={{ color: "#f8fafc", fontSize: 38, fontWeight: "600", marginTop: 22 }}>{name}</Text>
-      <Text style={{ color: "#e5f2fa", fontSize: 29, marginTop: 16 }}>{description}</Text>
+      <Text style={{ color: "#e5f2fa", fontSize: 27, lineHeight: 38, textAlign: "center", marginTop: 16 }}>{description}</Text>
     </SceneMotionView>)}
   </View>;
 }
