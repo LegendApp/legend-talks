@@ -18,6 +18,7 @@ import { AlternateRoots, AlternateWindows, AlternateEcosystem } from "./TypeGPUA
 import { Chart, Tradeoffs } from "./RNConnection"
 import { AppMontage, BalanceDiagram, CapabilityDiagram, MeasurementDiagram, MediaSlot, NativeDataDiagram, PlatformDiagram, RenderingDiagram } from "./RNConnectionVisuals"
 import { MetricBuckets } from "./MetricBuckets"
+import { AIMaintenance } from "./AIMaintenance"
 import { FrameworkComparison } from "./FrameworkComparison"
 import { CrossPlatformLanes } from "./CrossPlatformLanes"
 import { MeasurementTimeline } from "./MeasurementTimeline"
@@ -684,6 +685,47 @@ Performance bar method: Chat History first-content time, switching time, and ini
 
 The underlying measurements remain a mixed-build reference: GPUI and Tauri are new single runs, React Native is the September 19 ten-run median, and other rows are earlier measurements. The bar is descriptive of this snapshot, not a statistically established ranking.
 
+-->
+
+---
+steps: 2
+eyebrow: 'Writing versus maintaining'
+---
+
+# AI can write it nine times {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<AIMaintenance />
+
+<!--
+Step 1
+
+But couldn't AI just build a separate native app for every platform?
+
+Yeah. I threw AI at nine implementations. That's how I made this comparison.
+
+Nine is the benchmark callback here. I'm not saying your product needs nine implementations.
+
+Getting all of them to run was surprisingly easy. And honestly pretty fun.
+
+Step 2
+
+But getting them to run isn't the same as having apps I can confidently maintain.
+
+Now I find a bug. I have to fix it everywhere. And check every fix.
+
+AI can write Swift or Kotlin or Rust for me. But that doesn't automatically make me good at reviewing or optimizing all of them.
+
+And the implementations can quietly disagree. Different caching. Different sorting. Different behavior when something fails. AI doesn't catch every bug in one implementation. More implementations give me more places to miss one.
+
+Then the next feature comes along. Or a data migration. Or an accessibility fix. Same problem again.
+
+Separate native apps can absolutely work. Teams do it. But that's an ongoing cost, not just the cost of writing version one.
+
+I also like the iteration loop I already have with React Native. Fast Refresh, and shared JavaScript updates where OTA is supported and appropriate. That doesn't update native code, and native tools have their own preview workflows.
+
+I want AI helping me improve one shared implementation. And I want the platform-specific code to be there because the platform needs it.
+
+So what do I actually have to give up to get that? That's the interesting part. React Native is still composing a native app.
 -->
 
 ---
