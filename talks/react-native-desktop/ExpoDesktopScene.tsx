@@ -207,13 +207,16 @@ export function ExpoDesktopLayers() {
   const step = usePresentationValue("stepIndex");
   return <View style={{ width: 1824, height: 771, marginTop: 0, alignSelf: "center" }}>
     <GlassNetwork desktop={false} />
+    <Text style={{ position: "absolute", left: 752, top: 122, width: 320, fontSize: 34, lineHeight: 44,
+      fontWeight: "600", color: "#ffffff", textAlign: "center" }}>Expo</Text>
     <View style={{ position: "absolute", left: 0, top: 0, width: 1824, height: 726 }}>
       <GlassNetwork key={step >= 1 ? "connected" : "isolated"} desktop connected={step >= 1} />
       <Text accessibilityLabel="Apple logo" style={{ position: "absolute", left: 1238, top: 527, width: 100,
         fontFamily: "Helvetica Neue", fontSize: 72, lineHeight: 88, color: "#83d6ff", textAlign: "center",
         textShadowColor: "#418de0", textShadowRadius: 12, textShadowOffset: { width: 0, height: 0 } }}>{"\uF8FF"}</Text>
-      <SceneMotionView hidden={step < 1} initialPose={{ opacity: 0 }} pose={{ opacity: step >= 1 ? 1 : 0 }} duration={450}>
-      <Text style={{ position: "absolute", left: 1255, top: 329, width: 442, fontSize: 34, lineHeight: 42,
+      <SceneMotionView hidden={step < 1} initialPose={{ opacity: 0 }} pose={{ opacity: step >= 1 ? 1 : 0 }} duration={450}
+        style={{ position: "absolute", left: 1255, top: 329, width: 442, height: 42 }}>
+      <Text style={{ fontSize: 34, lineHeight: 42,
         fontWeight: "600", color: "#ffffff", textAlign: "center" }}>Expo Desktop</Text>
       </SceneMotionView>
       {["macOS", "Windows"].map((name, index) => <Text key={name} style={{ position: "absolute", top: 692,
