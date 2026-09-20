@@ -61,9 +61,5 @@ export function MeasurementTimeline() {
     </View>)}
     <SceneMotionView pose={{ x: frames[step].center - frames[0].center }} duration={900}
       style={{ position: "absolute", left: frames[0].center - 12, top: 473, width: 24, height: 24, borderRadius: 12, backgroundColor: cyan, shadowColor: cyan, shadowOpacity: 0.9, shadowRadius: 16, shadowOffset: { width: 0, height: 0 } }} />
-    <SceneMotionView pose={{ opacity: step === 2 ? 1 : 0 }} duration={650} style={{ position: "absolute", left: 225, top: 570, width: 1060, borderTopWidth: 2, borderColor: cyan }}>
-      <Text style={{ color: cyan, fontSize: 27, textAlign: "center", marginTop: 14 }}>Time to visible content</Text>
-    </SceneMotionView>
-    <Text style={{ position: "absolute", top: 645, width: "100%", textAlign: "center", color: "#b0c4d7", fontSize: 24 }}>Record the launch. Find the frame.</Text>
   </View>;
 }
