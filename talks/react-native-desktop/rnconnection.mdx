@@ -18,6 +18,7 @@ import { AlternateRoots, AlternateWindows, AlternateEcosystem } from "./TypeGPUA
 import { Chart, Tradeoffs } from "./RNConnection"
 import { AppMontage, BalanceDiagram, CapabilityDiagram, MeasurementDiagram, MediaSlot, NativeDataDiagram, PlatformDiagram, RenderingDiagram } from "./RNConnectionVisuals"
 import { MetricBuckets } from "./MetricBuckets"
+import { ChatArchitecture } from "./ChatArchitecture"
 import { AIMaintenance } from "./AIMaintenance"
 import { FrameworkComparison } from "./FrameworkComparison"
 import { CrossPlatformLanes } from "./CrossPlatformLanes"
@@ -580,6 +581,49 @@ Small app, low memory, fast interactions. That's a pretty good combination.
 -->
 
 ---
+steps: 8
+eyebrow: 'Chat History / architecture'
+---
+
+# How Chat History works {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<ChatArchitecture />
+
+<!--
+1. So how is a React Native app doing this?
+
+It isn't because JavaScript is magically faster than native code. Let me show you where the work actually happens.
+
+First we find the chat files. That's native. The C++ catalog discovers the conversations on disk.
+
+2. Then we parse the metadata. Titles, providers, dates. Enough to show the list of chats without opening every conversation in full.
+
+3. When I select a chat, the C++ parser opens it and builds the transcript rows and markdown blocks. I expose that through Nitro Modules.
+
+This is a custom parser for this workload. I'm not saying every desktop app needs you to write a C++ parser.
+
+4. Now React comes in. LegendList virtualizes the conversation.
+
+The data source gives it row indices and fetches metadata as needed. I don't need a giant JavaScript array containing every message's markdown.
+
+5. For each visible markdown row, Enriched Markdown gets a native block ID. The content stays native for the markdown renderer. React still composes the row, including images and controls.
+
+So React doesn't have to do every piece of work. It coordinates the pieces that are good at that work.
+
+6. And React is where I build the app UI. The layout, the state, what happens when I select another chat.
+
+7. The composer is a React component too. It coordinates input and the native controls underneath it.
+
+8. And settings belong on that React side as well. These last three are UI responsibilities, not extra sequential stages that all run after a message renders.
+
+That's the split I want. Native code for the work that benefits from it. React for composing and coordinating the app.
+
+No WebView is required for this core UI. This is regular React Native, with native modules and native views.
+
+Implementation references: packages/chat-history/cpp/ChatCatalog.cpp; packages/chat-history/cpp/ChatTranscriptParser.cpp; packages/chat-history/src/ChatHistory.nitro.ts; apps/chat-history/src/TranscriptDataSource.ts; apps/chat-history/src/TranscriptRow.tsx; apps/chat-history/src/ChatComposer.tsx. Settings is an architectural responsibility here, not a measured startup phase.
+-->
+
+---
 eyebrow: 'Chat History / four metrics'
 ---
 
@@ -633,6 +677,65 @@ SwiftUI gets the native UI and low memory, but this implementation misses the sp
 These are my cutoffs for this app. You can absolutely build good apps with those frameworks.
 
 But if I want this combination, React Native is looking really good. And unlike AppKit, it gives me a foundation I can use beyond macOS.
+-->
+
+---
+eyebrow: 'Beyond the window border'
+footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
+---
+
+# Native behavior {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<MediaSlot label="Diff: drop a file · Music: media keys" />
+
+<!--
+And native means more than how the sidebar looks.
+
+Drop a file into Diff. Use media keys in Music. Open a menu, use a shortcut, open another window.
+
+Those are the things I expect a desktop app to do.
+
+We still have to wire up those native integrations. But we can expose them to React and use them like any other part of the app.
+-->
+
+---
+eyebrow: 'And then / developer experience'
+footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
+---
+
+# And then you get React {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<MediaSlot label="Edit a component → Fast Refresh" />
+
+<!--
+And then you get React.
+
+That's the extra benefit. All the performance stuff we've just looked at stands on its own.
+
+But I also get to use the tools I already know. Components, hooks, state libraries, Fast Refresh.
+
+I can change some UI and see it immediately. That's a really nice way to build desktop apps.
+-->
+
+---
+eyebrow: 'The broader vision'
+footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
+---
+
+# React Native everywhere {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<PlatformDiagram />
+
+<!--
+And this is the development experience I actually want.
+
+React Native on mobile. React Native on desktop. React on the web.
+
+Share the state, the data, the logic, and the components that make sense to share.
+
+The interfaces should still fit the platform. A desktop app shouldn't just be a phone screen stretched sideways.
+
+But I don't want three completely separate codebases for the same product.
 -->
 
 ---
@@ -716,7 +819,9 @@ AppKit wins some of the numbers. You've seen them.
 
 But I don't have to give up this whole combination to use React Native.
 
-And we haven't even got to the developer experience yet.
+So this is the combination I wanted. Competitive performance. Native UI. Code I can share across platforms. I'm not choosing React Native because I'm willing to compromise.
+
+But if it's this good, why aren't more people building desktop apps with it?
 
 Reading this chart: native UI means native content controls on desktop, not just window chrome. Full dots are supported application targets. Half-filled Web dots for Tauri, Electron and Deno mean reusable web UI; desktop APIs still need adaptation. Tauri's iOS and Android half dots reflect my reservations about the mobile experience. Both are officially supported; this is my assessment, not a finding from these desktop benchmarks.
 
@@ -726,120 +831,6 @@ AppKit, React Native, and GPUI are in the leading group for all four. Difference
 
 These remain mixed-build reference measurements: GPUI and Tauri are new single runs, React Native is the September 19 ten-run median, and other rows are earlier measurements. App sizes are the earlier app-only snapshot. The groups describe this snapshot, not a statistically established ranking.
 
--->
-
----
-eyebrow: 'Why it works'
-footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
----
-
-# React composes a native app {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<WordFlow labels={["React", "Native views", "Operating system"]} />
-
-<!--
-Now, why does this work?
-
-It isn't because JavaScript suddenly became the world's fastest parser.
-
-React Native lets React compose a native app. Native code can own the expensive work and the big data, and React can describe what we want on screen.
-
-We don't have to turn everything into a giant JavaScript object first.
--->
-
----
-eyebrow: 'Architecture / illustrative code'
-footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
----
-
-# Keep the big data native {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<NativeDataDiagram />
-
-<!--
-For example, if I open a big document, why would I copy the whole thing into JavaScript just to display a few rows?
-
-Keep the document native. Ask for the rows we actually need. Let the UI update the small part that's visible.
-
-That means less copying, less memory, and less work.
-
-Native calls still have a cost. You can still block a thread by doing too much work on it. But React Native gives us the tools to build this architecture.
--->
-
----
-eyebrow: 'Regular React Native'
-footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
----
-
-# No WebView required {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-8xl mb-0"}
-
-<!--
-And this is just React Native.
-
-React components, Hermes, native modules, native views. We don't need a browser renderer and a main process talking over IPC just to build the core UI.
-
-You can still use a WebView when you want one. Music does for some integrations.
-
-But your entire app doesn't have to be one.
--->
-
----
-eyebrow: 'Beyond the window border'
-footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
----
-
-# Native behavior {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<MediaSlot label="Diff: drop a file · Music: media keys" />
-
-<!--
-And native means more than how the sidebar looks.
-
-Drop a file into Diff. Use media keys in Music. Open a menu, use a shortcut, open another window.
-
-Those are the things I expect a desktop app to do.
-
-We still have to wire up those native integrations. But we can expose them to React and use them like any other part of the app.
--->
-
----
-eyebrow: 'And then / developer experience'
-footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
----
-
-# And then you get React {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<MediaSlot label="Edit a component → Fast Refresh" />
-
-<!--
-And then you get React.
-
-That's the extra benefit. All the performance stuff we've just looked at stands on its own.
-
-But I also get to use the tools I already know. Components, hooks, state libraries, Fast Refresh.
-
-I can change some UI and see it immediately. That's a really nice way to build desktop apps.
--->
-
----
-eyebrow: 'The broader vision'
-footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
----
-
-# React Native everywhere {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<PlatformDiagram />
-
-<!--
-And this is the development experience I actually want.
-
-React Native on mobile. React Native on desktop. React on the web.
-
-Share the state, the data, the logic, and the components that make sense to share.
-
-The interfaces should still fit the platform. A desktop app shouldn't just be a phone screen stretched sideways.
-
-But I don't want three completely separate codebases for the same product.
 -->
 
 ---
