@@ -1,15 +1,11 @@
 import { SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
+import { metrics } from "./MetricBucketDefinitions";
 import benchmarks from "./rnconnection-assets/benchmarks.json";
 
 // All chat comparisons share the mixed-build reference measurements.
 const rows = benchmarks.chat;
-const metrics = [
-  { key: "content", title: "Load time", unit: "ms", limits: [500, 1000], bands: ["Under 500 ms", "500–1,000 ms", "1,000 ms and up"] },
-  { key: "memory", title: "Memory", unit: "MiB", limits: [100, 400], bands: ["Under 100 MiB", "100–400 MiB", "400 MiB and up"] },
-  { key: "size", title: "App size", unit: "MiB", limits: [25, 150], bands: ["Under 25 MiB", "25–150 MiB", "150 MiB and up"] },
-  { key: "switch", title: "Switching", unit: "ms", limits: [250, 500], bands: ["Under 250 ms", "250–500 ms", "500 ms and up"] },
-] as const;
+
 
 export function MetricBuckets() {
   const spotlight = usePresentationValue("stepIndex") >= 1;

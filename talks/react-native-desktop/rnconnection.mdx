@@ -296,7 +296,7 @@ But already, this doesn't look like some huge JavaScript performance penalty.
 
 ---
 eyebrow: 'Hello World / installed size'
-steps: 5
+steps: 6
 footer: 'Greeting workload · newer installed-size snapshot · MiB'
 ---
 
@@ -320,10 +320,13 @@ That's the app on disk, not a compressed download. These are ARM-only release bu
 Tauri gets to use the system WebView. Deno WebView does too, but still ships the Deno runtime.
 
 So choosing a system WebView doesn't automatically make every part of your app small.
+
+6. Now group those sizes using the same cutoffs as the overview: under 25 MiB, 25 to 150, and 150 or more.
 -->
 
 ---
 eyebrow: 'Hello World / memory'
+steps: 2
 footer: 'Greeting workload · MiB · settled physical footprint'
 ---
 
@@ -339,6 +342,7 @@ AppKit is about 16 MiB. SwiftUI is about 18. React Native is about 23. Compose M
 There's some overhead. Of course there is. But we're talking about a few megabytes here.
 
 Now what happens when we make it do something?
+2. Now use the same memory bands as the overview: under 100 MiB, 100 to 400, and 400 or more.
 -->
 
 ---
@@ -461,6 +465,7 @@ But we can draw whatever we want, right? So I made my own liquid glass.
 
 ---
 eyebrow: 'Chat History / first content'
+steps: 2
 footer: 'Video-derived ms · mixed-build reference · GPUI and Tauri single runs'
 ---
 
@@ -478,10 +483,12 @@ React Native gets to first content in about 393 milliseconds. AppKit is 319, and
 Electron takes about 1.28 seconds. That's roughly three times as long as React Native in this app.
 
 So React Native isn't winning every number. But it's very close to the fastest, and this is doing real app work now.
+2. Here are the load-time bands from the overview: under 500 milliseconds, 500 to 1,000, and a second or more.
 -->
 
 ---
 eyebrow: 'Chat History / initial memory'
+steps: 2
 footer: 'Settled physical footprint · MiB · includes attributed helper processes'
 ---
 
@@ -501,10 +508,12 @@ GPUI and Tauri have new file-backed storage. Their initial memory dropped from 2
 That's a big difference for an app that I might leave open all day.
 
 And this is why I care about more than build size. Using the system browser can make the download smaller, but it doesn't make the running app free.
+2. Now group by initial memory: under 100 MiB, 100 to 400, and 400 or more.
 -->
 
 ---
 eyebrow: 'Chat History / jump to top'
+steps: 2
 footer: 'Video-derived action-to-visible-result ms · mixed builds · lower is better'
 ---
 
@@ -520,10 +529,12 @@ React Native is about 51 milliseconds. GPUI is about 55 in its new single run. I
 This is the time from the action to the result appearing. It's not an FPS measurement.
 
 But it's the kind of thing that makes an app feel instant.
+2. Using the same interaction-time cutoffs as switching, every app is under 250 milliseconds here.
 -->
 
 ---
 eyebrow: 'Chat History / switch'
+steps: 2
 footer: 'Video-derived action-to-visible-result ms · mixed builds · lower is better'
 ---
 
@@ -539,10 +550,12 @@ AppKit is about 88 milliseconds. React Native and GPUI are around 183 and 185. T
 Opening quickly is great, but I want the rest of the app to feel quick too.
 
 That's what these interactions are testing.
+2. Now group by switching time: under 250 milliseconds, 250 to 500, and 500 or more.
 -->
 
 ---
 eyebrow: 'Chat History / app size'
+steps: 2
 footer: 'Measured September 18 · app bundles only · external grammars excluded · MiB'
 ---
 
@@ -560,6 +573,7 @@ AppKit and Tauri are smaller than React Native. So again, it doesn't win every c
 These are just the app bundles. I've excluded the external syntax grammar packs from every app.
 
 Small app, low memory, fast interactions. That's a pretty good combination.
+2. And the size bands: under 25 MiB, 25 to 150, and 150 or more.
 -->
 
 ---

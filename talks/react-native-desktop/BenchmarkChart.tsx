@@ -1,7 +1,8 @@
-import { ScenePositionView, SharedElement, useSharedElementTransition } from "@legend-apps/presentation";
+import { SceneMotionView, ScenePositionView, usePresentationValue, SharedElement, useSharedElementTransition } from "@legend-apps/presentation";
 import { useLayoutEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { ChartBar } from "./ChartBar";
+import { bucketColors, bucketIndex, bucketLayout } from "./MetricBucketDefinitions";
 import benchmarks from "./rnconnection-assets/benchmarks.json";
 
 export const chartLayout = { width: 1696, height: 710, top: 55, rowSpacing: 57, rowHeight: 43, fontSize: 34, lineHeight: 42, barLeft: 285, barWidth: 1210, barHeight: 30, valueWidth: 190, marginTop: 24 };
@@ -32,13 +33,25 @@ export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grou
   </ScenePositionView>;
 }
 
+export function BucketHeaders({ rows, metric, visible }: { rows: { name: string; value: number }[]; metric: Metric; visible: boolean }) {
+  return <>{bucketLayout(rows, metric).headers.map(header => <SceneMotionView key={header.label} hidden={!visible} pose={{ opacity: visible ? 1 : 0 }} duration={650}
+    style={{ position: "absolute", left: 0, top: header.y, width: chartLayout.width }}>
+    <Text style={{ color: header.color, fontSize: 25, lineHeight: 32 }}>{header.label}</Text>
+  </SceneMotionView>)}</>;
+}
+
 export function Chart({ metric, workload = "chat" }: { metric: Metric; workload?: "chat" | "hello" }) {
+  const grouped = usePresentationValue("stepIndex") >= 1;
   const rows = (workload === "chat" ? benchmarks.chat : benchmarks.hello)
     .map(row => ({ name: row.name, value: (row as unknown as Record<string, number>)[metric] }))
     .filter(row => Number.isFinite(row.value)).sort((a, b) => a.value - b.value);
   const maximum = Math.max(1, ...rows.map(row => row.value));
+  const buckets = bucketLayout(rows, metric);
   return <View style={{ width: chartLayout.width, height: chartLayout.height, marginTop: chartLayout.marginTop, alignSelf: "center" }}>
-    {rows.map(({ name, value }, index) => <BenchmarkRow key={name} name={name} value={value} metric={metric} maximum={maximum} y={chartLayout.top + index * chartLayout.rowSpacing} />)}
+    <BucketHeaders rows={rows} metric={metric} visible={grouped} />
+    {rows.map(({ name, value }, index) => <BenchmarkRow key={name} name={name} value={value} metric={metric} maximum={maximum}
+      grouped={grouped} groupColor={bucketColors[bucketIndex(value, metric)]}
+      y={grouped ? buckets.positions[name] : chartLayout.top + index * chartLayout.rowSpacing} />)}
     {workload === "chat" && <Text style={{ position: "absolute", top: 636, width: chartLayout.width, textAlign: "center", fontSize: 20, lineHeight: 28, color: "#cbd5e1" }}>
       {metric === "size" ? "Earlier app-only size snapshot · External grammars excluded" : "Mixed-build reference · GPUI/Tauri: single runs · RN: 10-run median · Other rows: Sept 17–18"}
     </Text>}
