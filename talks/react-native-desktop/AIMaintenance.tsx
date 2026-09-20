@@ -1,6 +1,6 @@
 import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { Animated, Easing, Text, View } from "react-native";
 import { MovingTitle } from "./MovingTitle";
 
@@ -91,10 +91,26 @@ function CryingStream() {
   const active = usePresentationValue("isActive");
   const preview = usePresentationValue("isPreview");
   const preparing = usePresentationValue("isPreparing");
-  const progress = useRef(new Animated.Value(2300)).current;
-  const intro = useRef(new Animated.Value(introDuration)).current;
-  useEffect(() => {
-    if (!active || preview || preparing) { progress.setValue(2300); intro.setValue(introDuration); return; }
+  const progress = useRef(new Animated.Value(preview && !preparing ? 2300 : 0)).current;
+  const intro = useRef(new Animated.Value(preview && !preparing ? introDuration : 0)).current;
+  const hasPlayed = useRef(false);
+  useLayoutEffect(() => {
+    if (preparing) {
+      hasPlayed.current = false;
+      progress.setValue(0);
+      intro.setValue(0);
+      return;
+    }
+    if (!active || preview) {
+      // Fresh presenter thumbnails show a still stream. Outgoing audience
+      // slides retain their last frame rather than jumping to that thumbnail.
+      if (preview && !hasPlayed.current) {
+        progress.setValue(2300);
+        intro.setValue(introDuration);
+      }
+      return;
+    }
+    hasPlayed.current = true;
     progress.setValue(0);
     intro.setValue(0);
     const animation = Animated.parallel([
