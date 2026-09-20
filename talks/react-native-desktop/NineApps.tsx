@@ -1,7 +1,7 @@
 import { FocusRegion, SceneMotionView, SharedElement, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
 import type { ReactNode } from "react";
 import { DeckBackground } from "./DeckBackground";
-import { detailCamera, renderingGroup, tourStep } from "./NineAppsTour";
+import { detailCamera, tourStep } from "./NineAppsTour";
 import { MovingTitle } from "./MovingTitle";
 import { Image, Text, View } from "react-native";
 import { appOrder, type AppId, type SceneMode } from "./NineAppsGeometry";
@@ -30,7 +30,6 @@ export function NineApps({ mode, children }: { mode: SceneMode; children?: React
     {mode === "hero" && <MovingTitle style={{ position: "absolute", left: 112, top: 65, width: 1696, zIndex: 2000 }}>
       <Text style={{ color: "#f8fafc", fontSize: 64, fontWeight: "700", textAlign: "center" }}>AI Chat History</Text>
     </MovingTitle>}
-    {mode === "filmstrip" && <Text style={{ position: "absolute", left: 112, top: 145, width: 1696, textAlign: "center", color: "#f1f5f9", fontSize: 28, zIndex: 2000 }}>{names[tour.app]} · {renderingGroup(tour.app)}{tour.detail === "sidebar" ? " · Sidebar" : tour.detail === "composer" ? " · Composer" : ""}</Text>}
     <SceneMotionView pose={camera} duration={650} style={{ width: 1920, height: 1080 }}>
     <AppCarousel items={appOrder} position={selected} mode={mode} renderCard={(id, card) => {
       const { captionHeight } = card;
