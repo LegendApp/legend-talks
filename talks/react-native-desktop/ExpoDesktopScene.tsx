@@ -92,6 +92,8 @@ float3 wallpaper(float2 p,float2 size,float seed) {
   return c;
 }
 half4 main(float2 p) {
+  // Canvas extends above the diagram so the meteor is visible during approach.
+  p.y-=240.0;
   float4 outColor=float4(0);
   float impact=max(elapsed()-0.85,0.0);
   float hit=connected*step(0.85,elapsed());
@@ -126,7 +128,10 @@ half4 main(float2 p) {
         float reveal=1.0-gap*(smoothstep(0.33,0.35,t)*(1.0-smoothstep(0.64,0.66,t)));
         float power=desktop<0.5 ? 1.0 : mix(0.65,1.0,connected*smoothstep(1.6,2.6,elapsed()));
         if(desktop>0.5 && t<0.35) power=1.0;
-        float fade=smoothstep(185.0,193.0,p.y)*(1.0-smoothstep(499.0,511.0,p.y))*reveal;
+        // Use the uninterrupted scene clock: connecting must not replay entrance.
+        float growth=smoothstep(0.12+i*0.045,1.5+i*0.045,time);
+        float grown=1.0-smoothstep(growth-0.02,growth+0.02,t);
+        float fade=smoothstep(185.0,193.0,p.y)*(1.0-smoothstep(499.0,511.0,p.y))*reveal*grown;
         float3 pipe=tint*(body*0.22+reflection*0.46+glow)
           +mix(float3(0.78,0.92,1.0),float3(1.0,0.25,0.28),outage)*(rim*0.96+front*0.80*wave)
           +mix(float3(0.32,0.66,0.90),float3(0.95,0.08,0.12),outage)*(innerRim*0.52+caustic*0.86+grid*0.14);
@@ -160,8 +165,9 @@ half4 main(float2 p) {
           float t=end==0 ? 0.34 : 0.65;
           float2 broken=float2(pathX(t,i),188.0+t*320.0);
           if(length(p-broken)<220.0) {
-            float cap=exp(-pow((p.y-broken.y)/4.0,2.0))*exp(-pow((p.x-broken.x)/26.0,4.0))*outage;
-            float flare=exp(-length(p-broken)/22.0)*outage*(0.45+0.15*sin(elapsed()*13.0+i));
+            float reached=smoothstep(t,t+0.08,smoothstep(0.12+i*0.045,1.5+i*0.045,time));
+            float cap=exp(-pow((p.y-broken.y)/4.0,2.0))*exp(-pow((p.x-broken.x)/26.0,4.0))*outage*reached;
+            float flare=exp(-length(p-broken)/22.0)*outage*reached*(0.45+0.15*sin(elapsed()*13.0+i));
             float heat=clamp(cap+flare,0.0,0.95);
             outColor=over(float4(float3(1.0,0.18,0.08)*heat,heat),outColor);
             for(int j=0;j<18;j++) {
@@ -170,7 +176,7 @@ half4 main(float2 p) {
               float2 sparkPos=broken+float2(direction*age*155.0,(end==0 ? 55.0 : -125.0)*age+age*age*145.0);
               float size=2.0+mod(float(j),4.0);
               float distance=length(p-sparkPos);
-              float light=clamp(exp(-distance/size)+0.3*exp(-distance/(size*3.0)),0.0,1.0)*(1.0-age)*outage;
+              float light=clamp(exp(-distance/size)+0.3*exp(-distance/(size*3.0)),0.0,1.0)*(1.0-age)*outage*reached;
               outColor=over(float4(float3(1.0,0.36,0.13)*light,light),outColor);
             }
           }
@@ -323,11 +329,11 @@ function GlassNetwork({ desktop, connected = false }: { desktop: boolean; connec
     }
     previous.current = { connected, running };
   }, [connected, preview, active, preparing]);
-  return <Canvas pointerEvents="none" accessibilityLabel={desktop && connected ? "Expo Desktop connects macOS and Windows" : undefined} style={{ width: 1824, height: 691 }}>
+  return <Canvas pointerEvents="none" accessibilityLabel={desktop && connected ? "Expo Desktop connects macOS and Windows" : undefined} style={{ position: "absolute", left: 0, top: -240, width: 1824, height: 1080 }}>
     <Fill><Shader source={effect!} uniforms={uniforms}>
-      <ImageShader image={bridgeLabelImage} tx="decal" ty="decal" />
+      <ImageShader image={bridgeLabelImage} x={0} y={0} width={884} height={84} fit="fill" tx="decal" ty="decal" />
     </Shader></Fill>
-    {!desktop && <Path path={expoLogo} color="#e6f7ff" transform={[{ translateX: 880 }, { translateY: 44 }, { scale: 64 / 24 }]} />}
+    {!desktop && <Path path={expoLogo} color="#e6f7ff" transform={[{ translateX: 880 }, { translateY: 284 }, { scale: 64 / 24 }]} />}
   </Canvas>;
 }
 
