@@ -18,6 +18,7 @@ import { AlternateRoots, AlternateWindows, AlternateEcosystem } from "./TypeGPUA
 import { Chart, Tradeoffs } from "./RNConnection"
 import { AppMontage, BalanceDiagram, CapabilityDiagram, MeasurementDiagram, MediaSlot, NativeDataDiagram, PlatformDiagram, RenderingDiagram } from "./RNConnectionVisuals"
 import { MetricBuckets } from "./MetricBuckets"
+import { CrossPlatformVenn } from "./CrossPlatformVenn"
 import { MeasurementTimeline } from "./MeasurementTimeline"
 import { HelloSizeJourney } from "./HelloSizeJourney"
 import { StoryMoment, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot, SlidesRelease, WordFlow } from "./StoryDiagrams"
@@ -630,6 +631,28 @@ SwiftUI gets the native UI and low memory, but this implementation misses the sp
 These are my cutoffs for this app. You can absolutely build good apps with those frameworks.
 
 But if I want this combination, React Native is looking really good. And unlike AppKit, it gives me a foundation I can use beyond macOS.
+-->
+
+---
+eyebrow: 'Cross-platform'
+---
+
+# React Native everywhere {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<CrossPlatformVenn />
+
+<!--
+And then there's this.
+
+iOS. Android. macOS. Windows. Web.
+
+The performance argument stands on its own. But with React Native, I also get to share a lot of what I build across all of these.
+
+The app logic, the data layer, components where they make sense. And then I can adapt the UI to the platform.
+
+This doesn't mean every library works on every platform today. Desktop still has gaps. We'll get to that.
+
+But this is the development experience I want. One foundation, and apps that feel right wherever they run.
 -->
 
 ---
