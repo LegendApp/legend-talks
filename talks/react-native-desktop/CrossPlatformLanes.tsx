@@ -2,25 +2,17 @@ import { Canvas, Fill, Path, Shader, Skia } from "@shopify/react-native-skia";
 import { useAnimatedShaderUniforms } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 
-const platforms = ["iOS", "Android", "macOS", "Windows", "Web"];
-const frameworks = [
-  { name: "React Native", targets: [0, 1, 2, 3, 4] },
-  { name: "Flutter", targets: [0, 1, 2, 3, 4] },
-  { name: "Compose", targets: [0, 1, 2, 3, 4] },
-  { name: "Tauri", targets: [0, 1, 2, 3] },
-  { name: "SwiftUI", targets: [0, 2] },
-  { name: "AppKit", targets: [2] },
-  { name: "Electron", targets: [2, 3] },
-  { name: "GPUI", targets: [2, 3] },
-  { name: "Deno", targets: [2, 3] },
-];
-// Generate static support predicates once; all motion stays in the GPU shader.
+import { frameworkCoverage, platforms } from "./FrameworkCoverage";
+
+const order = ["React Native", "Flutter", "Compose", "Tauri", "SwiftUI", "AppKit", "Electron", "GPUI", "Deno"];
+const frameworks = order.map(name => frameworkCoverage.find(framework => framework.name === name)!);
+// Static coverage predicates; shader motion stays entirely on the GPU.
 const support = frameworks.map((framework, row) =>
-  `if(row==${row}) return ${framework.targets.map(column => `column==${column}`).join(" || ")};`
+  `if(row==${row}) { ${framework.coverage.map((value, column) => `if(column==${column}) return ${value.toFixed(1)};`).join(" ")} }`
 ).join("\n");
 export const crossPlatformShader = `
 uniform float time;
-bool supported(int row,int column) { ${support} return false; }
+float supported(int row,int column) { ${support} return 0.0; }
 float hash(float n) { return fract(sin(n*127.1)*43758.5453); }
 half4 main(float2 p) {
   float3 color=float3(0);
@@ -32,6 +24,8 @@ half4 main(float2 p) {
   float first=row>=5 ? 990.0 : 470.0;
   float last=row<3 ? 1510.0 : row==3 ? 1250.0 : row<6 ? 990.0 : 1250.0;
   float span=step(first,p.x)*step(p.x,last);
+  bool partialWeb=row==3 || row==6 || row==8;
+  if(partialWeb && p.x>last && p.x<1510.0) span=step(0.5,fract(p.x/18.0))*0.3;
   float wave=pow(0.5+0.5*sin(time*2.1-p.x*0.008+float(row)*0.7),5.0);
   color+=tint*(exp(-dy*1.4)*0.60+exp(-dy*0.16)*(0.08+wave*0.17))*span;
   float travel=fract(time*0.19+float(row)*0.137);
@@ -41,13 +35,16 @@ half4 main(float2 p) {
   for(int column=0;column<5;column++) {
     float x=470.0+float(column)*260.0;
     color+=float3(0.12,0.22,0.32)*exp(-abs(p.x-x)*1.2)*step(88.0,p.y)*step(p.y,662.0)*0.55;
-    if(supported(row,column)) {
+    float coverage=supported(row,column);
+    if(coverage>0.0) {
       float phase=time*2.2+float(column)*0.9-float(row)*0.6;
       float beat=0.5+0.5*sin(phase);
       float radius=7.0+beat*1.8;
       float d=length(p-float2(x,y));
       color+=tint*exp(-d*0.075)*(0.34+beat*0.36);
-      color+=float3(0.85,0.95,1.0)*(1.0-smoothstep(radius-1.0,radius+0.8,d));
+      float fill=coverage==1.0 ? 1.0 : 1.0-smoothstep(x-0.5,x+0.5,p.x);
+      color+=float3(0.85,0.95,1.0)*(1.0-smoothstep(radius-1.0,radius+0.8,d))*fill;
+      if(coverage<1.0) color+=tint*exp(-abs(d-radius)*1.5)*0.6;
       float ring=14.0+fract(phase/6.28318)*13.0;
       color+=tint*exp(-abs(d-ring)*1.1)*(1.0-fract(phase/6.28318))*0.35;
       for(int spark=0;spark<5;spark++) {
@@ -80,7 +77,7 @@ const icons = [
 
 export function CrossPlatformLanes() {
   const uniforms = useAnimatedShaderUniforms({}, 8);
-  return <View accessibilityLabel={frameworks.map(framework => `${framework.name}: ${framework.targets.map(target => platforms[target]).join(", ")}`).join(". ")} style={{ width: 1696, height: 710, alignSelf: "center", marginTop: 16 }}>
+  return <View accessibilityLabel={frameworks.map(framework => `${framework.name}: ${framework.coverage.map((value, target) => value ? `${platforms[target]}${value === 0.5 ? " (reusable UI)" : ""}` : null).filter(Boolean).join(", ")}`).join(". ")} style={{ width: 1696, height: 710, alignSelf: "center", marginTop: 16 }}>
     <Canvas pointerEvents="none" style={{ position: "absolute", inset: 0 }}>
       <Fill><Shader source={effect!} uniforms={uniforms} /></Fill>
       {icons.map((path, column) => <Path key={platforms[column]} path={path} transform={[{ translateX: 470 + column * 260 }, { translateY: 30 }]} style="stroke" strokeWidth={2.5} strokeJoin="round" strokeCap="round" color="#e5f3ff" />)}

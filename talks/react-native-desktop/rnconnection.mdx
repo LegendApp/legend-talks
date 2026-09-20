@@ -18,6 +18,7 @@ import { AlternateRoots, AlternateWindows, AlternateEcosystem } from "./TypeGPUA
 import { Chart, Tradeoffs } from "./RNConnection"
 import { AppMontage, BalanceDiagram, CapabilityDiagram, MeasurementDiagram, MediaSlot, NativeDataDiagram, PlatformDiagram, RenderingDiagram } from "./RNConnectionVisuals"
 import { MetricBuckets } from "./MetricBuckets"
+import { FrameworkComparison } from "./FrameworkComparison"
 import { CrossPlatformLanes } from "./CrossPlatformLanes"
 import { MeasurementTimeline } from "./MeasurementTimeline"
 import { HelloSizeJourney } from "./HelloSizeJourney"
@@ -650,7 +651,7 @@ React Native isn't alone in covering all five. Flutter and Compose do too.
 
 Tauri does mobile and desktop. SwiftUI does Apple's platforms. AppKit is macOS. Electron, GPUI, and Deno are desktop frameworks.
 
-This is application targets, not whether you can reuse some HTML in a website. Linux isn't shown here, but the desktop frameworks generally support it too.
+Full dots are supported application targets. Half-filled Web dots mean the web UI can be reused, but platform APIs need adaptation. That's why Tauri, Electron and Deno have a partial Web dot. Linux isn't shown among these five platforms.
 
 React Native gets here through React Native Web and the macOS and Windows implementations. Platform coverage doesn't mean every library works everywhere, or that all the platforms are equally mature.
 
@@ -664,7 +665,7 @@ eyebrow: 'The technical case'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
-# You can have all three {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-8xl mb-0"}
+<FrameworkComparison />
 
 <!--
 This is why I think React Native is the best choice.
@@ -676,6 +677,13 @@ AppKit wins some of the numbers. You've seen them.
 But I don't have to give up this whole combination to use React Native.
 
 And we haven't even got to the developer experience yet.
+
+Reading this chart: native UI means native content controls on desktop, not just window chrome. Full dots are supported application targets. Half-filled Web dots for Tauri, Electron and Deno mean reusable web UI; desktop APIs still need adaptation. Tauri's supported mobile targets count fully.
+
+Performance bar method: Chat History first-content time, switching time, and initial physical footprint, weighted equally. For each metric use best measured value divided by that framework's value, then take their geometric mean. AppKit is 100 on this index because it leads these three metrics. Deno is the arithmetic mean of the two backend indices. This is a derived index, not a universal performance score, and excludes app size and jump timing.
+
+The underlying measurements remain a mixed-build reference: GPUI and Tauri are new single runs, React Native is the September 19 ten-run median, and other rows are earlier measurements. The bar is descriptive of this snapshot, not a statistically established ranking.
+
 -->
 
 ---
