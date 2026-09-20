@@ -19,9 +19,9 @@ float4 glassPanel(float2 p,float2 size,float radius,float clock) {
   d+=edgeMotion*(0.65*sin(angle*3.0+clock*0.45)+0.35*sin(angle*5.0-clock*0.3));
   float mask=1.0-smoothstep(-0.8,0.8,d);
   float2 uv=p/size;
-  float edge=exp(-abs(d+1.2)*1.1);
-  float bevel=exp(-abs(d+5.5)*0.22);
-  float inner=exp(-abs(d+14.0)*0.10);
+  float edge=exp(-abs(d+0.7)*2.0);
+  float bevel=exp(-abs(d+2.5)*0.65);
+  float inner=exp(-abs(d+7.0)*0.24);
   float outside=exp(-max(d,0.0)*0.11)*(1.0-mask);
   float direction=0.42+0.58*pow(0.5+0.5*cos(atan(p.y,p.x)*2.0-0.6),2.0);
   float top=exp(-pow((uv.y+0.95)/0.24,2.0));
@@ -29,14 +29,14 @@ float4 glassPanel(float2 p,float2 size,float radius,float clock) {
   float sweepAxis=(uv.y+uv.x*0.42+0.6*sin(clock*0.23))/0.26;
   float sweep=exp(-sweepAxis*sweepAxis);
   float3 body=float3(0.035,0.067,0.11)
-    +float3(0.09,0.17,0.26)*top
-    +float3(0.055,0.10,0.16)*bottom
+    +float3(0.035,0.065,0.10)*top
+    +float3(0.022,0.04,0.065)*bottom
     +float3(0.024,0.040,0.060)*sweep;
   float3 color=body*mask
-    +float3(0.75,0.88,1.0)*edge*(0.60+breath*0.13)*direction
-    +float3(0.24,0.48,0.72)*bevel*mask*(0.40+top*0.4)
-    +float3(0.12,0.23,0.38)*inner*mask*0.30
-    +float3(0.18,0.40,0.65)*outside*(0.14+breath*0.04);
+    +float3(0.75,0.88,1.0)*edge*(0.88+breath*0.12)*direction
+    +float3(0.24,0.48,0.72)*bevel*mask*(0.14+top*0.10)
+    +float3(0.12,0.23,0.38)*inner*mask*0.10
+    +float3(0.18,0.40,0.65)*outside*(0.08+breath*0.02);
   float alpha=clamp(mask*0.94+outside*0.30,0.0,1.0);
   return float4(min(color,float3(alpha)),alpha);
 }`;
