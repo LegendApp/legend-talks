@@ -1,10 +1,12 @@
-import { FilmstripMotionView, FocusRegion, SceneMotionView, SharedElement, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
+import { FocusRegion, SceneMotionView, SharedElement, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
 import type { ReactNode } from "react";
 import { DeckBackground } from "./DeckBackground";
 import { detailCamera, renderingGroup, tourStep } from "./NineAppsTour";
 import { MovingTitle } from "./MovingTitle";
 import { Image, Text, View } from "react-native";
-import { appCardLayout, appOrder, type AppId, type SceneMode } from "./NineAppsGeometry";
+import { appOrder, type AppId, type SceneMode } from "./NineAppsGeometry";
+
+import { AppCarousel } from "./AppCarousel";
 
 const names: Record<AppId, string> = {
   "react-native": "React Native", appkit: "AppKit", swiftui: "SwiftUI", electron: "Electron",
@@ -31,13 +33,10 @@ export function NineApps({ mode, children }: { mode: SceneMode; children?: React
     </MovingTitle>
     {mode === "filmstrip" && <Text style={{ position: "absolute", left: 112, top: 145, width: 1696, textAlign: "center", color: "#f1f5f9", fontSize: 28, zIndex: 2000 }}>{names[tour.app]} · {renderingGroup(tour.app)}{tour.detail === "sidebar" ? " · Sidebar" : tour.detail === "composer" ? " · Composer" : ""}</Text>}
     <SceneMotionView pose={camera} duration={650} style={{ width: 1920, height: 1080 }}>
-    {appOrder.map((id, index) => {
-      const card = appCardLayout(index, mode);
-      const height = card.width * 0.625;
-      const captionHeight = card.width * 0.0625;
+    <AppCarousel items={appOrder} position={selected} mode={mode} renderCard={(id, card) => {
+      const { captionHeight } = card;
       const uri = screenshots[id];
-      return <FilmstripMotionView key={id} index={index} count={appOrder.length} enabled={mode === "filmstrip"} position={selected} style={{ position: "absolute", left: card.x - card.width / 2,
-        top: card.y - height / 2, width: card.width, height, zIndex: card.depth }}>
+      return (
         <SharedElement id={`nine-app-${id}`} style={{ flex: 1 }}>
           <View style={{ flex: 1, borderRadius: 12, overflow: "hidden", borderWidth: 2,
             borderColor: id === "react-native" ? "#67e8f9" : "#33465e", backgroundColor: "#101e30" }}>
@@ -57,8 +56,8 @@ export function NineApps({ mode, children }: { mode: SceneMode; children?: React
             </View>
           </View>
         </SharedElement>
-      </FilmstripMotionView>;
-    })}
+      );
+    }} />
     </SceneMotionView>
     {mode === "filmstrip" && tour.detail === "takeover" && <View pointerEvents="none" style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080, zIndex: 3000 }}>{children}</View>}
   </FocusRegion>;

@@ -24,6 +24,7 @@ import { DesktopObjections } from "./DesktopObjections"
 import { SharedRoots } from "./SharedRoots"
 import markdownIcon from "./rnconnection-assets/markdown-icon.png";
 import { NineApps } from "./NineApps"
+import { AppShowcase } from "./AppCarousel"
 import { MovingTitle } from "./MovingTitle"
 import { DirectoryTitle } from "./DirectoryTitle"
 import directoryScreenshot from "./rnconnection-assets/directory-legend-list.png";
@@ -95,17 +96,20 @@ So testing a list turned into a somewhat larger project.
 
 
 ---
+title: Then I made apps I wanted
 eyebrow: Story
+steps: 2
+template: ./NineApps.tsx
 ---
 
-# Then I made apps I wanted {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<AppMontage apps={["Legend Photos", "Legend Music"]} />
+<AppShowcase title="Then I made apps I wanted" apps={["Legend Photos", "Legend Music"]} />
 
 <!--
-I started with Legend Photos and Legend Music. These were apps I actually wanted to use.
+1. I started with Legend Photos. This was an app I actually wanted to use.
 
 And just look at how quickly they open.
+
+2. And then Legend Music.
 
 That's what got me excited. These felt so much better than the Electron apps I was using. Small, instant, native UI.
 
