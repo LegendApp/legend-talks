@@ -468,6 +468,51 @@ But we can draw whatever we want, right? So I made my own liquid glass.
 -->
 
 ---
+steps: 8
+eyebrow: 'Chat History / architecture'
+---
+
+# How Chat History works {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<ChatArchitecture />
+
+<!--
+1. Before we get into the numbers, let me show you how the React Native version works.
+
+Here's where the work actually happens.
+
+First we find the chat files. That's native. The C++ catalog discovers the conversations on disk.
+
+2. Then we parse the metadata. Titles, providers, dates. Enough to show the list of chats without opening every conversation in full.
+
+3. When I select a chat, the C++ parser opens it and builds the transcript rows and markdown blocks. I expose that through Nitro Modules.
+
+This is a custom parser for this workload. I'm not saying every desktop app needs you to write a C++ parser.
+
+4. Now React comes in. LegendList virtualizes the conversation.
+
+The data source gives it row indices and fetches metadata as needed. I don't need a giant JavaScript array containing every message's markdown.
+
+5. For each visible markdown row, Enriched Markdown gets a native block ID. The content stays native for the markdown renderer. React still composes the row, including images and controls.
+
+So React doesn't have to do every piece of work. It coordinates the pieces that are good at that work.
+
+6. And React is where I build the app UI. The layout, the state, what happens when I select another chat.
+
+7. The composer is a React component too. It coordinates input and the native controls underneath it.
+
+8. And settings belong on that React side as well. These last three are UI responsibilities, not extra sequential stages that all run after a message renders.
+
+That's the split I want. Native code for the work that benefits from it. React for composing and coordinating the app.
+
+No WebView is required for this core UI. This is regular React Native, with native modules and native views.
+
+So what does that look like in the measurements?
+
+Implementation references: packages/chat-history/cpp/ChatCatalog.cpp; packages/chat-history/cpp/ChatTranscriptParser.cpp; packages/chat-history/src/ChatHistory.nitro.ts; apps/chat-history/src/TranscriptDataSource.ts; apps/chat-history/src/TranscriptRow.tsx; apps/chat-history/src/ChatComposer.tsx. Settings is an architectural responsibility here, not a measured startup phase.
+-->
+
+---
 eyebrow: 'Chat History / first content'
 steps: 2
 footer: 'Video-derived ms · mixed-build reference · GPUI and Tauri single runs'
@@ -578,49 +623,6 @@ These are just the app bundles. I've excluded the external syntax grammar packs 
 
 Small app, low memory, fast interactions. That's a pretty good combination.
 2. And the size bands: under 25 MiB, 25 to 150, and 150 or more.
--->
-
----
-steps: 8
-eyebrow: 'Chat History / architecture'
----
-
-# How Chat History works {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<ChatArchitecture />
-
-<!--
-1. So how is a React Native app doing this?
-
-It isn't because JavaScript is magically faster than native code. Let me show you where the work actually happens.
-
-First we find the chat files. That's native. The C++ catalog discovers the conversations on disk.
-
-2. Then we parse the metadata. Titles, providers, dates. Enough to show the list of chats without opening every conversation in full.
-
-3. When I select a chat, the C++ parser opens it and builds the transcript rows and markdown blocks. I expose that through Nitro Modules.
-
-This is a custom parser for this workload. I'm not saying every desktop app needs you to write a C++ parser.
-
-4. Now React comes in. LegendList virtualizes the conversation.
-
-The data source gives it row indices and fetches metadata as needed. I don't need a giant JavaScript array containing every message's markdown.
-
-5. For each visible markdown row, Enriched Markdown gets a native block ID. The content stays native for the markdown renderer. React still composes the row, including images and controls.
-
-So React doesn't have to do every piece of work. It coordinates the pieces that are good at that work.
-
-6. And React is where I build the app UI. The layout, the state, what happens when I select another chat.
-
-7. The composer is a React component too. It coordinates input and the native controls underneath it.
-
-8. And settings belong on that React side as well. These last three are UI responsibilities, not extra sequential stages that all run after a message renders.
-
-That's the split I want. Native code for the work that benefits from it. React for composing and coordinating the app.
-
-No WebView is required for this core UI. This is regular React Native, with native modules and native views.
-
-Implementation references: packages/chat-history/cpp/ChatCatalog.cpp; packages/chat-history/cpp/ChatTranscriptParser.cpp; packages/chat-history/src/ChatHistory.nitro.ts; apps/chat-history/src/TranscriptDataSource.ts; apps/chat-history/src/TranscriptRow.tsx; apps/chat-history/src/ChatComposer.tsx. Settings is an architectural responsibility here, not a measured startup phase.
 -->
 
 ---
