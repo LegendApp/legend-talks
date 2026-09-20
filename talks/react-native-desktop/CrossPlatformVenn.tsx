@@ -6,6 +6,7 @@ import { Text, View } from "react-native";
 export const crossPlatformShader = `
 uniform float time;
 half4 main(float2 p) {
+  p.x=848.0+(p.x-848.0)/1.7;
   float4 result=float4(0);
   for(int i=0;i<5;i++) {
     float angle=-1.5707963+float(i)*1.2566371;
@@ -34,22 +35,36 @@ if (!effect) throw new Error("Could not compile cross-platform Venn diagram");
 const platforms = [
   { name: "iOS", x: 848, y: 83 },
   { name: "Android", x: 1110, y: 269 },
-  { name: "Windows", x: 1004, y: 579 },
-  { name: "Web", x: 692, y: 579 },
+  { name: "Web", x: 1004, y: 579 },
+  { name: "Windows", x: 692, y: 579 },
   { name: "macOS", x: 586, y: 269 },
+];
+
+// Coordinates are in the shader's logical space; widen both glass and labels together.
+const screenX = (x: number) => 848 + (x - 848) * 1.7;
+const frameworks = [
+  { name: "React Native", x: 848, y: 320 },
+  { name: "Flutter", x: 848, y: 361 },
+  { name: "Compose", x: 848, y: 402 },
+  { name: "Tauri", x: 800, y: 263 },
+  { name: "SwiftUI", x: 705, y: 230 },
+  { name: "AppKit", x: 580, y: 340 },
+  { name: "Electron", x: 708, y: 393 },
+  { name: "GPUI", x: 708, y: 434 },
+  { name: "Deno", x: 708, y: 475 },
 ];
 
 export function CrossPlatformVenn() {
   const uniforms = useAnimatedShaderUniforms({}, 8);
-  return <View accessibilityLabel="React Native at the intersection of iOS, Android, macOS, Windows, and Web" style={{ width: 1696, height: 710, alignSelf: "center", marginTop: 16 }}>
+  return <View accessibilityLabel="Cross platform: React Native, Flutter, and Compose support all five platforms; Tauri supports mobile and desktop; SwiftUI supports iOS and macOS; AppKit supports macOS; Electron, GPUI, and Deno support macOS and Windows" style={{ width: 1696, height: 710, alignSelf: "center", marginTop: 16 }}>
     <Canvas pointerEvents="none" style={{ position: "absolute", inset: 0 }}>
       <Fill><Shader source={effect!} uniforms={uniforms} /></Fill>
     </Canvas>
-    {platforms.map(platform => <View key={platform.name} style={{ position: "absolute", left: platform.x - 108, top: platform.y - 27, width: 216, height: 54, alignItems: "center", justifyContent: "center" }}>
+    {platforms.map(platform => <View key={platform.name} style={{ position: "absolute", left: screenX(platform.x) - 108, top: platform.y - 27, width: 216, height: 54, alignItems: "center", justifyContent: "center" }}>
       <Text style={{ color: "#ffffff", fontSize: 36, fontWeight: "600", textShadowColor: "#0b1729", textShadowRadius: 8, textShadowOffset: { width: 0, height: 0 } }}>{platform.name}</Text>
     </View>)}
-    <View style={{ position: "absolute", left: 748, top: 302, width: 200, height: 106, justifyContent: "center", alignItems: "center" }}>
-      <Text style={{ color: "#ffffff", fontSize: 37, lineHeight: 44, fontWeight: "700", textAlign: "center", textShadowColor: "#082232", textShadowRadius: 12, textShadowOffset: { width: 0, height: 0 } }}>{"React\nNative"}</Text>
-    </View>
+    {frameworks.map(framework => <View key={framework.name} style={{ position: "absolute", left: screenX(framework.x) - 110, top: framework.y - 20, width: 220, height: 40, justifyContent: "center", alignItems: "center" }}>
+      <Text style={{ color: framework.name === "React Native" ? "#8de4ff" : "#ffffff", fontSize: 29, lineHeight: 36, fontWeight: framework.name === "React Native" ? "700" : "500", textAlign: "center", textShadowColor: "#082232", textShadowRadius: 12, textShadowOffset: { width: 0, height: 0 } }}>{framework.name}</Text>
+    </View>)}
   </View>;
 }
