@@ -30,7 +30,7 @@ export function MetricBuckets() {
                       style={{ position: "absolute", inset: 0, borderRadius: 8, borderWidth: 1,
                         borderColor: "#8bd7ec", backgroundColor: "#285165" }} />}
                     <Text numberOfLines={1} style={{ flex: 1, fontSize: 24, color: "#ffffff", fontWeight: rn ? "700" : "400" }}>{row.name}</Text>
-                    <Text style={{ fontSize: 24, color: "#ffffff", fontWeight: rn ? "700" : "400", fontVariant: ["tabular-nums"] }}>{row[metric.key].toFixed(1)}</Text>
+                    <Text style={{ fontSize: 24, color: "#ffffff", fontWeight: rn ? "700" : "400", fontVariant: ["tabular-nums"] }}>{row[metric.key].toFixed(0)}</Text>
                   </View>;
                 })}
               </View>

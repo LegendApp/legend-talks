@@ -28,7 +28,7 @@ export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grou
       <ChartBar highlighted={highlighted} groupColor={groupColor} grouped={grouped} animateEntrance={!matched && !enteredThroughMatch} style={{ width, height: chartLayout.barHeight }} />
     </SharedElement>
     <SharedElement id={`${id}-value`} resize="preserve" style={{ position: "absolute", right: 0, top: 0, width: chartLayout.valueWidth, height: chartLayout.rowHeight }}>
-      <Text style={{ color: "#f1f5f9", textAlign: "right", fontSize: chartLayout.fontSize, lineHeight: chartLayout.lineHeight, fontVariant: ["tabular-nums"] }}>{value.toFixed(1)} {units[metric]}</Text>
+      <Text style={{ color: "#f1f5f9", textAlign: "right", fontSize: chartLayout.fontSize, lineHeight: chartLayout.lineHeight, fontVariant: ["tabular-nums"] }}>{value.toFixed(0)} {units[metric]}</Text>
     </SharedElement>
   </ScenePositionView>;
 }

@@ -101,8 +101,8 @@ export function Tradeoffs() {
       {benchmarks.chat.map((row) => (
         <View key={row.name} style={{ flexDirection: "row", padding: 12, borderRadius: 8, backgroundColor: row.name === "React Native" ? "#102326" : "transparent" }}>
           <Text style={{ width: 340, fontSize: 25, color: "#f8fafc", fontWeight: row.name === "React Native" ? "700" : "400" }}>{row.name}</Text>
-          <Text style={{ width: 250, fontSize: 25, color: "#f1f5f9" }}>{row.content.toFixed(1)} ms</Text>
-          <Text style={{ width: 220, fontSize: 25, color: "#f1f5f9" }}>{row.memory.toFixed(1)} MiB</Text>
+          <Text style={{ width: 250, fontSize: 25, color: "#f1f5f9" }}>{row.content.toFixed(0)} ms</Text>
+          <Text style={{ width: 220, fontSize: 25, color: "#f1f5f9" }}>{row.memory.toFixed(0)} MiB</Text>
           <Text style={{ fontSize: 25, color: "#f1f5f9" }}>{row.name === "GPUI" ? "Canvas; translucent composer" : row.ui}</Text>
         </View>
       ))}

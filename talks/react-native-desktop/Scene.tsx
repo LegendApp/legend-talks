@@ -62,7 +62,7 @@ export function BenchmarkChart({ metric }: { metric: BenchmarkMetric }) {
               <View style={{ height: "100%", width: `${row[metric] / maximum * 100}%`, backgroundColor: highlighted ? accent : "#526580" }} />
             </View>
             <Text className="text-right text-3xl" style={[styles.chartValue, { color: highlighted ? accent : "#f1f5f9" }]}>
-              {row[metric].toFixed(1)} {unit}
+              {row[metric].toFixed(0)} {unit}
             </Text>
           </View>
         );
