@@ -363,11 +363,17 @@ transition: none
 <NineApps mode="hero" />
 
 <!--
-This is the React Native version.
+This is AI Chat History. This is the React Native version.
 
-Open it, pick a conversation, read through it. That's the app I actually wanted.
+It looks like a chat app, but there's quite a bit of work behind opening it.
 
-And it feels really good.
+It traverses the filesystem to find conversations, then parses lots of text files. This isn't just showing a hardcoded screen.
+
+Then there's a big list to virtualize. And when I open a conversation, it has to render Markdown, code blocks, and embedded images.
+
+So we're exercising file access, parsing, list virtualization, and rich content rendering. And then doing it again when I switch conversations.
+
+Open it, pick a conversation, read through it. That's the app I actually wanted. And it feels really good.
 
 But to compare the frameworks, I needed more than one version.
 -->
