@@ -77,7 +77,7 @@ const icons = [
 
 export function CrossPlatformLanes() {
   const uniforms = useAnimatedShaderUniforms({}, 8);
-  return <View accessibilityLabel={frameworks.map(framework => `${framework.name}: ${framework.coverage.map((value, target) => value ? `${platforms[target]}${value === 0.5 ? " (reusable UI)" : ""}` : null).filter(Boolean).join(", ")}`).join(". ")} style={{ width: 1696, height: 710, alignSelf: "center", marginTop: 16 }}>
+  return <View accessibilityLabel={frameworks.map(framework => `${framework.name}: ${framework.coverage.map((value, target) => value ? `${platforms[target]}${value === 0.5 ? target === 4 ? " (reusable web UI)" : " (qualified mobile experience assessment)" : ""}` : null).filter(Boolean).join(", ")}`).join(". ")} style={{ width: 1696, height: 710, alignSelf: "center", marginTop: 16 }}>
     <Canvas pointerEvents="none" style={{ position: "absolute", inset: 0 }}>
       <Fill><Shader source={effect!} uniforms={uniforms} /></Fill>
       {icons.map((path, column) => <Path key={platforms[column]} path={path} transform={[{ translateX: 470 + column * 260 }, { translateY: 30 }]} style="stroke" strokeWidth={2.5} strokeJoin="round" strokeCap="round" color="#e5f3ff" />)}

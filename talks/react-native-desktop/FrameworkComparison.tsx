@@ -50,7 +50,7 @@ if (!effect) throw new Error("Could not compile comparison glass");
 
 export function FrameworkComparison() {
   const uniforms = useAnimatedShaderUniforms({}, 8);
-  return <View accessibilityLabel="Framework comparison: performance index, native content controls, and platform coverage. Half-filled Web dots mean reusable web UI." style={{ width: 1696, height: 850, alignSelf: "center" }}>
+  return <View accessibilityLabel="Framework comparison: performance index, native content controls, and platform coverage. Half-filled Web dots mean reusable web UI; Tauri mobile half dots reflect the presenter’s assessment of the experience." style={{ width: 1696, height: 850, alignSelf: "center" }}>
     <Canvas pointerEvents="none" style={{ position: "absolute", inset: 0 }}><Fill><Shader source={effect!} uniforms={uniforms} /></Fill></Canvas>
     {[{ name: "Performance", x: 270, width: 480 }, { name: "Native UI", x: 775, width: 290 }, { name: "Cross platform", x: 1095, width: 590 }].map(column =>
       <Text key={column.name} style={{ position: "absolute", left: column.x, top: 64, width: column.width, fontSize: 36, lineHeight: 44, fontWeight: "600", color: "#f1f5f9", textAlign: "center" }}>{column.name}</Text>)}
@@ -58,7 +58,7 @@ export function FrameworkComparison() {
     {rows.map((row, index) => {
       const highlighted = row.name === "React Native";
       const y = 200 + index * 66;
-      return <View key={row.name} accessibilityLabel={`${row.name}: performance index ${Math.round(row.score * 100)}, native UI ${row.native ? "yes" : "no"}, ${row.coverage.filter(value => value === 1).length} platforms${row.coverage.includes(0.5) ? " plus reusable web UI" : ""}`} style={{ position: "absolute", left: 0, top: y - 29, width: 1696, height: 58, justifyContent: "center" }}>
+      return <View key={row.name} accessibilityLabel={`${row.name}: performance index ${Math.round(row.score * 100)}, native UI ${row.native ? "yes" : "no"}, ${row.coverage.filter(value => value === 1).length} platforms${row.coverage.includes(0.5) ? ` plus ${row.coverage.filter(value => value === 0.5).length} qualified targets` : ""}`} style={{ position: "absolute", left: 0, top: y - 29, width: 1696, height: 58, justifyContent: "center" }}>
         {highlighted && <View style={{ position: "absolute", inset: 0, borderRadius: 14, borderWidth: 1, borderColor: "#65cde880", backgroundColor: "#20608035" }} />}
         <Text style={{ width: 266, paddingLeft: 12, color: highlighted ? "#8de4ff" : "#f1f5f9", fontSize: 32, lineHeight: 40, fontWeight: highlighted ? "700" : "500" }}>{row.name}</Text>
         <View style={{ position: "absolute", left: 294, top: 15, width: 432, height: 28, borderRadius: 6, backgroundColor: "#90b6db16" }}>
