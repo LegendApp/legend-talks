@@ -36,6 +36,9 @@ export function NineApps({ mode, children }: { mode: SceneMode; children?: React
       const uri = screenshots[id];
       return (
         <SharedElement id={`nine-app-${id}`} style={{ flex: 1 }}>
+          <View style={{ height: captionHeight, minHeight: 24, justifyContent: "center", alignItems: "center" }}>
+            <Text style={{ fontSize: Math.max(17, card.width * 0.027), fontWeight: "600", color: "#f1f5f9" }}>{names[id]}</Text>
+          </View>
           <View style={{ flex: 1, borderRadius: 12, overflow: "hidden", borderWidth: 2,
             borderColor: id === "react-native" ? "#67e8f9" : "#33465e", backgroundColor: "#101e30" }}>
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#14253a" }}>
@@ -43,14 +46,11 @@ export function NineApps({ mode, children }: { mode: SceneMode; children?: React
                 <View style={{ position: "absolute", left: "2%", top: "2%", width: "26%", height: "94%", borderRadius: 12, borderWidth: 1, borderColor: "#94a3b8", justifyContent: "center", alignItems: "center" }}>
                   <Text style={{ color: "#f1f5f9", fontSize: Math.max(12, card.width * 0.018) }}>Sidebar</Text>
                 </View>
-                <Text style={{ position: "absolute", left: "33%", top: "30%", color: "#f1f5f9", fontSize: Math.max(14, card.width * 0.022) }}>{mode === "hero" ? "REACT NATIVE VIDEO" : names[id]}{"\n"}Capture pending</Text>
+                <Text style={{ position: "absolute", left: "33%", top: "30%", color: "#f1f5f9", fontSize: Math.max(14, card.width * 0.022) }}>{mode === "hero" ? "VIDEO" : "SCREENSHOT"}{"\n"}Capture pending</Text>
                 <View style={{ position: "absolute", left: "30%", top: "77%", width: "66%", height: "21%", borderRadius: 12, borderWidth: 1, borderColor: "#94a3b8", justifyContent: "center", alignItems: "center" }}>
                   <Text style={{ color: "#f1f5f9", fontSize: Math.max(12, card.width * 0.018) }}>Composer</Text>
                 </View>
               </>}
-            </View>
-            <View style={{ height: captionHeight, minHeight: 24, justifyContent: "center", alignItems: "center" }}>
-              <Text style={{ fontSize: Math.max(17, card.width * 0.027), fontWeight: "600", color: id === "react-native" ? "#67e8f9" : "#f1f5f9" }}>{names[id]}</Text>
             </View>
           </View>
         </SharedElement>
