@@ -141,7 +141,7 @@ const glassEffect = Skia.RuntimeEffect.Make(objectionGlassShader);
 if (!glassEffect) throw new Error("Could not compile objection glass");
 
 function GlassPanel({ crossed, settled, index }: { crossed: boolean; settled: boolean; index: number }) {
-  const uniforms = useAnimatedShaderUniforms({ broken: crossed ? 1 : 0, settled: settled ? 1 : 0, phase: index * 1.7, centerX: crossed ? 396 + index * 564 : 350 }, crossed ? 6 : 2);
+  const uniforms = useAnimatedShaderUniforms({ broken: crossed ? 1 : 0, settled: settled ? 1 : 0, phase: index * 1.7, centerX: crossed ? 396 + index * 564 : 350 }, crossed ? 6 : 2, { clock: crossed && !settled ? 1 : "slide" });
   // Crossed panels draw across the full stage and below its bottom. The shader
   // origin stays on this panel while fragments can cross neighboring columns.
   return <Canvas pointerEvents="none" style={{ position: "absolute", left: crossed ? -142 - index * 564 : -96, top: -108, width: crossed ? 1920 : 700, height: crossed ? 1080 : 600 }}>
@@ -161,8 +161,8 @@ function ObjectionCard({ label, index, crossed, settled, zoomTarget }: {
       scaleX: zoom && center ? 1.65 : 1, scaleY: zoom && center ? 1.65 : 1,
       opacity: zoom && !center ? 0 : 1 }}
     style={{ position: "absolute", left: 30 + index * 564, top: 105, width: 508, height: 384 }}>
-    {/* Re-crossing replays the animation; zooming preserves its current clock. */}
-    <GlassPanel key={String(crossed)} crossed={crossed} settled={settled} index={index} />
+    {/* The shared step-1 timeline survives the subsequent zoom step. */}
+    <GlassPanel crossed={crossed} settled={settled} index={index} />
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 24 }}>
       <Text style={{ color: "#ffffff", fontSize: 42, fontWeight: "600", textAlign: "center", lineHeight: 54,
         textShadowColor: "#07121f", textShadowRadius: 8, textShadowOffset: { width: 0, height: 2 } }}>{label}</Text>

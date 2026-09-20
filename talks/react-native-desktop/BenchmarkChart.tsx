@@ -1,5 +1,4 @@
-import { SceneMotionView, ScenePositionView, usePresentationValue, SharedElement, useSharedElementTransition } from "@legend-apps/presentation";
-import { useLayoutEffect, useState } from "react";
+import { SceneMotionView, ScenePositionView, usePresentationValue, SharedElement, useSharedElementEntrance } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 import { ChartBar } from "./ChartBar";
 import { bucketColors, bucketIndex, bucketLayout } from "./MetricBucketDefinitions";
@@ -15,9 +14,7 @@ export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grou
   groupColor?: string; grouped?: boolean; duration?: number;
 }) {
   const id = `benchmark-${name}`;
-  const matched = useSharedElementTransition(`${id}-bar`);
-  const [enteredThroughMatch, setEnteredThroughMatch] = useState(false);
-  useLayoutEffect(() => { if (matched) setEnteredThroughMatch(true); }, [matched]);
+  const animateEntrance = useSharedElementEntrance(`${id}-bar`);
   const highlighted = name === "React Native";
   const width = Math.max(2, value / maximum * chartLayout.barWidth);
   return <ScenePositionView y={y} duration={duration} style={{ left: 0, width: chartLayout.width, height: chartLayout.rowHeight }}>
@@ -25,7 +22,7 @@ export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grou
       <Text style={{ color: "#f1f5f9", fontWeight: highlighted ? "600" : "400", fontSize: chartLayout.fontSize, lineHeight: chartLayout.lineHeight }}>{name}</Text>
     </SharedElement>
     <SharedElement id={`${id}-bar`} style={{ position: "absolute", left: chartLayout.barLeft, top: (chartLayout.rowHeight - chartLayout.barHeight) / 2, width, height: chartLayout.barHeight }}>
-      <ChartBar highlighted={highlighted} groupColor={groupColor} grouped={grouped} animateEntrance={!matched && !enteredThroughMatch} style={{ width, height: chartLayout.barHeight }} />
+      <ChartBar highlighted={highlighted} groupColor={groupColor} grouped={grouped} animateEntrance={animateEntrance} style={{ width, height: chartLayout.barHeight }} />
     </SharedElement>
     <SharedElement id={`${id}-value`} resize="preserve" style={{ position: "absolute", right: 0, top: 0, width: chartLayout.valueWidth, height: chartLayout.rowHeight }}>
       <Text style={{ color: "#f1f5f9", textAlign: "right", fontSize: chartLayout.fontSize, lineHeight: chartLayout.lineHeight, fontVariant: ["tabular-nums"] }}>{value.toFixed(0)} {units[metric]}</Text>

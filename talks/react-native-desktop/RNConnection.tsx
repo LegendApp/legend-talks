@@ -1,8 +1,8 @@
 export { Chart } from "./BenchmarkChart";
 import { FlowGlyph } from "./RNConnectionVisuals";
-import { usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
-import { Animated, Easing, Text, View, type StyleProp, type ViewStyle } from "react-native";
-import { Fragment, useEffect, useState, type ReactNode } from "react";
+import { PlaybackKeyframeView, type PresentationTemplateProps } from "@legend-apps/presentation";
+import { Text, View, type StyleProp, type ViewStyle } from "react-native";
+import { Fragment, type ReactNode } from "react";
 import { DeckBackground } from "./DeckBackground";
 import benchmarks from "./rnconnection-assets/benchmarks.json";
 
@@ -17,44 +17,12 @@ export default function Frame({ children }: PresentationTemplateProps) {
   );
 }
 
-function useRevealProgress(delay: number, duration: number) {
-  const active = usePresentationValue("isActive");
-  const preview = usePresentationValue("isPreview");
-  const startedAt = usePresentationValue("startedAt");
-  const [progress] = useState(() => new Animated.Value(preview ? 1 : 0));
-
-  useEffect(() => {
-    progress.setValue(preview || !active ? 1 : 0);
-    if (active && !preview) {
-      const animation = Animated.timing(progress, {
-        toValue: 1,
-        duration,
-        delay,
-        easing: Easing.out(Easing.cubic),
-        // Match the macOS presentation host's transition driver.
-        useNativeDriver: false,
-        isInteraction: false,
-      });
-      animation.start();
-      return () => animation.stop();
-    }
-  }, [active, preview, startedAt, delay, duration, progress]);
-
-  return progress;
-}
-
 function Reveal({ children, delay = 0, style }: {
-  children: ReactNode;
-  delay?: number;
-  style?: StyleProp<ViewStyle>;
+  children: ReactNode; delay?: number; style?: StyleProp<ViewStyle>;
 }) {
-  const progress = useRevealProgress(delay, 650);
-
-  return (
-    <Animated.View style={[style, { opacity: progress }]}>
-      {children}
-    </Animated.View>
-  );
+  return <PlaybackKeyframeView clock="slide" delay={delay}
+    keyframes={[{ time: 0, x: 0, y: 0, opacity: 0 }, { time: 650, x: 0, y: 0, opacity: 1 }]}
+    style={style}>{children}</PlaybackKeyframeView>;
 }
 
 export function Points({ items }: { items: string[] }) {

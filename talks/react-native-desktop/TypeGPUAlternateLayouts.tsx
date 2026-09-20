@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { usePresentationValue } from "@legend-apps/presentation";
-import { Animated, Easing, Image, Text, View } from "react-native";
+import { type ReactNode } from "react";
+import { PlaybackKeyframeView } from "@legend-apps/presentation";
+import { Image, Text, View } from "react-native";
 
 export function AlternateRoots({ children, icons }: { children: ReactNode; icons: string[] }) {
   return <View style={{ width: 1696, height: 700, marginTop: 30 }}>
@@ -34,32 +34,18 @@ export function AlternateWindows({ children }: { children: ReactNode }) {
 }
 
 function LibraryLabel() {
-  const active = usePresentationValue("isActive");
-  const preview = usePresentationValue("isPreview");
-  const preparing = usePresentationValue("isPreparing");
-  const [time] = useState(() => new Animated.Value(0));
-  const elapsed = useRef(0);
-  const hasPlayed = useRef(false);
-  useEffect(() => {
-    if (preview && !hasPlayed.current) time.setValue(14);
-    if (!active || preview || preparing) return;
-    hasPlayed.current = true;
-    time.setValue(elapsed.current);
-    const animation = Animated.timing(time, { toValue: 14, duration: Math.max(0, 14-elapsed.current)*1000,
-      easing: Easing.linear, useNativeDriver: true, isInteraction: false });
-    animation.start();
-    return () => { time.stopAnimation(value => { elapsed.current = value; }); };
-  }, [active, preview, preparing, time]);
-  const green = time.interpolate({ inputRange: [0, 7, 8, 14], outputRange: [0, 0, 1, 1], extrapolate: "clamp" });
-  const visible = time.interpolate({ inputRange: [0, 10, 11.5, 14], outputRange: [1, 1, 0, 0], extrapolate: "clamp" });
-  return <Animated.View pointerEvents="none" style={{ position: "absolute", left: 738, top: 295, width: 220, height: 60,
-    borderRadius: 16, borderWidth: 1, borderColor: "#b4d6dd", backgroundColor: "#102333", opacity: visible, justifyContent: "center" }}>
+  return <PlaybackKeyframeView previewTime={14}
+    keyframes={[{ time: 0, x: 0, y: 0, opacity: 1 }, { time: 10000, x: 0, y: 0, opacity: 1 }, { time: 11500, x: 0, y: 0, opacity: 0 }]}
+    style={{ position: "absolute", left: 738, top: 295, width: 220, height: 60,
+    borderRadius: 16, borderWidth: 1, borderColor: "#b4d6dd", backgroundColor: "#102333", justifyContent: "center" }}>
     <Text style={{ color: "#ffffff", fontSize: 28, fontWeight: "600", textAlign: "center" }}>Your library</Text>
-    <Animated.View style={{ position: "absolute", inset: -1, borderRadius: 16, borderWidth: 1, borderColor: "#5af394",
-      backgroundColor: "#123827", opacity: green, justifyContent: "center" }}>
+    <PlaybackKeyframeView previewTime={14}
+      keyframes={[{ time: 0, x: 0, y: 0, opacity: 0 }, { time: 7000, x: 0, y: 0, opacity: 0 }, { time: 8000, x: 0, y: 0, opacity: 1 }]}
+      style={{ position: "absolute", inset: -1, borderRadius: 16, borderWidth: 1, borderColor: "#5af394",
+      backgroundColor: "#123827", justifyContent: "center" }}>
       <Text style={{ color: "#5af394", fontSize: 28, fontWeight: "600", textAlign: "center" }}>Your library</Text>
-    </Animated.View>
-  </Animated.View>;
+    </PlaybackKeyframeView>
+  </PlaybackKeyframeView>;
 }
 
 export function AlternateEcosystem({ children }: { children: ReactNode }) {
