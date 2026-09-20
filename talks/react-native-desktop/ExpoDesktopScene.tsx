@@ -98,7 +98,8 @@ half4 main(float2 p) {
     float i=float(k);
     if ((desktop < 0.5 && k<3) || (desktop > 0.5 && k>=3)) {
       float endpoint=160.0+i*376.0;
-      float3 tint=k<3 ? float3(0.24,0.43,0.70) : float3(0.04,0.67,0.90);
+      float outage=desktop*(1.0-latch());
+      float3 tint=k<3 ? float3(0.24,0.43,0.70) : mix(float3(0.04,0.67,0.90),float3(1.0,0.055,0.09),outage);
       // Broad, curved tubes, with a transparent core and two refractive rims.
       if(p.y>=187.0 && p.y<=511.0 &&
         p.x>=min(912.0+(i-2.0)*70.0,endpoint)-110.0 &&
@@ -120,12 +121,12 @@ half4 main(float2 p) {
         float grid=exp(-abs(sin((p.y+n*n*14.0)*0.037))*35.0)*body;
         float gap=desktop*(1.0-latch());
         float reveal=1.0-gap*(smoothstep(0.33,0.35,t)*(1.0-smoothstep(0.64,0.66,t)));
-        float power=desktop<0.5 ? 1.0 : mix(0.25,1.0,connected*smoothstep(1.6,2.6,time));
+        float power=desktop<0.5 ? 1.0 : mix(0.65,1.0,connected*smoothstep(1.6,2.6,time));
         if(desktop>0.5 && t<0.35) power=1.0;
         float fade=smoothstep(185.0,193.0,p.y)*(1.0-smoothstep(499.0,511.0,p.y))*reveal;
         float3 pipe=tint*(body*0.22+reflection*0.46+glow)
-          +float3(0.78,0.92,1.0)*(rim*0.96+front*0.80*wave)
-          +float3(0.32,0.66,0.90)*(innerRim*0.52+caustic*0.86+grid*0.14);
+          +mix(float3(0.78,0.92,1.0),float3(1.0,0.25,0.28),outage)*(rim*0.96+front*0.80*wave)
+          +mix(float3(0.32,0.66,0.90),float3(0.95,0.08,0.12),outage)*(innerRim*0.52+caustic*0.86+grid*0.14);
         float surge=desktop*hit*exp(-pow((t-mix(0.35,1.12,clamp((time-1.5)/1.15,0.0,1.0)))*18.0,2.0))
           *(1.0-smoothstep(2.6,3.0,time));
         pipe=pipe*power+float3(0.60,0.94,1.0)*surge*(body+glow)*1.8;
@@ -147,21 +148,29 @@ half4 main(float2 p) {
           float flowing=desktop<0.5 ? 1.0 : (1.0-step(0.35,travel))
             +step(0.35,travel)*connected*smoothstep(1.5,2.6,time);
           float alpha=clamp(spark,0.0,0.96)*fade*flowing;
-          outColor=over(float4(float3(0.90,0.97,1.0)*alpha,alpha),outColor);
+          outColor=over(float4(mix(float3(0.90,0.97,1.0),float3(1.0,0.35,0.25),outage)*alpha,alpha),outColor);
         }
       }
-      if(desktop>0.5) {
-        float2 broken=float2(pathX(0.34,i),296.8);
-        float outage=1.0-latch();
-        // Hot broken ends and staggered ballistic sparks, visible before the click.
-        float cap=exp(-pow((p.y-broken.y)/2.5,2.0))*exp(-pow((p.x-broken.x)/24.0,4.0))*outage;
-        outColor=over(float4(float3(1.0,0.48,0.22)*cap,cap),outColor);
-        for(int j=0;j<8;j++) {
-          float age=fract(time*0.85+float(j)*0.127+i*0.37);
-          float direction=sin(float(j)*17.3+i*4.0);
-          float2 sparkPos=broken+float2(direction*age*95.0,-age*70.0+age*age*235.0);
-          float light=exp(-length(p-sparkPos)/2.8)*(1.0-age)*outage;
-          outColor=over(float4(float3(1.0,0.60,0.28)*light,light),outColor);
+      if(desktop>0.5 && outage>0.001) {
+        // Both sides of each severed pipe spit staggered red-hot sparks.
+        for(int end=0;end<2;end++) {
+          float t=end==0 ? 0.34 : 0.65;
+          float2 broken=float2(pathX(t,i),188.0+t*320.0);
+          if(length(p-broken)<220.0) {
+            float cap=exp(-pow((p.y-broken.y)/4.0,2.0))*exp(-pow((p.x-broken.x)/26.0,4.0))*outage;
+            float flare=exp(-length(p-broken)/22.0)*outage*(0.45+0.15*sin(time*13.0+i));
+            float heat=clamp(cap+flare,0.0,0.95);
+            outColor=over(float4(float3(1.0,0.18,0.08)*heat,heat),outColor);
+            for(int j=0;j<18;j++) {
+              float age=fract(time*1.25+float(j)*0.618+i*0.37+float(end)*0.23);
+              float direction=sin(float(j)*17.3+i*4.0);
+              float2 sparkPos=broken+float2(direction*age*155.0,(end==0 ? 55.0 : -125.0)*age+age*age*145.0);
+              float size=2.0+mod(float(j),4.0);
+              float distance=length(p-sparkPos);
+              float light=clamp(exp(-distance/size)+0.3*exp(-distance/(size*3.0)),0.0,1.0)*(1.0-age)*outage;
+              outColor=over(float4(float3(1.0,0.36,0.13)*light,light),outColor);
+            }
+          }
         }
       }
       // Devices share a bottom baseline, as in the selected concept.
@@ -262,7 +271,7 @@ if (!effect) throw new Error("Could not compile Expo Desktop glass scene");
 const expoLogo = "M0 20.084c.043.53.23 1.063.718 1.778.58.849 1.576 1.315 2.303.567.49-.505 5.794-9.776 8.35-13.29a.761.761 0 011.248 0c2.556 3.514 7.86 12.785 8.35 13.29.727.748 1.723.282 2.303-.567.57-.835.728-1.42.728-2.046 0-.426-8.26-15.798-9.092-17.078-.8-1.23-1.044-1.498-2.397-1.542h-1.032c-1.353.044-1.597.311-2.398 1.542C8.267 3.991.33 18.758 0 19.77Z";
 
 function GlassNetwork({ desktop, connected = false }: { desktop: boolean; connected?: boolean }) {
-  const uniforms = useAnimatedShaderUniforms({ desktop: desktop ? 1 : 0, connected: connected ? 1 : 0 }, 4);
+  const uniforms = useAnimatedShaderUniforms({ desktop: desktop ? 1 : 0, connected: connected ? 1 : 0 }, 4, { restartKey: connected ? 1 : 0 });
   return <Canvas pointerEvents="none" style={{ width: 1824, height: 691 }}>
     <Fill><Shader source={effect!} uniforms={uniforms} /></Fill>
     {!desktop && <Path path={expoLogo} color="#e6f7ff" transform={[{ translateX: 880 }, { translateY: 44 }, { scale: 64 / 24 }]} />}
@@ -297,7 +306,7 @@ export function ExpoDesktopLayers() {
     <Text style={{ position: "absolute", left: 752, top: 122, width: 320, fontSize: 34, lineHeight: 44,
       fontWeight: "600", color: "#ffffff", textAlign: "center" }}>Expo</Text>
     <View style={{ position: "absolute", left: 0, top: 0, width: 1824, height: 726 }}>
-      <GlassNetwork key={step >= 1 ? "connected" : "isolated"} desktop connected={step >= 1} />
+      <GlassNetwork desktop connected={step >= 1} />
       <SceneMotionView pose={{ opacity: step >= 1 ? 1 : 0.16 }} duration={2800} style={{ position: "absolute", left: 1238, top: 527, width: 100, height: 88 }}>
       <Text accessibilityLabel="Apple logo" style={{ width: 100,
         fontFamily: "Helvetica Neue", fontSize: 72, lineHeight: 88, color: "#83d6ff", textAlign: "center",
