@@ -18,6 +18,7 @@ import { AlternateRoots, AlternateWindows, AlternateEcosystem } from "./TypeGPUA
 import { Chart, Tradeoffs } from "./RNConnection"
 import { AppMontage, BalanceDiagram, CapabilityDiagram, MeasurementDiagram, MediaSlot, NativeDataDiagram, PlatformDiagram, RenderingDiagram } from "./RNConnectionVisuals"
 import { MetricBuckets } from "./MetricBuckets"
+import { MeasurementTimeline } from "./MeasurementTimeline"
 import { HelloSizeJourney } from "./HelloSizeJourney"
 import { StoryMoment, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot, SlidesRelease, WordFlow } from "./StoryDiagrams"
 import { DesktopObjections } from "./DesktopObjections"
@@ -241,19 +242,32 @@ They can all talk to the OS. The difference here is who draws the content inside
 
 ---
 eyebrow: 'Ground rules'
+steps: 3
 footer: 'September 17 report · macOS / Apple M4 · implementation comparison'
 ---
 
 # Measure what the user sees {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
 
-<MeasurementDiagram />
+<MeasurementTimeline />
 
 <!--
-I care about how long it takes before I can actually use the app. How much memory it takes just sitting there. And how much stuff I have to install.
+1. I never really wanted to build this app in all of these platforms myself.
 
-So I tested release builds on the same Apple Silicon Mac, and repeated the runs. These are medians, not the best result I could get.
+But it was pretty easy to throw Codex at it. I could talk through architecture and optimization, even in languages I don't know.
 
-The size measurements are from newer builds than the timing and memory runs. And this is a macOS comparison. I haven't run this benchmark on Windows.
+So I ended up building a bunch of apps, and a measurement system to compare them.
+
+2. At first I had the apps report their own load times. But they were measuring different things. A framework saying it's ready doesn't mean the user can see anything yet.
+
+So I had it record videos and analyze the frames. Here's the click. Here's the window.
+
+3. And here's the frame where the content actually appears. That's the thing I wanted to measure.
+
+It's still limited by the recording frame rate. Tiny differences aren't meaningful. But now we're using the same visible endpoint across the apps.
+
+I wanted React Native to win. I love React Native.
+
+But if something else is truly better, I should reconsider what I'm building with. I wanted to know.
 -->
 
 ---
