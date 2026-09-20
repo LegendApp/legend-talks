@@ -578,7 +578,6 @@ Small app, low memory, fast interactions. That's a pretty good combination.
 
 ---
 eyebrow: 'Chat History / four metrics'
-steps: 2
 ---
 
 # In the leading group on every metric {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
@@ -586,7 +585,7 @@ steps: 2
 <MetricBuckets />
 
 <!--
-1. Here's everything together. Load time, memory, app size, and switching conversations.
+Here's everything together. Load time, memory, app size, and switching conversations.
 
 Look at the groups. A few hundred milliseconds to load, or over a second. Tens of megabytes of memory, or hundreds.
 
@@ -596,7 +595,7 @@ Load time means stable first content. Memory is the initial settled physical foo
 
 All of the chat charts now use this mixed-build reference. GPUI and Tauri have new single runs with file-backed storage. RN is the September 19 ten-run median. Compose is September 18, and the other rows are September 17. The remaining storage updates need completed builds and remeasurement. App sizes are still the earlier snapshot.
 
-2. Now just follow React Native.
+Now just follow React Native.
 
 It's in the first group every time.
 
@@ -611,7 +610,7 @@ steps: 2
 footer: 'Measured on macOS · current visuals require refreshed captures after native overlay removal'
 ---
 
-# The combination matters {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+# Performance metrics {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
 
 <BalanceDiagram />
 

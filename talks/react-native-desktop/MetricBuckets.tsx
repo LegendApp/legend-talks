@@ -1,4 +1,3 @@
-import { SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 import { metrics } from "./MetricBucketDefinitions";
 import benchmarks from "./rnconnection-assets/benchmarks.json";
@@ -8,7 +7,6 @@ const rows = benchmarks.chat;
 
 
 export function MetricBuckets() {
-  const spotlight = usePresentationValue("stepIndex") >= 1;
   return <View style={{ width: 1696, height: 740, marginTop: 28 }}>
     <View style={{ flexDirection: "row", gap: 24 }}>
       {metrics.map(metric => {
@@ -28,7 +26,7 @@ export function MetricBuckets() {
                 {entries.map(row => {
                   const rn = row.name === "React Native";
                   return <View key={row.name} style={{ height: 38, flexDirection: "row", alignItems: "center", paddingHorizontal: 8 }}>
-                    {rn && <SceneMotionView duration={450} pose={{ opacity: spotlight ? 1 : 0.3 }}
+                    {rn && <View
                       style={{ position: "absolute", inset: 0, borderRadius: 8, borderWidth: 1,
                         borderColor: "#8bd7ec", backgroundColor: "#285165" }} />}
                     <Text numberOfLines={1} style={{ flex: 1, fontSize: 24, color: "#ffffff", fontWeight: rn ? "700" : "400" }}>{row.name}</Text>
@@ -41,11 +39,5 @@ export function MetricBuckets() {
         </View>;
       })}
     </View>
-    <Text style={{ color: "#e2e8f0", fontSize: 20, lineHeight: 28, textAlign: "center", marginTop: 10 }}>
-      Chat History · Initial footprint · App-only sizes · Practical bands, not statistical ties
-    </Text>
-    <Text style={{ color: "#cbd5e1", fontSize: 18, lineHeight: 26, textAlign: "center" }}>
-      Mixed builds · GPUI/Tauri: single runs · RN: 10-run median · Other rows: Sept 17–18
-    </Text>
   </View>;
 }
