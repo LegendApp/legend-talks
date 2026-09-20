@@ -176,7 +176,6 @@ half4 main(float2 p) {
   }
   if(desktop < 0.5) {
     // Glass project tile behind the Expo mark and native label.
-    outColor=over(material(p-float2(919,108),float2(192,88),23.0,float3(0.025,0.085,0.16)),outColor);
     outColor=over(material(p-float2(912,100),float2(190,88),23.0,float3(0.07,0.16,0.27)),outColor);
   } else {
     // The two desktop pipes pass behind this bright connecting glass bridge.
@@ -184,7 +183,6 @@ half4 main(float2 p) {
     float appear=connected*smoothstep(0.0,0.45,time);
     float halo=exp(-abs(roundedBox(q,float2(221,41),31.0))*0.045)*0.42*appear;
     outColor=over(float4(float3(0.04,0.72,1.0)*halo,halo),outColor);
-    outColor=over(material(q-float2(8,10),float2(224,44),29.0,float3(0.015,0.18,0.26))*appear,outColor);
     outColor=over(material(q,float2(221,41),29.0,float3(0.025,0.29,0.39))*appear,outColor);
   }
   return half4(min(outColor.rgb,float3(outColor.a)),outColor.a);
