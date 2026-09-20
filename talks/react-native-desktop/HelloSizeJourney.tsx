@@ -5,12 +5,12 @@ import benchmarks from "./rnconnection-assets/benchmarks.json";
 
 const groups = [
   { title: "Native platform", names: ["AppKit", "SwiftUI"], color: "#a5b4fc" },
-  { title: "Runtime / engine included", names: ["GPUI", "React Native", "Tauri", "Flutter", "Deno WebView"], color: "#5eead4" },
+  { title: "Runtime / engine included", names: ["GPUI", "React Native", "Tauri", "Flutter", "Deno WebView", "Compose"], color: "#5eead4" },
   { title: "Bundled browser", names: ["Electron", "Deno CEF"], color: "#c4b5fd" },
 ];
 const rows = [...benchmarks.hello].sort((a, b) => a.size - b.size);
 const groupedRowSpacing = 47;
-const groupSpacing = 112;
+const groupSpacing = 90;
 const groupStarts = groups.map((_, index) => 55 + groups.slice(0, index).reduce(
   (offset, group) => offset + rows.filter((row) => group.names.includes(row.name)).length * groupedRowSpacing + groupSpacing, 0,
 ));

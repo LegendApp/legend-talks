@@ -287,6 +287,8 @@ Let's start with Hello World. Just open a window and put something in it.
 
 React Native is about 228 milliseconds. SwiftUI and GPUI are basically the same. The recording isn't precise enough for those tiny differences to mean anything.
 
+Compose Multiplatform is about 601 milliseconds to first content, with the window appearing at about 594. This is the latest supplied measurement; I don't have a run count for it.
+
 AppKit is faster, at about 193.
 
 But already, this doesn't look like some huge JavaScript performance penalty.
@@ -313,7 +315,7 @@ That's the app on disk, not a compressed download. These are ARM-only release bu
 
 4. Electron brings its own browser. So does the CEF version of Deno. And you can really see that here.
 
-5. React Native brings Hermes and its runtime, but it's still a very small app. Flutter and GPUI bring their own rendering machinery.
+5. React Native brings Hermes and its runtime, but it's still a very small app. Flutter and GPUI bring their own rendering machinery. Compose Multiplatform is about 113 MiB in this build.
 
 Tauri gets to use the system WebView. Deno WebView does too, but still ships the Deno runtime.
 
@@ -332,7 +334,7 @@ footer: 'Greeting workload · MiB · settled physical footprint'
 <!--
 And memory is the same kind of story.
 
-AppKit is about 16 MiB. SwiftUI is about 18. React Native is about 23.
+AppKit is about 16 MiB. SwiftUI is about 18. React Native is about 23. Compose Multiplatform is about 215.
 
 There's some overhead. Of course there is. But we're talking about a few megabytes here.
 

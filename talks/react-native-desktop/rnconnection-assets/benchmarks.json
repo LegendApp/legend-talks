@@ -185,6 +185,15 @@
       "size": 10.3,
       "content": 409.8,
       "memory": 73.0
+    },
+    {
+      "name": "Compose",
+      "framework": "Compose Multiplatform",
+      "window": 593.8,
+      "content": 600.5,
+      "memory": 214.6,
+      "size": 113.3,
+      "measurement": "User-supplied latest Hello World measurement; run count unspecified"
     }
   ],
   "chatReference": {
