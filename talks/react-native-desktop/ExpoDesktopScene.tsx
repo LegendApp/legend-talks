@@ -1,11 +1,12 @@
-import { Canvas, Fill, Path, Shader, Skia } from "@shopify/react-native-skia";
+import { Canvas, Fill, ImageShader, Path, Shader, Skia, matchFont } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Animated, Easing, Text, View } from "react-native";
+import { useLayoutEffect, useRef, useState } from "react";
+import { Text, View } from "react-native";
 
 // Analytic glass pipes and devices. A shared UI-thread clock moves the light
-// particles; no snapshots, texture uploads, or per-frame JS geometry updates.
+// particles; no per-frame captures, texture uploads, or JS geometry updates.
 export const expoDesktopShader = `
+uniform shader bridgeLabel;
 uniform float time;
 uniform float startTime;
 float elapsed() { return max(time-startTime,0.0); }
@@ -263,6 +264,11 @@ half4 main(float2 p) {
     float halo=exp(-abs(roundedBox(q,float2(221,41),31.0))*0.045)*0.42*appear;
     outColor=over(float4(float3(0.04,0.72,1.0)*halo,halo),outColor);
     outColor=over(material(q,float2(221,41),29.0,float3(0.025,0.29,0.39))*appear,outColor);
+    // The label uses exactly the same inverse transform, clock and opacity
+    // as the glass, including stretch, impact shake and recoil.
+    if(abs(q.x)<221.0 && abs(q.y)<21.0) {
+      outColor=over(bridgeLabel.eval((q+float2(221,21))*2.0)*appear,outColor);
+    }
   }
   return half4(min(outColor.rgb,float3(outColor.a)),outColor.a);
 }`;
@@ -271,6 +277,27 @@ if (!effect) throw new Error("Could not compile Expo Desktop glass scene");
 
 // Expo brand mark from https://github.com/simple-icons/simple-icons/blob/develop/icons/expo.svg
 const expoLogo = "M0 20.084c.043.53.23 1.063.718 1.778.58.849 1.576 1.315 2.303.567.49-.505 5.794-9.776 8.35-13.29a.761.761 0 011.248 0c2.556 3.514 7.86 12.785 8.35 13.29.727.748 1.723.282 2.303-.567.57-.835.728-1.42.728-2.046 0-.426-8.26-15.798-9.092-17.078-.8-1.23-1.044-1.498-2.397-1.542h-1.032c-1.353.044-1.597.311-2.398 1.542C8.267 3.991.33 18.758 0 19.77Z";
+
+// Rasterize once at 2x. Animation and compositing happen entirely in the
+// scene shader; there is no independent native text animation to drift.
+function makeBridgeLabel() {
+  const surface = Skia.Surface.Make(884, 84);
+  if (!surface) throw new Error("Could not create Expo Desktop label");
+  const canvas = surface.getCanvas();
+  canvas.clear(Skia.Color("transparent"));
+  const font = matchFont({ fontFamily: "Helvetica Neue", fontSize: 68, fontWeight: "600" });
+  const bounds = font.measureText("Expo Desktop");
+  const paint = Skia.Paint();
+  paint.setAntiAlias(true);
+  paint.setColor(Skia.Color("white"));
+  canvas.drawText("Expo Desktop", (884 - bounds.width) / 2 - bounds.x, (84 - bounds.height) / 2 - bounds.y, paint, font);
+  const image = surface.makeImageSnapshot();
+  surface.dispose();
+  paint.dispose();
+  font.dispose();
+  return image;
+}
+const bridgeLabelImage = makeBridgeLabel();
 
 function GlassNetwork({ desktop, connected = false }: { desktop: boolean; connected?: boolean }) {
   const preview = usePresentationValue("isPreview");
@@ -296,53 +323,12 @@ function GlassNetwork({ desktop, connected = false }: { desktop: boolean; connec
     }
     previous.current = { connected, running };
   }, [connected, preview, active, preparing]);
-  return <Canvas pointerEvents="none" style={{ width: 1824, height: 691 }}>
-    <Fill><Shader source={effect!} uniforms={uniforms} /></Fill>
+  return <Canvas pointerEvents="none" accessibilityLabel={desktop && connected ? "Expo Desktop connects macOS and Windows" : undefined} style={{ width: 1824, height: 691 }}>
+    <Fill><Shader source={effect!} uniforms={uniforms}>
+      <ImageShader image={bridgeLabelImage} tx="decal" ty="decal" />
+    </Shader></Fill>
     {!desktop && <Path path={expoLogo} color="#e6f7ff" transform={[{ translateX: 880 }, { translateY: 44 }, { scale: 64 / 24 }]} />}
   </Canvas>;
-}
-
-// Precompute keyframes once; native animation follows the shader's fall,
-// stretch and recoil without evaluating positions on the JS thread per frame.
-const bridgeTimes = Array.from({ length: 121 }, (_, index) => index * 25);
-const bridgeY = bridgeTimes.map((ms) => {
-  const t = ms / 1000;
-  const descent = Math.min(t / 0.85, 1);
-  const impact = Math.max(t - 0.85, 0);
-  return -470 * (1 - descent ** 3) + Math.sin(impact * 18) * Math.exp(-impact * 7) * 15;
-});
-const bridgeStretch = bridgeTimes.map((ms) => 1 + 0.45 * Math.sin(Math.min(ms / 850, 1) * Math.PI));
-
-function BridgeLabel() {
-  const active = usePresentationValue("isActive");
-  const preview = usePresentationValue("isPreview");
-  const preparing = usePresentationValue("isPreparing");
-  const progress = useRef(new Animated.Value(preview ? 3000 : 0)).current;
-  const played = useRef(false);
-  useEffect(() => {
-    if (preview) {
-      if (!played.current) progress.setValue(3000);
-      return;
-    }
-    if (!active || preparing) return;
-    played.current = true;
-    progress.setValue(0);
-    const animation = Animated.timing(progress, {
-      toValue: 3000, duration: 3000, easing: Easing.linear, useNativeDriver: true, isInteraction: false,
-    });
-    animation.start();
-    return () => animation.stop();
-  }, [active, preparing, preview, progress]);
-  return <Animated.View style={{ position: "absolute", left: 1255, top: 329, width: 442, height: 42,
-    opacity: progress.interpolate({ inputRange: [0, 120, 3000], outputRange: [0, 1, 1] }),
-    transform: [
-      { translateY: progress.interpolate({ inputRange: bridgeTimes, outputRange: bridgeY }) },
-      { scaleX: progress.interpolate({ inputRange: bridgeTimes, outputRange: bridgeStretch.map((scale) => 1 / Math.sqrt(scale)) }) },
-      { scaleY: progress.interpolate({ inputRange: bridgeTimes, outputRange: bridgeStretch }) },
-    ],
-  }}>
-    <Text style={{ fontSize: 34, lineHeight: 42, fontWeight: "600", color: "#ffffff", textAlign: "center" }}>Expo Desktop</Text>
-  </Animated.View>;
 }
 
 export function ExpoDesktopLayers() {
@@ -358,7 +344,6 @@ export function ExpoDesktopLayers() {
         fontFamily: "Helvetica Neue", fontSize: 72, lineHeight: 88, color: "#83d6ff", textAlign: "center",
         textShadowColor: "#418de0", textShadowRadius: 12, textShadowOffset: { width: 0, height: 0 } }}>{"\uF8FF"}</Text>
       </SceneMotionView>
-      {step >= 1 && <BridgeLabel />}
       {["macOS", "Windows"].map((name, index) => <Text key={name} style={{ position: "absolute", top: 692,
         left: 1158 + index * 376, width: 260, fontSize: 28, fontWeight: "500", color: "#ffffff", textAlign: "center" }}>{name}</Text>)}
     </View>
