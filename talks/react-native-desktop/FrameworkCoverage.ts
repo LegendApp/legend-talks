@@ -8,7 +8,7 @@ export const frameworkCoverage = [
   { name: "SwiftUI", native: true, coverage: [1, 0, 1, 0, 0] },
   { name: "Tauri", native: false, coverage: [0.5, 0.5, 1, 1, 0.5] },
   { name: "Flutter", native: false, coverage: [1, 1, 1, 1, 1] },
+  { name: "Compose", native: false, coverage: [1, 1, 1, 1, 1] },
   { name: "Electron", native: false, coverage: [0, 0, 1, 1, 0.5] },
   { name: "Deno", native: false, coverage: [0, 0, 1, 1, 0.5] },
-  { name: "Compose", native: false, coverage: [1, 1, 1, 1, 1] },
 ];
