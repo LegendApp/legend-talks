@@ -33,8 +33,8 @@ export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grou
   </ScenePositionView>;
 }
 
-export function BucketHeaders({ rows, metric, visible }: { rows: { name: string; value: number }[]; metric: Metric; visible: boolean }) {
-  return <>{bucketLayout(rows, metric).headers.map(header => <SceneMotionView key={header.label} hidden={!visible} pose={{ opacity: visible ? 1 : 0 }} duration={650}
+export function BucketHeaders({ rows, metric, visible, workload = "chat" }: { rows: { name: string; value: number }[]; metric: Metric; visible: boolean; workload?: "chat" | "hello" }) {
+  return <>{bucketLayout(rows, metric, workload).headers.map(header => <SceneMotionView key={header.label} hidden={!visible} pose={{ opacity: visible ? 1 : 0 }} duration={650}
     style={{ position: "absolute", left: 0, top: header.y, width: chartLayout.width }}>
     <Text style={{ color: header.color, fontSize: 25, lineHeight: 32 }}>{header.label}</Text>
   </SceneMotionView>)}</>;
@@ -46,11 +46,11 @@ export function Chart({ metric, workload = "chat" }: { metric: Metric; workload?
     .map(row => ({ name: row.name, value: (row as unknown as Record<string, number>)[metric] }))
     .filter(row => Number.isFinite(row.value)).sort((a, b) => a.value - b.value);
   const maximum = Math.max(1, ...rows.map(row => row.value));
-  const buckets = bucketLayout(rows, metric);
+  const buckets = bucketLayout(rows, metric, workload);
   return <View style={{ width: chartLayout.width, height: chartLayout.height, marginTop: chartLayout.marginTop, alignSelf: "center" }}>
-    <BucketHeaders rows={rows} metric={metric} visible={grouped} />
+    <BucketHeaders rows={rows} metric={metric} visible={grouped} workload={workload} />
     {rows.map(({ name, value }, index) => <BenchmarkRow key={name} name={name} value={value} metric={metric} maximum={maximum}
-      grouped={grouped} groupColor={bucketColors[bucketIndex(value, metric)]}
+      grouped={grouped} groupColor={bucketColors[bucketIndex(value, metric, workload)]}
       y={grouped ? buckets.positions[name] : chartLayout.top + index * chartLayout.rowSpacing} />)}
     {workload === "chat" && <Text style={{ position: "absolute", top: 636, width: chartLayout.width, textAlign: "center", fontSize: 20, lineHeight: 28, color: "#cbd5e1" }}>
       {metric === "size" ? "Earlier app-only size snapshot · External grammars excluded" : "Mixed-build reference · GPUI/Tauri: single runs · RN: 10-run median · Other rows: Sept 17–18"}
