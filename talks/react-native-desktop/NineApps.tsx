@@ -36,7 +36,7 @@ export function NineApps({ mode, children }: { mode: SceneMode; children?: React
       const uri = screenshots[id];
       return (
         <SharedElement id={`nine-app-${id}`} style={{ flex: 1 }}>
-          <View style={{ height: captionHeight, minHeight: 24, justifyContent: "center", alignItems: "center" }}>
+          <View style={{ height: captionHeight, minHeight: 24, justifyContent: "center", alignItems: "center", opacity: mode === "hero" && id !== "react-native" ? 0 : 1 }}>
             <Text style={{ fontSize: Math.max(17, card.width * 0.027), fontWeight: "600", color: "#f1f5f9" }}>{names[id]}</Text>
           </View>
           <View style={{ flex: 1, borderRadius: 12, overflow: "hidden", borderWidth: 2,
