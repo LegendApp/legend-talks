@@ -25,7 +25,7 @@ import { CrossPlatformLanes } from "./CrossPlatformLanes"
 import { MeasurementTimeline } from "./MeasurementTimeline"
 import { HelloSizeJourney } from "./HelloSizeJourney"
 import { StoryMoment, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot, SlidesRelease, WordFlow } from "./StoryDiagrams"
-import { ExpoDesktopGap, DesktopModulesChecklist } from "./DesktopFoundations"
+import { DesktopModulesChecklist } from "./DesktopFoundations"
 import { DesktopObjections } from "./DesktopObjections"
 import { SharedRoots } from "./SharedRoots"
 import markdownIcon from "./rnconnection-assets/markdown-icon.png";
@@ -877,36 +877,23 @@ So let's work on the other two.
 -->
 
 ---
-eyebrow: 'Desktop foundations / workflow'
----
-
-# I want to start with Expo {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<ExpoDesktopGap />
-
-<!--
-On mobile, I already have a workflow I like. Expo.
-
-I want to keep that project when I add desktop. But the desktop story isn't complete out of the box: project setup, native module compatibility, and the build workflow all need attention.
-
-This isn't saying no Expo modules work on desktop. Some do. It means I can't assume the whole mobile workflow and every module just work unchanged.
-
-So first, we need to bring desktop into that workflow.
--->
-
----
+title: 'Built on Expo Desktop'
 steps: 2
 eyebrow: 'Desktop foundations / Expo Desktop'
 ---
 
-# Built on Expo Desktop {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
 <ExpoDesktopLayers />
 
 <!--
-1. Start with your Expo project. iOS, Android, and web.
+1. I want to start with Expo. I already have a workflow I like for iOS, Android, and web.
 
-2. Expo Desktop adds the desktop projects around that workflow, using React Native macOS and Windows.
+But macOS and Windows are sitting outside that workflow. Desktop project setup, builds, and module compatibility still need work.
+
+2. That’s where Expo Desktop comes in.
+
+[Let the bubble appear and the pipes connect.]
+
+It adds the desktop projects around that workflow, using React Native macOS and Windows.
 
 It's a community project. It gives us a starting point for desktop, not automatic compatibility for every Expo module.
 

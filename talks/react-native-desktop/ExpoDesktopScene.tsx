@@ -7,6 +7,7 @@ import { Text, View } from "react-native";
 export const expoDesktopShader = `
 uniform float time;
 uniform float desktop;
+uniform float connected;
 float roundedBox(float2 p, float2 size, float radius) {
   float2 q=abs(p)-size+radius;
   return length(max(q,0.0))+min(max(q.x,q.y),0.0)-radius;
@@ -104,7 +105,10 @@ half4 main(float2 p) {
         float glow=exp(-abs(d)*0.045)*0.30;
         float wave=0.8+0.2*sin(t*12.0-time*1.4+i);
         float grid=exp(-abs(sin((p.y+n*n*14.0)*0.037))*35.0)*body;
-        float fade=smoothstep(185.0,193.0,p.y)*(1.0-smoothstep(499.0,511.0,p.y));
+        float progress=desktop<0.5 ? 1.0 : connected*smoothstep(0.5,2.5,time);
+        float reveal=1.0-smoothstep(progress-0.015,progress+0.015,t);
+        if(desktop>0.5 && connected<0.5) reveal=0.0;
+        float fade=smoothstep(185.0,193.0,p.y)*(1.0-smoothstep(499.0,511.0,p.y))*reveal;
         float3 pipe=tint*(body*0.22+reflection*0.46+glow)
           +float3(0.78,0.92,1.0)*(rim*0.96+front*0.80*wave)
           +float3(0.32,0.66,0.90)*(innerRim*0.52+caustic*0.86+grid*0.14);
@@ -177,10 +181,11 @@ half4 main(float2 p) {
   } else {
     // The two desktop pipes pass behind this bright connecting glass bridge.
     float2 q=p-float2(1476,350.0);
-    float halo=exp(-abs(roundedBox(q,float2(221,41),31.0))*0.045)*0.42;
+    float appear=connected*smoothstep(0.0,0.45,time);
+    float halo=exp(-abs(roundedBox(q,float2(221,41),31.0))*0.045)*0.42*appear;
     outColor=over(float4(float3(0.04,0.72,1.0)*halo,halo),outColor);
-    outColor=over(material(q-float2(8,10),float2(224,44),29.0,float3(0.015,0.18,0.26)),outColor);
-    outColor=over(material(q,float2(221,41),29.0,float3(0.025,0.29,0.39)),outColor);
+    outColor=over(material(q-float2(8,10),float2(224,44),29.0,float3(0.015,0.18,0.26))*appear,outColor);
+    outColor=over(material(q,float2(221,41),29.0,float3(0.025,0.29,0.39))*appear,outColor);
   }
   return half4(min(outColor.rgb,float3(outColor.a)),outColor.a);
 }`;
@@ -190,8 +195,8 @@ if (!effect) throw new Error("Could not compile Expo Desktop glass scene");
 // Expo brand mark from https://github.com/simple-icons/simple-icons/blob/develop/icons/expo.svg
 const expoLogo = "M0 20.084c.043.53.23 1.063.718 1.778.58.849 1.576 1.315 2.303.567.49-.505 5.794-9.776 8.35-13.29a.761.761 0 011.248 0c2.556 3.514 7.86 12.785 8.35 13.29.727.748 1.723.282 2.303-.567.57-.835.728-1.42.728-2.046 0-.426-8.26-15.798-9.092-17.078-.8-1.23-1.044-1.498-2.397-1.542h-1.032c-1.353.044-1.597.311-2.398 1.542C8.267 3.991.33 18.758 0 19.77Z";
 
-function GlassNetwork({ desktop }: { desktop: boolean }) {
-  const uniforms = useAnimatedShaderUniforms({ desktop: desktop ? 1 : 0 }, 2);
+function GlassNetwork({ desktop, connected = false }: { desktop: boolean; connected?: boolean }) {
+  const uniforms = useAnimatedShaderUniforms({ desktop: desktop ? 1 : 0, connected: connected ? 1 : 0 }, 3);
   return <Canvas pointerEvents="none" style={{ width: 1824, height: 691 }}>
     <Fill><Shader source={effect!} uniforms={uniforms} /></Fill>
     {!desktop && <Path path={expoLogo} color="#e6f7ff" transform={[{ translateX: 880 }, { translateY: 44 }, { scale: 64 / 24 }]} />}
@@ -202,19 +207,18 @@ export function ExpoDesktopLayers() {
   const step = usePresentationValue("stepIndex");
   return <View style={{ width: 1824, height: 771, marginTop: 0, alignSelf: "center" }}>
     <GlassNetwork desktop={false} />
-    <Text style={{ position: "absolute", left: 752, top: 129, width: 320, fontSize: 27, fontWeight: "600",
-      color: "#ffffff", textAlign: "center" }}>Your Expo project</Text>
-    <SceneMotionView hidden={step < 1} pose={{ opacity: step >= 1 ? 1 : 0 }} duration={800}
-      style={{ position: "absolute", left: 0, top: 0, width: 1824, height: 726 }}>
-      <GlassNetwork desktop />
+    <View style={{ position: "absolute", left: 0, top: 0, width: 1824, height: 726 }}>
+      <GlassNetwork key={step >= 1 ? "connected" : "isolated"} desktop connected={step >= 1} />
       <Text accessibilityLabel="Apple logo" style={{ position: "absolute", left: 1238, top: 527, width: 100,
         fontFamily: "Helvetica Neue", fontSize: 72, lineHeight: 88, color: "#83d6ff", textAlign: "center",
         textShadowColor: "#418de0", textShadowRadius: 12, textShadowOffset: { width: 0, height: 0 } }}>{"\uF8FF"}</Text>
+      <SceneMotionView hidden={step < 1} initialPose={{ opacity: 0 }} pose={{ opacity: step >= 1 ? 1 : 0 }} duration={450}>
       <Text style={{ position: "absolute", left: 1255, top: 329, width: 442, fontSize: 34, lineHeight: 42,
         fontWeight: "600", color: "#ffffff", textAlign: "center" }}>Expo Desktop</Text>
+      </SceneMotionView>
       {["macOS", "Windows"].map((name, index) => <Text key={name} style={{ position: "absolute", top: 692,
         left: 1158 + index * 376, width: 260, fontSize: 28, fontWeight: "500", color: "#ffffff", textAlign: "center" }}>{name}</Text>)}
-    </SceneMotionView>
+    </View>
     {["iOS", "Android", "Web"].map((name, index) => <Text key={name} style={{ position: "absolute", top: 692,
       left: 30 + index * 376, width: 260, fontSize: 28, fontWeight: "500", color: "#ffffff", textAlign: "center" }}>{name}</Text>)}
   </View>;
