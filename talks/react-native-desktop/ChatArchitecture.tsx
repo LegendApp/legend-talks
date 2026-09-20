@@ -58,9 +58,10 @@ if (!effect) throw new Error("Could not compile architecture particles");
 export function ChatArchitecture() {
   const stage = Math.min(usePresentationValue("stepIndex"), 7);
   const uniforms = useAnimatedShaderUniforms({ stage }, 8);
-  return <View accessibilityLabel="Native: find chat files, parse metadata, parse selected chat. React: LegendList virtualizes. Native: Enriched Markdown renders messages. React: app UI, composer, settings." style={{ width: 1696, height: 765, alignSelf: "center" }}>
+  return <View accessibilityLabel="Native: find chat files, parse metadata, parse selected chat. React: LegendList virtualizes. Native: Enriched Markdown renders messages. React: app UI, composer, settings." style={{ width: 1696, height: 789, alignSelf: "center", marginTop: 24 }}>
     <Text style={{ position: "absolute", top: 0, left: 155, width: 485, textAlign: "center", color: "#b9dcff", fontSize: 43, fontWeight: "600" }}>Native</Text>
     <Text style={{ position: "absolute", top: 0, left: 1055, width: 485, textAlign: "center", color: "#8eeeff", fontSize: 43, fontWeight: "600" }}>React</Text>
+    <View style={{ position: "absolute", left: 0, top: 24, width: 1696, height: 765 }}>
     <Canvas pointerEvents="none" style={{ position: "absolute", inset: 0 }}>
       {paths.map((path, index) => <Path key={`halo-${index}`} path={path} style="stroke" strokeWidth={14} strokeCap="round" color={index < stage ? "#369be51e" : "#369be509"} />)}
       {paths.map((path, index) => <Path key={`pipe-${index}`} path={path} style="stroke" strokeWidth={6} strokeCap="round" color={index < stage ? "#438acb80" : "#28435b30"} />)}
@@ -85,5 +86,6 @@ export function ChatArchitecture() {
         </View>
       </SceneMotionView>;
     })}
+    </View>
   </View>;
 }
