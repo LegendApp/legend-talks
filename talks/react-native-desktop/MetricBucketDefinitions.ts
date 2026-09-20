@@ -5,14 +5,18 @@ export const metrics = [
   { key: "switch", title: "Switching", unit: "ms", limits: [250, 500], bands: ["Under 250 ms", "250–500 ms", "500 ms and up"] },
 ] as const;
 
-export const bucketColors = ["#5eead4", "#a5b4fc", "#c4b5fd"];
+export const bucketColors = ["#5eead4", "#a5b4fc", "#fda4af"];
 export function metricBuckets(key: string, workload: "chat" | "hello" = "chat") {
+  if (key === "jump") return {
+    limits: [60, 75], bands: ["Under 60 ms", "60–75 ms", "Over 75 ms"],
+  };
   if (key === "memory" && workload === "hello") return {
     limits: [25, 100], bands: ["Under 25 MiB", "25–100 MiB", "100 MiB and up"],
   };
-  return metrics.find(metric => metric.key === (key === "jump" ? "switch" : key))!;
+  return metrics.find(metric => metric.key === key)!;
 }
 export function bucketIndex(value: number, key: string, workload: "chat" | "hello" = "chat") {
+  if (key === "jump") return value < 60 ? 0 : value <= 75 ? 1 : 2;
   return metricBuckets(key, workload).limits.filter(limit => value >= limit).length;
 }
 export function bucketLayout(rows: { name: string; value: number }[], key: string, workload: "chat" | "hello" = "chat") {
