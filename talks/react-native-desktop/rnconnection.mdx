@@ -25,7 +25,7 @@ import { CrossPlatformLanes } from "./CrossPlatformLanes"
 import { MeasurementTimeline } from "./MeasurementTimeline"
 import { HelloSizeJourney } from "./HelloSizeJourney"
 import { StoryMoment, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot, SlidesRelease, WordFlow } from "./StoryDiagrams"
-import { DesktopModulesChecklist } from "./DesktopFoundations"
+import { DesktopModulesChecklist, DesktopShipping, FrameAnnouncement } from "./DesktopFoundations"
 import { DesktopObjections } from "./DesktopObjections"
 import { SharedRoots } from "./SharedRoots"
 import markdownIcon from "./rnconnection-assets/markdown-icon.png";
@@ -927,53 +927,77 @@ Now I can start an app. But a desktop app needs a lot more than a window.
 -->
 
 ---
-steps: 3
-eyebrow: 'Desktop foundations / native capabilities'
+title: You're building more than an app
+steps: 4
 ---
 
-# A desktop app needs all of this {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+# You're building more than an app {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
 
 <DesktopModulesChecklist />
 
 <!--
-1. Windows. Menus. Keyboard shortcuts. Files. Open and save dialogs.
+1. I just want to build my app.
 
-React makes composing the interface easy. But somebody has to write and maintain the native integrations for these things.
+2. But I need windows. Menus. Keyboard shortcuts. Files. Open and save dialogs.
 
-2. Drag and drop. Clipboard. Notifications. A tray icon. Media controls.
+3. Then drag and drop. Clipboard. Notifications. A tray icon. Media controls.
 
-Every app I made needed another piece of this.
+4. Deep links. App lifecycle. Preferences. Permissions. Updates.
 
-3. Deep links. App lifecycle. Preferences. Permissions. And a way to distribute and update the app.
+Every app I made needed another piece of this. React makes composing the interface easy. But somebody still has to write and maintain all of these native integrations.
 
-This is a checklist of the foundation an app may need, not a claim that every feature is already finished or equally supported on every platform.
+Before I can build the thing I actually want to build, I need all of this.
 
-I'd already pulled a lot of this into shared packages for my own apps. I didn't want everybody else to have to build it all again.
-
-So I decided to turn that into a framework.
+These are the capabilities a desktop foundation needs to address. Not every app needs every module, and this isn't a claim that all of them are finished on every platform.
 -->
 
 ---
-title: "Introducing Legend Frame"
-steps: 2
-eyebrow: Story
+title: And then you have to ship it
 ---
 
-<MovingTitle><StoryMoment kind="frame" /></MovingTitle>
+# And then you have to ship it {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<DesktopShipping />
 
 <!--
-1. This is Legend Frame.
+And that's just the modules.
+
+You need to bootstrap the project. Link the native dependencies. Get the release build configured properly.
+
+Those small build sizes I showed you didn't happen by accident. Architectures, stripping unused code, release settings. There's a lot to get right.
+
+Then there are modules that mostly work, but need a desktop patch. Signing. Entitlements. Notarization on Mac. Packaging. Publishing. A way to deliver updates.
+
+Getting a window on screen isn't the hard part. Getting a small app I can ship, and reproduce on another machine, is a whole other project.
+
+I don't want everybody to figure this out again.
+
+I want a command that gives me the modules and sets this up.
+-->
+
+---
+title: Introducing Legend Frame
+---
+
+<FrameAnnouncement />
+
+<!--
+[Let the complexity collapse into the command. Hold for the reveal.]
+
+npx @legendapp/frame create.
+
+This is Legend Frame.
 
 Expo Desktop gives me the starting point. Frame brings together the desktop APIs and tooling I've been extracting from all these apps.
 
-2. The goal is much of the feature set of Electron, but in React Native.
+The idea is that you start with the modules and the configuration already assembled. Then you build your app.
 
-Windows, menus, system integrations, a way to develop the app and a way to ship it.
+The goal is much of the feature set of Electron, but in React Native. Windows, menus, system integrations, a way to develop the app and a way to ship it.
+
+That's the direction, not a claim that version 0.0.1 finishes every capability I just showed. I'll show what the CLI creates today.
 
 I don't mean running Electron APIs or putting Node in the app. I mean making it that practical to build a desktop app with native UI.
 -->
-
-
 
 ---
 eyebrow: 'Build'
