@@ -15,7 +15,7 @@ presenter:
 
 import { rootsProgram, windowsProgram, takeoverProgram, ecosystemProgram, dropletsProgram } from "./TypeGPUAlternates"
 import { AlternateRoots, AlternateWindows, AlternateEcosystem } from "./TypeGPUAlternateLayouts"
-import { Chart, Tradeoffs } from "./RNConnection"
+import { Chart, Points, Tradeoffs } from "./RNConnection"
 import { AppMontage, BalanceDiagram, CapabilityDiagram, MeasurementDiagram, MediaSlot, NativeDataDiagram, PlatformDiagram, RenderingDiagram } from "./RNConnectionVisuals"
 import { MetricBuckets } from "./MetricBuckets"
 import { ChatArchitecture } from "./ChatArchitecture"
@@ -466,6 +466,32 @@ You can add native integrations to a browser app. This is what the browser imple
 But we can draw whatever we want, right? So I made my own liquid glass.
 
 20. [Let the glass build inside the composer for five seconds, then slowly take over the slide over eight seconds. Pause.]
+-->
+
+---
+title: Why native UI matters
+---
+
+# Why native UI matters {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<Points items={["Fit the platform", "Feel familiar", "Use the latest OS features", "Accessibility and keyboard support"]} />
+
+<!--
+OK. Obviously I got a little carried away with the glass.
+
+But this is why I care about native UI. It's not just about how the screenshot looks.
+
+I want my Mac app to feel like a Mac app. And the Windows version should feel like a Windows app. Same product, but it should belong on the computer you're using.
+
+People already know how their computer works. Selecting text, moving focus, keyboard shortcuts, context menus. I don't want them to have to learn my version of all of that.
+
+And when the platform gets something new, like Liquid Glass, I want to use the real thing. Not spend my time trying to recreate it. Native APIs give me a path to those features, although the bindings and the app still need to adopt them.
+
+The less flashy part matters too. Accessibility. Keyboard navigation. Text input and input methods. Native controls give us a lot to build on. We still have to wire it up correctly and test it.
+
+You can build a good experience with the other approaches too. But this is the starting point I want.
+
+And React Native lets me keep that starting point while writing React. So let me show you how this app actually works.
 -->
 
 ---
