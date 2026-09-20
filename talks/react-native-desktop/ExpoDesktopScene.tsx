@@ -1,7 +1,7 @@
 import { Canvas, Fill, Path, Shader, Skia } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { useEffect, useRef } from "react";
-import { Animated, Text, View } from "react-native";
+import { Animated, Easing, Text, View } from "react-native";
 
 // Analytic glass pipes and devices. A shared UI-thread clock moves the light
 // particles; no snapshots, texture uploads, or per-frame JS geometry updates.
@@ -270,31 +270,58 @@ if (!effect) throw new Error("Could not compile Expo Desktop glass scene");
 // Expo brand mark from https://github.com/simple-icons/simple-icons/blob/develop/icons/expo.svg
 const expoLogo = "M0 20.084c.043.53.23 1.063.718 1.778.58.849 1.576 1.315 2.303.567.49-.505 5.794-9.776 8.35-13.29a.761.761 0 011.248 0c2.556 3.514 7.86 12.785 8.35 13.29.727.748 1.723.282 2.303-.567.57-.835.728-1.42.728-2.046 0-.426-8.26-15.798-9.092-17.078-.8-1.23-1.044-1.498-2.397-1.542h-1.032c-1.353.044-1.597.311-2.398 1.542C8.267 3.991.33 18.758 0 19.77Z";
 
+// Restart the clock owner, not the Canvas: retain the native drawing surface.
+function NetworkShader({ desktop, connected }: { desktop: boolean; connected: boolean }) {
+  const uniforms = useAnimatedShaderUniforms({ desktop: desktop ? 1 : 0, connected: connected ? 1 : 0 }, 4);
+  return <Shader source={effect!} uniforms={uniforms} />;
+}
+
 function GlassNetwork({ desktop, connected = false }: { desktop: boolean; connected?: boolean }) {
-  const uniforms = useAnimatedShaderUniforms({ desktop: desktop ? 1 : 0, connected: connected ? 1 : 0 }, 4, { restartKey: connected ? 1 : 0 });
   return <Canvas pointerEvents="none" style={{ width: 1824, height: 691 }}>
-    <Fill><Shader source={effect!} uniforms={uniforms} /></Fill>
+    <Fill><NetworkShader key={connected ? "connecting" : "broken"} desktop={desktop} connected={connected} /></Fill>
     {!desktop && <Path path={expoLogo} color="#e6f7ff" transform={[{ translateX: 880 }, { translateY: 44 }, { scale: 64 / 24 }]} />}
   </Canvas>;
 }
+
+// Precompute keyframes once; native animation follows the shader's fall,
+// stretch and recoil without evaluating positions on the JS thread per frame.
+const bridgeTimes = Array.from({ length: 121 }, (_, index) => index * 25);
+const bridgeY = bridgeTimes.map((ms) => {
+  const t = ms / 1000;
+  const descent = Math.min(t / 0.85, 1);
+  const impact = Math.max(t - 0.85, 0);
+  return -470 * (1 - descent ** 3) + Math.sin(impact * 18) * Math.exp(-impact * 7) * 15;
+});
+const bridgeStretch = bridgeTimes.map((ms) => 1 + 0.45 * Math.sin(Math.min(ms / 850, 1) * Math.PI));
 
 function BridgeLabel() {
   const active = usePresentationValue("isActive");
   const preview = usePresentationValue("isPreview");
   const preparing = usePresentationValue("isPreparing");
-  const opacity = useRef(new Animated.Value(preview ? 1 : 0)).current;
+  const progress = useRef(new Animated.Value(preview ? 3000 : 0)).current;
+  const played = useRef(false);
   useEffect(() => {
-    if (preview) { opacity.setValue(1); return; }
+    if (preview) {
+      if (!played.current) progress.setValue(3000);
+      return;
+    }
     if (!active || preparing) return;
-    opacity.setValue(0);
-    const animation = Animated.sequence([
-      Animated.timing(opacity, { toValue: 0, duration: 1000, useNativeDriver: true, isInteraction: false }),
-      Animated.timing(opacity, { toValue: 1, duration: 220, useNativeDriver: true, isInteraction: false }),
-    ]);
+    played.current = true;
+    progress.setValue(0);
+    const animation = Animated.timing(progress, {
+      toValue: 3000, duration: 3000, easing: Easing.linear, useNativeDriver: true, isInteraction: false,
+    });
     animation.start();
     return () => animation.stop();
-  }, [active, preparing, preview, opacity]);
-  return <Animated.View style={{ position: "absolute", left: 1255, top: 329, width: 442, height: 42, opacity }}>
+  }, [active, preparing, preview, progress]);
+  return <Animated.View style={{ position: "absolute", left: 1255, top: 329, width: 442, height: 42,
+    opacity: progress.interpolate({ inputRange: [0, 120, 3000], outputRange: [0, 1, 1] }),
+    transform: [
+      { translateY: progress.interpolate({ inputRange: bridgeTimes, outputRange: bridgeY }) },
+      { scaleX: progress.interpolate({ inputRange: bridgeTimes, outputRange: bridgeStretch.map((scale) => 1 / Math.sqrt(scale)) }) },
+      { scaleY: progress.interpolate({ inputRange: bridgeTimes, outputRange: bridgeStretch }) },
+    ],
+  }}>
     <Text style={{ fontSize: 34, lineHeight: 42, fontWeight: "600", color: "#ffffff", textAlign: "center" }}>Expo Desktop</Text>
   </Animated.View>;
 }
