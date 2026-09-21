@@ -1,4 +1,5 @@
 import { SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
+import { MovingTitle } from "./MovingTitle";
 import type { ReactNode } from "react";
 import { Image, Text, View } from "react-native";
 
@@ -57,11 +58,19 @@ export function CompatibilitySnapshot() {
   </View>;
 }
 
+export function SlidesHeader({ icon }: { icon: string }) {
+  return <MovingTitle style={{ alignSelf: "center" }}>
+    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 24 }}>
+      <Image source={{ uri: icon }} style={{ width: 100, height: 100 }} resizeMode="contain" />
+      <Text style={{ color: ink, fontSize: 72, fontWeight: "600" }}>Legend Slides</Text>
+    </View>
+  </MovingTitle>;
+}
+
 export function SlidesRelease({ icon }: { icon: string }) {
   return <View style={{ alignItems: "center", gap: 24 }}>
-    <Image source={{ uri: icon }} style={{ width: 210, height: 210 }} />
-    <Text style={{ color: ink, fontSize: 76, fontWeight: "600" }}>Legend Slides</Text>
-    <Text style={{ color: accent, fontSize: 44 }}>Open source · 0.0.1</Text>
+    <SlidesHeader icon={icon} />
+    <Text style={{ color: accent, fontSize: 44, marginTop: 55 }}>Open source · 0.0.1</Text>
     <Text style={{ color: ink, fontSize: 34, marginTop: 30 }}>github.com/LegendApp/legend-apps</Text>
   </View>;
 }
