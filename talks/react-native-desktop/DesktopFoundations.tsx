@@ -1,7 +1,6 @@
 import { Blur, Canvas, Fill, Group, ImageShader, Paint, RuntimeShader, Shader, Skia, matchFont, useImage } from "@shopify/react-native-skia";
-import { liquidGlassShader, useLiquidGlassPlayback, SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
-import { Text, View } from "react-native";
-import { MovingTitle } from "./MovingTitle";
+import { liquidGlassShader, useLiquidGlassPlayback, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
+import { View } from "react-native";
 import { glassPanelMaterial } from "./GlassPanels";
 
 const capabilities = ["Windows", "Native menus", "Keyboard shortcuts", "Files & folders", "Open / save dialogs",
@@ -201,11 +200,6 @@ export function DesktopFoundationsJourney({ icon }: { icon: Parameters<typeof us
   const cursorUniforms = useAnimatedShaderUniforms({ padding: canvasPadding }, 10, { clock: 5 });
   const image = <ImageShader image={atlas.image} x={0} y={0} width={atlasWidth} height={rows.length * rowHeight} fit="fill" tx="decal" ty="decal" />;
   return <>
-    <SceneMotionView pose={{ opacity: step >= 5 ? 0 : 1 }} duration={450}>
-      <MovingTitle><Text style={{ textAlign: "center", color: "#ffffff", fontSize: 72, fontWeight: "600" }}>
-        {step >= 4 ? "And then you have to ship it" : "You're building more than an app"}
-      </Text></MovingTitle>
-    </SceneMotionView>
     <View style={{ width: 1696, height: 680, marginTop: 36, alignSelf: "center" }}>
       <Canvas accessibilityLabel={step >= 5 ? command : step >= 4 ? publishing.join(", ") : capabilities.join(", ")}
         style={{ position: "absolute", left: -canvasPadding, top: -canvasPadding, width: canvasWidth, height: canvasHeight }}>
