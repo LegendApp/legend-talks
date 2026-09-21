@@ -6,6 +6,7 @@ import { Text, View } from "react-native";
 // ballistic glass fragments are analytic; no captured views or JS frame updates.
 export const objectionGlassShader = `
 uniform float time;
+uniform float slideTime;
 uniform float broken;
 uniform float settled;
 uniform float phase;
@@ -40,7 +41,7 @@ float4 glass(float2 p, float clock) {
 }
 half4 main(float2 position) {
   float2 p = position-float2(centerX,300.0);
-  float clock = time+phase;
+  float clock = slideTime+phase;
   float elapsed = min(mix(time,6.0,settled),6.0);
   float resolve = broken*smoothstep(1.2,2.2,elapsed);
   float impact = broken*step(0.38,elapsed);
@@ -141,10 +142,10 @@ const glassEffect = Skia.RuntimeEffect.Make(objectionGlassShader);
 if (!glassEffect) throw new Error("Could not compile objection glass");
 
 function GlassPanel({ crossed, settled, index }: { crossed: boolean; settled: boolean; index: number }) {
-  const uniforms = useAnimatedShaderUniforms({ broken: crossed ? 1 : 0, settled: settled ? 1 : 0, phase: index * 1.7, centerX: crossed ? 396 + index * 564 : 350 }, crossed ? 6 : 2, { clock: crossed && !settled ? 1 : "slide" });
-  // Crossed panels draw across the full stage and below its bottom. The shader
-  // origin stays on this panel while fragments can cross neighboring columns.
-  return <Canvas pointerEvents="none" style={{ position: "absolute", left: crossed ? -142 - index * 564 : -96, top: -108, width: crossed ? 1920 : 700, height: crossed ? 1080 : 600 }}>
+  const uniforms = useAnimatedShaderUniforms({ broken: crossed ? 1 : 0, settled: settled ? 1 : 0, phase: index * 1.7, centerX: 396 + index * 564 }, crossed ? 6 : 2, { clock: crossed && !settled ? 1 : "slide" });
+  // Keep bounds and shader origin fixed before and after the strike. Changing
+  // native layout alongside UI-thread uniforms can briefly displace the panel.
+  return <Canvas pointerEvents="none" style={{ position: "absolute", left: -142 - index * 564, top: -108, width: 1920, height: 1080 }}>
     <Fill><Shader source={glassEffect!} uniforms={uniforms} /></Fill>
   </Canvas>;
 }
