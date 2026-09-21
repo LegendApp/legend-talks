@@ -1,6 +1,7 @@
+import { GitHubLink } from "./GitHubLink";
 import { Canvas, Fill, Path, Shader, Skia } from "@shopify/react-native-skia";
 import { useAnimatedShaderUniforms } from "@legend-apps/presentation";
-import { Linking, Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 // The lens warps the particle field itself, so moving lights refract continuously
 // without screen captures, extra render passes, or JS animation updates.
@@ -78,7 +79,7 @@ half4 main(float2 p) {
 const effect = Skia.RuntimeEffect.Make(portalShader);
 if (!effect) throw new Error("Could not compile Expo Desktop portal");
 const expoLogo = "M0 20.084c.043.53.23 1.063.718 1.778.58.849 1.576 1.315 2.303.567.49-.505 5.794-9.776 8.35-13.29a.761.761 0 011.248 0c2.556 3.514 7.86 12.785 8.35 13.29.727.748 1.723.282 2.303-.567.57-.835.728-1.42.728-2.046 0-.426-8.26-15.798-9.092-17.078-.8-1.23-1.044-1.498-2.397-1.542h-1.032c-1.353.044-1.597.311-2.398 1.542C8.267 3.991.33 18.758 0 19.77Z";
-const repository = "https://github.com/shirakaba/expo-desktop";
+
 
 export function ExpoDesktopPortal() {
   const uniforms = useAnimatedShaderUniforms({}, 3.5);
@@ -90,11 +91,6 @@ export function ExpoDesktopPortal() {
       <Path path="M0 0H40V40H0ZM48 0H88V40H48ZM0 48H40V88H0ZM48 48H88V88H48Z" color="white" transform={[{ translateX: 1390 }, { translateY: 285 }, { scale: 1.2 }]} />
     </Canvas>
     <Text style={{ position: "absolute", left: 1190, top: 344, fontSize: 143, color: "white", fontFamily: "Helvetica Neue" }}></Text>
-    <Pressable accessibilityRole="link" accessibilityLabel="Expo Desktop on GitHub" onPress={() => Linking.openURL(repository)} style={{ position: "absolute", top: 772, alignSelf: "center", padding: 16, flexDirection: "row", alignItems: "center", gap: 22 }}>
-      <Canvas style={{ width: 56, height: 56 }}>
-        <Path color="white" transform={[{ scale: 56 / 24 }]} path="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.5-1.4-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.4-5.5-6a4.7 4.7 0 0 1 1.2-3.2c-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2a4.7 4.7 0 0 1 1.2 3.2c0 4.6-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6A12 12 0 0 0 12 .3Z" />
-      </Canvas>
-      <Text style={{ color: "white", fontSize: 54, fontWeight: "600" }}>github.com/<Text style={{ color: "#68ddff" }}>shirakaba/expo-desktop</Text></Text>
-    </Pressable>
+    <GitHubLink repository="shirakaba/expo-desktop" label="Expo Desktop on GitHub" style={{ position: "absolute", top: 772 }} />
   </View>;
 }

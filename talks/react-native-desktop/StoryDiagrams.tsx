@@ -1,3 +1,4 @@
+import { GitHubLink } from "./GitHubLink";
 import { SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
 import { MovingTitle } from "./MovingTitle";
 import type { ReactNode } from "react";
@@ -57,7 +58,7 @@ export function SlidesRelease({ icon }: { icon: string }) {
   return <View style={{ alignItems: "center", gap: 24 }}>
     <SlidesHeader icon={icon} />
     <Text style={{ color: accent, fontSize: 44, marginTop: 55 }}>Open source · 0.0.1</Text>
-    <Text style={{ color: ink, fontSize: 34, marginTop: 30 }}>github.com/LegendApp/legend-apps</Text>
+    <GitHubLink repository="LegendApp/legend-apps" label="Legend Slides on GitHub" style={{ marginTop: 30 }} />
   </View>;
 }
 
