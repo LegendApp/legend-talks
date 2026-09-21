@@ -3,6 +3,8 @@ import { PlaybackKeyframeView, SceneMotionView, useAnimatedShaderUniforms, usePr
 import { Text, View } from "react-native";
 import { MovingTitle } from "./MovingTitle";
 
+import { branchMaterialShader } from "./BranchMaterial";
+
 const implementations = ["iOS", "Android", "Mac", "Windows", "Web"];
 const branchX = (index: number) => 168 + index * 340;
 const ease = (t: number) => t * t * (3 - 2 * t);
@@ -10,6 +12,7 @@ const ease = (t: number) => t * t * (3 - 2 * t);
 export const maintenanceTreeShader = `
 uniform float time;
 uniform float maintenance;
+${branchMaterialShader}
 half4 main(float2 p) {
   float t=clamp((p.y-70.0)/500.0,0.0,1.0);
   float bend=t*t*(3.0-2.0*t);
@@ -24,16 +27,8 @@ half4 main(float2 p) {
       float phase=float(i)*0.7+float(strand)*3.14159;
       float offset=sin(t*8.0+phase)*sin(t*3.14159)*13.0;
       float d=(p.x-center-offset)/sqrt(1.0+slope*slope);
-      float pulse=0.5+0.5*sin(time*1.4-t*6.0+phase);
-      float radius=mix(14.0,3.0,t)*(0.9+pulse*0.2);
-      float n=d/radius;
-      float body=1.0-smoothstep(0.8,1.12,abs(n));
-      float edge=exp(-abs(abs(d)-radius*0.87)*0.9);
-      float ridge=exp(-pow((n+0.3)*4.0,2.0));
-      float flow=pow(0.5+0.5*sin(t*22.0-time*3.0+phase),8.0);
       float fade=smoothstep(65.0,90.0,p.y)*(1.0-smoothstep(570.0,585.0,p.y));
-      float3 ribbon=tint*(body*0.35+ridge*body*0.55+exp(-abs(d)/(radius*2.0))*0.08)
-        +light*(edge*0.6+flow*body*0.35);
+      float3 ribbon=branchRibbon(d,t,phase,time,tint,light);
       color=max(color,ribbon*fade);
     }
     float tip=length(p-float2(endpoint,570.0));

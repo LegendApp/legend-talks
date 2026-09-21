@@ -1,3 +1,4 @@
+import { branchMaterialShader } from "./BranchMaterial";
 import { Canvas, Fill, ImageShader, Path, Shader, Skia, matchFont } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
@@ -5,6 +6,7 @@ import { Text, View } from "react-native";
 // Analytic glass pipes and devices. A shared UI-thread clock moves the light
 // particles; no per-frame captures, texture uploads, or JS geometry updates.
 export const expoDesktopShader = `
+${branchMaterialShader}
 uniform shader bridgeLabel;
 uniform float time;
 uniform float stepTime;
@@ -104,26 +106,20 @@ half4 main(float2 p) {
     if ((desktop < 0.5 && k<3) || (desktop > 0.5 && k>=3)) {
       float endpoint=160.0+i*376.0;
       float outage=desktop*(1.0-latch());
-      float3 tint=k<3 ? float3(0.24,0.43,0.70) : mix(float3(0.04,0.67,0.90),float3(1.0,0.055,0.09),outage);
-      // Broad, curved tubes, with a transparent core and two refractive rims.
+      float3 tint=mix(float3(0.08,0.58,1.0),float3(1.0,0.08,0.14),outage);
+      float3 light=mix(float3(0.6,0.91,1.0),float3(1.0,0.65,0.65),outage);
+      // The same tapered, paired ribbons as the AI maintenance tree.
       if(p.y>=187.0 && p.y<=511.0 &&
         p.x>=min(912.0+(i-2.0)*70.0,endpoint)-110.0 &&
         p.x<=max(912.0+(i-2.0)*70.0,endpoint)+110.0) {
         float t=clamp((p.y-188.0)/320.0,0.0,1.0);
         float d=pipeDistance(p,i);
-        float radius=(21.0+desktop*4.0)*(1.0+0.07*sin(t*8.0+i));
-        float n=d/radius;
-        float body=1.0-smoothstep(0.94,1.04,abs(n));
-        // Cylindrical lighting: silver rim, broad specular ribbon, dark core,
-        // and an opposing cyan caustic make the tubes read as solid glass.
-        float rim=exp(-abs(abs(n)-0.94)*radius*0.95);
-        float innerRim=exp(-abs(abs(n)-0.70)*radius*0.65)*body;
-        float front=exp(-(n+0.48)*(n+0.48)*48.0)*body;
-        float reflection=exp(-(n-0.28)*(n-0.28)*16.0)*body;
-        float caustic=exp(-abs(n-0.78)*32.0)*body;
-        float glow=exp(-abs(d)*0.045)*0.30;
-        float wave=0.8+0.2*sin(t*12.0-elapsed()*1.4+i);
-        float grid=exp(-abs(sin((p.y+n*n*14.0)*0.037))*35.0)*body;
+        float3 pipe=float3(0);
+        for(int strand=0;strand<2;strand++) {
+          float phase=i*0.7+float(strand)*3.14159;
+          float offset=sin(t*8.0+phase)*sin(t*3.14159)*13.0;
+          pipe=max(pipe,branchRibbon(d-offset,t,phase,time,tint,light));
+        }
         float gap=desktop*(1.0-latch());
         float reveal=1.0-gap*(smoothstep(0.33,0.35,t)*(1.0-smoothstep(0.64,0.66,t)));
         float power=desktop<0.5 ? 1.0 : mix(0.65,1.0,connection()*smoothstep(1.6,2.6,elapsed()));
@@ -132,13 +128,10 @@ half4 main(float2 p) {
         float growth=smoothstep(0.12+i*0.045,1.5+i*0.045,time);
         float grown=1.0-smoothstep(growth-0.02,growth+0.02,t);
         float fade=smoothstep(185.0,193.0,p.y)*(1.0-smoothstep(499.0,511.0,p.y))*reveal*grown;
-        float3 pipe=tint*(body*0.22+reflection*0.46+glow)
-          +mix(float3(0.78,0.92,1.0),float3(1.0,0.25,0.28),outage)*(rim*0.96+front*0.80*wave)
-          +mix(float3(0.32,0.66,0.90),float3(0.95,0.08,0.12),outage)*(innerRim*0.52+caustic*0.86+grid*0.14);
         float surge=desktop*hit*exp(-pow((t-mix(0.35,1.12,clamp((elapsed()-1.5)/1.15,0.0,1.0)))*18.0,2.0))
           *(1.0-smoothstep(2.6,3.0,elapsed()));
-        pipe=pipe*power+float3(0.60,0.94,1.0)*surge*(body+glow)*1.8;
-        float alpha=clamp(body*0.90+rim*0.15+glow+surge*glow,0.0,1.0)*fade;
+        pipe=pipe*power+float3(0.60,0.94,1.0)*surge*exp(-abs(d)*0.12)*1.8;
+        float alpha=clamp(max(pipe.r,max(pipe.g,pipe.b)),0.0,1.0)*fade;
         outColor=over(float4(min(pipe*fade,float3(alpha)),alpha),outColor);
         // Stable size/brightness variation gives each light its own identity
         // while all particles continue down the same project-to-device path.
