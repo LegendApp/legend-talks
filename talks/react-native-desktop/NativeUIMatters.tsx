@@ -25,19 +25,42 @@ half4 main(float2 p) {
       bool mac=platform==0;
       c=put(c,box(p,float2(x,295),float2(245,230),mac?22.0:9.0),mac?half3(0.16,0.19,0.23):half3(0.12,0.14,0.18),1.0);
       c=put(c,abs(box(p,float2(x,295),float2(245,230),mac?22.0:9.0))-0.7,half3(0.4,0.48,0.57),0.8);
-      // Native-style segmented selection, switch, slider, and radio buttons.
-      c=put(c,box(p,float2(x,145),float2(175,23),mac?9.0:4.0),half3(0.23,0.26,0.3),1.0);
       float selected=floor(mod(time*0.45,3.0));
-      c=put(c,box(p,float2(x-116.0+selected*116.0,145),float2(56,20),mac?7.0:3.0),mac?half3(0.42,0.46,0.5):half3(0.18,0.36,0.48),1.0);
-      c=put(c,box(p,float2(x+128,245),float2(32,17),17),mix(half3(0.35),half3(0.15,0.65,0.92),on),1.0);
-      c=put(c,length(p-float2(x+112.0+on*32.0,245))-13.0,half3(0.95),1.0);
-      c=put(c,box(p,float2(x,345),float2(175,mac?3.0:2.0),2),half3(0.35,0.39,0.44),1.0);
-      c=put(c,box(p,float2(x-175.0+175.0*value,345),float2(175.0*value,3),2),half3(0.2,0.65,0.98),1.0);
-      c=put(c,length(p-float2(x-175.0+350.0*value,345))-(mac?11.0:13.0),half3(0.93),1.0);
+      half3 accent=mac?half3(0.04,0.48,1.0):half3(0.38,0.80,1.0);
+      if(mac) {
+        // macOS segmented picker: inset track and raised glass selection.
+        c=put(c,box(p,float2(x,145),float2(175,22),22),half3(0.10,0.12,0.15),1.0);
+        float d=box(p,float2(x-116.0+selected*116.0,145),float2(57,20),20);
+        c=put(c,d,half3(0.34,0.37,0.42),1.0);
+        c=put(c,abs(d)-0.6,half3(0.69,0.72,0.77),0.55);
+      } else {
+        // Fluent navigation uses a compact accent indicator, not a Mac pill.
+        c=put(c,box(p,float2(x-116.0+selected*116.0,169),float2(16,2),2),accent,1.0);
+      }
+      float2 toggle=float2(x+128,245);
+      float td=box(p,toggle,float2(mac?31.0:29.0,mac?18.0:14.0),mac?18.0:14.0);
+      c=put(c,td,mix(half3(0.22,0.24,0.27),accent,on),1.0);
+      if(!mac)c=put(c,abs(td)-0.8,half3(0.75),1.0-on);
+      float2 knob=toggle+float2(mix(-14.0,14.0,on),0);
+      if(mac) {
+        c=put(c,length(p-knob)-15.0,half3(0.97),1.0);
+        c=put(c,abs(length(p-knob)-14.0)-0.6,half3(0.75,0.85,0.95),0.6);
+      } else {
+        // WinUI switch thumb is small and dark against the accent when on.
+        c=put(c,length(p-knob)-8.0,mix(half3(0.83),half3(0.08,0.13,0.17),on),1.0);
+      }
+      c=put(c,box(p,float2(x,345),float2(175,mac?3.0:2.0),2),half3(0.39),1.0);
+      c=put(c,box(p,float2(x-175.0+175.0*value,345),float2(175.0*value,mac?3.0:2.0),2),accent,1.0);
+      float2 thumb=float2(x-175.0+350.0*value,345);
+      c=put(c,length(p-thumb)-(mac?12.0:15.0),mac?half3(0.96):half3(0.28,0.30,0.33),1.0);
+      if(!mac)c=put(c,length(p-thumb)-9.0,accent,1.0);
       for(int i=0;i<3;i++) {
-        float cx=x-135.0+float(i)*135.0;
-        c=put(c,abs(length(p-float2(cx,440))-11.0)-1.4,half3(0.65,0.72,0.8),1.0);
-        if(float(i)==selected)c=put(c,length(p-float2(cx,440))-6.0,half3(0.22,0.68,1),1.0);
+        float2 radio=float2(x-135.0+float(i)*135.0,440);
+        bool checked=float(i)==selected;
+        float r=mac?10.0:12.0;
+        c=put(c,length(p-radio)-r,checked?accent:half3(0.13),1.0);
+        if(!checked)c=put(c,abs(length(p-radio)-r)-0.7,half3(0.67),1.0);
+        if(checked)c=put(c,length(p-radio)-(mac?4.0:6.0),mac?half3(1):half3(0.08,0.13,0.17),1.0);
       }
     }
   } else {
@@ -97,7 +120,7 @@ function Example({ index, width, height }: { index: number; width: number; heigh
       {index === 1 && <Text style={{ position: "absolute", left: 470, top: 199, width: 240, textAlign: "center", color: "white", fontSize: 24, fontWeight: "600" }}>Shared state</Text>}
       {index === 0 && [0, 1].map(platform => <View key={platform} pointerEvents="none" style={{ position: "absolute", left: platform === 0 ? 30 : 560, top: 84, width: 590, height: 520 }}>
         <View style={{ position: "absolute", left: 120, top: 132, width: 350, flexDirection: "row" }}>
-          {["Day", "Week", "Month"].map(label => <Text key={label} style={{ width: 116, color: "white", textAlign: "center", fontSize: 19 }}>{label}</Text>)}
+          {["Day", "Week", "Month"].map(label => <Text key={label} style={{ width: 116, color: "white", textAlign: "center", fontFamily: platform === 0 ? "Helvetica Neue" : "Segoe UI", fontSize: 19 }}>{label}</Text>)}
         </View>
         <Text style={{ position: "absolute", left: 120, top: 231, color: "white", fontSize: 23 }}>Notifications</Text>
         <Text style={{ position: "absolute", left: 120, top: 293, color: "#c4d0dd", fontSize: 20 }}>Volume</Text>
