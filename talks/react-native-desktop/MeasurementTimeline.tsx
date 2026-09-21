@@ -9,11 +9,12 @@ const frames = [
   { label: "First content", x: 960, y: 12, width: 650, height: 408, center: 1285 },
 ];
 
-// One six-second GPU loop keeps the three illustrations synchronized. The host
-// clock freezes outgoing slides and samples a still frame for presenter previews.
+// Each GPU loop starts at its own reveal step on the shared playback clock.
+// Outgoing slides freeze and presenter previews sample a still frame.
 const launchEffect = Skia.RuntimeEffect.Make(`
 uniform float time;
 uniform float stage;
+uniform float stepIndex;
 uniform float2 resolution;
 float rect(float2 p,float2 center,float2 size,float radius) {
   float2 q=abs(p-center)-size+radius;
@@ -36,33 +37,35 @@ float triangle(float2 p,float2 a,float2 b,float2 c) {
   return -sqrt(d.x)*sign(d.y);
 }
 half4 main(float2 p) {
-  float t=mod(time,6.0);
+  float t=stepIndex<stage?0.0:mod(time,6.0);
   half4 color=half4(0);
   float reset=1.0-smoothstep(5.3,5.9,t);
   if(stage<0.5) {
     float2 target=float2(resolution.x*0.5,resolution.y-37.0);
-    float move=smoothstep(0.15,1.35,t);
-    float2 start=float2(resolution.x*0.28,resolution.y*0.35);
+    float move=smoothstep(0.1,0.38,t);
+    float2 start=target+float2(-38.0,-42.0);
     float2 cursor=mix(start,target,move);
-    cursor=mix(cursor,start,smoothstep(4.5,5.9,t));
-    float click=smoothstep(1.4,1.52,t)*(1.0-smoothstep(1.52,1.78,t));
-    float rebound=sin(clamp((t-1.52)/0.5,0.0,1.0)*3.14159)*0.12;
+    cursor=mix(cursor,start,smoothstep(5.5,5.8,t));
+    float click=smoothstep(0.4,0.48,t)*(1.0-smoothstep(0.48,0.66,t));
+    float rebound=sin(clamp((t-0.48)/0.35,0.0,1.0)*3.14159)*0.12;
     float scale=0.65*(1.0-click*0.25+rebound);
-    float wave=clamp((t-1.5)/1.1,0.0,1.0);
+    float wave=clamp((t-0.45)/0.8,0.0,1.0);
     float ring=abs(length(p-target)-(8.0+wave*48.0))-1.5;
-    color=over(color,ring,half3(0.48,0.86,1),step(1.5,t)*(1.0-wave));
+    color=over(color,ring,half3(0.48,0.86,1),step(0.45,t)*(1.0-wave));
     float2 q=(p-cursor)/scale;
-    float arrow=min(triangle(q,float2(0),float2(0,43),float2(35,26)),
-      triangle(q,float2(11,26),float2(25,51),float2(33,46)));
+    float arrow=min(triangle(q,float2(0),float2(0,43),float2(12,31)),
+      triangle(q,float2(0),float2(12,31),float2(35,26)));
+    arrow=min(arrow,triangle(q,float2(12,27),float2(24,49),float2(31,45)));
+    arrow=min(arrow,triangle(q,float2(12,27),float2(31,45),float2(19,25)));
     color=over(color,arrow*scale-2.0,half3(0.04,0.09,0.15),1.0);
     return over(color,arrow*scale,half3(0.92,0.97,1),1.0);
   }
-  float opening=stage<1.5?smoothstep(1.65,2.65,t):1.0;
+  float opening=stage<1.5?smoothstep(0.1,0.9,t):1.0;
   float scale=mix(0.07,1.0,opening);
   float2 center=float2(resolution.x*0.5,(resolution.y-22.0)*0.5);
   float2 dock=float2(resolution.x*0.5,resolution.y-29.0);
   float2 q=(p-mix(dock,center,opening))/scale+center;
-  float visible=stage<1.5?smoothstep(1.65,1.85,t)*reset:1.0;
+  float visible=stage<1.5?smoothstep(0.1,0.25,t)*reset:1.0;
   float window=rect(q,center,float2(resolution.x-96.0,resolution.y-102.0)*0.5,15.0);
   color=over(color,window*scale,half3(0.4,0.5,0.59),visible);
   color=over(color,(window+1.5)*scale,half3(0.043,0.094,0.145),visible);
@@ -71,24 +74,24 @@ half4 main(float2 p) {
     color=over(color,(length(q-float2(65.0+float(i)*17.0,57))-5.0)*scale,tint,visible);
   }
   if(stage>1.5) {
-    float sidebar=smoothstep(2.7,3.1,t)*reset;
+    float sidebar=smoothstep(0.1,0.5,t)*reset;
     float2 sp=p+float2((1.0-sidebar)*18.0,0);
     color=over(color,rect(sp,float2(128,78.0+(resolution.y-152.0)*0.5),float2(69,(resolution.y-152.0)*0.5),9),half3(0.118,0.188,0.259),sidebar);
     for(int i=0;i<5;i++) {
-      float a=smoothstep(2.85+float(i)*0.12,3.15+float(i)*0.12,t)*reset;
+      float a=smoothstep(0.25+float(i)*0.12,0.55+float(i)*0.12,t)*reset;
       float y=99.0+float(i)*39.0+(1.0-a)*10.0;
       color=over(color,length(p-float2(77,y))-9.0,half3(0.32,0.61,0.88),a);
       color=over(color,rect(p,float2(136,y-1.0),float2(41,3),3),half3(0.43,0.55,0.64),a);
     }
     for(int i=0;i<4;i++) {
-      float a=smoothstep(3.1+float(i)*0.2,3.5+float(i)*0.2,t)*reset;
+      float a=smoothstep(0.5+float(i)*0.2,0.9+float(i)*0.2,t)*reset;
       float x=218.0+mod(float(i),2.0)*72.0;
       float y=86.0+float(i)*49.0+(1.0-a)*18.0;
       color=over(color,rect(p,float2(x+105.0,y+19.0),float2(105,19),10),mod(float(i),2.0)<0.5?half3(0.17,0.25,0.33):half3(0.15,0.37,0.62),a);
       color=over(color,rect(p,float2(x+90.0,y+15.5),float2(74,2.5),2.5),half3(0.55,0.70,0.86),a);
       color=over(color,rect(p,float2(x+63.0,y+26.0),float2(47,2),2),half3(0.41,0.55,0.68),a);
     }
-    float composer=smoothstep(3.9,4.3,t)*reset;
+    float composer=smoothstep(1.3,1.7,t)*reset;
     color=over(color,rect(p,float2(resolution.x*0.5+75.0,resolution.y-83.5),float2((resolution.x-282.0)*0.5,11.5),10),half3(0.14,0.22,0.30),composer);
   }
   return color;
@@ -96,7 +99,7 @@ half4 main(float2 p) {
 if (!launchEffect) throw new Error("Could not compile measurement timeline animation");
 
 function LaunchFrame({ stage, width, height }: { stage: number; width: number; height: number }) {
-  const uniforms = useAnimatedShaderUniforms({ stage, resolution: [width, height] }, 4.7);
+  const uniforms = useAnimatedShaderUniforms({ stage, resolution: [width, height] }, 4.7, { clock: stage });
   return <Canvas style={{ width, height }}>
     <RoundedRect x={1} y={1} width={width - 2} height={height - 2} r={20}>
       <LinearGradient start={vec(0, 0)} end={vec(width, height)} colors={["#203951", "#091420", "#163047"]} />
