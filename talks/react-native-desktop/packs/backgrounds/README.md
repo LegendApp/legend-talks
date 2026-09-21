@@ -20,8 +20,8 @@ These are procedural Skia shader effects, not recorded videos or physics simulat
 
 `TypeGPUGlassBackground.tsx` combines the normal Skia droplet styling with six
 GPU-simulated bubbles. The original Skia component and deck default are unchanged.
-The final two comparison slides in `rnconnection.mdx` show the same title with
-Skia, then TypeGPU. Use left/right to compare.
+The comparison slides have been removed from the final talk. To compare, apply
+the override below to a slide, then remove it to restore Skia.
 
 To switch an individual slide to TypeGPU, add this import once at the top of the deck:
 

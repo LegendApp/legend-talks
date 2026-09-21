@@ -13,11 +13,9 @@ presenter:
   showNotes: true
 ---
 
-import { TypeGPUGlassBackground } from "./packs/backgrounds/TypeGPUGlassBackground";
-import { rootsProgram, windowsProgram, takeoverProgram, ecosystemProgram, dropletsProgram } from "./TypeGPUAlternates"
-import { AlternateRoots, AlternateWindows, AlternateEcosystem } from "./TypeGPUAlternateLayouts"
-import { Chart, Points, Tradeoffs } from "./RNConnection"
-import { AppMontage, BalanceDiagram, CapabilityDiagram, MeasurementDiagram, MediaSlot, NativeDataDiagram, PlatformDiagram, RenderingDiagram } from "./RNConnectionVisuals"
+import { takeoverProgram } from "./TypeGPUAlternates"
+import { Chart } from "./RNConnection"
+import { BalanceDiagram, MediaSlot } from "./RNConnectionVisuals"
 import { MetricBuckets } from "./MetricBuckets"
 import { ChatArchitecture } from "./ChatArchitecture"
 import { AIMaintenance } from "./AIMaintenance"
@@ -25,7 +23,7 @@ import { FrameworkComparison } from "./FrameworkComparison"
 import { CrossPlatformLanes } from "./CrossPlatformLanes"
 import { MeasurementTimeline } from "./MeasurementTimeline"
 import { HelloSizeJourney } from "./HelloSizeJourney"
-import { StoryMoment, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot, SlidesHeader, SlidesRelease, WordFlow } from "./StoryDiagrams"
+import { StoryMoment, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot, SlidesHeader, SlidesRelease } from "./StoryDiagrams"
 import { ExistingModulesTitle } from "./ModuleCompatibility";
 import { FramePitch, FrameFoundations } from "./FramePitch";
 import { EverywhereMorph } from "./EverywhereMorph";
@@ -1167,14 +1165,13 @@ Source snapshot: rnconnection-assets/module-compatibility.json. Source: https://
 
 ---
 title: "Please help"
-steps: 2
 eyebrow: Story
 ---
 
 <MovingTitle><StoryMoment kind="invite" /></MovingTitle>
 
 <!--
-1. Please help.
+Please help.
 
 If you maintain a React Native library, add macOS and Windows support.
 
@@ -1182,7 +1179,7 @@ And you don't have to maintain a library to help. Pick a popular module, test it
 
 Sometimes it's a platform check or a small change. Sometimes there's real native work to do. Either way, we need to know.
 
-2. Please put macOS and Windows in the support matrix.
+Please put macOS and Windows in the support matrix.
 
 Try a small example. File an issue. Send a PR. Add a test and document what works.
 
@@ -1213,216 +1210,3 @@ I'm really optimistic about where this can go. If we work on those gaps together
 
 Thank you!
 -->
-
----
-eyebrow: 'Backup / methodology'
-footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
----
-
-# What we measured {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<MeasurementDiagram />
-
-<!--
-The timings are video-derived milliseconds on an Apple M4 Mac with ARM64 release builds. Hello World retains its earlier medians. Chat History is a mixed-build reference: GPUI and Tauri are new single runs, RN is the September 19 ten-run median, and the other rows retain September 17–18 measurements.
-
-Memory is the settled physical footprint from separate launches without recording. These aren't peak memory measurements.
-
-The size builds are newer than the timing runs, so I keep those revisions separate. Chat app sizes exclude the external grammar packs.
-
-The full results and report are included with the deck. These are implementations of a workload, not a proof about every app you could build with each framework.
-
-[Before presenting: complete the remaining storage builds and runtime measurements, repeat GPUI and Tauri, and refresh affected captures and sizes. The single-run timings cannot establish a startup regression against the earlier medians.]
--->
-
----
-eyebrow: 'Backup / terminology'
-footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
----
-
-# Native content ≠ native window {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<RenderingDiagram />
-
-<!--
-A native window and native content aren't the same thing.
-
-You can have native titlebar buttons around a browser or a custom renderer.
-
-And you can mix approaches. React Native can use a WebView or a canvas. Browser and canvas frameworks can integrate native controls.
-
-For the comparison, I'm talking about how the main content is drawn. GPUI's current transcript and composer are both framework-drawn.
--->
-
----
-eyebrow: 'Optional app example'
-footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
----
-
-# Legend Markdown {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<MediaSlot label="Edit a block → format → save" />
-
-<!--
-And this is Legend Markdown, another app I've been working on.
-
-It's a local-first Markdown editor with native document behavior, formatting, and undo and redo.
-
-It's another example of taking that same shared foundation and making something quite different with it.
-
-[Optional demo. Describe it as a preview unless it has launched.]
--->
-
----
-eyebrow: 'Backup / tradeoffs'
----
-
-# The full comparison {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<Tradeoffs />
-
-<!--
-Here's the full comparison if you want to look at a particular framework.
-
-AppKit is a really good choice for a macOS-only app. It wins several of these measurements.
-
-React Native is the one that gives me fast content, low memory, native UI, and a foundation I can share across platforms.
-
-That's the combination I'm arguing for. Not a claim that it wins every cell in this table.
--->
-
----
-title: "Alternate · Shared foundations · TypeGPU"
-eyebrow: "Alternate / TypeGPU"
----
-
-# Different apps. Shared foundations. {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<AlternateRoots icons={[chatIcon, codeIcon, diffIcon, markdownIcon]}>
-  <TypeGPUShader code={rootsProgram} particles particleCount={2048} />
-</AlternateRoots>
-
-<!--
-[Alternate for the shared foundations slide.]
-
-These apps all need the same kinds of things underneath.
-
-Windows, menus, files, storage, shortcuts. I don't want to rebuild those for every app.
-
-So each app picks the pieces it needs from a shared native foundation. That makes the next app much easier to build.
-
-The particles are just a picture of that idea, not a recording of app activity.
--->
-
----
-title: "Alternate · Three ways · TypeGPU"
-eyebrow: "Alternate / TypeGPU"
----
-
-# Three ways to draw a desktop app {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<AlternateWindows>
-  <TypeGPUShader code={windowsProgram} />
-</AlternateWindows>
-
-<!--
-[Alternate for the rendering primer.]
-
-There are three different things happening here.
-
-Native views are separate controls supplied by the platform. Browser apps render an HTML and CSS surface. And custom renderers draw the content themselves.
-
-They can all integrate with the OS. This is about who draws what's inside the window.
-
-AppKit, SwiftUI, React Native. Electron, Tauri, Deno. Flutter, Compose, GPUI.
--->
-
----
-title: "Alternate · Fake glass · TypeGPU"
-template: false
-steps: 1
-eyebrow: "Alternate / TypeGPU"
----
-
-<TypeGPUShader code={takeoverProgram} width={1920} height={1080} previewTime={14} />
-
-<!--
-But we can draw whatever we want, right?
-
-So I made my own liquid glass.
-
-[Let the glass build in the composer for five seconds, then expand for eight. Pause. No explanation over the joke.]
--->
-
----
-title: "Alternate · Existing modules · TypeGPU"
-eyebrow: "Alternate / TypeGPU"
----
-
-# Now I need help with the ecosystem {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<AlternateEcosystem>
-  <TypeGPUShader code={ecosystemProgram} particles previewTime={14} />
-</AlternateEcosystem>
-
-<!--
-[Alternate for the ecosystem invitation.]
-
-React Native already has all these libraries. The hard part is that desktop isn't in everyone's support matrix yet.
-
-Your library might already work. It might need a small fix. Or it might need a new native implementation.
-
-But each one we add makes the platform better for everyone.
-
-So please try your library on desktop. And help us figure out what's missing.
-
-The particles begin white, slowly turn green, then our library turns green and sends out a shockwave. The whole network becomes a smile. Let that play while making the invitation.
-
-These dots are an illustration, not an audit result.
--->
-
----
-title: "Alternate · Interacting background · TypeGPU"
-eyebrow: "Alternate / TypeGPU"
----
-
-<Background>
-  <TypeGPUShader code={dropletsProgram} background />
-</Background>
-
-# React Native is the best way to build desktop apps {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-8xl mb-0"}
-
-<!--
-[Alternate closing slide.]
-
-I started all of this just trying to test LegendList.
-
-And now I really do think React Native is the best way to build desktop apps.
-
-There are still rough edges. We need more modules to support desktop. Legend Frame is still early.
-
-But look at what we can already build. Small, really fast apps that feel like they belong on your computer. And we get to use React Native to do it.
-
-I'm really optimistic about where this can go. If we work on those gaps together, we can make all of our apps really fast and really great.
-
-Thank you!
--->
-
-
----
-title: "Compare · Skia glass background"
----
-
-# React Native is the best way to build desktop apps {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-8xl mb-0"}
-
-<!-- Original Skia background, inherited from the deck template. Advance once to compare the same title over simulated glass bubbles. -->
-
----
-title: "Compare · TypeGPU glass background"
----
-
-<TypeGPUGlassBackground><TypeGPUShader /></TypeGPUGlassBackground>
-
-# React Native is the best way to build desktop apps {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-8xl mb-0"}
-
-<!-- Same glass palette, grid, refraction and rim shading as the original. Six GPU-simulated bubbles repel and bounce. This is an alternate, not the deck default. -->
