@@ -2,6 +2,7 @@ import { Blur, Canvas, Fill, Group, ImageShader, Paint, RuntimeShader, Shader, S
 import { liquidGlassShader, useLiquidGlassPlayback, SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 import { MovingTitle } from "./MovingTitle";
+import { glassPanelMaterial } from "./GlassPanels";
 
 const capabilities = ["Windows", "Native menus", "Keyboard shortcuts", "Files & folders", "Open / save dialogs",
   "Drag & drop", "Clipboard", "Notifications", "Tray / menu bar", "Media controls",
@@ -64,6 +65,9 @@ uniform float slideTime;
 uniform float stepTime;
 uniform float stepIndex;
 uniform float kind;
+const float pulse=0.003;
+const float edgeMotion=1.2;
+${glassPanelMaterial}
 ${geometry}
 half4 textAt(float2 p,float row) {
   if(abs(p.y)>49.0 || abs(p.x)>799.0) return half4(0);
@@ -76,20 +80,19 @@ half4 main(float2 p) {
   float3 light=float3(0);
   float alpha=0.0;
   half4 ink=half4(0);
+  half4 panels=half4(0);
   ${[...features, ...shipping].map((n, i) => `{
     if(kind==${i < features.length ? "0.0" : "1.0"}) {
-      float delay=${i < features.length ? ((i % 5) * .10).toFixed(2) : (2.0 + (i - features.length) * .12).toFixed(2)};
+      float delay=${i < features.length ? ((i % 5) * .10).toFixed(2) : (0.55 + (i - features.length) * .08).toFixed(2)};
       float growth=stepIndex>${n.wave}.0 ? 1.0 : stepIndex<${n.wave}.0 ? 0.0 : smoothstep(delay,delay+0.65,stepTime);
       float2 end=mix(hub,float2(${n.x}.0,${n.y}.0),growth*visibility);
       float show=growth*visibility;
       float d=segment(p,hub,end);
       float pulse=0.8+0.2*sin(slideTime*2.0+${i}.0);
       float line=(exp(-d*0.20)*0.22+exp(-d*1.4)*0.8)*show;
-      float panel=box(p-end,float2(145,36)*max(0.01,visibility),17.0*max(0.01,visibility));
-      float body=(1.0-smoothstep(-1.0,1.0,panel))*show;
-      float rim=exp(-abs(panel)*1.2)*show;
-      light+=float3(0.02,0.055,0.10)*body+float3(0.22,0.75,1.0)*(line+rim*0.55)*pulse;
-      alpha=max(alpha,body*0.94);
+      half4 panel=half4(glassPanel((p-end)/max(0.01,visibility),float2(145,36),17.0,slideTime+${i}.0*1.7))*show;
+      panels=panel+panels*(1.0-panel.a);
+      light+=float3(0.22,0.75,1.0)*line*pulse;
       for(int j=0;j<3;j++) {
         float travel=fract(slideTime*(0.65+${(i % 3 * .12).toFixed(2)})+float(j)/3.0+${(i * .17).toFixed(2)});
         float2 particle=mix(end,hub,travel);
@@ -101,15 +104,14 @@ half4 main(float2 p) {
     }
   }`).join("\n")}
   if(kind<0.5) {
-    float d=box((p-hub)/max(0.01,visibility),float2(140,83),24.0);
-    float mask=(1.0-smoothstep(-1.0,1.0,d))*visibility;
-    light+=float3(0.025,0.065,0.11)*mask+float3(0.38,0.8,1.0)*exp(-abs(d))*visibility;
-    alpha=max(alpha,mask*0.98);
+    half4 panel=half4(glassPanel((p-hub)/max(0.01,visibility),float2(140,83),24.0,slideTime))*visibility;
+    panels=panel+panels*(1.0-panel.a);
     half4 label=textAt((p-hub)/max(0.01,visibility),25.0)*visibility;
     ink=label+ink*(1.0-label.a);
   }
   alpha=max(alpha,clamp(max(light.r,max(light.g,light.b)),0.0,1.0));
   half4 result=half4(min(light,float3(alpha)),alpha);
+  result=panels+result*(1.0-panels.a);
   return ink+result*(1.0-ink.a);
 }`;
 
