@@ -188,8 +188,11 @@ export function DesktopFoundationsJourney() {
     <View style={{ width: 1696, height: 680, marginTop: 36, alignSelf: "center" }}>
       <Canvas accessibilityLabel={step >= 5 ? command : step >= 4 ? publishing.join(", ") : capabilities.join(", ")}
         style={{ position: "absolute", inset: 0 }}>
-        <Group layer={<Paint><RuntimeShader source={ripple!} uniforms={glass.uniforms}><Blur blur={glass.blur} mode="clamp" /></RuntimeShader></Paint>}>
-          <Fill><Shader source={network!} uniforms={featureUniforms}>{image}</Shader></Fill>
+        <Group transform={[{ scale: 1 / glass.pixelRatio }]}>
+          <Group transform={[{ scale: glass.pixelRatio }]}
+            layer={<Paint><RuntimeShader source={ripple!} uniforms={glass.uniforms}><Blur blur={glass.blur} mode="clamp" /></RuntimeShader></Paint>}>
+            <Fill><Shader source={network!} uniforms={featureUniforms}>{image}</Shader></Fill>
+          </Group>
         </Group>
         <Fill><Shader source={network!} uniforms={shippingUniforms}>{image}</Shader></Fill>
         <Fill><Shader source={cursor!} uniforms={cursorUniforms}>{image}</Shader></Fill>
