@@ -37,7 +37,15 @@ The Expo Modules slide follows Existing Modules and shows 16 packages on one pag
 | expo-image-picker | 13,701,891 |
 | expo-device | 11,775,708 |
 
-Expo FileSystem is marked working on macOS based on Jay's September 21 update; the full Directory snapshot below preserves its original metadata. Router is omitted at Jay's request. Image Picker and Device are the next two eligible packages by monthly downloads.
+Eight onstage Expo packages are marked working on macOS using the RNL presentation evidence below; FileSystem was also explicitly confirmed by Jay on September 21. The full Directory snapshot below preserves its original metadata. Router is omitted at Jay's request. Image Picker and Device are the next two eligible packages by monthly downloads.
+
+## RNL presentation evidence
+
+Source: [State of React Native macOS — React Native London, November 14, 2025](/Users/jay/Documents/code/presentations/rnl-conf-2025/slides/slides.md:1352), “Some Expo Libraries”. Speaker notes state these modules already work on Mac. This is historical speaker evidence, not new runtime testing or Windows evidence.
+
+The current slide uses this evidence for: expo-constants, expo-file-system, expo-asset, expo-keep-awake, expo-font, expo-linking, expo-web-browser, expo-crypto. Windows remains `?`.
+
+The original list also includes: @expo/log-box, expo-eas-client, expo-local-authentication, expo-manifests, expo-mesh-gradient, expo-modules-core, expo-sqlite, expo-updates. Those remain outside the curated onstage list.
 
 ## All Expo entries in Directory
 

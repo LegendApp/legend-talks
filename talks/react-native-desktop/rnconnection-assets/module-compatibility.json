@@ -627,9 +627,10 @@
     {
       "name": "expo-constants",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-constants",
-      "macos": "untested",
+      "macos": "working",
       "windows": "untested",
-      "monthlyDownloads": 35787647
+      "monthlyDownloads": 35787647,
+      "statusNote": "Listed as working on macOS in the RNL presentation, November 14, 2025; Windows not established by that source."
     },
     {
       "name": "expo-file-system",
@@ -637,35 +638,39 @@
       "macos": "working",
       "windows": "untested",
       "monthlyDownloads": 34782427,
-      "statusNote": "macOS support supplied by Jay on 2026-09-21; Directory snapshot does not list it."
+      "statusNote": "Listed as working on macOS in the RNL presentation, November 14, 2025; Windows not established by that source."
     },
     {
       "name": "expo-asset",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-asset",
-      "macos": "untested",
+      "macos": "working",
       "windows": "untested",
-      "monthlyDownloads": 32531594
+      "monthlyDownloads": 32531594,
+      "statusNote": "Listed as working on macOS in the RNL presentation, November 14, 2025; Windows not established by that source."
     },
     {
       "name": "expo-keep-awake",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-keep-awake",
-      "macos": "untested",
+      "macos": "working",
       "windows": "untested",
-      "monthlyDownloads": 30471274
+      "monthlyDownloads": 30471274,
+      "statusNote": "Listed as working on macOS in the RNL presentation, November 14, 2025; Windows not established by that source."
     },
     {
       "name": "expo-font",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-font",
-      "macos": "untested",
+      "macos": "working",
       "windows": "untested",
-      "monthlyDownloads": 30314014
+      "monthlyDownloads": 30314014,
+      "statusNote": "Listed as working on macOS in the RNL presentation, November 14, 2025; Windows not established by that source."
     },
     {
       "name": "expo-linking",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-linking",
-      "macos": "untested",
+      "macos": "working",
       "windows": "untested",
-      "monthlyDownloads": 22339293
+      "monthlyDownloads": 22339293,
+      "statusNote": "Listed as working on macOS in the RNL presentation, November 14, 2025; Windows not established by that source."
     },
     {
       "name": "expo-secure-store",
@@ -677,9 +682,10 @@
     {
       "name": "expo-web-browser",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-web-browser",
-      "macos": "untested",
+      "macos": "working",
       "windows": "untested",
-      "monthlyDownloads": 18764052
+      "monthlyDownloads": 18764052,
+      "statusNote": "Listed as working on macOS in the RNL presentation, November 14, 2025; Windows not established by that source."
     },
     {
       "name": "expo-application",
@@ -719,9 +725,10 @@
     {
       "name": "expo-crypto",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-crypto",
-      "macos": "untested",
+      "macos": "working",
       "windows": "untested",
-      "monthlyDownloads": 14196052
+      "monthlyDownloads": 14196052,
+      "statusNote": "Listed as working on macOS in the RNL presentation, November 14, 2025; Windows not established by that source."
     },
     {
       "name": "expo-image-picker",
@@ -742,5 +749,31 @@
     "source": "https://reactnative.directory/api/libraries?order=downloads&limit=100&skipTools=true",
     "metric": "Monthly npm downloads, descending, among desktop-relevant app-facing Expo packages.",
     "excluded": "Mobile status/system UI, mobile splash screens, haptics, build/dev tooling, core umbrella package and internal infrastructure packages. Router omitted at Jay's request; symbols and glass retained for native desktop UI."
+  },
+  "expoPresentationEvidence": {
+    "source": "/Users/jay/Documents/code/presentations/rnl-conf-2025/slides/slides.md",
+    "title": "State of React Native macOS \u2014 React Native London",
+    "date": "2025-11-14",
+    "section": "Some Expo Libraries",
+    "platform": "macos",
+    "packages": [
+      "@expo/log-box",
+      "expo-asset",
+      "expo-constants",
+      "expo-crypto",
+      "expo-eas-client",
+      "expo-file-system",
+      "expo-font",
+      "expo-keep-awake",
+      "expo-linking",
+      "expo-local-authentication",
+      "expo-manifests",
+      "expo-mesh-gradient",
+      "expo-modules-core",
+      "expo-sqlite",
+      "expo-updates",
+      "expo-web-browser"
+    ],
+    "note": "Speaker notes state these Expo modules already work on Mac. Historical speaker evidence, not a new runtime test or evidence of Windows support."
   }
 }
