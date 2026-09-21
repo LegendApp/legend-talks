@@ -115,7 +115,3 @@ Ten recognizable libraries, not a ranked top ten.
 | [react-native-mmkv](https://github.com/margelo/react-native-mmkv/tree/main/packages/react-native-mmkv) | untested | untested |
 | [@shopify/react-native-skia](https://github.com/Shopify/react-native-skia/tree/main/packages/skia) | untested | untested |
 | [react-native-vision-camera](https://github.com/margelo/react-native-vision-camera/tree/main/packages/react-native-vision-camera) | untested | untested |
-
-## Frame adapters shown separately onstage
-
-Clipboard, SecureStore, and Linking have partial macOS API adapters in Frame, not upstream Expo desktop support. Evidence: `../legend-framework/docs/expo-api-adapters.md`, supported contracts and September 13 recorded macOS validation. Windows native acceptance remains pending; show untested. These overlays do not change the upstream Expo rows above.
