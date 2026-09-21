@@ -7,10 +7,13 @@ function makeLabels() {
   const canvas = surface.getCanvas(); canvas.clear(Skia.Color("transparent"));
   const paint = Skia.Paint(); paint.setAntiAlias(true); paint.setColor(Skia.Color("#f1f5f9"));
   const font = matchFont({ fontFamily: "Helvetica Neue", fontSize: 23, fontWeight: "600" });
-  ["Chat History", "chat.example.com", "Conversation"].forEach((text, row) => canvas.drawText(text, 0, row * 80 + 48, paint, font));
+  ["Chat History", "legend.so", "Conversation"].forEach((text, row) => canvas.drawText(text, 0, row * 80 + 48, paint, font));
   const image = surface.makeImageSnapshot(); font.dispose(); paint.dispose(); surface.dispose(); return image;
 }
 const labels = makeLabels();
+const tabFont = matchFont({ fontFamily: "Helvetica Neue", fontSize: 23, fontWeight: "600" });
+const tabTitleWidth = tabFont.measureText("Chat History").width;
+tabFont.dispose();
 // All dimensions and child positions interpolate from one shared GPU timeline. The app
 // reflows inside the device rather than scaling a screenshot of the phone.
 export const everywhereShader = `
@@ -63,7 +66,7 @@ half4 main(float2 p) {
   for(int i=0;i<3;i++)c=put(c,length(p-float2(left+23.0+float(i)*18.0,top+23.0))-5.0,i==0?half3(1,0.4,0.4):i==1?half3(1,0.76,0.35):half3(0.35,0.8,0.45),browser);
   c=put(c,box(p,float2(left+240.0,top+24.0),float2(125,17),8),half3(0.22,0.28,0.34),browser*(1.0-desktop));
   c=put(c,box(p,float2(848,top+58.0),float2(width*0.5-100.0,14),14),half3(0.07,0.11,0.16),browser*(1.0-desktop));
-  c=label(c,p,float2(left+135.0,top-12.0),0,browser*(1.0-desktop));
+  c=label(c,p,float2(left+240.0-${(tabTitleWidth / 2).toFixed(6)},top-15.0),0,browser*(1.0-desktop));
   c=label(c,p,float2(755,top+18.0),1,browser*(1.0-desktop));
   c=label(c,p,float2(left+102.0,top-14.0),0,desktop);
   // A sidebar appears as width becomes available, keeping readable row sizes.
