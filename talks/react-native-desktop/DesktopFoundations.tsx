@@ -60,6 +60,7 @@ float segment(float2 p,float2 a,float2 b) {
 `;
 export const foundationsNetworkShader = `
 uniform shader labels;
+uniform float padding;
 uniform float time;
 uniform float slideTime;
 uniform float stepTime;
@@ -74,6 +75,7 @@ half4 textAt(float2 p,float row) {
   return labels.eval(p+float2(800,row*100.0+50.0));
 }
 half4 main(float2 p) {
+  p -= float2(padding);
   float collapse=stepIndex>=5.0 ? smoothstep(0.0,1.35,time) : 0.0;
   float visibility=1.0-collapse;
   float2 hub=float2(848,330);
@@ -121,10 +123,12 @@ export const foundationsRippleShader = liquidGlassShader;
 
 export const frameCursorShader = `
 uniform shader labels;
+uniform float padding;
 uniform float time;
 uniform float stepIndex;
 ${geometry}
 half4 main(float2 p) {
+  p -= float2(padding);
   if(stepIndex<5.0) return half4(0);
   float2 hub=float2(848,330);
   float morph=smoothstep(3.0,4.5,time);
@@ -174,12 +178,18 @@ const ripple = Skia.RuntimeEffect.Make(foundationsRippleShader);
 const cursor = Skia.RuntimeEffect.Make(frameCursorShader);
 if (!network || !ripple || !cursor) throw new Error("Could not compile the Frame reveal");
 
+// Leave transparent space for the 24px blur kernel, refraction, and panel glow.
+// Keep the logical stage fixed; only the raster surface and filter bounds grow.
+const canvasPadding = 160;
+const canvasWidth = 1696 + canvasPadding * 2;
+const canvasHeight = 680 + canvasPadding * 2;
+
 export function DesktopFoundationsJourney() {
   const step = usePresentationValue("stepIndex");
-  const featureUniforms = useAnimatedShaderUniforms({ kind: 0 }, 10, { clock: 5 });
-  const shippingUniforms = useAnimatedShaderUniforms({ kind: 1 }, 10, { clock: 5 });
-  const glass = useLiquidGlassPlayback({ active: step >= 4, width: 1696, height: 680 });
-  const cursorUniforms = useAnimatedShaderUniforms({}, 10, { clock: 5 });
+  const featureUniforms = useAnimatedShaderUniforms({ kind: 0, padding: canvasPadding }, 10, { clock: 5 });
+  const shippingUniforms = useAnimatedShaderUniforms({ kind: 1, padding: canvasPadding }, 10, { clock: 5 });
+  const glass = useLiquidGlassPlayback({ active: step >= 4, width: canvasWidth, height: canvasHeight });
+  const cursorUniforms = useAnimatedShaderUniforms({ padding: canvasPadding }, 10, { clock: 5 });
   const image = <ImageShader image={atlas.image} x={0} y={0} width={atlasWidth} height={rows.length * rowHeight} fit="fill" tx="decal" ty="decal" />;
   return <>
     <SceneMotionView pose={{ opacity: step >= 5 ? 0 : 1 }} duration={450}>
@@ -189,7 +199,7 @@ export function DesktopFoundationsJourney() {
     </SceneMotionView>
     <View style={{ width: 1696, height: 680, marginTop: 36, alignSelf: "center" }}>
       <Canvas accessibilityLabel={step >= 5 ? command : step >= 4 ? publishing.join(", ") : capabilities.join(", ")}
-        style={{ position: "absolute", inset: 0 }}>
+        style={{ position: "absolute", left: -canvasPadding, top: -canvasPadding, width: canvasWidth, height: canvasHeight }}>
         <Group transform={[{ scale: 1 / glass.pixelRatio }]}>
           <Group transform={[{ scale: glass.pixelRatio }]}
             layer={<Paint><RuntimeShader source={ripple!} uniforms={glass.uniforms}><Blur blur={glass.blur} mode="clamp" /></RuntimeShader></Paint>}>
