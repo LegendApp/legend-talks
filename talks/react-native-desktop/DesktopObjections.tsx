@@ -1,5 +1,6 @@
 import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
 import { SceneMotionView, SharedElement, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
+import { ExistingModulesTitle } from "./ModuleCompatibility";
 import { Text, View } from "react-native";
 
 // One bounded GPU surface per panel. Reflections, cracks, and
@@ -155,8 +156,8 @@ function GlassPanel({ crossed, settled, index }: { crossed: boolean; settled: bo
 }
 
 /** Both resolved objections use the exact same glass, strike, sparks and check. */
-function ObjectionCard({ label, index, crossed, settled, zoomTarget }: {
-  label: string; index: number; crossed: boolean; settled: boolean; zoomTarget: number | null;
+function ObjectionCard({ label, index, crossed, settled, zoomTarget, separateLabel }: {
+  label: string; index: number; crossed: boolean; settled: boolean; zoomTarget: number | null; separateLabel: boolean;
 }) {
   const zoom = zoomTarget !== null;
   const center = index === zoomTarget;
@@ -169,10 +170,10 @@ function ObjectionCard({ label, index, crossed, settled, zoomTarget }: {
     {/* The shared step-1 timeline survives the subsequent zoom step. */}
     <GlassPanel crossed={crossed} settled={settled} index={index} />
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 24 }}>
-      <SharedElement id={index === 1 ? "existing-modules-title" : `objection-label-${index}`} resize="preserve">
+      {!separateLabel && <SharedElement id={index === 1 ? "existing-modules-title" : `objection-label-${index}`} resize="preserve">
         <Text style={{ color: "#ffffff", fontSize: 42, fontWeight: "600", textAlign: "center", lineHeight: 54,
           textShadowColor: "#07121f", textShadowRadius: 8, textShadowOffset: { width: 0, height: 2 } }}>{label}</Text>
-      </SharedElement>
+      </SharedElement>}
     </View>
   </SceneMotionView>;
 }
@@ -184,6 +185,7 @@ export function DesktopObjections({ returning = false }: { returning?: boolean }
   return <View style={{ width: 1696, height: 660, marginTop: 45, alignSelf: "center" }}>
     {["Performance", "Existing Modules", "Desktop foundations"].map((label, index) =>
       <ObjectionCard key={label} label={label} index={index} crossed={crossed[index]!}
-        settled={returning && index === 0} zoomTarget={zoomTarget} />)}
+        settled={returning && index === 0} zoomTarget={zoomTarget} separateLabel={returning && index === 1} />)}
+    {returning && <ExistingModulesTitle inCard expanded={step >= 2} />}
   </View>;
 }

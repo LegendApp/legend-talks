@@ -1,0 +1,554 @@
+{
+  "checkedAt": "2026-09-21",
+  "source": "https://github.com/react-native-community/directory/blob/8067cc2b75a9d53925e7cfbff10dc3622e86d94b/react-native-libraries.json",
+  "expo": [
+    {
+      "name": "@expo/app-integrity",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-app-integrity",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "@expo/dom-webview",
+      "source": "https://github.com/expo/expo/tree/main/packages/%40expo/dom-webview",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "@expo/fingerprint",
+      "source": "https://github.com/expo/expo/tree/main/packages/@expo/fingerprint",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "@expo/html-elements",
+      "source": "https://github.com/expo/expo/tree/main/packages/html-elements",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "@expo/metro-runtime",
+      "source": "https://github.com/expo/expo/tree/main/packages/@expo/metro-runtime",
+      "macos": "working",
+      "windows": "untested"
+    },
+    {
+      "name": "@expo/router-server",
+      "source": "https://github.com/expo/expo/tree/main/packages/%40expo/router-server",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-age-range",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-age-range",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-apple-authentication",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-apple-authentication",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-application",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-application",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-asset",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-asset",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-audio",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-audio",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-auth-session",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-auth-session",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-background-fetch",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-background-fetch",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-background-task",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-background-task",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-battery",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-battery",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-blur",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-blur",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-brightness",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-brightness",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-build-properties",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-build-properties",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-calendar",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-calendar",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-camera",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-camera",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-cellular",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-cellular",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-checkbox",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-checkbox",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-clipboard",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-clipboard",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-constants",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-constants",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-contacts",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-contacts",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-crypto",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-crypto",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-dev-client",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-dev-client",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-device",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-device",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-document-picker",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-document-picker",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-file-system",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-file-system",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-font",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-font",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-gl",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-gl",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-glass-effect",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-glass-effect",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-haptics",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-haptics",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-image",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-image",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-image-manipulator",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-image-manipulator",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-image-picker",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-image-picker",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-insights",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-insights",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-intent-launcher",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-intent-launcher",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-json-utils",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-json-utils",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-keep-awake",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-keep-awake",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-linear-gradient",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-linear-gradient",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-linking",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-linking",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-local-authentication",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-local-authentication",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-localization",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-localization",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-location",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-location",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-mail-composer",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-mail-composer",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-manifests",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-manifests",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-maps",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-maps",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-media-library",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-media-library",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-mesh-gradient",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-mesh-gradient",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-modules-jsi",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-modules-jsi",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-navigation-bar",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-navigation-bar",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-network",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-network",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-notifications",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-notifications",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-print",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-print",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-router",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-router",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-screen-capture",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-screen-capture",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-screen-orientation",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-screen-orientation",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-secure-store",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-secure-store",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-sensors",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-sensors",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-sharing",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-sharing",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-sms",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-sms",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-speech",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-speech",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-splash-screen",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-splash-screen",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-sqlite",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-sqlite",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-status-bar",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-status-bar",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-store-review",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-store-review",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-structured-headers",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-structured-headers",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-symbols",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-symbols",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-system-ui",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-system-ui",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-task-manager",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-task-manager",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-tracking-transparency",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-tracking-transparency",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-updates",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-updates",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-video",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-video",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-video-thumbnails",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-video-thumbnails",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-web-browser",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-web-browser",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "expo-widgets",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-widgets",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "jest-expo",
+      "source": "https://github.com/expo/expo/tree/main/packages/jest-expo",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "patch-project",
+      "source": "https://github.com/expo/expo/tree/main/packages/patch-project",
+      "macos": "untested",
+      "windows": "untested"
+    }
+  ],
+  "community": [
+    {
+      "name": "react-native-reanimated",
+      "source": "https://github.com/software-mansion/react-native-reanimated/tree/main/packages/react-native-reanimated",
+      "macos": "working",
+      "windows": "untested"
+    },
+    {
+      "name": "react-native-gesture-handler",
+      "source": "https://github.com/software-mansion/react-native-gesture-handler/tree/main/packages/react-native-gesture-handler",
+      "macos": "working",
+      "windows": "untested"
+    },
+    {
+      "name": "react-native-svg",
+      "source": "https://github.com/software-mansion/react-native-svg",
+      "macos": "working",
+      "windows": "working"
+    },
+    {
+      "name": "react-native-webview",
+      "source": "https://github.com/react-native-webview/react-native-webview",
+      "macos": "working",
+      "windows": "working"
+    },
+    {
+      "name": "@react-native-async-storage/async-storage",
+      "source": "https://github.com/react-native-async-storage/async-storage/tree/main/packages/async-storage",
+      "macos": "working",
+      "windows": "working"
+    },
+    {
+      "name": "react-native-safe-area-context",
+      "source": "https://github.com/AppAndFlow/react-native-safe-area-context",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "react-native-screens",
+      "source": "https://github.com/software-mansion/react-native-screens",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "react-native-mmkv",
+      "source": "https://github.com/margelo/react-native-mmkv/tree/main/packages/react-native-mmkv",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "@shopify/react-native-skia",
+      "source": "https://github.com/Shopify/react-native-skia/tree/main/packages/skia",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "react-native-vision-camera",
+      "source": "https://github.com/margelo/react-native-vision-camera/tree/main/packages/react-native-vision-camera",
+      "macos": "untested",
+      "windows": "untested"
+    }
+  ]
+}

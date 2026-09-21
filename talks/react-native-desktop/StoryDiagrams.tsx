@@ -42,21 +42,7 @@ export { RendererFamilies } from "./RendererWindows";
 
 export { ExpoDesktopLayers } from "./ExpoDesktopScene";
 
-export function CompatibilitySnapshot() {
-  const step = usePresentationValue("stepIndex");
-  return <View style={{ gap: 54, marginTop: 36, paddingHorizontal: 100 }}>
-    {[
-      ["Clipboard · Secure storage · Linking", "Expo-shaped APIs", "Partial Frame adapters"],
-      ["Margelo Runtimes", "Independent Hermes workers", "macOS · local patches"],
-      ["The rest of the ecosystem", "Help us audit and upstream support", "Windows validation pending"],
-    ].map(([name, description, status], index) => <Reveal key={name} show={step >= index}>
-      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-        <View style={{ gap: 12 }}><Text style={{ color: ink, fontSize: 38 }}>{name}</Text><Text style={{ color: ink, fontSize: 26 }}>{description}</Text></View>
-        <Text style={{ color: accent, fontSize: 28 }}>{status}</Text>
-      </View>
-    </Reveal>)}
-  </View>;
-}
+export { CompatibilitySnapshot } from "./ModuleCompatibility";
 
 export function SlidesHeader({ icon }: { icon: string }) {
   return <MovingTitle style={{ alignSelf: "center" }}>

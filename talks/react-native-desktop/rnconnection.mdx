@@ -25,6 +25,7 @@ import { CrossPlatformLanes } from "./CrossPlatformLanes"
 import { MeasurementTimeline } from "./MeasurementTimeline"
 import { HelloSizeJourney } from "./HelloSizeJourney"
 import { StoryMoment, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot, SlidesHeader, SlidesRelease, WordFlow } from "./StoryDiagrams"
+import { ExistingModulesTitle } from "./ModuleCompatibility";
 import { FramePitch, FrameFoundations } from "./FramePitch";
 import { EverywhereMorph } from "./EverywhereMorph";
 import { ReactNativeTitleDemo } from "./ReactNativeTitleDemo";
@@ -1121,28 +1122,30 @@ And this is where I need your help.
 -->
 
 ---
-steps: 3
+steps: 2
 eyebrow: Story
 ---
 
-# Existing Modules {shared=existing-modules-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+<ExistingModulesTitle />
 
 <CompatibilitySnapshot />
 
 <!--
 1. React Native already has a huge ecosystem. We don't need to start over.
 
-But we do need to make more of it work on desktop.
+This is a snapshot of React Native Directory, not a promise that every version and architecture works. Green means Directory lists support. A question mark means it isn't listed and we haven't tested it here. It doesn't mean broken.
 
-I've got adapters for things like Expo clipboard, secure storage, and linking. Those are supported subsets, not a claim that every Expo API works.
+The Frame rows are separate: small, tested macOS adapters for parts of the Expo API. They aren't upstream Expo support, and Windows acceptance is still pending.
 
-2. I've also been working with Margelo Runtimes for background Hermes work on macOS. That currently needs some local patches and adapters.
+The full Expo audit is linked here. Most entries don't declare either desktop platform. That's a list of questions to answer, not a list of failures.
 
-And I'm working on getting desktop support added to more of the Margelo libraries.
+2. Here are ten familiar community libraries. This isn't a popularity ranking.
 
-3. What we need next is a proper audit. Which libraries work already? Which need a small fix? Which need a native implementation?
+SVG, WebView and AsyncStorage list both desktop platforms. Reanimated and Gesture Handler list macOS. The other question marks need investigation, even when we know a patched version can work in this app.
 
-And macOS and Windows need separate answers.
+We need to test specific versions, record the architecture and platform, and get fixes upstream. Working, partial, unsupported, and untested need to mean different things.
+
+Source snapshot: rnconnection-assets/module-compatibility.json. Full audit and definitions: MODULE_COMPATIBILITY_AUDIT.md. Source: https://reactnative.directory/
 -->
 
 ---
