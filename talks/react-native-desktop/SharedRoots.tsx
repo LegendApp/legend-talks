@@ -99,9 +99,7 @@ export function SharedRoots({ icons }: { icons: string[] }) {
   const names = ["Music", "Chat History", "Code", "Diff", "Markdown"];
   return <View style={{ width: 1696, height: 770, alignSelf: "center", marginTop: 8 }}>
     {names.map((name, index) => <View key={name} style={{ position: "absolute", left: 60 + index * 314, top: -8, width: 320, alignItems: "center", gap: 4 }}>
-      {index === 0
-        ? <Text accessibilityLabel="Music icon placeholder" style={{ color: "#c4a0ff", fontSize: 82, lineHeight: 96 }}>♫</Text>
-        : <Image source={{ uri: icons[index - 1] }} style={{ width: 96, height: 96 }} />}
+      <Image source={{ uri: icons[index] }} accessibilityLabel={`${name} icon`} style={{ width: 96, height: 96 }} resizeMode="contain" />
       <Text style={{ color: "#f8fafc", fontSize: 30, fontWeight: "600" }}>{name}</Text>
     </View>)}
     <View style={{ position: "absolute", left: 0, top: 128, width: 1696 }}>
