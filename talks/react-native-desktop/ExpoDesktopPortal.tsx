@@ -9,7 +9,7 @@ uniform float time;
 float hash(float2 p) { return fract(sin(dot(p,float2(127.1,311.7)))*43758.5453); }
 float3 stream(float2 p,float t) {
   float3 light=float3(0);
-  float envelope=smoothstep(398.0,420.0,p.x)*(1.0-smoothstep(1390.0,1610.0,p.x));
+  float envelope=smoothstep(248.0,270.0,p.x)*(1.0-smoothstep(1390.0,1610.0,p.x));
   for(int lane=0;lane<19;lane++) {
     float l=float(lane);
     float speed=65.0+hash(float2(l,9))*95.0;
@@ -18,9 +18,9 @@ float3 stream(float2 p,float t) {
       float id=cell+float(neighbor);
       float seed=hash(float2(id,l));
       float x=(id+seed)*44.0+t*speed;
-      // The Expo mark is centered at x=398. Fan out from a narrow emitter
+      // The Expo mark is centered at x=248. Fan out from a narrow emitter
       // inside it, reaching the full particle spread at the portal.
-      float spread=mix(0.025,1.0,smoothstep(398.0,800.0,x));
+      float spread=mix(0.025,1.0,smoothstep(248.0,800.0,x));
       float py=330.0+spread*((l-9.0)*10.0+sin(x*0.006-l*0.29+t*0.15)*(24.0+l*2.8));
       float d=length(p-float2(x,py));
       float size=0.45+pow(hash(float2(id+31.0,l)),4.0)*4.8;
@@ -86,7 +86,7 @@ export function ExpoDesktopPortal() {
     <Text style={{ color: "white", fontSize: 88, fontWeight: "600", textAlign: "center", marginTop: 12 }}>Expo Desktop</Text>
     <Canvas accessibilityLabel="A glowing glass portal refracts particles flowing from Expo to macOS and Windows" style={{ position: "absolute", top: 105, left: 0, width: 1696, height: 650 }}>
       <Fill><Shader source={effect!} uniforms={uniforms} /></Fill>
-      <Path path={expoLogo} color="white" transform={[{ translateX: 332 }, { translateY: 272 }, { scale: 5.5 }]} />
+      <Path path={expoLogo} color="white" transform={[{ translateX: 182 }, { translateY: 272 }, { scale: 5.5 }]} />
       <Path path="M0 0H40V40H0ZM48 0H88V40H48ZM0 48H40V88H0ZM48 48H88V88H48Z" color="white" transform={[{ translateX: 1390 }, { translateY: 285 }, { scale: 1.2 }]} />
     </Canvas>
     <Text style={{ position: "absolute", left: 1190, top: 344, fontSize: 143, color: "white", fontFamily: "Helvetica Neue" }}></Text>
