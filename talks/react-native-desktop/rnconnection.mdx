@@ -13,6 +13,7 @@ presenter:
   showNotes: true
 ---
 
+import { TypeGPUGlassBackground } from "./packs/backgrounds/TypeGPUGlassBackground";
 import { rootsProgram, windowsProgram, takeoverProgram, ecosystemProgram, dropletsProgram } from "./TypeGPUAlternates"
 import { AlternateRoots, AlternateWindows, AlternateEcosystem } from "./TypeGPUAlternateLayouts"
 import { Chart, Points, Tradeoffs } from "./RNConnection"
@@ -1390,3 +1391,22 @@ I'm really optimistic about where this can go. If we work on those gaps together
 
 Thank you!
 -->
+
+
+---
+title: "Compare · Skia glass background"
+---
+
+# React Native is the best way to build desktop apps {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-8xl mb-0"}
+
+<!-- Original Skia background, inherited from the deck template. Advance once to compare the same title over simulated glass bubbles. -->
+
+---
+title: "Compare · TypeGPU glass background"
+---
+
+<TypeGPUGlassBackground><TypeGPUShader /></TypeGPUGlassBackground>
+
+# React Native is the best way to build desktop apps {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-8xl mb-0"}
+
+<!-- Same glass palette, grid, refraction and rim shading as the original. Six GPU-simulated bubbles repel and bounce. This is an alternate, not the deck default. -->
