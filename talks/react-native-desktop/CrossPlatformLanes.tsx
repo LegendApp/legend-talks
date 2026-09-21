@@ -25,28 +25,39 @@ half4 main(float2 p) {
   float last=row<3 ? 1510.0 : row==3 ? 1250.0 : row<6 ? 990.0 : 1250.0;
   float span=step(first,p.x)*step(p.x,last);
   bool partialWeb=row==3 || row==6 || row==8;
-  if(partialWeb && p.x>last && p.x<1510.0) span=step(0.5,fract(p.x/18.0))*0.3;
+  float laneEnd=partialWeb ? 1510.0 : last;
+  span=step(first,p.x)*step(p.x,laneEnd);
+  int nearestColumn=int(clamp(floor((p.x-470.0)/260.0+0.5),0.0,4.0));
+  float laneCoverage=supported(row,nearestColumn);
+  bool partialLane=laneCoverage>0.0 && laneCoverage<1.0;
+  float3 partialTint=float3(1.0,0.16,0.22);
+  float3 laneTint=partialLane ? partialTint : tint;
+  if(partialLane) span*=step(0.5,fract(p.x/18.0))*0.75;
   float wave=pow(0.5+0.5*sin(time*2.1-p.x*0.008+float(row)*0.7),5.0);
-  color+=tint*(exp(-dy*1.4)*0.60+exp(-dy*0.16)*(0.08+wave*0.17))*span;
+  color+=laneTint*(exp(-dy*1.4)*0.60+exp(-dy*0.16)*(0.08+wave*0.17))*span;
   float travel=fract(time*0.19+float(row)*0.137);
-  float pulseX=mix(first,last,travel);
+  float pulseX=mix(first,laneEnd,travel);
   float trail=exp(-abs(p.x-pulseX)*0.034)*span;
-  color+=tint*trail*(exp(-dy*0.22)*0.65+exp(-dy*1.1));
+  color+=laneTint*trail*(exp(-dy*0.22)*0.65+exp(-dy*1.1));
   for(int column=0;column<5;column++) {
     float x=470.0+float(column)*260.0;
     color+=float3(0.12,0.22,0.32)*exp(-abs(p.x-x)*1.2)*step(88.0,p.y)*step(p.y,662.0)*0.55;
     float coverage=supported(row,column);
     if(coverage>0.0) {
+      float3 nodeTint=coverage<1.0 ? partialTint : tint;
       float phase=time*2.2+float(column)*0.9-float(row)*0.6;
       float beat=0.5+0.5*sin(phase);
       float radius=7.0+beat*1.8;
       float d=length(p-float2(x,y));
-      color+=tint*exp(-d*0.075)*(0.34+beat*0.36);
-      float fill=coverage==1.0 ? 1.0 : 1.0-smoothstep(x-0.5,x+0.5,p.x);
-      color+=float3(0.85,0.95,1.0)*(1.0-smoothstep(radius-1.0,radius+0.8,d))*fill;
-      if(coverage<1.0) color+=tint*exp(-abs(d-radius)*1.5)*0.6;
+      color+=nodeTint*exp(-d*0.075)*(0.34+beat*0.36);
+      if(coverage==1.0) color+=float3(0.85,0.95,1.0)*(1.0-smoothstep(radius-1.0,radius+0.8,d));
+      else {
+        // Clear the lane/glow inside partial markers so they remain hollow.
+        color*=smoothstep(radius-2.5,radius-1.0,d);
+        color+=nodeTint*exp(-abs(d-radius)*1.5)*1.5;
+      }
       float ring=14.0+fract(phase/6.28318)*13.0;
-      color+=tint*exp(-abs(d-ring)*1.1)*(1.0-fract(phase/6.28318))*0.35;
+      color+=nodeTint*exp(-abs(d-ring)*1.1)*(1.0-fract(phase/6.28318))*0.35;
       for(int spark=0;spark<5;spark++) {
         float seed=float(row*31+column*7+spark);
         float life=fract(time*(0.30+hash(seed)*0.22)+hash(seed+4.0));
@@ -55,7 +66,7 @@ half4 main(float2 p) {
         float2 delta=p-float2(x,y)-offset;
         float size=mix(0.65,2.0,hash(seed+13.0));
         float sparkLight=exp(-dot(delta,delta)/(size*size*2.0))*sin(life*3.14159);
-        color+=mix(tint,float3(1),hash(seed+6.0))*sparkLight*1.25;
+        color+=mix(nodeTint,coverage<1.0 ? float3(1.0,0.45,0.48) : float3(1),hash(seed+6.0))*sparkLight*1.25;
       }
     }
   }
