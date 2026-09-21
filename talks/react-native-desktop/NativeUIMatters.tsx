@@ -1,4 +1,4 @@
-import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
+import { Canvas, Fill, Group, Rect, Shader, Skia, Text as SkiaText, matchFont } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 import { AppCarousel } from "./AppCarousel";
@@ -123,15 +123,26 @@ half4 main(float2 p) {
 const effect = Skia.RuntimeEffect.Make(nativeUIShader);
 if (!effect) throw new Error("Could not compile native UI examples");
 
+const integrationTitleFont = matchFont({ fontFamily: "Helvetica Neue", fontSize: 38, fontWeight: "600" });
+const sharedStateFont = matchFont({ fontFamily: "Helvetica Neue", fontSize: 24, fontWeight: "600" });
+const integrationTitleX = (1180 - integrationTitleFont.measureText("OS Integration").width) / 2;
+const sharedStateX = (1180 - sharedStateFont.measureText("Shared State").width) / 2;
+
 function Example({ index, width, height }: { index: number; width: number; height: number }) {
   const step = usePresentationValue("stepIndex");
   const uniforms = useAnimatedShaderUniforms({ stage: index }, 2, { clock: index });
   return <View style={{ width: 1180, height: 738, transformOrigin: "top left", transform: [{ scale: width / 1180 }] }}>
     <GlassPanels panels={containerPanels} width={1180} height={670} pulse={0.001} edgeMotion={0.5} />
-    <Text style={{ color: "white", fontSize: 38, fontWeight: "600", textAlign: "center", marginBottom: 18, marginTop: 20 }}>{examples[index]}</Text>
+    {index !== 1 && <Text style={{ color: "white", fontSize: 38, fontWeight: "600", textAlign: "center", marginBottom: 18, marginTop: 20 }}>{examples[index]}</Text>}
     {index < 2 ? <>
-      <Canvas style={{ width: 1180, height: 560 }}><Fill><Shader source={effect!} uniforms={uniforms} /></Fill></Canvas>
-      {index === 1 && <Text style={{ position: "absolute", left: 470, top: 199, width: 240, textAlign: "center", color: "white", fontSize: 24, fontWeight: "600" }}>Shared state</Text>}
+      {index === 1 ? <Canvas style={{ width: 1180, height: 650 }}>
+        {/* Labels share the live GPU surface, avoiding native-text overlay ordering. */}
+        <Group transform={[{ translateY: 84 }]}>
+          <Rect x={0} y={0} width={1180} height={560}><Shader source={effect!} uniforms={uniforms} /></Rect>
+          <SkiaText x={sharedStateX} y={143} text="Shared State" font={sharedStateFont} color="white" />
+        </Group>
+        <SkiaText x={integrationTitleX} y={56} text="OS Integration" font={integrationTitleFont} color="white" />
+      </Canvas> : <Canvas style={{ width: 1180, height: 560 }}><Fill><Shader source={effect!} uniforms={uniforms} /></Fill></Canvas>}
       {index === 0 && [0, 1].map(platform => <View key={platform} pointerEvents="none" style={{ position: "absolute", left: platform === 0 ? 30 : 560, top: 84, width: 590, height: 520 }}>
         <View style={{ position: "absolute", left: 120, top: 132, width: 350, flexDirection: "row" }}>
           {["Day", "Week", "Month"].map(label => <Text key={label} style={{ width: 116, color: "white", textAlign: "center", fontFamily: platform === 0 ? "Helvetica Neue" : "Segoe UI", fontSize: 19 }}>{label}</Text>)}
