@@ -30,7 +30,7 @@ half4 main(float2 p) {
   int nearestColumn=int(clamp(floor((p.x-470.0)/260.0+0.5),0.0,4.0));
   float laneCoverage=supported(row,nearestColumn);
   bool partialLane=laneCoverage>0.0 && laneCoverage<1.0;
-  float3 partialTint=float3(1.0,0.16,0.22);
+  float3 partialTint=float3(1.0,0.76,0.12);
   float3 laneTint=partialLane ? partialTint : tint;
   if(partialLane) span*=step(0.5,fract(p.x/18.0))*0.75;
   float wave=pow(0.5+0.5*sin(time*2.1-p.x*0.008+float(row)*0.7),5.0);
@@ -66,7 +66,7 @@ half4 main(float2 p) {
         float2 delta=p-float2(x,y)-offset;
         float size=mix(0.65,2.0,hash(seed+13.0));
         float sparkLight=exp(-dot(delta,delta)/(size*size*2.0))*sin(life*3.14159);
-        color+=mix(nodeTint,coverage<1.0 ? float3(1.0,0.45,0.48) : float3(1),hash(seed+6.0))*sparkLight*1.25;
+        color+=mix(nodeTint,coverage<1.0 ? float3(1.0,0.93,0.52) : float3(1),hash(seed+6.0))*sparkLight*1.25;
       }
     }
   }
