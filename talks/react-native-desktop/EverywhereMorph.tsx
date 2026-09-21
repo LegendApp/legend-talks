@@ -63,14 +63,21 @@ half4 main(float2 p) {
   float chatRight=left+width-22.0-splitWidth;
   // The browser toolbar retracts into a native titlebar on the final step.
   c=put(c,box(p,float2(848,top+chromeHeight*0.5+8.0),float2(width*0.5-5.0,chromeHeight*0.5),10),half3(0.14,0.19,0.25),browser);
+  // On macOS the sidebar surface extends behind the traffic lights, clipped
+  // to the window's rounded screen. Keep it below the controls in draw order.
+  float sidebarTop=mix(contentTop,top+bezel,desktop);
+  float sidebarBottom=mix(contentBottom,top+height-bezel,desktop);
+  float sidebarLeft=mix(innerLeft+10.0,left+bezel,desktop);
+  float sidebarRight=innerLeft+sidebarWidth-10.0;
+  float sidebar=box(p,float2((sidebarLeft+sidebarRight)*0.5,(sidebarTop+sidebarBottom)*0.5),float2(max(0.0,(sidebarRight-sidebarLeft)*0.5),(sidebarBottom-sidebarTop)*0.5),mix(10.0,0.0,desktop));
+  c=put(c,max(sidebar,screen),half3(0.11,0.18,0.25),tablet);
   for(int i=0;i<3;i++)c=put(c,length(p-float2(left+23.0+float(i)*18.0,top+23.0))-5.0,i==0?half3(1,0.4,0.4):i==1?half3(1,0.76,0.35):half3(0.35,0.8,0.45),browser);
   c=put(c,box(p,float2(left+240.0,top+24.0),float2(125,17),8),half3(0.22,0.28,0.34),browser*(1.0-desktop));
   c=put(c,box(p,float2(848,top+58.0),float2(width*0.5-100.0,14),14),half3(0.07,0.11,0.16),browser*(1.0-desktop));
   c=label(c,p,float2(left+240.0-${(tabTitleWidth / 2).toFixed(6)},top-15.0),0,browser*(1.0-desktop));
   c=label(c,p,float2(755,top+18.0),1,browser*(1.0-desktop));
-  c=label(c,p,float2(left+102.0,top-14.0),0,desktop);
+  c=label(c,p,float2(chatLeft+14.0,top-14.0),0,desktop);
   // A sidebar appears as width becomes available, keeping readable row sizes.
-  c=put(c,box(p,float2(innerLeft+sidebarWidth*0.5, (contentTop+contentBottom)*0.5),float2(max(0.0,sidebarWidth*0.5-10.0),(contentBottom-contentTop)*0.5),10),half3(0.11,0.18,0.25),tablet);
   for(int row=0;row<6;row++) {
     float y=contentTop+40.0+float(row)*51.0;
     c=put(c,length(p-float2(innerLeft+25.0,y))-8.0,half3(0.3,0.65,0.92),tablet);
