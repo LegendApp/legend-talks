@@ -36,8 +36,13 @@ uniform float time;
 float box(float2 p,float2 c,float2 h,float r) { float2 q=abs(p-c)-h+r; return length(max(q,0.0))+min(max(q.x,q.y),0.0)-r; }
 half4 put(half4 c,float d,half3 color,float a) { a*=1.0-smoothstep(-0.7,0.7,d); return half4(color*a,a)+c*(1.0-a); }
 half4 main(float2 p) {
-  float t=mod(time,8.5);
-  float row=t<1.5?0.0:t<2.5?min(5.0,1.0+floor((t-1.5)/0.2)):min(13.0,5.0+floor((t-2.5)/0.23));
+  float t=mod(time,11.0);
+  // Reuse the same atlas backwards to erase Hello RN and type Title again.
+  float row=0.0;
+  if(t>=1.5 && t<2.5) row=min(5.0,1.0+floor((t-1.5)/0.2));
+  else if(t>=2.5 && t<6.0) row=min(13.0,5.0+floor((t-2.5)/0.23));
+  else if(t>=6.0 && t<7.6) row=max(5.0,12.0-floor((t-6.0)/0.2));
+  else if(t>=7.6) row=max(0.0,5.0-floor((t-7.6)/0.23));
   float count=row<=5.0?5.0-row:row-5.0;
   half4 c=half4(0);
   for(int i=0;i<2;i++) {
@@ -55,11 +60,11 @@ half4 main(float2 p) {
   }
   float cell=${atlas.cell.toFixed(6)};
   float2 destination=float2(80.0+cell*(16.0+count),294.0);
-  float travel=smoothstep(0.2,0.65,t);
+  float travel=smoothstep(0.2,0.65,t)*(1.0-smoothstep(10.0,10.5,t));
   float2 cursor=mix(float2(560,385),destination,travel);
-  float blink=t<4.5?1.0:step(0.0,sin(t*6.0));
+  float blink=(t<4.5 || (t>=6.0 && t<8.8) || t>=10.0)?1.0:step(0.0,sin(t*6.0));
   c=put(c,box(p,cursor,float2(1.3,20),0),half3(0.85,0.96,1),blink);
-  if(t<0.8) {
+  if(t<0.8 || t>=10.0) {
     c=put(c,box(p,cursor+float2(0,-20),float2(5,1),0),half3(0.85,0.96,1),1.0);
     c=put(c,box(p,cursor+float2(0,20),float2(5,1),0),half3(0.85,0.96,1),1.0);
   }
@@ -73,7 +78,7 @@ if (!effect) throw new Error("Could not compile React Native title demo");
 
 export function ReactNativeTitleDemo() {
   const uniforms = useAnimatedShaderUniforms({}, 5);
-  return <Canvas accessibilityLabel={'Editing useWindowTitle("Title") to useWindowTitle("Hello RN") updates the native window title in sync'} style={{ width: 1696, height: 600, alignSelf: "center", marginTop: 32 }}>
+  return <Canvas accessibilityLabel={'Editing useWindowTitle("Title") to useWindowTitle("Hello RN") and back in a loop updates the native window title in sync'} style={{ width: 1696, height: 600, alignSelf: "center", marginTop: 32 }}>
     <Fill><Shader source={effect!} uniforms={uniforms}>
       <ImageShader image={atlas.image} x={0} y={0} width={1600} height={titles.length * rowHeight} fit="fill" tx="decal" ty="decal" />
     </Shader></Fill>
