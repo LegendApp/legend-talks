@@ -1,5 +1,5 @@
 import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
-import { PlaybackKeyframeView, useAnimatedShaderUniforms } from "@legend-apps/presentation";
+import { PlaybackKeyframeView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Image, Text, View } from "react-native";
 import { GlassPanels } from "./GlassPanels";
 import { rootRibbonShader } from "./SharedRoots";
@@ -7,7 +7,7 @@ import { MovingTitle } from "./MovingTitle";
 import { objectionGlassShader } from "./DesktopObjections";
 
 const effect = Skia.RuntimeEffect.Make(objectionGlassShader
-  .replace("float elapsed = min(mix(time,6.0,settled),6.0);", "float elapsed = clamp(time-6.5,0.0,6.0);")
+  .replace("float elapsed = min(mix(time,6.0,settled),6.0);", "float elapsed = clamp(time,0.0,6.0);")
   .replaceAll("-240.0", "-65.0").replaceAll("238.0", "65.0")
   .replaceAll("-245.0", "-65.0").replaceAll("246.0", "65.0"));
 if (!effect) throw new Error("Could not compile Frame foundation reveal");
@@ -88,23 +88,26 @@ function FoundationBox({ title }: { title: string }) {
   </View>;
 }
 export function FrameFoundations({ icon }: { icon: string }) {
-  const branchUniforms = useAnimatedShaderUniforms({}, 3);
-  const uniforms = useAnimatedShaderUniforms({ panelHalfHeight: 8, resolveToCheck: 0, broken: 1, settled: 0, phase: 0, centerX: 848 }, 10);
+  const step = usePresentationValue("stepIndex");
+  const branchUniforms = useAnimatedShaderUniforms({}, 5);
+  const uniforms = useAnimatedShaderUniforms({ panelHalfHeight: 8, resolveToCheck: 0, broken: 1, settled: 0, phase: 0, centerX: 848 }, 6, { clock: 1 });
   return <View style={{ width: 1696, height: 980, alignSelf: "center" }}>
     <FrameTitle icon={icon} />
     <Canvas style={{ position: "absolute", inset: 0 }}><Fill><Shader source={branches!} uniforms={branchUniforms} /></Fill></Canvas>
     {["Expo Desktop", "Expo"].map((name, i) => <PlaybackKeyframeView key={name} keyframes={boxReveal} delay={1200 + i * 1500} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 250 + i * 300 }}>
       <FoundationBox title={name} />
     </PlaybackKeyframeView>)}
-    <PlaybackKeyframeView keyframes={[...boxReveal, { time: 2100, x: 0, y: 0, opacity: 1 }, { time: 2300, x: 0, y: 0, opacity: 0 }]} delay={4200} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 850 }}>
+    {step === 0 && <PlaybackKeyframeView keyframes={boxReveal} delay={4200} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 850 }}>
       <FoundationBox title="WebView" />
-    </PlaybackKeyframeView>
-    <PlaybackKeyframeView keyframes={[{ time: 0, x: 0, y: 0, opacity: 1 }]} delay={6500} previewTime={10} clock="slide" style={{ position: "absolute", left: 0, top: 603, width: 1696, height: 1080 }}>
+    </PlaybackKeyframeView>}
+    {step > 0 && <>
+    <PlaybackKeyframeView keyframes={[{ time: 0, x: 0, y: 0, opacity: 1 }]} delay={0} previewTime={6} clock="step" style={{ position: "absolute", left: 0, top: 603, width: 1696, height: 1080 }}>
       <Canvas style={{ width: 1696, height: 1080 }}><Fill><Shader source={effect!} uniforms={uniforms} /></Fill></Canvas>
     </PlaybackKeyframeView>
-    <PlaybackKeyframeView keyframes={hide} delay={6500} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 875, width: 512 }}><Text style={{ textAlign: "center", fontSize: 40, fontWeight: "600", color: "white" }}>WebView</Text></PlaybackKeyframeView>
-    <PlaybackKeyframeView keyframes={boxReveal} delay={8000} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 850 }}>
+    <PlaybackKeyframeView keyframes={hide} delay={0} previewTime={6} clock="step" style={{ position: "absolute", left: 592, top: 875, width: 512 }}><Text style={{ textAlign: "center", fontSize: 40, fontWeight: "600", color: "white" }}>WebView</Text></PlaybackKeyframeView>
+    <PlaybackKeyframeView keyframes={boxReveal} delay={1500} previewTime={6} clock="step" style={{ position: "absolute", left: 592, top: 850 }}>
       <FoundationBox title="React Native" />
     </PlaybackKeyframeView>
+    </>}
   </View>;
 }
