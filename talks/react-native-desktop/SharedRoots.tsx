@@ -6,8 +6,7 @@ const features = ["Multiple windows", "Native menus", "Files & folders", "Local 
 
 // Analytic glass tubes: the shader varies their radius and lighting together.
 // No geometry, React state or uniform arrays are rebuilt on animation frames.
-export const rootsShader = `
-uniform float time;
+export const rootRibbonShader = `
 // A rounded ribbon has a dark translucent body, a refractive edge, and
 // narrow highlights. Max-compositing preserves detail at branching junctions.
 float3 ribbon(float distance, float radius, float along, float phase, float3 tint) {
@@ -22,6 +21,11 @@ float3 ribbon(float distance, float radius, float along, float phase, float3 tin
     + float3(0.42, 0.82, 1.0) * (edge * 0.48 + grain * body * 0.16)
     + float3(0.3, 0.72, 1.0) * wave * body * 0.36;
 }
+`;
+
+export const rootsShader = `
+uniform float time;
+${rootRibbonShader}
 float ease(float t) { return t * t * (3.0 - 2.0 * t); }
 half4 main(float2 p) {
   float x = p.x - 848.0;

@@ -1,11 +1,15 @@
 import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
-import { PlaybackKeyframeView, SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
+import { PlaybackKeyframeView, useAnimatedShaderUniforms } from "@legend-apps/presentation";
 import { Image, Text, View } from "react-native";
 import { GlassPanels } from "./GlassPanels";
+import { rootRibbonShader } from "./SharedRoots";
 import { MovingTitle } from "./MovingTitle";
 import { objectionGlassShader } from "./DesktopObjections";
 
-const effect = Skia.RuntimeEffect.Make(objectionGlassShader);
+const effect = Skia.RuntimeEffect.Make(objectionGlassShader
+  .replace("float elapsed = min(mix(time,6.0,settled),6.0);", "float elapsed = clamp(time-6.5,0.0,6.0);")
+  .replaceAll("-240.0", "-65.0").replaceAll("238.0", "65.0")
+  .replaceAll("-245.0", "-65.0").replaceAll("246.0", "65.0"));
 if (!effect) throw new Error("Could not compile Frame foundation reveal");
 const imports = [
   ["openWindow", "windows"], ["getDirectory", "files"], ["settings", "settings"],
@@ -23,37 +27,34 @@ function FrameTitle({ icon }: { icon: string }) {
   </MovingTitle>;
 }
 export function FramePitch({ icon }: { icon: string }) {
-  const step = usePresentationValue("stepIndex");
   return <View style={{ width: 1696, height: 880, alignSelf: "center" }}>
     <FrameTitle icon={icon} />
     <View style={{ marginTop: 50, alignSelf: "center" }}>
-      {imports.map(([name, path], index) => <SceneMotionView key={path} pose={{ opacity: step >= index ? 1 : 0, y: step >= index ? 0 : 20 }} duration={500}>
+      {imports.map(([name, path], index) => <PlaybackKeyframeView key={path} keyframes={reveal} delay={index * 550} previewTime={5} clock="slide">
         <Text style={{ color: "white", fontFamily: "Menlo", fontSize: 27, marginBottom: 34 }}>
           {"import { "}<Text style={{ color: "#83dfff" }}>{name}</Text>{` } from "@legendapp/frame/${path}"`}
         </Text>
-      </SceneMotionView>)}
+      </PlaybackKeyframeView>)}
     </View>
   </View>;
 }
 export const foundationBranchesShader = `
 uniform float time;
-uniform float stepTime;
-uniform float stepIndex;
+${rootRibbonShader}
 half4 main(float2 p) {
   float3 light=float3(0);
   for(int branch=0;branch<3;branch++) {
-    float visible=stepIndex>float(branch)?1.0:0.0;
-    float growth=stepIndex==float(branch+1)?smoothstep(0.0,0.7,stepTime):1.0;
-    float start=branch==0?125.0:276.0+float(branch-1)*160.0;
-    float end=180.0+float(branch)*160.0;
+    float growth=smoothstep(0.5+float(branch)*1.5,1.2+float(branch)*1.5,time);
+    float visible=step(0.001,growth);
+    float start=branch==0?125.0:326.0+float(branch-1)*230.0;
+    float end=230.0+float(branch)*230.0;
     float t=clamp((p.y-start)/(end-start),0.0,1.0);
     for(int strand=0;strand<7;strand++) {
       float lane=float(strand)-3.0;
       float x=848.0+sin(t*3.14159)*lane*12.0;
       float d=abs(p.x-x);
       float mask=step(start,p.y)*step(p.y,mix(start,end,growth))*visible;
-      light+=float3(0.08,0.4,0.65)*exp(-d/4.0)*mask*0.2;
-      light+=float3(0.25,0.75,1)*exp(-d/0.8)*mask*0.5;
+      light=max(light,ribbon(p.x-x,5.0+sin(t*3.14159)*5.0,p.y,float(strand),float3(0.025,0.4,1))*mask);
       for(int spark=0;spark<3;spark++) {
         float u=fract(time*0.5+float(spark)/3.0+float(strand)*0.11);
         float2 pos=float2(848.0+sin(u*3.14159)*lane*12.0,mix(start,end,u));
@@ -73,22 +74,23 @@ function FoundationBox({ title }: { title: string }) {
   </View>;
 }
 export function FrameFoundations({ icon }: { icon: string }) {
-  const step = usePresentationValue("stepIndex");
   const branchUniforms = useAnimatedShaderUniforms({}, 3);
-  const uniforms = useAnimatedShaderUniforms({ panelHalfHeight: 8, resolveToCheck: 0, broken: step >= 4 ? 1 : 0, settled: 0, phase: 0, centerX: 848 }, step >= 4 ? 3 : 0, { clock: 4 });
+  const uniforms = useAnimatedShaderUniforms({ panelHalfHeight: 8, resolveToCheck: 0, broken: 1, settled: 0, phase: 0, centerX: 848 }, 10);
   return <View style={{ width: 1696, height: 880, alignSelf: "center" }}>
     <FrameTitle icon={icon} />
     <Canvas style={{ position: "absolute", inset: 0 }}><Fill><Shader source={branches!} uniforms={branchUniforms} /></Fill></Canvas>
-    {["Expo Desktop", "Expo"].map((name, i) => <SceneMotionView key={name} pose={{ opacity: step > i ? 1 : 0, y: step > i ? 0 : -15 }} duration={700} style={{ position: "absolute", left: 592, top: 175 + i * 160 }}>
+    {["Expo Desktop", "Expo"].map((name, i) => <PlaybackKeyframeView key={name} keyframes={reveal} delay={1200 + i * 1500} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 225 + i * 230 }}>
       <FoundationBox title={name} />
-    </SceneMotionView>)}
-    {step >= 3 && <>
-      {step >= 4 && <Canvas style={{ position: "absolute", left: 0, top: 248, width: 1696, height: 1080 }}><Fill><Shader source={effect!} uniforms={uniforms} /></Fill></Canvas>}
-      {step === 3 ? <View style={{ position: "absolute", left: 592, top: 495 }}><FoundationBox title="WebView" /></View>
-        : <PlaybackKeyframeView keyframes={hide} previewTime={3} style={{ position: "absolute", left: 592, top: 520, width: 512 }}><Text style={{ textAlign: "center", fontSize: 40, fontWeight: "600", color: "white" }}>WebView</Text></PlaybackKeyframeView>}
-    </>}
-    {step >= 4 && <PlaybackKeyframeView keyframes={reveal} delay={1500} previewTime={3} style={{ position: "absolute", left: 592, top: 495 }}>
+    </PlaybackKeyframeView>)}
+    <PlaybackKeyframeView keyframes={[...reveal, { time: 2100, x: 0, y: 0, opacity: 1 }, { time: 2300, x: 0, y: 0, opacity: 0 }]} delay={4200} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 685 }}>
+      <FoundationBox title="WebView" />
+    </PlaybackKeyframeView>
+    <PlaybackKeyframeView keyframes={[{ time: 0, x: 0, y: 0, opacity: 1 }]} delay={6500} previewTime={10} clock="slide" style={{ position: "absolute", left: 0, top: 438, width: 1696, height: 1080 }}>
+      <Canvas style={{ width: 1696, height: 1080 }}><Fill><Shader source={effect!} uniforms={uniforms} /></Fill></Canvas>
+    </PlaybackKeyframeView>
+    <PlaybackKeyframeView keyframes={hide} delay={6500} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 710, width: 512 }}><Text style={{ textAlign: "center", fontSize: 40, fontWeight: "600", color: "white" }}>WebView</Text></PlaybackKeyframeView>
+    <PlaybackKeyframeView keyframes={reveal} delay={8000} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 685 }}>
       <FoundationBox title="React Native" />
-    </PlaybackKeyframeView>}
+    </PlaybackKeyframeView>
   </View>;
 }
