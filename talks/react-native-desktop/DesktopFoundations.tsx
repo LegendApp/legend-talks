@@ -1,4 +1,4 @@
-import { Blur, Canvas, Fill, Group, ImageShader, Paint, RuntimeShader, Shader, Skia, matchFont } from "@shopify/react-native-skia";
+import { Blur, Canvas, Fill, Group, ImageShader, Paint, RuntimeShader, Shader, Skia, matchFont, useImage } from "@shopify/react-native-skia";
 import { liquidGlassShader, useLiquidGlassPlayback, SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 import { MovingTitle } from "./MovingTitle";
@@ -33,6 +33,7 @@ function makeTextAtlas() {
   paint.setAntiAlias(true);
   paint.setColor(Skia.Color("white"));
   let cell = 0;
+  let brandWidth = 0;
   rows.forEach((label, row) => {
     const font = matchFont({ fontFamily: row === commandRow ? "Menlo" : "Helvetica Neue",
       fontSize: row === commandRow ? 60 : row === brandRow ? 80 : row === appRow ? 32 : 27, fontWeight: "600" });
@@ -40,12 +41,13 @@ function makeTextAtlas() {
     canvas.drawText(label, (atlasWidth - bounds.width) / 2 - bounds.x,
       row * rowHeight + (rowHeight - bounds.height) / 2 - bounds.y, paint, font);
     if (row === commandRow) cell = bounds.width / command.length;
+    if (row === brandRow) brandWidth = bounds.width;
     font.dispose();
   });
   const image = surface.makeImageSnapshot();
   paint.dispose();
   surface.dispose();
-  return { image, cell };
+  return { image, cell, brandWidth };
 }
 const atlas = makeTextAtlas();
 const geometry = `
@@ -123,6 +125,7 @@ export const foundationsRippleShader = liquidGlassShader;
 
 export const frameCursorShader = `
 uniform shader labels;
+uniform shader icon;
 uniform float padding;
 uniform float time;
 uniform float stepIndex;
@@ -168,8 +171,13 @@ half4 main(float2 p) {
   }
   float brand=smoothstep(7.4,8.2,time);
   if(abs(p.y-170.0)<49.0) {
-    half4 text=labels.eval(p-float2(848,170)+float2(800,2750))*brand;
+    half4 text=labels.eval(p-float2(912,170)+float2(800,2750))*brand;
     result=text+result*(1.0-text.a);
+  }
+  float2 iconPoint=p-float2(${(848 - (atlas.brandWidth + 128) / 2 - 12).toFixed(6)},96);
+  if(iconPoint.x>=0.0 && iconPoint.x<148.0 && iconPoint.y>=0.0 && iconPoint.y<148.0) {
+    half4 mark=icon.eval(iconPoint)*brand;
+    result=mark+result*(1.0-mark.a);
   }
   return result;
 }`;
@@ -184,8 +192,9 @@ const canvasPadding = 160;
 const canvasWidth = 1696 + canvasPadding * 2;
 const canvasHeight = 680 + canvasPadding * 2;
 
-export function DesktopFoundationsJourney() {
+export function DesktopFoundationsJourney({ icon }: { icon: Parameters<typeof useImage>[0] }) {
   const step = usePresentationValue("stepIndex");
+  const frameIcon = useImage(icon);
   const featureUniforms = useAnimatedShaderUniforms({ kind: 0, padding: canvasPadding }, 10, { clock: 5 });
   const shippingUniforms = useAnimatedShaderUniforms({ kind: 1, padding: canvasPadding }, 10, { clock: 5 });
   const glass = useLiquidGlassPlayback({ active: step >= 4, width: canvasWidth, height: canvasHeight });
@@ -207,7 +216,9 @@ export function DesktopFoundationsJourney() {
           </Group>
         </Group>
         <Fill><Shader source={network!} uniforms={shippingUniforms}>{image}</Shader></Fill>
-        <Fill><Shader source={cursor!} uniforms={cursorUniforms}>{image}</Shader></Fill>
+        {frameIcon && <Fill><Shader source={cursor!} uniforms={cursorUniforms}>{image}
+          <ImageShader image={frameIcon} x={0} y={0} width={148} height={148} fit="fill" tx="decal" ty="decal" />
+        </Shader></Fill>}
       </Canvas>
     </View>
   </>;
