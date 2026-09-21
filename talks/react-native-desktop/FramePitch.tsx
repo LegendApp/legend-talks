@@ -16,6 +16,7 @@ const imports = [
   ["registerShortcut", "shortcuts"], ["secureStorage", "secure-storage"], ["beforeQuit", "app"],
 ];
 const reveal = [{ time: 0, x: 0, y: 15, opacity: 0 }, { time: 650, x: 0, y: 0, opacity: 1 }];
+const boxReveal = [{ time: 0, x: 0, y: 0, opacity: 0 }, { time: 650, x: 0, y: 0, opacity: 1 }];
 const hide = [{ time: 0, x: 0, y: 0, opacity: 1 }, { time: 380, x: 0, y: 0, opacity: 1 }, { time: 550, x: 0, y: 8, opacity: 0 }];
 const boxGeometry = [{ x: 5, y: 5, width: 502, height: 96, radius: 28 }];
 function FrameTitle({ icon }: { icon: string }) {
@@ -49,8 +50,8 @@ half4 main(float2 p) {
     float start=branch==0?125.0:326.0+float(branch-1)*230.0;
     float end=230.0+float(branch)*230.0;
     float t=clamp((p.y-start)/(end-start),0.0,1.0);
-    for(int strand=0;strand<7;strand++) {
-      float lane=float(strand)-3.0;
+    for(int strand=0;strand<4;strand++) {
+      float lane=float(strand)-1.5;
       float x=848.0+sin(t*3.14159)*lane*12.0;
       float d=abs(p.x-x);
       float mask=step(start,p.y)*step(p.y,mix(start,end,growth))*visible;
@@ -59,6 +60,19 @@ half4 main(float2 p) {
         float u=fract(time*0.5+float(spark)/3.0+float(strand)*0.11);
         float2 pos=float2(848.0+sin(u*3.14159)*lane*12.0,mix(start,end,u));
         light+=float3(0.4,0.85,1)*exp(-length(p-pos)/2.0)*mask;
+      }
+      // Glints shed from the ribbons and drift outward before disappearing.
+      for(int particle=0;particle<4;particle++) {
+        float seed=float(particle)*0.23+float(strand)*0.17+float(branch)*0.31;
+        float age=fract(time*0.65+seed);
+        float source=fract(seed*3.71);
+        float direction=mod(float(particle+strand),2.0)<0.5?-1.0:1.0;
+        float2 origin=float2(848.0+sin(source*3.14159)*lane*12.0,mix(start,end,source));
+        float2 point=origin+float2(direction*age*(25.0+float(particle)*9.0),age*18.0);
+        float d=length(p-point);
+        float size=0.7+float(particle)*0.45;
+        float fade=sin(age*3.14159)*(1.0-age)*visible*step(source,growth);
+        light+=float3(0.45,0.85,1)*(exp(-d/size)+0.12*exp(-d/(size*4.0)))*fade;
       }
     }
   }
@@ -79,17 +93,17 @@ export function FrameFoundations({ icon }: { icon: string }) {
   return <View style={{ width: 1696, height: 880, alignSelf: "center" }}>
     <FrameTitle icon={icon} />
     <Canvas style={{ position: "absolute", inset: 0 }}><Fill><Shader source={branches!} uniforms={branchUniforms} /></Fill></Canvas>
-    {["Expo Desktop", "Expo"].map((name, i) => <PlaybackKeyframeView key={name} keyframes={reveal} delay={1200 + i * 1500} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 225 + i * 230 }}>
+    {["Expo Desktop", "Expo"].map((name, i) => <PlaybackKeyframeView key={name} keyframes={boxReveal} delay={1200 + i * 1500} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 225 + i * 230 }}>
       <FoundationBox title={name} />
     </PlaybackKeyframeView>)}
-    <PlaybackKeyframeView keyframes={[...reveal, { time: 2100, x: 0, y: 0, opacity: 1 }, { time: 2300, x: 0, y: 0, opacity: 0 }]} delay={4200} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 685 }}>
+    <PlaybackKeyframeView keyframes={[...boxReveal, { time: 2100, x: 0, y: 0, opacity: 1 }, { time: 2300, x: 0, y: 0, opacity: 0 }]} delay={4200} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 685 }}>
       <FoundationBox title="WebView" />
     </PlaybackKeyframeView>
     <PlaybackKeyframeView keyframes={[{ time: 0, x: 0, y: 0, opacity: 1 }]} delay={6500} previewTime={10} clock="slide" style={{ position: "absolute", left: 0, top: 438, width: 1696, height: 1080 }}>
       <Canvas style={{ width: 1696, height: 1080 }}><Fill><Shader source={effect!} uniforms={uniforms} /></Fill></Canvas>
     </PlaybackKeyframeView>
     <PlaybackKeyframeView keyframes={hide} delay={6500} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 710, width: 512 }}><Text style={{ textAlign: "center", fontSize: 40, fontWeight: "600", color: "white" }}>WebView</Text></PlaybackKeyframeView>
-    <PlaybackKeyframeView keyframes={reveal} delay={8000} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 685 }}>
+    <PlaybackKeyframeView keyframes={boxReveal} delay={8000} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 685 }}>
       <FoundationBox title="React Native" />
     </PlaybackKeyframeView>
   </View>;
