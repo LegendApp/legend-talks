@@ -25,6 +25,7 @@ import { CrossPlatformLanes } from "./CrossPlatformLanes"
 import { MeasurementTimeline } from "./MeasurementTimeline"
 import { HelloSizeJourney } from "./HelloSizeJourney"
 import { StoryMoment, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot, SlidesRelease, WordFlow } from "./StoryDiagrams"
+import { NativeUIMatters } from "./NativeUIMatters";
 import { ExpoDesktopPortal } from "./ExpoDesktopPortal";
 import frameIcon from "./rnconnection-assets/legend-frame.png";
 import { DesktopFoundationsJourney } from "./DesktopFoundations"
@@ -472,11 +473,11 @@ But we can draw whatever we want, right? So I made my own liquid glass.
 
 ---
 title: Native UI Matters
+template: ./NineApps.tsx
+steps: 3
 ---
 
-# Native UI Matters {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<Points items={["Platform Fit", "Deep OS Integration", "Latest OS Features"]} />
+<NativeUIMatters />
 
 <!--
 OK. Obviously I got a little carried away with the glass.
@@ -485,9 +486,15 @@ But this is why I care about native UI. It's not just about how the screenshot l
 
 I want my Mac app to feel like a Mac app. And the Windows version should feel like a Windows app. Same product, but it should belong on the computer you're using.
 
-Drop a file into Diff. Use media keys in Music. Those are the desktop integrations I expect, and we can expose them to React like any other part of the app.
+[Advance to the windows.]
+
+One app, multiple windows. These can share the same application state. Change the data in one and the others update. These slides are doing that with the presenter and audience windows.
+
+Electron can open multiple windows too. The point here is the shared application model.
 
 People already know how their computer works. Selecting text, moving focus, keyboard shortcuts, context menus. I don't want them to have to learn my version of all of that.
+
+[Advance to the video. The placeholder will become a recording of Chat History scrolling beneath its composer, then zooming into the glass.]
 
 And when the platform gets something new, like Liquid Glass, I want to use the real thing. Not spend my time trying to recreate it. Native APIs give me a path to those features, although the bindings and the app still need to adopt them.
 
