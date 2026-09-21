@@ -1,5 +1,5 @@
-import { Canvas, Fill, Group, ImageShader, Paint, RuntimeShader, Shader, Skia, matchFont } from "@shopify/react-native-skia";
-import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
+import { Blur, Canvas, Fill, Group, ImageShader, Paint, RuntimeShader, Shader, Skia, matchFont } from "@shopify/react-native-skia";
+import { liquidGlassShader, useLiquidGlassPlayback, SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 import { MovingTitle } from "./MovingTitle";
 
@@ -113,34 +113,9 @@ half4 main(float2 p) {
   return ink+result*(1.0-ink.a);
 }`;
 
-// An expanding refractive front frosts the actual feature image beneath it.
-// Nine bounded texture taps blur the text and nodes, without live view capture.
-export const foundationsRippleShader = `
-uniform shader image;
-uniform float time;
-uniform float stepIndex;
-half4 main(float2 p) {
-  if(stepIndex<4.0) return image.eval(p);
-  float2 delta=p-float2(848,330);
-  float radius=length(delta);
-  float front=time*620.0;
-  float behind=1.0-smoothstep(front-100.0,front+60.0,radius);
-  float ring=exp(-pow((radius-front)/65.0,2.0));
-  float2 normal=delta/max(radius,1.0);
-  float displacement=sin((radius-front)*0.045)*ring*32.0;
-  float2 q=p+normal*displacement;
-  float blur=behind*13.0;
-  half4 color=image.eval(q)*0.2;
-  for(int i=0;i<8;i++) {
-    float angle=float(i)*0.785398;
-    color+=image.eval(q+float2(cos(angle),sin(angle))*blur)*0.1;
-  }
-  color*=1.0-behind*0.66;
-  float gleam=ring*0.65;
-  color.rgb+=half3(0.35,0.75,1.0)*gleam;
-  color.a=max(color.a,half(gleam));
-  return half4(min(color.rgb,half3(color.a)),color.a);
-}`;
+// The exact material used by talk.mdx's "Change the focus" slide.
+// Its Gaussian blur and deformation share one host-owned playback tween.
+export const foundationsRippleShader = liquidGlassShader;
 
 export const frameCursorShader = `
 uniform shader labels;
@@ -150,31 +125,42 @@ ${geometry}
 half4 main(float2 p) {
   if(stepIndex<5.0) return half4(0);
   float2 hub=float2(848,330);
-  float morph=smoothstep(1.2,2.1,time);
+  float morph=smoothstep(3.0,4.5,time);
   float charge=smoothstep(0.65,1.15,time);
-  float typed=clamp(floor((time-2.7)*14.0),0.0,${command.length}.0);
+  float typed=clamp(floor((time-5.1)*14.0),0.0,${command.length}.0);
   float cell=${atlas.cell.toFixed(6)};
-  float left=848.0-cell*${command.length}.0*0.5;
-  float2 cursor=float2(mix(848.0,left+typed*cell,morph),330.0);
+  // The cursor forms at the center; the typed prefix grows around that center.
+  float left=848.0-cell*typed*0.5;
+  float2 cursor=float2(848.0+typed*cell*0.5,330.0);
   float d=mix(length(p-cursor)-25.0,box(p-cursor,float2(2.5,35.0),1.5),morph);
   float glow=exp(-abs(d)*(0.10+morph*0.15))*charge;
   float core=(1.0-smoothstep(-1.0,1.0,d))*charge;
   float3 light=float3(0.55,0.9,1.0)*(glow*0.7+core);
-  for(int i=0;i<48;i++) {
+  float burst=max(0.0,time-1.12);
+  float flash=exp(-pow((time-1.3)*6.0,2.0));
+  light+=float3(0.55,0.88,1.0)*exp(-length(p-hub)*0.006)*flash*5.0;
+  float shockRadius=burst*750.0;
+  float shock=exp(-pow((length(p-hub)-shockRadius)/24.0,2.0));
+  light+=float3(0.24,0.75,1.0)*shock*exp(-burst*1.1)*charge*(1.0-morph);
+  for(int i=0;i<96;i++) {
     float id=float(i);
     float angle=id*2.39996;
-    float burst=max(0.0,time-1.0);
-    float radius=sin(clamp(burst/0.65,0.0,1.0)*3.14159)*(80.0+mod(id,7.0)*20.0);
-    float2 point=mix(hub+float2(cos(angle),sin(angle))*radius,cursor,morph);
-    light+=float3(0.38,0.8,1.0)*exp(-length(p-point)*0.35)*(1.0-morph)*charge;
+    float expansion=1.0-exp(-burst*3.0);
+    float radius=expansion*(180.0+mod(id*17.0,67.0)*9.0);
+    float2 destination=hub+float2(cos(angle),sin(angle))*radius;
+    float2 point=mix(destination,cursor,morph);
+    float size=2.0+mod(id,4.0);
+    float spark=exp(-length(p-point)/size);
+    float trail=exp(-segment(p,point,mix(hub,point,0.86))/1.8);
+    light+=float3(0.38,0.8,1.0)*(spark*2.4+trail*0.45)*(1.0-morph)*charge;
   }
   float alpha=clamp(max(light.r,max(light.g,light.b)),0.0,1.0);
   half4 result=half4(min(light,float3(alpha)),alpha);
   if(abs(p.y-330.0)<49.0 && p.x>=left && p.x<left+typed*cell) {
-    half4 text=labels.eval(p-float2(848,330)+float2(800,2650));
+    half4 text=labels.eval(float2(p.x-left+800.0-cell*${command.length}.0*0.5,p.y-330.0+2650.0));
     result=text+result*(1.0-text.a);
   }
-  float brand=smoothstep(5.2,6.0,time);
+  float brand=smoothstep(7.4,8.2,time);
   if(abs(p.y-170.0)<49.0) {
     half4 text=labels.eval(p-float2(848,170)+float2(800,2750))*brand;
     result=text+result*(1.0-text.a);
@@ -188,10 +174,10 @@ if (!network || !ripple || !cursor) throw new Error("Could not compile the Frame
 
 export function DesktopFoundationsJourney() {
   const step = usePresentationValue("stepIndex");
-  const featureUniforms = useAnimatedShaderUniforms({ kind: 0 }, 7, { clock: 5 });
-  const shippingUniforms = useAnimatedShaderUniforms({ kind: 1 }, 7, { clock: 5 });
-  const rippleUniforms = useAnimatedShaderUniforms({}, 7, { clock: 4 });
-  const cursorUniforms = useAnimatedShaderUniforms({}, 7, { clock: 5 });
+  const featureUniforms = useAnimatedShaderUniforms({ kind: 0 }, 10, { clock: 5 });
+  const shippingUniforms = useAnimatedShaderUniforms({ kind: 1 }, 10, { clock: 5 });
+  const glass = useLiquidGlassPlayback({ active: step >= 4, width: 1696, height: 680 });
+  const cursorUniforms = useAnimatedShaderUniforms({}, 10, { clock: 5 });
   const image = <ImageShader image={atlas.image} x={0} y={0} width={atlasWidth} height={rows.length * rowHeight} fit="fill" tx="decal" ty="decal" />;
   return <>
     <SceneMotionView pose={{ opacity: step >= 5 ? 0 : 1 }} duration={450}>
@@ -202,7 +188,7 @@ export function DesktopFoundationsJourney() {
     <View style={{ width: 1696, height: 680, marginTop: 36, alignSelf: "center" }}>
       <Canvas accessibilityLabel={step >= 5 ? command : step >= 4 ? publishing.join(", ") : capabilities.join(", ")}
         style={{ position: "absolute", inset: 0 }}>
-        <Group layer={<Paint><RuntimeShader source={ripple!} uniforms={rippleUniforms} /></Paint>}>
+        <Group layer={<Paint><RuntimeShader source={ripple!} uniforms={glass.uniforms}><Blur blur={glass.blur} mode="clamp" /></RuntimeShader></Paint>}>
           <Fill><Shader source={network!} uniforms={featureUniforms}>{image}</Shader></Fill>
         </Group>
         <Fill><Shader source={network!} uniforms={shippingUniforms}>{image}</Shader></Fill>

@@ -6,7 +6,7 @@ The complete `rnconnection.mdx` talk, including alternate slides, uses host-owne
 | --- | --- | --- |
 | Background, glass, roots, renderer windows, platform lanes | `useAnimatedShaderUniforms` | Slide clock; background scope stays continuous across slides |
 | Expo connection, module waves | Shader `stepIndex` and `stepTime` | Current step |
-| Frame feature ripple → publishing network → cursor typing | Shader text atlas and step-anchored uniforms | Steps 4 and 5; one persistent Canvas |
+| Frame glass → publishing network → explosion → cursor typing | Shared LiquidGlass shader, `useLiquidGlassPlayback`, shader text atlas | Glass tween on step 4; reveal anchored to step 5; one persistent Canvas |
 | Shattered objections and subsequent zoom | Shader option `{ clock: 1 }` | Time since step 1; survives step 2 |
 | Native poses and interrupted moves | `SceneMotionView`, `usePlaybackTween` | Shared step clock |
 | Chart row grouping | `ScenePositionView` | Shared tween; fixed native layout for measurement |
