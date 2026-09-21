@@ -1,5 +1,5 @@
 import { SceneMotionView, SharedElement } from "@legend-apps/presentation";
-import { Linking, Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import snapshot from "./rnconnection-assets/module-compatibility.json";
 
 const statusStyle = {
@@ -49,9 +49,6 @@ export function CompatibilitySnapshot({ expo = false }: { expo?: boolean }) {
         {[rows.slice(0, split), rows.slice(split)].map((rows, index) =>
           <View key={index} style={{ flex: 1 }}><CompatibilityTable rows={rows} compact /></View>)}
       </View>}
-    </View>
-    <View style={{ flexDirection: "row", justifyContent: "flex-end", marginTop: 18 }}>
-      <Pressable accessibilityRole="link" onPress={() => void Linking.openURL("https://reactnative.directory/")}><Text style={{ color: "#8be5ff", fontSize: 26 }}>reactnative.directory ↗</Text></Pressable>
     </View>
   </View>;
 }
