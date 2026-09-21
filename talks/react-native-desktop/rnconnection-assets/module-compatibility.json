@@ -612,5 +612,117 @@
         "monthlyDownloads": 5564312
       }
     ]
+  },
+  "expoFeatured": [
+    {
+      "name": "expo-constants",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-constants",
+      "macos": "untested",
+      "windows": "untested",
+      "monthlyDownloads": 35787647
+    },
+    {
+      "name": "expo-file-system",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-file-system",
+      "macos": "untested",
+      "windows": "untested",
+      "monthlyDownloads": 34782427
+    },
+    {
+      "name": "expo-asset",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-asset",
+      "macos": "untested",
+      "windows": "untested",
+      "monthlyDownloads": 32531594
+    },
+    {
+      "name": "expo-keep-awake",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-keep-awake",
+      "macos": "untested",
+      "windows": "untested",
+      "monthlyDownloads": 30471274
+    },
+    {
+      "name": "expo-font",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-font",
+      "macos": "untested",
+      "windows": "untested",
+      "monthlyDownloads": 30314014
+    },
+    {
+      "name": "expo-linking",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-linking",
+      "macos": "untested",
+      "windows": "untested",
+      "monthlyDownloads": 22339293
+    },
+    {
+      "name": "expo-secure-store",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-secure-store",
+      "macos": "untested",
+      "windows": "untested",
+      "monthlyDownloads": 20844456
+    },
+    {
+      "name": "expo-router",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-router",
+      "macos": "untested",
+      "windows": "untested",
+      "monthlyDownloads": 20532233
+    },
+    {
+      "name": "expo-web-browser",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-web-browser",
+      "macos": "untested",
+      "windows": "untested",
+      "monthlyDownloads": 18764052
+    },
+    {
+      "name": "expo-application",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-application",
+      "macos": "untested",
+      "windows": "untested",
+      "monthlyDownloads": 17815881
+    },
+    {
+      "name": "expo-symbols",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-symbols",
+      "macos": "untested",
+      "windows": "untested",
+      "monthlyDownloads": 17437092
+    },
+    {
+      "name": "expo-notifications",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-notifications",
+      "macos": "untested",
+      "windows": "untested",
+      "monthlyDownloads": 16371548
+    },
+    {
+      "name": "expo-image",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-image",
+      "macos": "untested",
+      "windows": "untested",
+      "monthlyDownloads": 15595012
+    },
+    {
+      "name": "expo-glass-effect",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-glass-effect",
+      "macos": "untested",
+      "windows": "untested",
+      "monthlyDownloads": 15387478
+    },
+    {
+      "name": "expo-crypto",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-crypto",
+      "macos": "untested",
+      "windows": "untested",
+      "monthlyDownloads": 14196052
+    }
+  ],
+  "expoSelection": {
+    "source": "https://reactnative.directory/api/libraries?order=downloads&limit=100&skipTools=true",
+    "metric": "Monthly npm downloads, descending, among desktop-relevant app-facing Expo packages.",
+    "excluded": "Mobile status/system UI, mobile splash screens, haptics, build/dev tooling, core umbrella package and internal infrastructure packages. Router retained as app navigation; symbols and glass retained for native desktop UI."
   }
 }

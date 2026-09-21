@@ -11,6 +11,30 @@ Source: [pinned React Native Directory data](https://github.com/react-native-com
 - Unsupported: explicit negative evidence. Absence of a platform flag is **not** negative evidence.
 - Untested: desktop support is unlisted in this source; this audit has not tested it. It may work.
 
+## Onstage Expo selection
+
+The Expo Modules slide follows Existing Modules and shows 15 packages on one page. Selected by monthly npm downloads after filtering out mobile-only UI, mobile splash screens, build/dev tooling, the umbrella package and internal infrastructure. This is a curated desktop-relevant subset, not the unfiltered Expo top 15. The full audit remains below.
+
+[Download ranking source](https://reactnative.directory/api/libraries?order=downloads&limit=100&skipTools=true).
+
+| Package | Monthly downloads |
+| --- | ---: |
+| expo-constants | 35,787,647 |
+| expo-file-system | 34,782,427 |
+| expo-asset | 32,531,594 |
+| expo-keep-awake | 30,471,274 |
+| expo-font | 30,314,014 |
+| expo-linking | 22,339,293 |
+| expo-secure-store | 20,844,456 |
+| expo-router | 20,532,233 |
+| expo-web-browser | 18,764,052 |
+| expo-application | 17,815,881 |
+| expo-symbols | 17,437,092 |
+| expo-notifications | 16,371,548 |
+| expo-image | 15,595,012 |
+| expo-glass-effect | 15,387,478 |
+| expo-crypto | 14,196,052 |
+
 ## All Expo entries in Directory
 
 This includes SDK and tooling entries present in Directory, not an assertion that Directory contains every Expo package. Upstream package status is kept separate from Frame adapters.

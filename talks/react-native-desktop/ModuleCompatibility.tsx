@@ -1,4 +1,4 @@
-import { SceneMotionView, SharedElement, usePresentationValue } from "@legend-apps/presentation";
+import { SceneMotionView, SharedElement } from "@legend-apps/presentation";
 import { Linking, Pressable, Text, View } from "react-native";
 import snapshot from "./rnconnection-assets/module-compatibility.json";
 
@@ -10,17 +10,13 @@ const statusStyle = {
 };
 type Status = keyof typeof statusStyle;
 type Row = { name: string; macos: string; windows: string };
-const expoRowsPerColumn = 9;
-const expoRowsPerPage = expoRowsPerColumn * 2;
-const expoPageCount = Math.ceil(snapshot.expo.length / expoRowsPerPage);
-
 // Keep the shared marker outside animated ancestors. Both slides use identical
 // typography and bounds, so their crossfade reads as one moving label.
-export function ExistingModulesTitle({ inCard = false, expanded = true }: { inCard?: boolean; expanded?: boolean }) {
+export function ExistingModulesTitle({ inCard = false, expanded = true, title = "Existing Modules" }: { inCard?: boolean; expanded?: boolean; title?: string }) {
   return <SharedElement id="existing-modules-title" resize="preserve"
     style={{ width: 1696, height: 92, ...(inCard ? { position: "absolute", top: 286, left: 0 } : {}) }}>
     <SceneMotionView duration={850} pose={{ y: inCard && !expanded ? -35 : 0, scaleX: inCard && !expanded ? 42 / 72 : 1, scaleY: inCard && !expanded ? 42 / 72 : 1 }}>
-      <Text style={{ color: "#ffffff", fontSize: 72, lineHeight: 92, fontWeight: "600", textAlign: "center", letterSpacing: -1.8 }}>Existing Modules</Text>
+      <Text style={{ color: "#ffffff", fontSize: 72, lineHeight: 92, fontWeight: "600", textAlign: "center", letterSpacing: -1.8 }}>{title}</Text>
     </SceneMotionView>
   </SharedElement>;
 }
@@ -40,19 +36,13 @@ function CompatibilityTable({ rows, compact = false }: { rows: Row[]; compact?: 
     </View>)}
   </View>;
 }
-export function CompatibilitySnapshot() {
-  const step = usePresentationValue("stepIndex");
-  const community = step >= expoPageCount;
-  const pageRows = snapshot.expo.slice(step * expoRowsPerPage, (step + 1) * expoRowsPerPage);
-  const split = Math.ceil(pageRows.length / 2);
+export function CompatibilitySnapshot({ expo = false }: { expo?: boolean }) {
+  const rows = expo ? snapshot.expoFeatured : snapshot.community;
+  const split = Math.ceil(rows.length / 2);
   return <View style={{ width: 1570, alignSelf: "center", marginTop: 25, height: 650 }}>
-    <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 20 }}>
-      <Text style={{ color: "#8be5ff", fontSize: 32, fontWeight: "600" }}>{community ? "Community libraries" : "Expo modules"}</Text>
-      {!community && <Text style={{ color: "#aab8cc", fontSize: 27 }}>{step + 1} / {expoPageCount}</Text>}
-    </View>
     <View style={{ height: 510 }}>
-      {community ? <CompatibilityTable rows={snapshot.community} /> : <View style={{ flexDirection: "row", gap: 50 }}>
-        {[pageRows.slice(0, split), pageRows.slice(split)].map((rows, index) =>
+      {!expo ? <CompatibilityTable rows={rows} /> : <View style={{ flexDirection: "row", gap: 50 }}>
+        {[rows.slice(0, split), rows.slice(split)].map((rows, index) =>
           <View key={index} style={{ flex: 1 }}><CompatibilityTable rows={rows} compact /></View>)}
       </View>}
     </View>

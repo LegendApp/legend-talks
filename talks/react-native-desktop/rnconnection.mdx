@@ -1124,7 +1124,7 @@ And this is where I need your help.
 -->
 
 ---
-steps: 6
+title: Existing Modules
 eyebrow: Story
 ---
 
@@ -1133,19 +1133,36 @@ eyebrow: Story
 <CompatibilitySnapshot />
 
 <!--
-1. React Native already has a huge ecosystem. We don't need to start over.
+React Native already has a huge ecosystem. We don't need to start over.
 
-This is a snapshot of React Native Directory, not a promise that every version and architecture works. Green means Directory lists support. A question mark means it isn't listed and we haven't tested it here. It doesn't mean broken.
-
-These five pages show every Expo entry in the Directory snapshot, including SDK and tooling packages. They describe the upstream packages, without Frame adapters. Most entries don't declare either desktop platform. That's a list of questions to answer, not a list of failures.
-
-6. Here are ten familiar community libraries. This isn't a popularity ranking.
+Here are ten familiar community libraries. This isn't a popularity ranking of the whole table.
 
 SVG, WebView and React Navigation list both desktop platforms. Reanimated and Gesture Handler list macOS. The other question marks need investigation, even when we know a patched version can work in this app.
 
-We need to test specific versions, record the architecture and platform, and get fixes upstream. Working, partial, unsupported, and untested need to mean different things.
+This is a snapshot of React Native Directory, not a promise that every version and architecture works. Green means Directory lists support. A question mark means it isn't listed and we haven't tested it here. It doesn't mean broken.
 
-Source snapshot: rnconnection-assets/module-compatibility.json. Full audit and definitions: MODULE_COMPATIBILITY_AUDIT.md. Source: https://reactnative.directory/
+We need to test specific versions, record the architecture and platform, and get fixes upstream.
+-->
+
+---
+title: Expo Modules
+eyebrow: Story
+---
+
+<ExistingModulesTitle title="Expo Modules" />
+
+<CompatibilitySnapshot expo />
+
+<!--
+And Expo is a big part of that ecosystem too.
+
+These are fifteen popular, desktop-relevant Expo packages, ranked by Directory's monthly npm downloads after filtering out mobile-specific UI, build tooling and internal infrastructure. These are upstream packages, without Frame adapters.
+
+The Directory doesn't list desktop support for these entries. That doesn't mean none of them work. It means we need to test them and document the answer. Expo Desktop gets us started, but individual module support needs its own audit.
+
+The full 81-entry snapshot is still in MODULE_COMPATIBILITY_AUDIT.md. Onstage we're focusing on things you actually want in a desktop app.
+
+Source snapshot: rnconnection-assets/module-compatibility.json. Source: https://reactnative.directory/
 -->
 
 ---
