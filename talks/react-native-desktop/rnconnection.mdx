@@ -25,7 +25,7 @@ import { CrossPlatformLanes } from "./CrossPlatformLanes"
 import { MeasurementTimeline } from "./MeasurementTimeline"
 import { HelloSizeJourney } from "./HelloSizeJourney"
 import { StoryMoment, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot, SlidesRelease, WordFlow } from "./StoryDiagrams"
-import { FramePitch } from "./FramePitch";
+import { FramePitch, FrameFoundations } from "./FramePitch";
 import { EverywhereMorph } from "./EverywhereMorph";
 import { ReactNativeTitleDemo } from "./ReactNativeTitleDemo";
 import { NativeUIMatters } from "./NativeUIMatters";
@@ -996,7 +996,7 @@ I don't mean running Electron APIs or putting Node in the app. I mean making it 
 
 ---
 title: Legend Frame
-steps: 3
+steps: 6
 ---
 
 <FramePitch icon={frameIcon} />
@@ -1010,15 +1010,32 @@ The goal is much of Electron's desktop feature set, with native UI and an Expo d
 
 I want moving an Electron app to Frame to be practical. That isn't drop-in API compatibility. Your business logic may carry over; the UI and integrations need adapting.
 
-2. And it builds on Expo Desktop. Which builds on Expo. Which of course builds on...
+[Reveal the imports one at a time. These are the desktop APIs your React app uses.]
+-->
 
-[Pause on WebView. Let them notice.]
+---
+title: Legend Frame foundations
+steps: 5
+---
 
-3. Absolutely not.
+<FrameFoundations icon={frameIcon} />
 
-[Cross it out. Let the glass shatter and React Native appear.]
+<!--
+1. So what is it built on?
 
-It's React Native. The joke aside, Expo Desktop adds the desktop platform support around Expo and React Native. Frame adds the desktop APIs and tooling.
+2. Expo Desktop gives us desktop platform support.
+
+3. Building on the Expo workflow we already know.
+
+4. And underneath that... a WebView.
+
+[Pause.]
+
+5. Absolutely not.
+
+[Let the X shatter the box and React Native appear.]
+
+It's React Native. Frame adds desktop APIs and tooling to that foundation.
 
 And here's an app built with these pieces. You've been looking at it the whole time.
 -->

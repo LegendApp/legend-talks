@@ -12,13 +12,14 @@ uniform float resolveToCheck;
 uniform float settled;
 uniform float phase;
 uniform float centerX;
+uniform float panelHalfHeight;
 float hash(float n) { return fract(sin(n * 127.1 + 311.7) * 43758.5453); }
 float2 rotatePoint(float2 p, float a) {
   float c = cos(a), s = sin(a);
   return float2(c*p.x-s*p.y, s*p.x+c*p.y);
 }
 float box(float2 p) {
-  float2 q = abs(p) - float2(211.0, 151.0);
+  float2 q = abs(p) - float2(211.0, panelHalfHeight);
   return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - 40.0;
 }
 float stroke(float2 p, float2 a, float2 b, float progress) {
@@ -144,7 +145,7 @@ const glassEffect = Skia.RuntimeEffect.Make(objectionGlassShader);
 if (!glassEffect) throw new Error("Could not compile objection glass");
 
 function GlassPanel({ crossed, settled, index }: { crossed: boolean; settled: boolean; index: number }) {
-  const uniforms = useAnimatedShaderUniforms({ resolveToCheck: 1, broken: crossed ? 1 : 0, settled: settled ? 1 : 0, phase: index * 1.7, centerX: 396 + index * 564 }, crossed ? 6 : 2, { clock: crossed && !settled ? 1 : "slide" });
+  const uniforms = useAnimatedShaderUniforms({ panelHalfHeight: 151, resolveToCheck: 1, broken: crossed ? 1 : 0, settled: settled ? 1 : 0, phase: index * 1.7, centerX: 396 + index * 564 }, crossed ? 6 : 2, { clock: crossed && !settled ? 1 : "slide" });
   // Keep bounds and shader origin fixed before and after the strike. Changing
   // native layout alongside UI-thread uniforms can briefly displace the panel.
   return <Canvas pointerEvents="none" style={{ position: "absolute", left: -142 - index * 564, top: -108, width: 1920, height: 1080 }}>
