@@ -1,4 +1,4 @@
-import { Canvas, Fill, Group, Rect, Shader, Skia, Text as SkiaText, matchFont } from "@shopify/react-native-skia";
+import { Canvas, Fill, Group, Path, Rect, Shader, Skia, matchFont } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 import { AppCarousel } from "./AppCarousel";
@@ -125,6 +125,10 @@ if (!effect) throw new Error("Could not compile native UI examples");
 
 const sharedStateFont = matchFont({ fontFamily: "Helvetica Neue", fontSize: 24, fontWeight: "600" });
 const sharedStateX = (1180 - sharedStateFont.measureText("Shared State").width) / 2;
+// Vector glyph outlines stay smooth as the carousel enlarges this card.
+const sharedStatePath = Skia.Path.MakeFromText("Shared State", sharedStateX, 143, sharedStateFont);
+sharedStateFont.dispose();
+if (!sharedStatePath) throw new Error("Could not create Shared State label outlines");
 
 function Example({ index, width, height }: { index: number; width: number; height: number }) {
   const step = usePresentationValue("stepIndex");
@@ -137,7 +141,7 @@ function Example({ index, width, height }: { index: number; width: number; heigh
         {/* Labels share the live GPU surface, avoiding native-text overlay ordering. */}
         <Group transform={[{ translateY: 84 }]}>
           <Rect x={0} y={0} width={1180} height={560}><Shader source={effect!} uniforms={uniforms} /></Rect>
-          <SkiaText x={sharedStateX} y={143} text="Shared State" font={sharedStateFont} color="white" />
+          <Path path={sharedStatePath!} color="white" antiAlias />
         </Group>
       </Canvas> : <Canvas style={{ width: 1180, height: 560 }}><Fill><Shader source={effect!} uniforms={uniforms} /></Fill></Canvas>}
       {index === 0 && [0, 1].map(platform => <View key={platform} pointerEvents="none" style={{ position: "absolute", left: platform === 0 ? 30 : 560, top: 84, width: 590, height: 520 }}>
