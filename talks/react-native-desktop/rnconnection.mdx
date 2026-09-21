@@ -485,6 +485,8 @@ But this is why I care about native UI. It's not just about how the screenshot l
 
 I want my Mac app to feel like a Mac app. And the Windows version should feel like a Windows app. Same product, but it should belong on the computer you're using.
 
+Drop a file into Diff. Use media keys in Music. Those are the desktop integrations I expect, and we can expose them to React like any other part of the app.
+
 People already know how their computer works. Selecting text, moving focus, keyboard shortcuts, context menus. I don't want them to have to learn my version of all of that.
 
 And when the platform gets something new, like Liquid Glass, I want to use the real thing. Not spend my time trying to recreate it. Native APIs give me a path to those features, although the bindings and the app still need to adopt them.
@@ -708,25 +710,6 @@ SwiftUI gets the native UI and low memory, but this implementation misses the sp
 These are my cutoffs for this app. You can absolutely build good apps with those frameworks.
 
 But if I want this combination, React Native is looking really good. And unlike AppKit, it gives me a foundation I can use beyond macOS.
--->
-
----
-eyebrow: 'Beyond the window border'
-footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
----
-
-# Native behavior {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<MediaSlot label="Diff: drop a file · Music: media keys" />
-
-<!--
-And native means more than how the sidebar looks.
-
-Drop a file into Diff. Use media keys in Music. Open a menu, use a shortcut, open another window.
-
-Those are the things I expect a desktop app to do.
-
-We still have to wire up those native integrations. But we can expose them to React and use them like any other part of the app.
 -->
 
 ---
