@@ -8,6 +8,7 @@ export const objectionGlassShader = `
 uniform float time;
 uniform float slideTime;
 uniform float broken;
+uniform float resolveToCheck;
 uniform float settled;
 uniform float phase;
 uniform float centerX;
@@ -43,7 +44,7 @@ half4 main(float2 position) {
   float2 p = position-float2(centerX,300.0);
   float clock = slideTime+phase;
   float elapsed = min(mix(time,6.0,settled),6.0);
-  float resolve = broken*smoothstep(1.2,2.2,elapsed);
+  float resolve = resolveToCheck*broken*smoothstep(1.2,2.2,elapsed);
   float impact = broken*step(0.38,elapsed);
   float flight = max(elapsed-0.38,0.0);
   float travel = 1.0-exp(-flight*3.8);
@@ -112,6 +113,7 @@ half4 main(float2 position) {
     float shimmer = pow(0.5+0.5*sin(p.x*0.045+p.y*0.025-time*mix(12.0,5.0,resolve)),8.0);
     float3 color = mix(tint,float3(1.0,0.96,0.8),clamp(core*0.6+shimmer*0.7,0.0,1.0));
     float4 slash = float4(color*alpha,alpha);
+    slash *= 1.0-(1.0-resolveToCheck)*smoothstep(0.9,1.5,elapsed);
     result = slash+result*(1.0-slash.a);
     // Shape time settles, but the lifecycle-controlled GPU clock keeps the
     // success check shimmering and emitting green sparks while active.
@@ -142,7 +144,7 @@ const glassEffect = Skia.RuntimeEffect.Make(objectionGlassShader);
 if (!glassEffect) throw new Error("Could not compile objection glass");
 
 function GlassPanel({ crossed, settled, index }: { crossed: boolean; settled: boolean; index: number }) {
-  const uniforms = useAnimatedShaderUniforms({ broken: crossed ? 1 : 0, settled: settled ? 1 : 0, phase: index * 1.7, centerX: 396 + index * 564 }, crossed ? 6 : 2, { clock: crossed && !settled ? 1 : "slide" });
+  const uniforms = useAnimatedShaderUniforms({ resolveToCheck: 1, broken: crossed ? 1 : 0, settled: settled ? 1 : 0, phase: index * 1.7, centerX: 396 + index * 564 }, crossed ? 6 : 2, { clock: crossed && !settled ? 1 : "slide" });
   // Keep bounds and shader origin fixed before and after the strike. Changing
   // native layout alongside UI-thread uniforms can briefly displace the panel.
   return <Canvas pointerEvents="none" style={{ position: "absolute", left: -142 - index * 564, top: -108, width: 1920, height: 1080 }}>

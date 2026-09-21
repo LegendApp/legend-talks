@@ -25,6 +25,7 @@ import { CrossPlatformLanes } from "./CrossPlatformLanes"
 import { MeasurementTimeline } from "./MeasurementTimeline"
 import { HelloSizeJourney } from "./HelloSizeJourney"
 import { StoryMoment, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot, SlidesRelease, WordFlow } from "./StoryDiagrams"
+import { FramePitch } from "./FramePitch";
 import { EverywhereMorph } from "./EverywhereMorph";
 import { ReactNativeTitleDemo } from "./ReactNativeTitleDemo";
 import { NativeUIMatters } from "./NativeUIMatters";
@@ -994,64 +995,32 @@ I don't mean running Electron APIs or putting Node in the app. I mean making it 
 -->
 
 ---
-eyebrow: 'Build'
-footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
+title: Legend Frame
+steps: 3
 ---
 
-# From development to shipping {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<WordFlow labels={["Prebuilt runtime", "Custom dev build", "Standalone app"]} />
+<FramePitch icon={frameIcon} />
 
 <!--
-The development model should feel familiar.
+1. Frame is the desktop APIs, the configuration, and the tooling, assembled into one framework.
 
-Use a runtime with the native modules you need, and iterate on the JavaScript with Metro and Fast Refresh.
+Start with Expo. Import the desktop features you need. Build your app.
 
-If you need to add native code, make a custom development build.
+The goal is much of Electron's desktop feature set, with native UI and an Expo development experience. This is early, and the scope is still growing.
 
-Then build a standalone app to ship.
+I want moving an Electron app to Frame to be practical. That isn't drop-in API compatibility. Your business logic may carry over; the UI and integrations need adapting.
 
-The app runs JavaScript in Hermes. Node and Bun are development tools, not something we need to bundle just to run it.
--->
+2. And it builds on Expo Desktop. Which builds on Expo. Which of course builds on...
 
----
-eyebrow: 'Integrate / ship'
-footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
----
+[Pause on WebView. Let them notice.]
 
-# Desktop tools for React {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+3. Absolutely not.
 
-<MediaSlot label="Menus → file dialog → second window" />
+[Cross it out. Let the glass shatter and React Native appear.]
 
-<!--
-Here's what that looks like in practice.
+It's React Native. The joke aside, Expo Desktop adds the desktop platform support around Expo and React Native. Frame adds the desktop APIs and tooling.
 
-Add a menu. Open a file dialog. Open a second window.
-
-These are ordinary desktop features. They shouldn't each turn into a little research project before you can build your app.
-
-I want the easy way to build it to also be the fast, native way.
--->
-
----
-eyebrow: 'Current scope / September 19 draft'
-footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
----
-
-# Early · Useful · Growing {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<PlatformDiagram scope />
-
-<!--
-Now, this is early.
-
-macOS on Apple Silicon is where I've been doing the work and testing these apps. Windows still needs more native validation.
-
-And there are still pieces of the distribution and shipping workflow to finish.
-
-But it's already useful. That's why I kept building apps with these pieces.
-
-I'd rather show you what works and get people involved than pretend everything is finished.
+And here's an app built with these pieces. You've been looking at it the whole time.
 -->
 
 ---
