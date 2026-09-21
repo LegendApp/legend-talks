@@ -123,9 +123,7 @@ half4 main(float2 p) {
 const effect = Skia.RuntimeEffect.Make(nativeUIShader);
 if (!effect) throw new Error("Could not compile native UI examples");
 
-const integrationTitleFont = matchFont({ fontFamily: "Helvetica Neue", fontSize: 38, fontWeight: "600" });
 const sharedStateFont = matchFont({ fontFamily: "Helvetica Neue", fontSize: 24, fontWeight: "600" });
-const integrationTitleX = (1180 - integrationTitleFont.measureText("OS Integration").width) / 2;
 const sharedStateX = (1180 - sharedStateFont.measureText("Shared State").width) / 2;
 
 function Example({ index, width, height }: { index: number; width: number; height: number }) {
@@ -133,7 +131,7 @@ function Example({ index, width, height }: { index: number; width: number; heigh
   const uniforms = useAnimatedShaderUniforms({ stage: index }, 2, { clock: index });
   return <View style={{ width: 1180, height: 738, transformOrigin: "top left", transform: [{ scale: width / 1180 }] }}>
     <GlassPanels panels={containerPanels} width={1180} height={670} pulse={0.001} edgeMotion={0.5} />
-    {index !== 1 && <Text style={{ color: "white", fontSize: 38, fontWeight: "600", textAlign: "center", marginBottom: 18, marginTop: 20 }}>{examples[index]}</Text>}
+    {index !== 1 && <View style={{ height: 84 }} />}
     {index < 2 ? <>
       {index === 1 ? <Canvas style={{ width: 1180, height: 650 }}>
         {/* Labels share the live GPU surface, avoiding native-text overlay ordering. */}
@@ -141,7 +139,6 @@ function Example({ index, width, height }: { index: number; width: number; heigh
           <Rect x={0} y={0} width={1180} height={560}><Shader source={effect!} uniforms={uniforms} /></Rect>
           <SkiaText x={sharedStateX} y={143} text="Shared State" font={sharedStateFont} color="white" />
         </Group>
-        <SkiaText x={integrationTitleX} y={56} text="OS Integration" font={integrationTitleFont} color="white" />
       </Canvas> : <Canvas style={{ width: 1180, height: 560 }}><Fill><Shader source={effect!} uniforms={uniforms} /></Fill></Canvas>}
       {index === 0 && [0, 1].map(platform => <View key={platform} pointerEvents="none" style={{ position: "absolute", left: platform === 0 ? 30 : 560, top: 84, width: 590, height: 520 }}>
         <View style={{ position: "absolute", left: 120, top: 132, width: 350, flexDirection: "row" }}>
@@ -173,5 +170,13 @@ export function NativeUIMatters() {
       <Text style={{ color: "white", fontSize: 64, fontWeight: "700", textAlign: "center" }}>Native UI Matters</Text>
     </MovingTitle>
     <AppCarousel items={examples} position={step} renderCard={(name, card) => <Example index={examples.indexOf(name)} width={card.width} height={card.height} />} />
+    {/* Keep the active title above every card's GPU surface and blur/clipping layer. */}
+    <View pointerEvents="none" style={{ position: "absolute", left: 370, top: 212, width: 1180, height: 62, zIndex: 2100 }}>
+      {examples.map((title, index) => <SceneMotionView key={title} hidden={step !== index}
+        pose={{ opacity: step === index ? 1 : 0 }} duration={250}
+        style={{ position: "absolute", inset: 0, justifyContent: "center" }}>
+        <Text style={{ color: "white", fontSize: 38, lineHeight: 48, fontWeight: "600", textAlign: "center" }}>{title}</Text>
+      </SceneMotionView>)}
+    </View>
   </View>;
 }
