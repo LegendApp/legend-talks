@@ -14,7 +14,7 @@ Source: [pinned React Native Directory data](https://github.com/react-native-com
 
 ## Onstage Expo selection
 
-The Expo Modules slide follows Existing Modules and shows 15 packages on one page. Selected by monthly npm downloads after filtering out mobile-only UI, mobile splash screens, build/dev tooling, the umbrella package and internal infrastructure. This is a curated desktop-relevant subset, not the unfiltered Expo top 15. The full audit remains below.
+The Expo Modules slide follows Existing Modules and shows 16 packages on one page. Selected by monthly npm downloads after filtering out mobile-only UI, mobile splash screens, build/dev tooling, the umbrella package and internal infrastructure. This is a curated desktop-relevant subset, not the unfiltered Expo top 16. The full audit remains below.
 
 [Download ranking source](https://reactnative.directory/api/libraries?order=downloads&limit=100&skipTools=true).
 
@@ -27,7 +27,6 @@ The Expo Modules slide follows Existing Modules and shows 15 packages on one pag
 | expo-font | 30,314,014 |
 | expo-linking | 22,339,293 |
 | expo-secure-store | 20,844,456 |
-| expo-router | 20,532,233 |
 | expo-web-browser | 18,764,052 |
 | expo-application | 17,815,881 |
 | expo-symbols | 17,437,092 |
@@ -35,6 +34,10 @@ The Expo Modules slide follows Existing Modules and shows 15 packages on one pag
 | expo-image | 15,595,012 |
 | expo-glass-effect | 15,387,478 |
 | expo-crypto | 14,196,052 |
+| expo-image-picker | 13,701,891 |
+| expo-device | 11,775,708 |
+
+Expo FileSystem is marked working on macOS based on Jay's September 21 update; the full Directory snapshot below preserves its original metadata. Router is omitted at Jay's request. Image Picker and Device are the next two eligible packages by monthly downloads.
 
 ## All Expo entries in Directory
 

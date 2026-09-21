@@ -634,9 +634,10 @@
     {
       "name": "expo-file-system",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-file-system",
-      "macos": "untested",
+      "macos": "working",
       "windows": "untested",
-      "monthlyDownloads": 34782427
+      "monthlyDownloads": 34782427,
+      "statusNote": "macOS support supplied by Jay on 2026-09-21; Directory snapshot does not list it."
     },
     {
       "name": "expo-asset",
@@ -672,13 +673,6 @@
       "macos": "untested",
       "windows": "untested",
       "monthlyDownloads": 20844456
-    },
-    {
-      "name": "expo-router",
-      "source": "https://github.com/expo/expo/tree/main/packages/expo-router",
-      "macos": "untested",
-      "windows": "untested",
-      "monthlyDownloads": 20532233
     },
     {
       "name": "expo-web-browser",
@@ -728,11 +722,25 @@
       "macos": "untested",
       "windows": "untested",
       "monthlyDownloads": 14196052
+    },
+    {
+      "name": "expo-image-picker",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-image-picker",
+      "macos": "untested",
+      "windows": "untested",
+      "monthlyDownloads": 13701891
+    },
+    {
+      "name": "expo-device",
+      "source": "https://github.com/expo/expo/tree/main/packages/expo-device",
+      "macos": "untested",
+      "windows": "untested",
+      "monthlyDownloads": 11775708
     }
   ],
   "expoSelection": {
     "source": "https://reactnative.directory/api/libraries?order=downloads&limit=100&skipTools=true",
     "metric": "Monthly npm downloads, descending, among desktop-relevant app-facing Expo packages.",
-    "excluded": "Mobile status/system UI, mobile splash screens, haptics, build/dev tooling, core umbrella package and internal infrastructure packages. Router retained as app navigation; symbols and glass retained for native desktop UI."
+    "excluded": "Mobile status/system UI, mobile splash screens, haptics, build/dev tooling, core umbrella package and internal infrastructure packages. Router omitted at Jay's request; symbols and glass retained for native desktop UI."
   }
 }
