@@ -3,8 +3,8 @@ import { PlaybackKeyframeView, SceneMotionView, useAnimatedShaderUniforms, usePr
 import { Text, View } from "react-native";
 import { MovingTitle } from "./MovingTitle";
 
-const implementations = ["React Native", "AppKit", "SwiftUI", "Electron", "Tauri", "Deno", "Flutter", "Compose", "GPUI"];
-const branchX = (index: number) => 96 + index * 188;
+const implementations = ["iOS", "Android", "Mac", "Windows", "Web"];
+const branchX = (index: number) => 168 + index * 340;
 const ease = (t: number) => t * t * (3 - 2 * t);
 
 export const maintenanceTreeShader = `
@@ -16,8 +16,8 @@ half4 main(float2 p) {
   float3 tint=mix(float3(0.08,0.58,1.0),float3(1.0,0.08,0.14),maintenance);
   float3 light=mix(float3(0.6,0.91,1.0),float3(1.0,0.65,0.65),maintenance);
   float3 color=float3(0);
-  for(int i=0;i<9;i++) {
-    float endpoint=96.0+float(i)*188.0;
+  for(int i=0;i<5;i++) {
+    float endpoint=168.0+float(i)*340.0;
     float center=mix(848.0,endpoint,bend);
     float slope=(endpoint-848.0)*6.0*t*(1.0-t)/500.0;
     for(int strand=0;strand<2;strand++) {
@@ -84,13 +84,13 @@ export function AIMaintenance() {
   const maintenance = usePresentationValue("stepIndex") > 0;
   const uniforms = useAnimatedShaderUniforms({ maintenance: maintenance ? 1 : 0 }, 8);
   return <View style={{ width: 1696, height: 850, alignSelf: "center" }}>
-    <MovingTitle><Text style={{ color: "#ffffff", fontSize: 72, lineHeight: 88, fontWeight: "600", textAlign: "center" }}>{maintenance ? "You maintain it nine times" : "AI can write it nine times"}</Text></MovingTitle>
+    <MovingTitle><Text style={{ color: "#ffffff", fontSize: 72, lineHeight: 88, fontWeight: "600", textAlign: "center" }}>{maintenance ? "You maintain it five times" : "AI can write it five times"}</Text></MovingTitle>
     <View style={{ position: "absolute", left: 0, top: 120, width: 1696, height: 650 }}>
       <Canvas pointerEvents="none" style={{ position: "absolute", inset: 0 }}><Fill><Shader source={effect!} uniforms={uniforms} /></Fill></Canvas>
       <Text style={{ position: "absolute", top: 0, left: 600, width: 496, textAlign: "center", color: maintenance ? "#fda4af" : "#8de4ff", fontSize: 40, lineHeight: 52 }}>{maintenance ? "One bug fix" : "One feature"}</Text>
       {maintenance && <CryingStream />}
       {implementations.map((name, index) => <View key={name} style={{ position: "absolute", left: branchX(index) - 91, top: 600, width: 182, alignItems: "center" }}>
-        <Text style={{ color: "#f1f5f9", fontSize: 25, lineHeight: 34, textAlign: "center", fontWeight: name === "React Native" ? "700" : "500" }}>{name}</Text>
+        <Text style={{ color: "#f1f5f9", fontSize: 25, lineHeight: 34, textAlign: "center", fontWeight: "500" }}>{name}</Text>
         <SceneMotionView hidden={!maintenance} pose={{ opacity: maintenance ? 1 : 0 }} duration={450} style={{ marginTop: 12 }}>
           <Text style={{ color: "#fda4af", fontSize: 24 }}>Fix + verify</Text>
         </SceneMotionView>
