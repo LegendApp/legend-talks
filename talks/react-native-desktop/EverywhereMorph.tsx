@@ -1,5 +1,5 @@
 import { Canvas, Fill, ImageShader, Shader, Skia, matchFont } from "@shopify/react-native-skia";
-import { usePlaybackTween, usePresentationValue } from "@legend-apps/presentation";
+import { useAnimatedShaderUniforms } from "@legend-apps/presentation";
 
 function makeLabels() {
   const surface = Skia.Surface.Make(600, 240);
@@ -11,11 +11,11 @@ function makeLabels() {
   const image = surface.makeImageSnapshot(); font.dispose(); paint.dispose(); surface.dispose(); return image;
 }
 const labels = makeLabels();
-// All dimensions and child positions interpolate from one shared pose. The app
+// All dimensions and child positions interpolate from one shared GPU timeline. The app
 // reflows inside the device rather than scaling a screenshot of the phone.
 export const everywhereShader = `
 uniform shader labels;
-uniform float phase;
+uniform float time;
 float box(float2 p,float2 c,float2 h,float r) { float2 q=abs(p-c)-h+r; return length(max(q,0.0))+min(max(q.x,q.y),0.0)-r; }
 half4 put(half4 c,float d,half3 tint,float a) { a*=1.0-smoothstep(-0.7,0.7,d); return half4(tint*a,a)+c*(1.0-a); }
 half4 label(half4 c,float2 p,float2 origin,float row,float a) {
@@ -24,6 +24,11 @@ half4 label(half4 c,float2 p,float2 origin,float row,float a) {
   return c;
 }
 half4 main(float2 p) {
+  // Pause at each form, then morph; the return trip retraces the same layout.
+  float clock=mod(time,21.6)/3.6;
+  float leg=floor(clock);
+  float progress=smoothstep(0.38,0.92,fract(clock));
+  float phase=leg<3.0?leg+progress:6.0-leg-progress;
   float tablet=clamp(phase,0.0,1.0), browser=clamp(phase-1.0,0.0,1.0), desktop=clamp(phase-2.0,0.0,1.0);
   float width=mix(302.0,860.0,tablet)+browser*440.0+desktop*80.0;
   float height=mix(650.0,590.0,tablet)-browser*20.0;
@@ -32,12 +37,16 @@ half4 main(float2 p) {
   float left=center.x-width*0.5, top=center.y-height*0.5;
   float frame=box(p,center,float2(width,height)*0.5,radius);
   half4 c=half4(0);
-  c=put(c,frame-6.0,half3(0.12,0.28,0.42),0.3);
-  c=put(c,frame,half3(0.39,0.47,0.55),1.0);
+  c=put(c,frame-13.0,half3(0.08,0.22,0.36),0.12);
+  c=put(c,frame-5.0,half3(0.16,0.36,0.53),0.25);
+  float sheen=0.5+0.5*sin((p.x+p.y)*0.006+time*0.25);
+  c=put(c,frame,mix(half3(0.28,0.36,0.45),half3(0.66,0.78,0.88),sheen),1.0);
   c=put(c,frame+2.0,half3(0.025,0.045,0.075),1.0);
   float bezel=mix(11.0,3.0,browser);
   float screen=box(p,center,float2(width,height)*0.5-bezel,max(8.0,radius-bezel));
-  c=put(c,screen,half3(0.055,0.10,0.16),1.0);
+  float surfaceLight=clamp(1.0-(p.y-top)/height,0.0,1.0);
+  c=put(c,screen,mix(half3(0.04,0.075,0.12),half3(0.085,0.15,0.22),surfaceLight),1.0);
+  c=put(c,abs(screen)-0.55,half3(0.40,0.63,0.79),0.35);
   float mobile=1.0-browser;
   c=put(c,box(p,float2(848,top+24.0),float2(mix(45.0,4.0,tablet),mix(12.0,4.0,tablet)),12.0),half3(0),mobile);
   c=put(c,box(p,float2(848,top+height-20.0),float2(48,2.5),2.5),half3(0.8),mobile);
@@ -87,9 +96,8 @@ const effect = Skia.RuntimeEffect.Make(everywhereShader);
 if (!effect) throw new Error("Could not compile adaptive app morph");
 
 export function EverywhereMorph() {
-  const step = Math.min(usePresentationValue("stepIndex"), 3);
-  const uniforms = usePlaybackTween({ phase: step }, 1500);
-  return <Canvas accessibilityLabel={["Chat History on iPhone", "Chat History on iPad with a sidebar", "Chat History in Chrome", "Chat History in a native window with split view"][step]} style={{ width: 1696, height: 720, alignSelf: "center", marginTop: 20 }}>
+  const uniforms = useAnimatedShaderUniforms({}, 8.5);
+  return <Canvas accessibilityLabel="Chat History continuously morphs from iPhone to iPad, Chrome, and a native split-view window, then reverses" style={{ width: 1696, height: 720, alignSelf: "center", marginTop: 20 }}>
     <Fill><Shader source={effect!} uniforms={uniforms}><ImageShader image={labels} x={0} y={0} width={600} height={240} fit="fill" tx="decal" ty="decal" /></Shader></Fill>
   </Canvas>;
 }
