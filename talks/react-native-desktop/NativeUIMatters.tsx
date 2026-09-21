@@ -2,9 +2,11 @@ import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 import { AppCarousel } from "./AppCarousel";
+import { GlassPanels } from "./GlassPanels";
 import { MovingTitle } from "./MovingTitle";
 
-const examples = ["Platform Fit", "One app, multiple windows", "Latest OS Features"] as const;
+const containerPanels = [{ x: 5, y: 5, width: 1170, height: 650, radius: 28 }];
+const examples = ["Platform Fit", "OS Integration", "Latest OS Features"] as const;
 // Illustrative native controls, not screenshots. All motion samples the host
 // playback controller, including the synchronized values in separate windows.
 export const nativeUIShader = `
@@ -19,7 +21,7 @@ half4 main(float2 p) {
   float on=smoothstep(-0.15,0.15,sin(time*1.3));
   if(stage<0.5) {
     for(int platform=0;platform<2;platform++) {
-      float x=platform==0?295.0:885.0;
+      float x=platform==0?325.0:855.0;
       bool mac=platform==0;
       c=put(c,box(p,float2(x,295),float2(245,230),mac?22.0:9.0),mac?half3(0.16,0.19,0.23):half3(0.12,0.14,0.18),1.0);
       c=put(c,abs(box(p,float2(x,295),float2(245,230),mac?22.0:9.0))-0.7,half3(0.4,0.48,0.57),0.8);
@@ -39,29 +41,42 @@ half4 main(float2 p) {
       }
     }
   } else {
-    // Curved luminous branches carry pulses between three independent windows.
-    for(int branch=0;branch<2;branch++) {
-      float side=branch==0?-1.0:1.0;
-      float u=clamp((p.x-590.0)/(side*350.0),0.0,1.0);
-      float2 nearest=float2(590.0+side*350.0*u,370.0-130.0*u+sin(u*3.14159)*85.0);
-      float d=length(p-nearest);
-      c=put(c,d-1.3,half3(0.2,0.65,0.95),0.7);
-      c=put(c,d-6.0,half3(0.12,0.4,0.7),0.12);
-      for(int point=0;point<5;point++) {
-        float particle=fract(time*0.25+float(point)/5.0);
-        float2 spark=float2(590.0+side*350.0*particle,370.0-130.0*particle+sin(particle*3.14159)*85.0);
-        float sd=length(p-spark);
-        c=put(c,sd-8.0,half3(0.15,0.65,1),0.16);
-        c=put(c,sd-2.5,half3(0.65,0.94,1),0.95);
+    // Thick branching light carries updates outward and edits back to the hub.
+    float2 hub=float2(590,135);
+    for(int branch=0;branch<3;branch++) {
+      float2 end=branch==0?float2(220,260):branch==1?float2(960,260):float2(590,475);
+      float2 axis=end-hub;
+      float2 perpendicular=normalize(float2(-axis.y,axis.x));
+      float u=clamp(dot(p-hub,axis)/dot(axis,axis),0.0,1.0);
+      for(int twig=0;twig<5;twig++) {
+        float offset=(float(twig)-2.0)*10.0;
+        float2 point=hub+axis*u+perpendicular*sin(u*3.14159)*offset;
+        float d=length(p-point);
+        float pulse=0.75+0.25*sin(time*2.0-u*9.0);
+        c=put(c,d-12.0,half3(0.08,0.42,0.75),0.08*pulse);
+        c=put(c,d-3.0,half3(0.12,0.6,0.9),0.25*pulse);
+        c=put(c,d-0.9,half3(0.42,0.85,1),0.7*pulse);
+        for(int particle=0;particle<4;particle++) {
+          float t=fract(time*(0.2+float(twig)*0.025)+float(particle)*0.25+float(branch)*0.12);
+          if(particle<2)t=1.0-t;
+          float2 spark=hub+axis*t+perpendicular*sin(t*3.14159)*offset;
+          float sd=length(p-spark);
+          c=put(c,sd-7.0,half3(0.1,0.55,1),0.12);
+          c=put(c,sd-(particle==0?3.0:1.8),particle<2?half3(0.5,0.95,1):half3(0.8,0.65,1),0.95);
+        }
       }
     }
+    float hubPulse=sin(time*1.3)*2.0;
+    c=put(c,box(p,hub,float2(110,34)+hubPulse,22)-8.0,half3(0.1,0.5,0.85),0.18);
+    c=put(c,box(p,hub,float2(110,34)+hubPulse,22),half3(0.13,0.27,0.4),1.0);
+    c=put(c,abs(box(p,hub,float2(110,34)+hubPulse,22))-1.0,half3(0.65,0.92,1),0.9);
     for(int window=0;window<3;window++) {
-      float2 center=window==0?float2(590,375):window==1?float2(220,175):float2(960,175);
-      c=put(c,box(p,center,float2(195,120),14),half3(0.07,0.13,0.2),1.0);
-      c=put(c,abs(box(p,center,float2(195,120),14))-1.0,half3(0.4,0.72,0.94),0.8);
-      for(int button=0;button<3;button++)c=put(c,length(p-(center+float2(-172.0+float(button)*19.0,-98)))-5.0,button==0?half3(1,0.4,0.4):button==1?half3(1,0.76,0.35):half3(0.3,0.8,0.45),1.0);
+      float2 center=window==0?float2(590,455):window==1?float2(220,280):float2(960,280);
+      c=put(c,box(p,center,float2(180,95),14),half3(0.07,0.13,0.2),1.0);
+      c=put(c,abs(box(p,center,float2(180,95),14))-1.0,half3(0.4,0.72,0.94),0.8);
+      for(int button=0;button<3;button++)c=put(c,length(p-(center+float2(-156.0+float(button)*19.0,-75)))-5.0,button==0?half3(1,0.4,0.4):button==1?half3(1,0.76,0.35):half3(0.3,0.8,0.45),1.0);
       for(int bar=0;bar<4;bar++) {
-        float h=20.0+(0.5+0.5*sin(time*1.3+float(bar)))*75.0;
+        float h=15.0+(0.5+0.5*sin(time*1.3+float(bar)))*55.0;
         c=put(c,box(p,center+float2(-115.0+float(bar)*77.0,65.0-h*0.5),float2(23,h*0.5),5),half3(0.22,0.67,0.95),1.0);
       }
     }
@@ -75,18 +90,20 @@ function Example({ index, width, height }: { index: number; width: number; heigh
   const step = usePresentationValue("stepIndex");
   const uniforms = useAnimatedShaderUniforms({ stage: index }, 2, { clock: index });
   return <View style={{ width: 1180, height: 738, transformOrigin: "top left", transform: [{ scale: width / 1180 }] }}>
-    <Text style={{ color: "white", fontSize: 38, fontWeight: "600", textAlign: "center", marginBottom: 18 }}>{examples[index]}</Text>
+    <GlassPanels panels={containerPanels} width={1180} height={670} pulse={0.001} edgeMotion={0.5} />
+    <Text style={{ color: "white", fontSize: 38, fontWeight: "600", textAlign: "center", marginBottom: 18, marginTop: 20 }}>{examples[index]}</Text>
     {index < 2 ? <>
       <Canvas style={{ width: 1180, height: 560 }}><Fill><Shader source={effect!} uniforms={uniforms} /></Fill></Canvas>
-      {index === 0 && [0, 1].map(platform => <View key={platform} pointerEvents="none" style={{ position: "absolute", left: platform * 590, top: 64, width: 590, height: 520 }}>
+      {index === 1 && <Text style={{ position: "absolute", left: 470, top: 199, width: 240, textAlign: "center", color: "white", fontSize: 24, fontWeight: "600" }}>Shared state</Text>}
+      {index === 0 && [0, 1].map(platform => <View key={platform} pointerEvents="none" style={{ position: "absolute", left: platform === 0 ? 30 : 560, top: 84, width: 590, height: 520 }}>
         <View style={{ position: "absolute", left: 120, top: 132, width: 350, flexDirection: "row" }}>
           {["Day", "Week", "Month"].map(label => <Text key={label} style={{ width: 116, color: "white", textAlign: "center", fontSize: 19 }}>{label}</Text>)}
         </View>
         <Text style={{ position: "absolute", left: 120, top: 231, color: "white", fontSize: 23 }}>Notifications</Text>
         <Text style={{ position: "absolute", left: 120, top: 293, color: "#c4d0dd", fontSize: 20 }}>Volume</Text>
       </View>)}
-      {index === 0 && <View style={{ position: "absolute", left: 0, right: 0, top: 76, flexDirection: "row" }}>
-        {["macOS", "Windows"].map(label => <Text key={label} style={{ width: 590, textAlign: "center", color: "white", fontSize: 28 }}>{label}</Text>)}
+      {index === 0 && <View style={{ position: "absolute", left: 60, right: 60, top: 96, flexDirection: "row" }}>
+        {["macOS", "Windows"].map(label => <Text key={label} style={{ width: 530, textAlign: "center", color: "white", fontSize: 28 }}>{label}</Text>)}
       </View>}
     </> : <View style={{ height: 560, overflow: "hidden", borderRadius: 18, borderColor: "#66849b", borderWidth: 1 }}>
       <SceneMotionView pose={{ scaleX: step === 2 ? 1.65 : 1, scaleY: step === 2 ? 1.65 : 1, y: step === 2 ? -130 : 0 }} duration={6500} style={{ width: 1180, height: 560, backgroundColor: "#102032" }}>
