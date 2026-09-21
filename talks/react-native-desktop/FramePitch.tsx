@@ -12,8 +12,12 @@ const effect = Skia.RuntimeEffect.Make(objectionGlassShader
   .replaceAll("-245.0", "-65.0").replaceAll("246.0", "65.0"));
 if (!effect) throw new Error("Could not compile Frame foundation reveal");
 const imports = [
-  ["openWindow", "windows"], ["getDirectory", "files"], ["settings", "settings"],
-  ["registerShortcut", "shortcuts"], ["secureStorage", "secure-storage"], ["beforeQuit", "app"],
+  ["useNativeMenu", "menus"],
+  ["createTray", "tray"],
+  ["registerGlobalShortcut", "global-shortcuts"],
+  ["openWindow", "windows"],
+  ["DragDropView", "drag-drop"],
+  ["showNotification", "notifications"],
 ];
 const reveal = [{ time: 0, x: 0, y: 15, opacity: 0 }, { time: 650, x: 0, y: 0, opacity: 1 }];
 const boxReveal = [{ time: 0, x: 0, y: 0, opacity: 0 }, { time: 650, x: 0, y: 0, opacity: 1 }];
