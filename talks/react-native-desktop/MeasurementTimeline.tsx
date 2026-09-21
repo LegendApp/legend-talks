@@ -37,15 +37,16 @@ float triangle(float2 p,float2 a,float2 b,float2 c) {
   return -sqrt(d.x)*sign(d.y);
 }
 half4 main(float2 p) {
-  float t=stepIndex<stage?0.0:mod(time,6.0);
+  float cycle=stage<0.5?1.6:stage<1.5?1.8:2.4;
+  float t=stepIndex<stage?0.0:mod(time,cycle);
   half4 color=half4(0);
-  float reset=1.0-smoothstep(5.3,5.9,t);
+  float reset=1.0-smoothstep(cycle-0.35,cycle-0.05,t);
   if(stage<0.5) {
     float2 target=float2(resolution.x*0.5,resolution.y-37.0);
     float move=smoothstep(0.1,0.38,t);
     float2 start=target+float2(-38.0,-42.0);
     float2 cursor=mix(start,target,move);
-    cursor=mix(cursor,start,smoothstep(5.5,5.8,t));
+    cursor=mix(cursor,start,smoothstep(1.25,1.55,t));
     float click=smoothstep(0.4,0.48,t)*(1.0-smoothstep(0.48,0.66,t));
     float rebound=sin(clamp((t-0.48)/0.35,0.0,1.0)*3.14159)*0.12;
     float scale=0.65*(1.0-click*0.25+rebound);
@@ -99,7 +100,7 @@ half4 main(float2 p) {
 if (!launchEffect) throw new Error("Could not compile measurement timeline animation");
 
 function LaunchFrame({ stage, width, height }: { stage: number; width: number; height: number }) {
-  const uniforms = useAnimatedShaderUniforms({ stage, resolution: [width, height] }, 4.7, { clock: stage });
+  const uniforms = useAnimatedShaderUniforms({ stage, resolution: [width, height] }, stage < 0.5 ? 0.9 : stage < 1.5 ? 1.1 : 1.8, { clock: stage });
   return <Canvas style={{ width, height }}>
     <RoundedRect x={1} y={1} width={width - 2} height={height - 2} r={20}>
       <LinearGradient start={vec(0, 0)} end={vec(width, height)} colors={["#203951", "#091420", "#163047"]} />
