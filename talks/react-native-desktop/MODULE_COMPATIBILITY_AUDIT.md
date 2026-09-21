@@ -101,7 +101,7 @@ This includes SDK and tooling entries present in Directory, not an assertion tha
 
 ## Representative community libraries
 
-Ten recognizable libraries, not a ranked top ten.
+Ten recognizable libraries, not a ranked top ten. The three replacements use Directory's monthly npm downloads among native-code libraries, excluding Expo and all original rows (including the removed rows).
 
 | Package | macOS | Windows |
 | --- | --- | --- |
@@ -109,9 +109,26 @@ Ten recognizable libraries, not a ranked top ten.
 | [react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler/tree/main/packages/react-native-gesture-handler) | working | untested |
 | [react-native-svg](https://github.com/software-mansion/react-native-svg) | working | working |
 | [react-native-webview](https://github.com/react-native-webview/react-native-webview) | working | working |
-| [@react-native-async-storage/async-storage](https://github.com/react-native-async-storage/async-storage/tree/main/packages/async-storage) | working | working |
-| [react-native-safe-area-context](https://github.com/AppAndFlow/react-native-safe-area-context) | untested | untested |
-| [react-native-screens](https://github.com/software-mansion/react-native-screens) | untested | untested |
 | [react-native-mmkv](https://github.com/margelo/react-native-mmkv/tree/main/packages/react-native-mmkv) | untested | untested |
 | [@shopify/react-native-skia](https://github.com/Shopify/react-native-skia/tree/main/packages/skia) | untested | untested |
 | [react-native-vision-camera](https://github.com/margelo/react-native-vision-camera/tree/main/packages/react-native-vision-camera) | untested | untested |
+| [@react-navigation/native](https://github.com/react-navigation/react-navigation/tree/main/packages/native) | working | working |
+| [react-native-worklets](https://github.com/software-mansion/react-native-reanimated/tree/main/packages/react-native-worklets) | untested | untested |
+| [@react-native-masked-view/masked-view](https://github.com/callstack/masked-view) | untested | untested |
+
+## Replacement candidates
+
+[Directory query](https://reactnative.directory/api/libraries?order=downloads&limit=100&hasNativeCode=true&skipTools=true), checked September 21, 2026. First three added to the slide. Counts include dependency installs; they are not counts of apps or developers.
+
+| Package | Monthly downloads |
+| --- | ---: |
+| [@react-navigation/native](https://github.com/react-navigation/react-navigation/tree/main/packages/native) | 24,177,470 |
+| [react-native-worklets](https://github.com/software-mansion/react-native-reanimated/tree/main/packages/react-native-worklets) | 21,905,961 |
+| [@react-native-masked-view/masked-view](https://github.com/callstack/masked-view) | 13,931,892 |
+| [@sentry/react-native](https://github.com/getsentry/sentry-react-native/tree/main/packages/core) | 11,706,184 |
+| [@react-native-community/netinfo](https://github.com/react-native-netinfo/react-native-netinfo) | 10,691,097 |
+| [@react-native-community/datetimepicker](https://github.com/react-native-datetimepicker/datetimepicker) | 8,889,556 |
+| [react-native-get-random-values](https://github.com/LinusU/react-native-get-random-values) | 8,746,684 |
+| [react-native-keyboard-controller](https://github.com/kirillzyusko/react-native-keyboard-controller) | 8,242,628 |
+| [react-native-nitro-modules](https://github.com/margelo/nitro/tree/main/packages/react-native-nitro-modules) | 6,562,646 |
+| [@react-native-firebase/app](https://github.com/invertase/react-native-firebase/tree/main/packages/app) | 5,564,312 |

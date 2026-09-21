@@ -515,24 +515,6 @@
       "windows": "working"
     },
     {
-      "name": "@react-native-async-storage/async-storage",
-      "source": "https://github.com/react-native-async-storage/async-storage/tree/main/packages/async-storage",
-      "macos": "working",
-      "windows": "working"
-    },
-    {
-      "name": "react-native-safe-area-context",
-      "source": "https://github.com/AppAndFlow/react-native-safe-area-context",
-      "macos": "untested",
-      "windows": "untested"
-    },
-    {
-      "name": "react-native-screens",
-      "source": "https://github.com/software-mansion/react-native-screens",
-      "macos": "untested",
-      "windows": "untested"
-    },
-    {
       "name": "react-native-mmkv",
       "source": "https://github.com/margelo/react-native-mmkv/tree/main/packages/react-native-mmkv",
       "macos": "untested",
@@ -549,6 +531,86 @@
       "source": "https://github.com/margelo/react-native-vision-camera/tree/main/packages/react-native-vision-camera",
       "macos": "untested",
       "windows": "untested"
+    },
+    {
+      "name": "@react-navigation/native",
+      "source": "https://github.com/react-navigation/react-navigation/tree/main/packages/native",
+      "macos": "working",
+      "windows": "working"
+    },
+    {
+      "name": "react-native-worklets",
+      "source": "https://github.com/software-mansion/react-native-reanimated/tree/main/packages/react-native-worklets",
+      "macos": "untested",
+      "windows": "untested"
+    },
+    {
+      "name": "@react-native-masked-view/masked-view",
+      "source": "https://github.com/callstack/masked-view",
+      "macos": "untested",
+      "windows": "untested"
     }
-  ]
+  ],
+  "replacementSelection": {
+    "checkedAt": "2026-09-21",
+    "source": "https://reactnative.directory/api/libraries?order=downloads&limit=100&hasNativeCode=true&skipTools=true",
+    "metric": "Monthly npm downloads reported by Directory; native-code filter; excludes Expo and all original community rows. This is not Directory popularity score.",
+    "removed": [
+      "@react-native-async-storage/async-storage",
+      "react-native-safe-area-context",
+      "react-native-screens"
+    ],
+    "candidates": [
+      {
+        "name": "@react-navigation/native",
+        "source": "https://github.com/react-navigation/react-navigation/tree/main/packages/native",
+        "monthlyDownloads": 24177470
+      },
+      {
+        "name": "react-native-worklets",
+        "source": "https://github.com/software-mansion/react-native-reanimated/tree/main/packages/react-native-worklets",
+        "monthlyDownloads": 21905961
+      },
+      {
+        "name": "@react-native-masked-view/masked-view",
+        "source": "https://github.com/callstack/masked-view",
+        "monthlyDownloads": 13931892
+      },
+      {
+        "name": "@sentry/react-native",
+        "source": "https://github.com/getsentry/sentry-react-native/tree/main/packages/core",
+        "monthlyDownloads": 11706184
+      },
+      {
+        "name": "@react-native-community/netinfo",
+        "source": "https://github.com/react-native-netinfo/react-native-netinfo",
+        "monthlyDownloads": 10691097
+      },
+      {
+        "name": "@react-native-community/datetimepicker",
+        "source": "https://github.com/react-native-datetimepicker/datetimepicker",
+        "monthlyDownloads": 8889556
+      },
+      {
+        "name": "react-native-get-random-values",
+        "source": "https://github.com/LinusU/react-native-get-random-values",
+        "monthlyDownloads": 8746684
+      },
+      {
+        "name": "react-native-keyboard-controller",
+        "source": "https://github.com/kirillzyusko/react-native-keyboard-controller",
+        "monthlyDownloads": 8242628
+      },
+      {
+        "name": "react-native-nitro-modules",
+        "source": "https://github.com/margelo/nitro/tree/main/packages/react-native-nitro-modules",
+        "monthlyDownloads": 6562646
+      },
+      {
+        "name": "@react-native-firebase/app",
+        "source": "https://github.com/invertase/react-native-firebase/tree/main/packages/app",
+        "monthlyDownloads": 5564312
+      }
+    ]
+  }
 }
