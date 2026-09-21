@@ -10,22 +10,19 @@ float hash(float2 p) { return fract(sin(dot(p,float2(127.1,311.7)))*43758.5453);
 float3 stream(float2 p,float t) {
   float3 light=float3(0);
   float envelope=smoothstep(220.0,410.0,p.x)*(1.0-smoothstep(1390.0,1610.0,p.x));
-  for(int lane=0;lane<13;lane++) {
+  for(int lane=0;lane<19;lane++) {
     float l=float(lane);
     float speed=65.0+hash(float2(l,9))*95.0;
-    float wave=sin(p.x*0.006-l*0.29+t*0.15)*(24.0+l*2.8);
-    float y=330.0+(l-6.0)*9.0+wave;
-    light+=float3(0.08,0.35,0.58)*exp(-abs(p.y-y)/0.9)*0.28;
-    float cell=floor((p.x-t*speed)/62.0);
+    float cell=floor((p.x-t*speed)/44.0);
     for(int neighbor=-1;neighbor<=1;neighbor++) {
       float id=cell+float(neighbor);
       float seed=hash(float2(id,l));
-      float x=(id+seed)*62.0+t*speed;
-      float py=330.0+(l-6.0)*9.0+sin(x*0.006-l*0.29+t*0.15)*(24.0+l*2.8);
+      float x=(id+seed)*44.0+t*speed;
+      float py=330.0+(l-9.0)*10.0+sin(x*0.006-l*0.29+t*0.15)*(24.0+l*2.8);
       float d=length(p-float2(x,py));
-      float size=0.8+seed*seed*2.4;
+      float size=0.45+pow(hash(float2(id+31.0,l)),4.0)*4.8;
       float glow=exp(-d/size)+exp(-d/(size*4.0))*0.14;
-      light+=float3(0.35,0.76,1.0)*glow*(0.45+seed*1.5);
+      light+=float3(0.35,0.76,1.0)*glow*(0.18+pow(hash(float2(id,l+41.0)),2.0)*2.8);
     }
   }
   return light*envelope;
@@ -43,11 +40,25 @@ half4 main(float2 p) {
   bent.x+=inside*(uv.x*100.0*lens+sin(uv.y*13.0-time*1.6)*17.0*lens);
   bent.y+=inside*(uv.y*66.0*lens+sin(uv.x*9.0+time)*12.0*lens);
   float3 light=stream(bent,time);
-  float rim=abs(radius-1.0)*105.0;
-  float shimmer=0.85+0.15*sin(atan(uv.y,uv.x)*5.0-time*1.3);
-  light+=float3(0.22,0.60,1.0)*(exp(-rim/1.0)*1.9+exp(-rim/5.0)*0.7+exp(-rim/18.0)*0.2)*shimmer;
-  float innerRim=abs(radius-0.93)*105.0;
-  light+=float3(0.65,0.85,1)*exp(-innerRim/0.65)*0.65;
+  // A rounded glass cross-section: dark transmission, broad reflected light,
+  // sharp grazing highlights, and a displaced rear surface give the rim depth.
+  float angle=atan(uv.y,uv.x);
+  float wobble=sin(angle*3.0-time*0.45)*0.003;
+  float signedRim=(radius-0.975+wobble)*105.0;
+  float tube=1.0-smoothstep(6.0,8.0,abs(signedRim));
+  float normal=clamp(signedRim/7.0,-1.0,1.0);
+  float face=sqrt(max(0.0,1.0-normal*normal));
+  float reflection=pow(max(0.0,cos(angle+0.8)*0.55+normal*0.65),6.0);
+  float highlight=exp(-pow((normal+0.42)/0.19,2.0));
+  float shimmer=0.75+0.25*sin(angle*4.0-time*0.65);
+  light*=1.0-tube*0.55;
+  light+=tube*(float3(0.09,0.22,0.35)*face
+    +float3(0.68,0.85,1.0)*highlight*shimmer*0.85
+    +float3(0.85,0.94,1.0)*reflection*1.8);
+  float frontEdge=abs(signedRim-6.7);
+  float backEdge=abs(length((q-float2(6,-2))/float2(105,265))-1.0)*105.0;
+  light+=float3(0.38,0.72,1.0)*(exp(-frontEdge/0.8)*1.05+exp(-frontEdge/11.0)*0.12);
+  light+=float3(0.52,0.68,0.9)*exp(-backEdge/0.75)*0.55;
   light+=float3(0.035,0.12,0.21)*inside*(0.3+lens*0.7);
   // Drifting fine inclusions add depth inside the portal without a particle loop.
   float2 field=bent+float2(time*13.0,-time*23.0);
