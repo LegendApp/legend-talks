@@ -46,8 +46,8 @@ const effect = Skia.RuntimeEffect.Make(maintenanceTreeShader);
 if (!effect) throw new Error("Could not compile maintenance tree");
 const emissionInterval = 300;
 const travelDuration = 1900;
-const warmupStarts = [3000, 3900, 4675, 5325, 5875, 6325, 6675];
-const steadyStart = 6975;
+const warmupStarts = [750, 1650, 2425, 3075, 3625, 4075, 4425];
+const steadyStart = 4725;
 // Precompute varied routes once. A single native clock keeps emissions evenly
 // spaced; no timers, frame callbacks or per-cycle JS lane selection.
 const routes = Array.from({ length: 3 }, () => {
