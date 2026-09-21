@@ -6,7 +6,8 @@ const statusStyle = {
   working: { symbol: "●", label: "Working", color: "#72efac" },
   partial: { symbol: "◐", label: "Partial", color: "#ffd383" },
   unsupported: { symbol: "×", label: "Unsupported", color: "#ff929f" },
-  untested: { symbol: "?", label: "Untested", color: "#b5c3d5" },
+  "in-progress": { symbol: "◌", label: "In progress", color: "#ffd383" },
+  untested: { symbol: "?", label: "?", color: "#b5c3d5" },
 };
 type Status = keyof typeof statusStyle;
 type Row = { name: string; macos: string; windows: string };
@@ -22,7 +23,7 @@ export function ExistingModulesTitle({ inCard = false, expanded = true, title = 
 }
 function StatusCell({ value, compact }: { value: string; compact: boolean }) {
   const status = statusStyle[value as Status];
-  return <Text accessibilityLabel={status.label} style={{ width: compact ? 100 : 260, color: status.color, fontSize: 27, textAlign: "center" }}>{compact ? status.symbol : `${status.symbol}  ${status.label}`}</Text>;
+  return <Text accessibilityLabel={status.label} style={{ width: compact ? 100 : 260, color: status.color, fontSize: 27, textAlign: "center" }}>{compact || value === "untested" ? status.symbol : `${status.symbol}  ${status.label}`}</Text>;
 }
 function CompatibilityTable({ rows, compact = false }: { rows: Row[]; compact?: boolean }) {
   return <View>
@@ -40,14 +41,14 @@ export function CompatibilitySnapshot({ expo = false }: { expo?: boolean }) {
   const rows = expo ? snapshot.expoFeatured : snapshot.community;
   const split = Math.ceil(rows.length / 2);
   return <View style={{ width: 1570, alignSelf: "center", marginTop: 25, height: 650 }}>
-    <View style={{ height: 510 }}>
+    <View style={{ height: 570 }}>
       {!expo ? <CompatibilityTable rows={rows} /> : <View style={{ flexDirection: "row", gap: 50 }}>
         {[rows.slice(0, split), rows.slice(split)].map((rows, index) =>
           <View key={index} style={{ flex: 1 }}><CompatibilityTable rows={rows} compact /></View>)}
       </View>}
     </View>
     <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 18 }}>
-      {Object.entries(statusStyle).map(([key, status]) => <Text key={key} style={{ color: status.color, fontSize: 23 }}>{status.symbol} {status.label}</Text>)}
+      {Object.entries(statusStyle).map(([key, status]) => <Text key={key} style={{ color: status.color, fontSize: 23 }}>{key === "untested" ? "?" : `${status.symbol} ${status.label}`}</Text>)}
       <Pressable accessibilityRole="link" onPress={() => void Linking.openURL("https://reactnative.directory/")}><Text style={{ color: "#8be5ff", fontSize: 23 }}>reactnative.directory ↗</Text></Pressable>
     </View>
   </View>;

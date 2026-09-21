@@ -517,26 +517,23 @@
     {
       "name": "react-native-mmkv",
       "source": "https://github.com/margelo/react-native-mmkv/tree/main/packages/react-native-mmkv",
-      "macos": "untested",
-      "windows": "untested"
+      "macos": "working",
+      "windows": "untested",
+      "statusNote": "macOS support supplied by Jay on 2026-09-21; Windows remains unknown."
     },
     {
       "name": "@shopify/react-native-skia",
       "source": "https://github.com/Shopify/react-native-skia/tree/main/packages/skia",
-      "macos": "untested",
-      "windows": "untested"
+      "macos": "working",
+      "windows": "untested",
+      "statusNote": "macOS support supplied by Jay on 2026-09-21; Windows remains unknown."
     },
     {
       "name": "react-native-vision-camera",
       "source": "https://github.com/margelo/react-native-vision-camera/tree/main/packages/react-native-vision-camera",
-      "macos": "untested",
-      "windows": "untested"
-    },
-    {
-      "name": "@react-navigation/native",
-      "source": "https://github.com/react-navigation/react-navigation/tree/main/packages/native",
-      "macos": "working",
-      "windows": "working"
+      "macos": "in-progress",
+      "windows": "in-progress",
+      "statusNote": "Desktop support in progress on both platforms, supplied by Jay on 2026-09-21."
     },
     {
       "name": "react-native-worklets",
@@ -545,10 +542,23 @@
       "windows": "untested"
     },
     {
-      "name": "@react-native-masked-view/masked-view",
-      "source": "https://github.com/callstack/masked-view",
+      "name": "@sentry/react-native",
+      "source": "https://github.com/getsentry/sentry-react-native/tree/main/packages/core",
       "macos": "untested",
       "windows": "untested"
+    },
+    {
+      "name": "@react-native-community/netinfo",
+      "source": "https://github.com/react-native-netinfo/react-native-netinfo",
+      "macos": "working",
+      "windows": "working"
+    },
+    {
+      "name": "react-native-nitro-modules",
+      "source": "https://github.com/margelo/nitro/tree/main/packages/react-native-nitro-modules",
+      "macos": "working",
+      "windows": "untested",
+      "statusNote": "macOS support supplied by Jay on 2026-09-21; Windows remains unknown."
     }
   ],
   "replacementSelection": {
