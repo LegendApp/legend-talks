@@ -24,7 +24,7 @@ export function StoryMoment({ kind }: { kind: "discovery" | "question" | "frame"
   const quotes = kind === "question" ? ["Was I just imagining it?", "So I measured it"]
     : kind === "objections" ? ["“I’d build native”", "“Electron has an ecosystem”", "“It’s hard to get started”"]
     : kind === "frame" ? ["Legend Frame", "Electron’s ambition.\nReact Native’s foundation."]
-    : ["Does your library\nsupport desktop?", "Does your library\nsupport desktop?"];
+    : ["Please help", "Please help"];
   const current = Math.min(step, quotes.length - 1);
   return <View style={{ height: 420, justifyContent: "center" }}>
     {quotes.map((quote, index) => <SceneMotionView key={index} hidden={index !== current}

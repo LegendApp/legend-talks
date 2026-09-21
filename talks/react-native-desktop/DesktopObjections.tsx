@@ -1,5 +1,5 @@
 import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
-import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
+import { SceneMotionView, SharedElement, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 
 // One bounded GPU surface per panel. Reflections, cracks, and
@@ -168,8 +168,10 @@ function ObjectionCard({ label, index, crossed, settled, zoomTarget }: {
     {/* The shared step-1 timeline survives the subsequent zoom step. */}
     <GlassPanel crossed={crossed} settled={settled} index={index} />
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 24 }}>
-      <Text style={{ color: "#ffffff", fontSize: 42, fontWeight: "600", textAlign: "center", lineHeight: 54,
-        textShadowColor: "#07121f", textShadowRadius: 8, textShadowOffset: { width: 0, height: 2 } }}>{label}</Text>
+      <SharedElement id={index === 1 ? "existing-modules-title" : `objection-label-${index}`} resize="preserve">
+        <Text style={{ color: "#ffffff", fontSize: 42, fontWeight: "600", textAlign: "center", lineHeight: 54,
+          textShadowColor: "#07121f", textShadowRadius: 8, textShadowOffset: { width: 0, height: 2 } }}>{label}</Text>
+      </SharedElement>
     </View>
   </SceneMotionView>;
 }
@@ -179,7 +181,7 @@ export function DesktopObjections({ returning = false }: { returning?: boolean }
   const zoomTarget = step >= 2 ? returning ? 1 : 2 : null;
   const crossed = [returning || step >= 1, false, returning && step >= 1];
   return <View style={{ width: 1696, height: 660, marginTop: 45, alignSelf: "center" }}>
-    {["Performance", "Existing modules", "Desktop foundations"].map((label, index) =>
+    {["Performance", "Existing Modules", "Desktop foundations"].map((label, index) =>
       <ObjectionCard key={label} label={label} index={index} crossed={crossed[index]!}
         settled={returning && index === 0} zoomTarget={zoomTarget} />)}
   </View>;
