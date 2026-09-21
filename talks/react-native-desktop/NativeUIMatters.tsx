@@ -14,6 +14,7 @@ uniform float time;
 uniform float stage;
 float box(float2 p,float2 c,float2 h,float r) { float2 q=abs(p-c)-h+r; return length(max(q,0.0))+min(max(q.x,q.y),0.0)-r; }
 half4 put(half4 c,float d,half3 tint,float a) { a*=1.0-smoothstep(-0.7,0.7,d); return half4(tint*a,a)+c*(1.0-a); }
+float hash(float2 p) { return fract(sin(dot(p,float2(127.1,311.7)))*43758.5453); }
 float segment(float2 p,float2 a,float2 b) { float2 v=b-a; return length(p-a-v*clamp(dot(p-a,v)/dot(v,v),0.0,1.0)); }
 half4 main(float2 p) {
   half4 c=half4(0);
@@ -66,29 +67,42 @@ half4 main(float2 p) {
   } else {
     // Thick branching light carries updates outward and edits back to the hub.
     float2 hub=float2(590,135);
+    float3 energy=float3(0);
     for(int branch=0;branch<3;branch++) {
       float2 end=branch==0?float2(220,260):branch==1?float2(960,260):float2(590,475);
       float2 axis=end-hub;
-      float2 perpendicular=normalize(float2(-axis.y,axis.x));
-      float u=clamp(dot(p-hub,axis)/dot(axis,axis),0.0,1.0);
-      for(int twig=0;twig<5;twig++) {
-        float offset=(float(twig)-2.0)*10.0;
-        float2 point=hub+axis*u+perpendicular*sin(u*3.14159)*offset;
-        float d=length(p-point);
-        float pulse=0.75+0.25*sin(time*2.0-u*9.0);
-        c=put(c,d-12.0,half3(0.08,0.42,0.75),0.08*pulse);
-        c=put(c,d-3.0,half3(0.12,0.6,0.9),0.25*pulse);
-        c=put(c,d-0.9,half3(0.42,0.85,1),0.7*pulse);
-        for(int particle=0;particle<4;particle++) {
-          float t=fract(time*(0.2+float(twig)*0.025)+float(particle)*0.25+float(branch)*0.12);
-          if(particle<2)t=1.0-t;
-          float2 spark=hub+axis*t+perpendicular*sin(t*3.14159)*offset;
-          float sd=length(p-spark);
-          c=put(c,sd-7.0,half3(0.1,0.55,1),0.12);
-          c=put(c,sd-(particle==0?3.0:1.8),particle<2?half3(0.5,0.95,1):half3(0.8,0.65,1),0.95);
+      float distance=length(axis);
+      float2 along=axis/distance;
+      float2 across=float2(-along.y,along.x);
+      float x=dot(p-hub,along);
+      // Local cell lookup keeps dense streams bounded in cost, like the portal.
+      for(int lane=0;lane<12;lane++) {
+        float l=float(lane);
+        float direction=lane<6?1.0:-1.0;
+        float speed=direction*(90.0+hash(float2(l,float(branch)))*95.0);
+        float cell=floor((x-time*speed)/29.0);
+        for(int neighbor=-1;neighbor<=1;neighbor++) {
+          float id=cell+float(neighbor);
+          float seed=hash(float2(id+l*17.0,float(branch)+l));
+          float position=(id+seed)*29.0+time*speed;
+          float t=clamp(position/distance,0.0,1.0);
+          float spread=sin(t*3.14159);
+          float offset=((l-5.5)*7.0+sin(t*9.0-time*1.2+l)*11.0)*spread;
+          float2 point=hub+along*position+across*offset;
+          float d=length(p-point);
+          float size=0.55+pow(seed,3.0)*3.8;
+          float brightness=0.3+hash(float2(id+8.0,l))*1.8;
+          float fade=smoothstep(0.0,18.0,position)*(1.0-smoothstep(distance-15.0,distance,position));
+          float glow=exp(-d/size)*1.4+exp(-d/(size*4.0))*0.15;
+          float3 tint=lane<6?float3(0.25,0.8,1):float3(0.7,0.45,1);
+          energy+=tint*glow*brightness*fade;
         }
       }
     }
+    float halo=exp(-length((p-hub)/float2(145,57)))*0.45;
+    energy+=float3(0.12,0.5,1)*halo;
+    float energyAlpha=clamp(max(energy.r,max(energy.g,energy.b)),0.0,1.0);
+    c=half4(min(energy,float3(energyAlpha)),energyAlpha)+c*(1.0-energyAlpha);
     float hubPulse=sin(time*1.3)*2.0;
     c=put(c,box(p,hub,float2(110,34)+hubPulse,22)-8.0,half3(0.1,0.5,0.85),0.18);
     c=put(c,box(p,hub,float2(110,34)+hubPulse,22),half3(0.13,0.27,0.4),1.0);
