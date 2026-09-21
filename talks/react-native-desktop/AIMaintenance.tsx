@@ -89,8 +89,8 @@ export function AIMaintenance() {
       <Canvas pointerEvents="none" style={{ position: "absolute", inset: 0 }}><Fill><Shader source={effect!} uniforms={uniforms} /></Fill></Canvas>
       <Text style={{ position: "absolute", top: 0, left: 600, width: 496, textAlign: "center", color: maintenance ? "#fda4af" : "#8de4ff", fontSize: 40, lineHeight: 52 }}>{maintenance ? "One bug fix" : "One feature"}</Text>
       {maintenance && <CryingStream />}
-      {implementations.map((name, index) => <View key={name} style={{ position: "absolute", left: branchX(index) - 91, top: 600, width: 182, alignItems: "center" }}>
-        <Text style={{ color: "#f1f5f9", fontSize: 25, lineHeight: 34, textAlign: "center", fontWeight: "500" }}>{name}</Text>
+      {implementations.map((name, index) => <View key={name} style={{ position: "absolute", left: branchX(index) - 125, top: 600, width: 250, alignItems: "center" }}>
+        <Text style={{ color: "#f1f5f9", fontSize: 40, lineHeight: 52, textAlign: "center", fontWeight: "600" }}>{name}</Text>
         <SceneMotionView hidden={!maintenance} pose={{ opacity: maintenance ? 1 : 0 }} duration={450} style={{ marginTop: 12 }}>
           <Text style={{ color: "#fda4af", fontSize: 24 }}>Fix + verify</Text>
         </SceneMotionView>
