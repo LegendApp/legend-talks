@@ -25,7 +25,7 @@ import { CrossPlatformLanes } from "./CrossPlatformLanes"
 import { MeasurementTimeline } from "./MeasurementTimeline"
 import { HelloSizeJourney } from "./HelloSizeJourney"
 import { StoryMoment, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot, SlidesRelease, WordFlow } from "./StoryDiagrams"
-import { DesktopModulesChecklist, DesktopShipping, FrameAnnouncement } from "./DesktopFoundations"
+import { DesktopFoundationsJourney } from "./DesktopFoundations"
 import { DesktopObjections } from "./DesktopObjections"
 import { SharedRoots } from "./SharedRoots"
 import markdownIcon from "./rnconnection-assets/markdown-icon.png";
@@ -927,13 +927,11 @@ Now I can start an app. But a desktop app needs a lot more than a window.
 -->
 
 ---
-title: You're building more than an app
-steps: 4
+title: Desktop foundations → Legend Frame
+steps: 6
 ---
 
-# You're building more than an app {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<DesktopModulesChecklist />
+<DesktopFoundationsJourney />
 
 <!--
 1. I just want to build my app.
@@ -949,18 +947,10 @@ Every app I made needed another piece of this. React makes composing the interfa
 Before I can build the thing I actually want to build, I need all of this.
 
 These are the capabilities a desktop foundation needs to address. Not every app needs every module, and this isn't a claim that all of them are finished on every platform.
--->
 
----
-title: And then you have to ship it
----
+5. [Let the glass ripple wash over the features. The publishing requirements grow out around them.]
 
-# And then you have to ship it {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<DesktopShipping />
-
-<!--
-And that's just the modules.
+And that's just the modules. Then you have to ship it.
 
 You need to bootstrap the project. Link the native dependencies. Get the release build configured properly.
 
@@ -973,16 +963,8 @@ Getting a window on screen isn't the hard part. Getting a small app I can ship, 
 I don't want everybody to figure this out again.
 
 I want a command that gives me the modules and sets this up.
--->
 
----
-title: Introducing Legend Frame
----
-
-<FrameAnnouncement />
-
-<!--
-[Let the complexity collapse into the command. Hold for the reveal.]
+6. [The network collapses. The explosion gathers into a cursor. Let it type the command.]
 
 npx @legendapp/frame create.
 

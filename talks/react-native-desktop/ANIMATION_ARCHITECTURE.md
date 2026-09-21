@@ -6,13 +6,14 @@ The complete `rnconnection.mdx` talk, including alternate slides, uses host-owne
 | --- | --- | --- |
 | Background, glass, roots, renderer windows, platform lanes | `useAnimatedShaderUniforms` | Slide clock; background scope stays continuous across slides |
 | Expo connection, module waves | Shader `stepIndex` and `stepTime` | Current step |
+| Frame feature ripple → publishing network → cursor typing | Shader text atlas and step-anchored uniforms | Steps 4 and 5; one persistent Canvas |
 | Shattered objections and subsequent zoom | Shader option `{ clock: 1 }` | Time since step 1; survives step 2 |
 | Native poses and interrupted moves | `SceneMotionView`, `usePlaybackTween` | Shared step clock |
 | Chart row grouping | `ScenePositionView` | Shared tween; fixed native layout for measurement |
 | Chart entrance vs matched resize | `useSharedElementEntrance` | Host shared-element lifecycle |
 | Carousel position, scale, opacity, stacking | `FilmstripMotionView` | Shared tween |
 | Carousel exit | `NavigationExitView` | Audience navigation progress |
-| Emoji paths, staggered modules/sheets, Frame reveal, ecosystem label | `PlaybackKeyframeView` | Explicit slide or step clock |
+| Emoji paths and ecosystem label | `PlaybackKeyframeView` | Explicit slide or step clock |
 | TypeGPU simulations | `TypeGPUShader` | Shared step time; simulation resets on activation/step change |
 | Headers, shared elements, whole-slide transitions | Host navigation controller | Native navigation progress |
 
