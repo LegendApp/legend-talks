@@ -130,6 +130,7 @@ half4 main(float2 position) {
         float2 center = origin+velocity*age+float2(0.0,age*age*45.0);
         float dist = length(p-center);
         float life = sin(age*3.141593)*(0.75+pulse*0.25);
+        life *= 1.0-(1.0-resolveToCheck)*smoothstep(0.9,1.5,elapsed);
         float spark = (exp(-dist*dist/5.0)+0.25*exp(-dist*0.24))*life;
         float4 particle = float4(mix(tint,mix(float3(1.0,0.92,0.64),float3(0.65,1.0,0.78),resolve),0.45)*spark,spark);
         result = particle+result*(1.0-particle.a);

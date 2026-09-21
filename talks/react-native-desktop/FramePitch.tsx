@@ -47,30 +47,30 @@ half4 main(float2 p) {
   for(int branch=0;branch<3;branch++) {
     float growth=smoothstep(0.5+float(branch)*1.5,1.2+float(branch)*1.5,time);
     float visible=step(0.001,growth);
-    float start=branch==0?125.0:326.0+float(branch-1)*230.0;
-    float end=230.0+float(branch)*230.0;
+    float start=branch==0?125.0:351.0+float(branch-1)*300.0;
+    float end=255.0+float(branch)*300.0;
     float t=clamp((p.y-start)/(end-start),0.0,1.0);
     for(int strand=0;strand<4;strand++) {
       float lane=float(strand)-1.5;
       float x=848.0+sin(t*3.14159)*lane*12.0;
       float d=abs(p.x-x);
       float mask=step(start,p.y)*step(p.y,mix(start,end,growth))*visible;
-      light=max(light,ribbon(p.x-x,5.0+sin(t*3.14159)*5.0,p.y,float(strand),float3(0.025,0.4,1))*mask);
+      light=max(light,ribbon(p.x-x,3.5+sin(t*3.14159)*3.0,p.y,float(strand),float3(0.025,0.4,1))*mask);
       for(int spark=0;spark<3;spark++) {
         float u=fract(time*0.5+float(spark)/3.0+float(strand)*0.11);
         float2 pos=float2(848.0+sin(u*3.14159)*lane*12.0,mix(start,end,u));
         light+=float3(0.4,0.85,1)*exp(-length(p-pos)/2.0)*mask;
       }
       // Glints shed from the ribbons and drift outward before disappearing.
-      for(int particle=0;particle<4;particle++) {
+      for(int particle=0;particle<8;particle++) {
         float seed=float(particle)*0.23+float(strand)*0.17+float(branch)*0.31;
         float age=fract(time*0.65+seed);
         float source=fract(seed*3.71);
         float direction=mod(float(particle+strand),2.0)<0.5?-1.0:1.0;
         float2 origin=float2(848.0+sin(source*3.14159)*lane*12.0,mix(start,end,source));
-        float2 point=origin+float2(direction*age*(25.0+float(particle)*9.0),age*18.0);
+        float2 point=origin+float2(direction*age*(35.0+float(particle)*8.0),age*18.0);
         float d=length(p-point);
-        float size=0.7+float(particle)*0.45;
+        float size=0.7+mod(float(particle),4.0)*0.45;
         float fade=sin(age*3.14159)*(1.0-age)*visible*step(source,growth);
         light+=float3(0.45,0.85,1)*(exp(-d/size)+0.12*exp(-d/(size*4.0)))*fade;
       }
@@ -90,20 +90,20 @@ function FoundationBox({ title }: { title: string }) {
 export function FrameFoundations({ icon }: { icon: string }) {
   const branchUniforms = useAnimatedShaderUniforms({}, 3);
   const uniforms = useAnimatedShaderUniforms({ panelHalfHeight: 8, resolveToCheck: 0, broken: 1, settled: 0, phase: 0, centerX: 848 }, 10);
-  return <View style={{ width: 1696, height: 880, alignSelf: "center" }}>
+  return <View style={{ width: 1696, height: 980, alignSelf: "center" }}>
     <FrameTitle icon={icon} />
     <Canvas style={{ position: "absolute", inset: 0 }}><Fill><Shader source={branches!} uniforms={branchUniforms} /></Fill></Canvas>
-    {["Expo Desktop", "Expo"].map((name, i) => <PlaybackKeyframeView key={name} keyframes={boxReveal} delay={1200 + i * 1500} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 225 + i * 230 }}>
+    {["Expo Desktop", "Expo"].map((name, i) => <PlaybackKeyframeView key={name} keyframes={boxReveal} delay={1200 + i * 1500} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 250 + i * 300 }}>
       <FoundationBox title={name} />
     </PlaybackKeyframeView>)}
-    <PlaybackKeyframeView keyframes={[...boxReveal, { time: 2100, x: 0, y: 0, opacity: 1 }, { time: 2300, x: 0, y: 0, opacity: 0 }]} delay={4200} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 685 }}>
+    <PlaybackKeyframeView keyframes={[...boxReveal, { time: 2100, x: 0, y: 0, opacity: 1 }, { time: 2300, x: 0, y: 0, opacity: 0 }]} delay={4200} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 850 }}>
       <FoundationBox title="WebView" />
     </PlaybackKeyframeView>
-    <PlaybackKeyframeView keyframes={[{ time: 0, x: 0, y: 0, opacity: 1 }]} delay={6500} previewTime={10} clock="slide" style={{ position: "absolute", left: 0, top: 438, width: 1696, height: 1080 }}>
+    <PlaybackKeyframeView keyframes={[{ time: 0, x: 0, y: 0, opacity: 1 }]} delay={6500} previewTime={10} clock="slide" style={{ position: "absolute", left: 0, top: 603, width: 1696, height: 1080 }}>
       <Canvas style={{ width: 1696, height: 1080 }}><Fill><Shader source={effect!} uniforms={uniforms} /></Fill></Canvas>
     </PlaybackKeyframeView>
-    <PlaybackKeyframeView keyframes={hide} delay={6500} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 710, width: 512 }}><Text style={{ textAlign: "center", fontSize: 40, fontWeight: "600", color: "white" }}>WebView</Text></PlaybackKeyframeView>
-    <PlaybackKeyframeView keyframes={boxReveal} delay={8000} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 685 }}>
+    <PlaybackKeyframeView keyframes={hide} delay={6500} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 875, width: 512 }}><Text style={{ textAlign: "center", fontSize: 40, fontWeight: "600", color: "white" }}>WebView</Text></PlaybackKeyframeView>
+    <PlaybackKeyframeView keyframes={boxReveal} delay={8000} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 850 }}>
       <FoundationBox title="React Native" />
     </PlaybackKeyframeView>
   </View>;
