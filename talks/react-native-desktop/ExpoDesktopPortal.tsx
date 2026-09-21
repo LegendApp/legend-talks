@@ -9,7 +9,7 @@ uniform float time;
 float hash(float2 p) { return fract(sin(dot(p,float2(127.1,311.7)))*43758.5453); }
 float3 stream(float2 p,float t) {
   float3 light=float3(0);
-  float envelope=smoothstep(220.0,410.0,p.x)*(1.0-smoothstep(1390.0,1610.0,p.x));
+  float envelope=smoothstep(398.0,420.0,p.x)*(1.0-smoothstep(1390.0,1610.0,p.x));
   for(int lane=0;lane<19;lane++) {
     float l=float(lane);
     float speed=65.0+hash(float2(l,9))*95.0;
@@ -18,7 +18,10 @@ float3 stream(float2 p,float t) {
       float id=cell+float(neighbor);
       float seed=hash(float2(id,l));
       float x=(id+seed)*44.0+t*speed;
-      float py=330.0+(l-9.0)*10.0+sin(x*0.006-l*0.29+t*0.15)*(24.0+l*2.8);
+      // The Expo mark is centered at x=398. Fan out from a narrow emitter
+      // inside it, reaching the full particle spread at the portal.
+      float spread=mix(0.025,1.0,smoothstep(398.0,800.0,x));
+      float py=330.0+spread*((l-9.0)*10.0+sin(x*0.006-l*0.29+t*0.15)*(24.0+l*2.8));
       float d=length(p-float2(x,py));
       float size=0.45+pow(hash(float2(id+31.0,l)),4.0)*4.8;
       float glow=exp(-d/size)+exp(-d/(size*4.0))*0.14;
