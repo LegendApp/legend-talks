@@ -5,7 +5,7 @@ export const filmstripCenterX = 960;
 export const filmstripWidth = 1560;
 export const filmstripLeft = filmstripCenterX - filmstripWidth / 2;
 export function appCardLayout(index: number, mode: SceneMode, position = 0, width = filmstripWidth) {
-  if (mode === "hero") return { x: 960, y: 560, width: 1160, opacity: 1, depth: index === 0 ? 100 : 9 - index };
+  if (mode === "hero") return { x: 960, y: 555, width, opacity: 1, depth: index === 0 ? 100 : 9 - index };
   if (mode === "grid") {
     const slot = index;
     return { x: 960 + (slot % 3 - 1) * 440, y: 550 + (Math.floor(slot / 3) - 1) * 265, width: 380, opacity: 1, depth: index === 0 ? 100 : 9 - index };

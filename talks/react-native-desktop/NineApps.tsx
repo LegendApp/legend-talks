@@ -95,18 +95,18 @@ export function NineApps({ mode, children }: { mode: SceneMode; children?: React
   const selected = mode === "filmstrip" ? appOrder.indexOf(tour.app) : 0;
   const camera = detailCamera(mode === "filmstrip" ? tour.detail : "app", tour.app);
   return <FocusRegion id="nine-apps-stage" style={{ width: 1920, height: 1080, overflow: "hidden" }}>
-    {mode !== "filmstrip" && <SceneMotionView initialPose={{ opacity: 0 }} pose={{ opacity: 1 }} duration={650} style={{ position: "absolute", left: 112, top: 65, width: 1696, zIndex: 2000 }}>
+    <SceneMotionView initialPose={{ opacity: 0 }} pose={{ opacity: 1 }} duration={650} style={{ position: "absolute", left: 112, top: 65, width: 1696, zIndex: 2000 }}>
       <MovingTitle>
-      <Text style={{ color: "#f8fafc", fontSize: 64, fontWeight: "700", textAlign: "center" }}>AI Chat History</Text>
+      <Text style={{ color: "#f8fafc", fontSize: 64, fontWeight: "700", textAlign: "center" }}>{mode === "filmstrip" ? names[tour.app] : "AI Chat History"}</Text>
       </MovingTitle>
-    </SceneMotionView>}
+    </SceneMotionView>
     <SceneMotionView pose={camera} duration={650} style={{ width: 1920, height: 1080 }}>
     <AppCarousel cardWidth={filmstripWidth} items={appOrder} position={selected} mode={mode} renderCard={(id, card) => {
       const { captionHeight } = card;
       const uri = recordings[id].poster;
       return (
         <SharedElement id={`nine-app-${id}`} style={{ flex: 1 }}>
-          <View style={{ height: captionHeight, minHeight: 24, justifyContent: "center", alignItems: "center", opacity: mode === "hero" ? 0 : 1 }}>
+          <View style={{ height: captionHeight, minHeight: 24, justifyContent: "center", alignItems: "center", opacity: mode === "grid" ? 1 : 0 }}>
             <Text style={{ fontSize: mode === "filmstrip" ? 64 * card.width / filmstripWidth : Math.max(17, card.width * 0.027), fontWeight: "700", color: "#f1f5f9" }}>{names[id]}</Text>
           </View>
           <View style={{ flex: 1, borderRadius: 12, overflow: "hidden", borderWidth: 2,
