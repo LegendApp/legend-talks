@@ -6,6 +6,12 @@ import { MovingTitle } from "./MovingTitle";
 import { Image, Text, View } from "react-native";
 import { appOrder, type AppId, type SceneMode } from "./NineAppsGeometry";
 
+import { WebView } from "react-native-webview";
+// @ts-ignore Deck assets resolve to local file URLs in the deck compiler.
+import rnVideoPage from "./rnconnection-assets/react-native-scroll-proof.html";
+// @ts-ignore Deck assets resolve to local file URLs in the deck compiler.
+import rnPoster from "./rnconnection-assets/react-native-scroll-proof.jpg";
+
 import { AppCarousel } from "./AppCarousel";
 
 const names: Record<AppId, string> = {
@@ -14,7 +20,7 @@ const names: Record<AppId, string> = {
 };
 // Add deck-local image imports here when the final captures arrive.
 // The RN still should match the video's last frame for a seamless handoff.
-const screenshots: Partial<Record<AppId, string>> = {};
+const screenshots: Partial<Record<AppId, string>> = { "react-native": rnPoster };
 
 // Full-stage template avoids the standard Markdown content padding.
 export default function NineAppsFrame({ children }: PresentationTemplateProps) {
@@ -23,6 +29,7 @@ export default function NineAppsFrame({ children }: PresentationTemplateProps) {
 
 export function NineApps({ mode, children }: { mode: SceneMode; children?: ReactNode }) {
   const step = usePresentationValue("stepIndex");
+  const phase = usePresentationValue("playbackPhase");
   const tour = tourStep(step);
   const selected = mode === "filmstrip" ? appOrder.indexOf(tour.app) : 0;
   const camera = detailCamera(mode === "filmstrip" ? tour.detail : "app");
@@ -44,7 +51,11 @@ export function NineApps({ mode, children }: { mode: SceneMode; children?: React
           <View style={{ flex: 1, borderRadius: 12, overflow: "hidden", borderWidth: 2,
             borderColor: id === "react-native" ? "#67e8f9" : "#33465e", backgroundColor: "#101e30" }}>
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#14253a" }}>
-              {uri ? <Image source={{ uri }} resizeMode="contain" style={{ width: "100%", height: "100%" }} /> : <>
+              {id === "react-native" && phase === "playing" && (mode === "hero" || (mode === "filmstrip" && selected === 0)) ?
+                <WebView source={{ uri: rnVideoPage }} allowingReadAccessToURL={rnVideoPage.slice(0, rnVideoPage.lastIndexOf("/") + 1)}
+                  originWhitelist={["file://*"]} mediaPlaybackRequiresUserAction={false} allowsInlineMediaPlayback
+                  scrollEnabled={false} style={{ width: "100%", height: "100%", backgroundColor: "#101e30" }} />
+              : uri ? <Image source={{ uri }} resizeMode="contain" style={{ width: "100%", height: "100%" }} /> : <>
                 <View style={{ position: "absolute", left: "2%", top: "2%", width: "26%", height: "94%", borderRadius: 12, borderWidth: 1, borderColor: "#94a3b8", justifyContent: "center", alignItems: "center" }}>
                   <Text style={{ color: "#f1f5f9", fontSize: Math.max(12, card.width * 0.018) }}>Sidebar</Text>
                 </View>
