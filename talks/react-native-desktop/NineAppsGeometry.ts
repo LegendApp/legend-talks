@@ -8,7 +8,7 @@ export function appCardLayout(index: number, mode: SceneMode, position = 0) {
   if (mode === "hero") return { x: 960, y: 560, width: 1160, opacity: 1, depth: index === 0 ? 100 : 9 - index };
   if (mode === "grid") {
     const slot = index;
-    return { x: 960 + (slot % 3 - 1) * 440, y: 550 + (Math.floor(slot / 3) - 1) * 265, width: 380, opacity: 1, depth: 10 };
+    return { x: 960 + (slot % 3 - 1) * 440, y: 550 + (Math.floor(slot / 3) - 1) * 265, width: 380, opacity: 1, depth: index === 0 ? 100 : 9 - index };
   }
   const distance = index - Math.max(0, Math.min(appOrder.length - 1, position));
   const magnitude = Math.abs(distance);
