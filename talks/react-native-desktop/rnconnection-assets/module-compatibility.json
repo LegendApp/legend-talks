@@ -494,71 +494,210 @@
       "name": "react-native-reanimated",
       "source": "https://github.com/software-mansion/react-native-reanimated/tree/main/packages/react-native-reanimated",
       "macos": "working",
-      "windows": "untested"
+      "windows": "unsupported",
+      "statusNote": "macOS pod target and New-Architecture-only implementation; use a Reanimated/RN-macOS compatible version pair (this deck uses 4.3.4 / RN-macOS 0.81.7). Latest npm is not a recommendation for RN-macOS 0.81. Windows native integration is not supported; Windows-hosted Android build CI does not establish RN Windows support.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "4.7.0",
+        "releaseRef": "4.7.0",
+        "evidence": [
+          "https://github.com/software-mansion/react-native-reanimated/blob/4.7.0/packages/react-native-reanimated/RNReanimated.podspec",
+          "https://github.com/software-mansion/react-native-reanimated/blob/4.7.0/README.md",
+          "https://github.com/software-mansion/react-native-reanimated/discussions/6386"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "react-native-gesture-handler",
       "source": "https://github.com/software-mansion/react-native-gesture-handler/tree/main/packages/react-native-gesture-handler",
       "macos": "working",
-      "windows": "untested"
+      "windows": "unsupported",
+      "statusNote": "macOS Fabric example explicitly enables the New Architecture. Use a matching version: Gesture Handler 3 requires RN >=0.82; the 2.x line is needed for RN-macOS 0.81. Windows module is a no-op shim, not gesture support.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "3.3.0",
+        "releaseRef": "v3.3.0",
+        "evidence": [
+          "https://github.com/software-mansion/react-native-gesture-handler/blob/v3.3.0/packages/react-native-gesture-handler/RNGestureHandler.podspec",
+          "https://github.com/software-mansion/react-native-gesture-handler/blob/v3.3.0/packages/react-native-gesture-handler/src/RNGestureHandlerModule.windows.ts",
+          "https://github.com/software-mansion/react-native-gesture-handler/blob/e26231e9d89ec25f45ff3961d76c575ec6f04700/apps/macos-example/macos/Podfile"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "react-native-svg",
       "source": "https://github.com/software-mansion/react-native-svg",
       "macos": "working",
-      "windows": "working"
+      "windows": "partial",
+      "statusNote": "macOS has a Fabric example and platform source. Windows Fabric renders basic geometry but explicitly registers unsupported components for text/TSpan, masks, patterns, markers, symbols, foreignObject and filters.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "15.15.5",
+        "releaseRef": "v15.15.5",
+        "evidence": [
+          "https://github.com/software-mansion/react-native-svg/blob/v15.15.5/RNSVG.podspec",
+          "https://github.com/software-mansion/react-native-svg/blob/v15.15.5/windows/RNSVG/ReactPackageProvider.cpp",
+          "https://github.com/software-mansion/react-native-svg/tree/4948f3b8f24af2c052671fd09ff655848f093b13/apps/fabric-macos-example"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "react-native-webview",
       "source": "https://github.com/react-native-webview/react-native-webview",
       "macos": "working",
-      "windows": "working"
+      "windows": "unsupported",
+      "statusNote": "Default npm latest 14.0.1 supports macOS Fabric but not Windows Fabric. Windows Fabric landed in v15; v16 also exists, but is not npm latest. v16 has an open blank-URL-source report (#3990). The Windows cross is for the default release, not a claim that no Fabric implementation exists.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "14.0.1",
+        "releaseRef": "8b0779c961345691179bd033ff263badd3087932",
+        "evidence": [
+          "https://github.com/react-native-webview/react-native-webview/blob/8b0779c961345691179bd033ff263badd3087932/react-native-webview.podspec",
+          "https://github.com/react-native-webview/react-native-webview/blob/8b0779c961345691179bd033ff263badd3087932/README.md",
+          "https://github.com/react-native-webview/react-native-webview/releases/tag/v15.0.0",
+          "https://github.com/react-native-webview/react-native-webview/releases/tag/v16.0.0",
+          "https://github.com/react-native-webview/react-native-webview/issues/3990"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "react-native-mmkv",
       "source": "https://github.com/margelo/react-native-mmkv/tree/main/packages/react-native-mmkv",
       "macos": "working",
-      "windows": "untested",
-      "statusNote": "macOS support supplied by Jay on 2026-09-21; Windows remains unknown."
+      "windows": "unsupported",
+      "statusNote": "Released NitroMmkv podspec targets macOS and uses Nitro. No released Windows package integration; Nitro Windows work is still unmerged. Generic C++ MMKV portability does not establish RN Windows support.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "4.3.2",
+        "releaseRef": "388b4d8b3d34ed6880d38b9c828ae025c730516f",
+        "evidence": [
+          "https://github.com/margelo/react-native-mmkv/blob/388b4d8b3d34ed6880d38b9c828ae025c730516f/packages/react-native-mmkv/NitroMmkv.podspec",
+          "https://github.com/margelo/nitro/pull/537"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "@shopify/react-native-skia",
       "source": "https://github.com/Shopify/react-native-skia/tree/main/packages/skia",
       "macos": "working",
-      "windows": "untested",
-      "statusNote": "macOS support supplied by Jay on 2026-09-21; Windows remains unknown."
+      "windows": "unsupported",
+      "statusNote": "Released macOS frameworks and Apple implementation support Fabric. Maintainer confirmed macOS landed; Windows requires a separate backend/integration and is not shipped.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "2.12.0",
+        "releaseRef": "v2.12.0",
+        "evidence": [
+          "https://github.com/Shopify/react-native-skia/blob/v2.12.0/packages/skia/react-native-skia.podspec",
+          "https://github.com/Shopify/react-native-skia/blob/v2.12.0/packages/skia/apple/SkiaPictureView.mm",
+          "https://github.com/Shopify/react-native-skia/issues/2058"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "react-native-vision-camera",
       "source": "https://github.com/margelo/react-native-vision-camera/tree/main/packages/react-native-vision-camera",
       "macos": "in-progress",
       "windows": "in-progress",
-      "statusNote": "Desktop support in progress on both platforms, supplied by Jay on 2026-09-21."
+      "statusNote": "Released podspec targets iOS/visionOS, with Android implementation; no upstream macOS or Windows target found. In progress is Jay's explicitly supplied desktop roadmap, not a verified upstream PR or released support. Mac Catalyst is not RN-macOS.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "5.2.3",
+        "releaseRef": "a4acf4d4f2083cf639699796d38d687e1f4bd49e",
+        "evidence": [
+          "https://github.com/margelo/react-native-vision-camera/blob/a4acf4d4f2083cf639699796d38d687e1f4bd49e/packages/react-native-vision-camera/VisionCamera.podspec"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "react-native-worklets",
       "source": "https://github.com/software-mansion/react-native-reanimated/tree/main/packages/react-native-worklets",
-      "macos": "untested",
-      "windows": "untested"
+      "macos": "working",
+      "windows": "unsupported",
+      "statusNote": "RNWorklets declares macOS, shares the Reanimated New Architecture implementation, and needs an RN-compatible version pair (this deck uses 0.8.3 with a local patch). No released RN Windows platform integration found; do not infer Windows support from portable C++ or Android-on-Windows builds.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "0.13.0",
+        "releaseRef": "worklets-0.13.0",
+        "evidence": [
+          "https://github.com/software-mansion/react-native-reanimated/blob/worklets-0.13.0/packages/react-native-worklets/RNWorklets.podspec",
+          "https://github.com/software-mansion/react-native-reanimated/discussions/6386"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "@sentry/react-native",
       "source": "https://github.com/getsentry/sentry-react-native/tree/main/packages/core",
-      "macos": "untested",
-      "windows": "untested"
+      "macos": "working",
+      "windows": "partial",
+      "statusNote": "macOS Cocoa target plus New Architecture TurboModule implementation and Fabric-configurable macOS sample. Windows is JS error reporting only with native integrations disabled; no native crashes/replay via this SDK. macOS support does not imply all mobile features such as replay work.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "8.27.0",
+        "releaseRef": "8.27.0",
+        "evidence": [
+          "https://github.com/getsentry/sentry-react-native/blob/8.27.0/packages/core/RNSentry.podspec",
+          "https://github.com/getsentry/sentry-react-native/blob/8.27.0/packages/core/ios/RNSentry.mm",
+          "https://github.com/getsentry/sentry-react-native/blob/38f2efbb5e66e0aac1f94fc07f6e1df89a2249ca/samples/react-native-macos/macos/Podfile",
+          "https://github.com/getsentry/sentry-react-native/issues/1407"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "@react-native-community/netinfo",
       "source": "https://github.com/react-native-netinfo/react-native-netinfo",
-      "macos": "working",
-      "windows": "working"
+      "macos": "untested",
+      "windows": "in-progress",
+      "statusNote": "macOS target exists and New Architecture pod dependencies are enabled, but Apple module is still RCTEventEmitter/legacy interop; this audit did not establish macOS bridgeless runtime support, so ?. Windows project still targets UWP. Open PR #805 migrates it to New Architecture; not released.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "12.0.1",
+        "releaseRef": "d9923d2c15137b36bdc763d0d1f9dd118a4a1ca1",
+        "evidence": [
+          "https://github.com/react-native-netinfo/react-native-netinfo/blob/d9923d2c15137b36bdc763d0d1f9dd118a4a1ca1/react-native-netinfo.podspec",
+          "https://github.com/react-native-netinfo/react-native-netinfo/blob/d9923d2c15137b36bdc763d0d1f9dd118a4a1ca1/ios/RNCNetInfo.h",
+          "https://github.com/react-native-netinfo/react-native-netinfo/blob/d9923d2c15137b36bdc763d0d1f9dd118a4a1ca1/windows/RNCNetInfoCPP/RNCNetInfoCPP.vcxproj",
+          "https://github.com/react-native-netinfo/react-native-netinfo/pull/805"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "react-native-nitro-modules",
       "source": "https://github.com/margelo/nitro/tree/main/packages/react-native-nitro-modules",
       "macos": "working",
-      "windows": "untested",
-      "statusNote": "macOS support supplied by Jay on 2026-09-21; Windows remains unknown."
+      "windows": "in-progress",
+      "statusNote": "Released macOS pod target and JSI runtime support. Windows New Architecture implementations are in open, unmerged PRs; not a released Windows checkmark.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "0.37.1",
+        "releaseRef": "605017127c16f9d502f527097ffed77439d8ce6c",
+        "evidence": [
+          "https://github.com/margelo/nitro/blob/605017127c16f9d502f527097ffed77439d8ce6c/packages/react-native-nitro-modules/NitroModules.podspec",
+          "https://github.com/margelo/nitro/pull/537",
+          "https://github.com/margelo/nitro/pull/1483"
+        ],
+        "runtimeTested": false
+      }
     }
   ],
   "replacementSelection": {
@@ -628,121 +767,321 @@
       "name": "expo-constants",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-constants",
       "macos": "working",
-      "windows": "untested",
+      "windows": "unsupported",
       "monthlyDownloads": 35787647,
-      "statusNote": "Listed as working on macOS in the RNL presentation, November 14, 2025; Windows not established by that source."
+      "statusNote": "macOS pod target and native Constants implementation through Expo Modules Core. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "57.0.19",
+        "releaseRef": "7687b07947a5c866adeb11abbceae72403ccb188",
+        "evidence": [
+          "https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-constants/ios/EXConstants.podspec",
+          "https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-constants/expo-module.config.json",
+          "https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-constants/ios/ConstantsModule.swift"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "expo-file-system",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-file-system",
-      "macos": "working",
-      "windows": "untested",
+      "macos": "partial",
+      "windows": "unsupported",
       "monthlyDownloads": 34782427,
-      "statusNote": "Listed as working on macOS in the RNL presentation, November 14, 2025; Windows not established by that source."
+      "statusNote": "File operations have a macOS target; the native file/directory pickers reject FeatureNotAvailableOnPlatformException outside iOS. Core filesystem support remains supported; this is an API coverage limitation. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "57.0.7",
+        "releaseRef": "9e5319c0f821a27b7924841903abae50e2b41790",
+        "evidence": [
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-file-system/ios/ExpoFileSystem.podspec",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-file-system/expo-module.config.json",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-file-system/ios/FileSystemModule.swift"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "expo-asset",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-asset",
       "macos": "working",
-      "windows": "untested",
+      "windows": "unsupported",
       "monthlyDownloads": 32531594,
-      "statusNote": "Listed as working on macOS in the RNL presentation, November 14, 2025; Windows not established by that source."
+      "statusNote": "macOS target and native asset downloading implementation through Expo Modules Core. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "57.0.18",
+        "releaseRef": "7687b07947a5c866adeb11abbceae72403ccb188",
+        "evidence": [
+          "https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-asset/ios/ExpoAsset.podspec",
+          "https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-asset/expo-module.config.json",
+          "https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-asset/ios/AssetModule.swift"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "expo-keep-awake",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-keep-awake",
-      "macos": "working",
-      "windows": "untested",
+      "macos": "unsupported",
+      "windows": "unsupported",
       "monthlyDownloads": 30471274,
-      "statusNote": "Listed as working on macOS in the RNL presentation, November 14, 2025; Windows not established by that source."
+      "statusNote": "macOS is declared in the podspec, but isActivated returns false and setActivated only acts on iOS/tvOS. It compiles without implementing its core behavior on macOS. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "57.0.2",
+        "releaseRef": "9e5319c0f821a27b7924841903abae50e2b41790",
+        "evidence": [
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-keep-awake/ios/ExpoKeepAwake.podspec",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-keep-awake/expo-module.config.json",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-keep-awake/ios/KeepAwakeModule.swift"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "expo-font",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-font",
-      "macos": "working",
-      "windows": "untested",
+      "macos": "partial",
+      "windows": "unsupported",
       "monthlyDownloads": 30314014,
-      "statusNote": "Listed as working on macOS in the RNL presentation, November 14, 2025; Windows not established by that source."
+      "statusNote": "macOS font loading is implemented, but renderToImageAsync is excluded with #if !os(macOS). Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "57.0.4",
+        "releaseRef": "9e5319c0f821a27b7924841903abae50e2b41790",
+        "evidence": [
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-font/ios/ExpoFont.podspec",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-font/expo-module.config.json",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-font/ios/FontUtilsModule.swift"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "expo-linking",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-linking",
       "macos": "working",
-      "windows": "untested",
+      "windows": "unsupported",
       "monthlyDownloads": 22339293,
-      "statusNote": "Listed as working on macOS in the RNL presentation, November 14, 2025; Windows not established by that source."
+      "statusNote": "macOS pod target and Expo Linking module. It imports requireNativeModule(ExpoLinking), so JS delegation to RN Linking does not make the entire package Windows-compatible. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "57.0.10",
+        "releaseRef": "9e5319c0f821a27b7924841903abae50e2b41790",
+        "evidence": [
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-linking/ios/ExpoLinking.podspec",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-linking/expo-module.config.json",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-linking/ios/ExpoLinkingModule.swift",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-linking/src/ExpoLinking.ts"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "expo-secure-store",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-secure-store",
-      "macos": "untested",
-      "windows": "untested",
-      "monthlyDownloads": 20844456
+      "macos": "unsupported",
+      "windows": "unsupported",
+      "monthlyDownloads": 20844456,
+      "statusNote": "Published podspec omits macOS; iOS/visionOS implementation is not a macOS module. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "57.0.4",
+        "releaseRef": "9e5319c0f821a27b7924841903abae50e2b41790",
+        "evidence": [
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-secure-store/ios/ExpoSecureStore.podspec",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-secure-store/expo-module.config.json",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-secure-store/ios/SecureStoreModule.swift"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "expo-web-browser",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-web-browser",
       "macos": "working",
-      "windows": "untested",
+      "windows": "unsupported",
       "monthlyDownloads": 18764052,
-      "statusNote": "Listed as working on macOS in the RNL presentation, November 14, 2025; Windows not established by that source."
+      "statusNote": "Explicit macOS NSWindow/WKWebView implementation and macOS authentication session path. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "57.0.3",
+        "releaseRef": "9e5319c0f821a27b7924841903abae50e2b41790",
+        "evidence": [
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-web-browser/ios/ExpoWebBrowser.podspec",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-web-browser/expo-module.config.json",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-web-browser/ios/WebBrowserSession.swift"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "expo-application",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-application",
-      "macos": "untested",
-      "windows": "untested",
-      "monthlyDownloads": 17815881
+      "macos": "unsupported",
+      "windows": "unsupported",
+      "monthlyDownloads": 17815881,
+      "statusNote": "Published EXApplication podspec omits macOS; native implementation is mobile-oriented. Main renamed the podspec to ExpoApplication; that is not the audited published file. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "57.0.3",
+        "releaseRef": "9e5319c0f821a27b7924841903abae50e2b41790",
+        "evidence": [
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-application/ios/EXApplication.podspec",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-application/expo-module.config.json",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-application/ios/ApplicationModule.swift"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "expo-symbols",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-symbols",
-      "macos": "untested",
-      "windows": "untested",
-      "monthlyDownloads": 17437092
+      "macos": "working",
+      "windows": "unsupported",
+      "monthlyDownloads": 17437092,
+      "statusNote": "Published macOS target and explicit NSImage/NSFont symbol rendering branch; ExpoView is supplied by Expo Modules Core. Symbol effects retain OS-version requirements. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "57.0.3",
+        "releaseRef": "9e5319c0f821a27b7924841903abae50e2b41790",
+        "evidence": [
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-symbols/ios/ExpoSymbols.podspec",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-symbols/expo-module.config.json",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-symbols/ios/SymbolView.swift"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "expo-notifications",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-notifications",
-      "macos": "untested",
-      "windows": "untested",
-      "monthlyDownloads": 16371548
+      "macos": "unsupported",
+      "windows": "unsupported",
+      "monthlyDownloads": 16371548,
+      "statusNote": "Published podspec omits macOS; no upstream RN Windows native implementation. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "57.0.20",
+        "releaseRef": "7687b07947a5c866adeb11abbceae72403ccb188",
+        "evidence": [
+          "https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-notifications/ios/ExpoNotifications.podspec",
+          "https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-notifications/expo-module.config.json"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "expo-image",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-image",
-      "macos": "untested",
-      "windows": "untested",
-      "monthlyDownloads": 15595012
+      "macos": "unsupported",
+      "windows": "unsupported",
+      "monthlyDownloads": 15595012,
+      "statusNote": "Published podspec omits macOS; iOS UIKit image view does not establish RN-macOS support. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "57.0.5",
+        "releaseRef": "9e5319c0f821a27b7924841903abae50e2b41790",
+        "evidence": [
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-image/ios/ExpoImage.podspec",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-image/expo-module.config.json",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-image/ios/ImageModule.swift"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "expo-glass-effect",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-glass-effect",
-      "macos": "untested",
-      "windows": "untested",
-      "monthlyDownloads": 15387478
+      "macos": "unsupported",
+      "windows": "unsupported",
+      "monthlyDownloads": 15387478,
+      "statusNote": "Published podspec targets iOS/tvOS, not macOS. iOS Liquid Glass is not evidence of a macOS Expo module. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "57.0.3",
+        "releaseRef": "9e5319c0f821a27b7924841903abae50e2b41790",
+        "evidence": [
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-glass-effect/ios/ExpoGlassEffect.podspec",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-glass-effect/expo-module.config.json",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-glass-effect/ios/GlassEffectModule.swift"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "expo-crypto",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-crypto",
       "macos": "working",
-      "windows": "untested",
+      "windows": "unsupported",
       "monthlyDownloads": 14196052,
-      "statusNote": "Listed as working on macOS in the RNL presentation, November 14, 2025; Windows not established by that source."
+      "statusNote": "macOS target and platform-independent Apple crypto implementation through Expo Modules Core. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "57.0.3",
+        "releaseRef": "9e5319c0f821a27b7924841903abae50e2b41790",
+        "evidence": [
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-crypto/ios/ExpoCrypto.podspec",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-crypto/expo-module.config.json",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-crypto/ios/CryptoModule.swift"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "expo-image-picker",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-image-picker",
-      "macos": "untested",
-      "windows": "untested",
-      "monthlyDownloads": 13701891
+      "macos": "unsupported",
+      "windows": "unsupported",
+      "monthlyDownloads": 13701891,
+      "statusNote": "Published podspec omits macOS; no macOS picker integration. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "57.0.19",
+        "releaseRef": "7687b07947a5c866adeb11abbceae72403ccb188",
+        "evidence": [
+          "https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-image-picker/ios/ExpoImagePicker.podspec",
+          "https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-image-picker/expo-module.config.json",
+          "https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-image-picker/ios/ImagePickerModule.swift"
+        ],
+        "runtimeTested": false
+      }
     },
     {
       "name": "expo-device",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-device",
-      "macos": "untested",
-      "windows": "untested",
-      "monthlyDownloads": 11775708
+      "macos": "unsupported",
+      "windows": "unsupported",
+      "monthlyDownloads": 11775708,
+      "statusNote": "Published podspec omits macOS; device code does not supply a macOS target. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-22",
+        "architecture": "new",
+        "npmLatest": "57.0.2",
+        "releaseRef": "9e5319c0f821a27b7924841903abae50e2b41790",
+        "evidence": [
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-device/ios/ExpoDevice.podspec",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-device/expo-module.config.json",
+          "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-device/ios/DeviceModule.swift"
+        ],
+        "runtimeTested": false
+      }
     }
   ],
   "expoSelection": {
@@ -775,5 +1114,14 @@
       "expo-web-browser"
     ],
     "note": "Speaker notes state these Expo modules already work on Mac. Historical speaker evidence, not a new runtime test or evidence of Windows support."
+  },
+  "architectureAudit": {
+    "checkedAt": "2026-09-22",
+    "scope": "Onstage community and expoFeatured rows only. Source audit for New Architecture, not runtime certification. Supported requires a compatible RN/platform/library version; latest inspected is not always compatible with RN-macOS 0.81. Default npm latest defines WebView Windows status.",
+    "expoCoreEvidence": [
+      "https://github.com/expo/expo/blob/3c760625d530c6b13508a0e8498744b42065056b/packages/expo-modules-core/expo-module.config.json",
+      "https://github.com/expo/expo/blob/3c760625d530c6b13508a0e8498744b42065056b/packages/expo-modules-core/ExpoModulesCore.podspec"
+    ],
+    "historicalData": "Top-level checkedAt/source, expo and ranking arrays retain the September 21 Directory snapshot; their architecture-unspecified flags are not used for this audit."
   }
 }

@@ -1,171 +1,66 @@
-# Desktop module audit
+# Desktop modules — New Architecture audit
 
-Directory metadata snapshot checked September 21, 2026. This is not a runtime validation or a popularity ranking.
+Checked September 22, 2026 against GitHub source, published-package git refs, release notes and open PRs. Covers all 11 Existing Modules and 16 Expo Modules entries. No runtime builds were performed for this audit.
 
-Source: [pinned React Native Directory data](https://github.com/react-native-community/directory/blob/8067cc2b75a9d53925e7cfbff10dc3622e86d94b/react-native-libraries.json).
+## Reading the slides
 
-## Status definitions
+- **Supported:** upstream platform implementation and New Architecture integration evidence; not a guarantee of every API or every RN version.
+- **Partial:** important API gaps or a JS-only subset; read the row notes.
+- **Unsupported:** the default published implementation lacks the desktop functionality/integration.
+- **In progress:** unmerged implementation PR, or the explicitly attributed Jay roadmap for Vision Camera. Not available as a released feature.
+- **?:** platform exists but New Architecture evidence was insufficient. Unknown is not broken.
 
-- Working: Directory explicitly lists support, or the community row includes Jay's explicit support update. Version and architecture compatibility still need testing.
-- Partial: Directory names an alternate implementation, or a separately documented adapter only provides a subset.
-- Unsupported: explicit negative evidence. Absence of a platform flag is **not** negative evidence.
-- In progress: implementation work reported by Jay; not a claim of completed support.
-- `?`: desktop support is unlisted in this source; this audit has not tested it. It may work.
+A package having a macOS podspec, a Windows folder, or an `apple` config is not sufficient by itself. Mac Catalyst and building Android on a Windows host do not count as RN desktop. RN legacy-module interop is distinct from a TurboModule implementation.
 
-## Onstage Expo selection
+Versions below are the npm `latest` versions inspected, not a single tested dependency matrix. In particular Gesture Handler 3 requires RN >=0.82, and Reanimated/Worklets have RN-minor compatibility requirements; use compatible releases for RN-macOS 0.81. This deck currently uses Reanimated 4.3.4 and Worklets 0.8.3 (patched).
 
-The Expo Modules slide follows Existing Modules and shows 16 packages on one page. Selected by monthly npm downloads after filtering out mobile-only UI, mobile splash screens, build/dev tooling, the umbrella package and internal infrastructure. This is a curated desktop-relevant subset, not the unfiltered Expo top 16. The full audit remains below.
+## Existing Modules
 
-[Download ranking source](https://reactnative.directory/api/libraries?order=downloads&limit=100&skipTools=true).
+| Library | npm latest inspected | macOS | Windows | Evidence and qualification |
+| --- | --- | --- | --- | --- |
+| react-native-reanimated | 4.7.0 | Supported | Unsupported | macOS pod target and New-Architecture-only implementation; use a Reanimated/RN-macOS compatible version pair (this deck uses 4.3.4 / RN-macOS 0.81.7). Latest npm is not a recommendation for RN-macOS 0.81. Windows native integration is not supported; Windows-hosted Android build CI does not establish RN Windows support. [Source 1](https://github.com/software-mansion/react-native-reanimated/blob/4.7.0/packages/react-native-reanimated/RNReanimated.podspec) [Source 2](https://github.com/software-mansion/react-native-reanimated/blob/4.7.0/README.md) [Source 3](https://github.com/software-mansion/react-native-reanimated/discussions/6386) |
+| react-native-gesture-handler | 3.3.0 | Supported | Unsupported | macOS Fabric example explicitly enables the New Architecture. Use a matching version: Gesture Handler 3 requires RN >=0.82; the 2.x line is needed for RN-macOS 0.81. Windows module is a no-op shim, not gesture support. [Source 1](https://github.com/software-mansion/react-native-gesture-handler/blob/v3.3.0/packages/react-native-gesture-handler/RNGestureHandler.podspec) [Source 2](https://github.com/software-mansion/react-native-gesture-handler/blob/v3.3.0/packages/react-native-gesture-handler/src/RNGestureHandlerModule.windows.ts) [Source 3](https://github.com/software-mansion/react-native-gesture-handler/blob/e26231e9d89ec25f45ff3961d76c575ec6f04700/apps/macos-example/macos/Podfile) |
+| react-native-svg | 15.15.5 | Supported | Partial | macOS has a Fabric example and platform source. Windows Fabric renders basic geometry but explicitly registers unsupported components for text/TSpan, masks, patterns, markers, symbols, foreignObject and filters. [Source 1](https://github.com/software-mansion/react-native-svg/blob/v15.15.5/RNSVG.podspec) [Source 2](https://github.com/software-mansion/react-native-svg/blob/v15.15.5/windows/RNSVG/ReactPackageProvider.cpp) [Source 3](https://github.com/software-mansion/react-native-svg/tree/4948f3b8f24af2c052671fd09ff655848f093b13/apps/fabric-macos-example) |
+| react-native-webview | 14.0.1 | Supported | Unsupported | Default npm latest 14.0.1 supports macOS Fabric but not Windows Fabric. Windows Fabric landed in v15; v16 also exists, but is not npm latest. v16 has an open blank-URL-source report (#3990). The Windows cross is for the default release, not a claim that no Fabric implementation exists. [Source 1](https://github.com/react-native-webview/react-native-webview/blob/8b0779c961345691179bd033ff263badd3087932/react-native-webview.podspec) [Source 2](https://github.com/react-native-webview/react-native-webview/blob/8b0779c961345691179bd033ff263badd3087932/README.md) [Source 3](https://github.com/react-native-webview/react-native-webview/releases/tag/v15.0.0) [Source 4](https://github.com/react-native-webview/react-native-webview/releases/tag/v16.0.0) [Source 5](https://github.com/react-native-webview/react-native-webview/issues/3990) |
+| react-native-mmkv | 4.3.2 | Supported | Unsupported | Released NitroMmkv podspec targets macOS and uses Nitro. No released Windows package integration; Nitro Windows work is still unmerged. Generic C++ MMKV portability does not establish RN Windows support. [Source 1](https://github.com/margelo/react-native-mmkv/blob/388b4d8b3d34ed6880d38b9c828ae025c730516f/packages/react-native-mmkv/NitroMmkv.podspec) [Source 2](https://github.com/margelo/nitro/pull/537) |
+| @shopify/react-native-skia | 2.12.0 | Supported | Unsupported | Released macOS frameworks and Apple implementation support Fabric. Maintainer confirmed macOS landed; Windows requires a separate backend/integration and is not shipped. [Source 1](https://github.com/Shopify/react-native-skia/blob/v2.12.0/packages/skia/react-native-skia.podspec) [Source 2](https://github.com/Shopify/react-native-skia/blob/v2.12.0/packages/skia/apple/SkiaPictureView.mm) [Source 3](https://github.com/Shopify/react-native-skia/issues/2058) |
+| react-native-vision-camera | 5.2.3 | In progress | In progress | Released podspec targets iOS/visionOS, with Android implementation; no upstream macOS or Windows target found. In progress is Jay's explicitly supplied desktop roadmap, not a verified upstream PR or released support. Mac Catalyst is not RN-macOS. [Source 1](https://github.com/margelo/react-native-vision-camera/blob/a4acf4d4f2083cf639699796d38d687e1f4bd49e/packages/react-native-vision-camera/VisionCamera.podspec) |
+| react-native-worklets | 0.13.0 | Supported | Unsupported | RNWorklets declares macOS, shares the Reanimated New Architecture implementation, and needs an RN-compatible version pair (this deck uses 0.8.3 with a local patch). No released RN Windows platform integration found; do not infer Windows support from portable C++ or Android-on-Windows builds. [Source 1](https://github.com/software-mansion/react-native-reanimated/blob/worklets-0.13.0/packages/react-native-worklets/RNWorklets.podspec) [Source 2](https://github.com/software-mansion/react-native-reanimated/discussions/6386) |
+| @sentry/react-native | 8.27.0 | Supported | Partial | macOS Cocoa target plus New Architecture TurboModule implementation and Fabric-configurable macOS sample. Windows is JS error reporting only with native integrations disabled; no native crashes/replay via this SDK. macOS support does not imply all mobile features such as replay work. [Source 1](https://github.com/getsentry/sentry-react-native/blob/8.27.0/packages/core/RNSentry.podspec) [Source 2](https://github.com/getsentry/sentry-react-native/blob/8.27.0/packages/core/ios/RNSentry.mm) [Source 3](https://github.com/getsentry/sentry-react-native/blob/38f2efbb5e66e0aac1f94fc07f6e1df89a2249ca/samples/react-native-macos/macos/Podfile) [Source 4](https://github.com/getsentry/sentry-react-native/issues/1407) |
+| @react-native-community/netinfo | 12.0.1 | ? | In progress | macOS target exists and New Architecture pod dependencies are enabled, but Apple module is still RCTEventEmitter/legacy interop; this audit did not establish macOS bridgeless runtime support, so ?. Windows project still targets UWP. Open PR #805 migrates it to New Architecture; not released. [Source 1](https://github.com/react-native-netinfo/react-native-netinfo/blob/d9923d2c15137b36bdc763d0d1f9dd118a4a1ca1/react-native-netinfo.podspec) [Source 2](https://github.com/react-native-netinfo/react-native-netinfo/blob/d9923d2c15137b36bdc763d0d1f9dd118a4a1ca1/ios/RNCNetInfo.h) [Source 3](https://github.com/react-native-netinfo/react-native-netinfo/blob/d9923d2c15137b36bdc763d0d1f9dd118a4a1ca1/windows/RNCNetInfoCPP/RNCNetInfoCPP.vcxproj) [Source 4](https://github.com/react-native-netinfo/react-native-netinfo/pull/805) |
+| react-native-nitro-modules | 0.37.1 | Supported | In progress | Released macOS pod target and JSI runtime support. Windows New Architecture implementations are in open, unmerged PRs; not a released Windows checkmark. [Source 1](https://github.com/margelo/nitro/blob/605017127c16f9d502f527097ffed77439d8ce6c/packages/react-native-nitro-modules/NitroModules.podspec) [Source 2](https://github.com/margelo/nitro/pull/537) [Source 3](https://github.com/margelo/nitro/pull/1483) |
 
-| Package | Monthly downloads |
-| --- | ---: |
-| expo-constants | 35,787,647 |
-| expo-file-system | 34,782,427 |
-| expo-asset | 32,531,594 |
-| expo-keep-awake | 30,471,274 |
-| expo-font | 30,314,014 |
-| expo-linking | 22,339,293 |
-| expo-secure-store | 20,844,456 |
-| expo-web-browser | 18,764,052 |
-| expo-application | 17,815,881 |
-| expo-symbols | 17,437,092 |
-| expo-notifications | 16,371,548 |
-| expo-image | 15,595,012 |
-| expo-glass-effect | 15,387,478 |
-| expo-crypto | 14,196,052 |
-| expo-image-picker | 13,701,891 |
-| expo-device | 11,775,708 |
+### WebView version trap
 
-Eight onstage Expo packages are marked working on macOS using the RNL presentation evidence below; FileSystem was also explicitly confirmed by Jay on September 21. The full Directory snapshot below preserves its original metadata. Router is omitted at Jay's request. Image Picker and Device are the next two eligible packages by monthly downloads.
+npm `latest` is **14.0.1**, while GitHub’s latest release is **16.0.0**. Windows Fabric landed in **15.0.0**. Therefore the onstage Windows cross is correct for a default install; saying “WebView has no Windows New Architecture implementation” would be incorrect. v16 has a reported blank URL source bug (#3990); a separate newer-release comparison should describe that implementation as qualified/partial until tested.
 
-## RNL presentation evidence
+## Expo Modules
 
-Source: [State of React Native macOS — React Native London, November 14, 2025](/Users/jay/Documents/code/presentations/rnl-conf-2025/slides/slides.md:1352), “Some Expo Libraries”. Speaker notes state these modules already work on Mac. This is historical speaker evidence, not new runtime testing or Windows evidence.
+These are upstream Expo packages, without Frame adapters or desktop forks. They use Expo Modules Core: [platform registration](https://github.com/expo/expo/blob/3c760625d530c6b13508a0e8498744b42065056b/packages/expo-modules-core/expo-module.config.json) and [macOS/Fabric pod configuration](https://github.com/expo/expo/blob/3c760625d530c6b13508a0e8498744b42065056b/packages/expo-modules-core/ExpoModulesCore.podspec). The upstream native runtime registers Apple/Android, not Windows. Browser fallback files are not Windows native implementations. macOS support presumes a compatible Expo Modules Core/RN-macOS integration (such as the desktop setup discussed in the talk), not stock create-expo-app desktop support.
 
-The current slide uses this evidence for: expo-constants, expo-file-system, expo-asset, expo-keep-awake, expo-font, expo-linking, expo-web-browser, expo-crypto. Windows remains `?`.
+| Library | npm latest inspected | macOS | Windows | Evidence and qualification |
+| --- | --- | --- | --- | --- |
+| expo-constants | 57.0.19 | Supported | Unsupported | macOS pod target and native Constants implementation through Expo Modules Core. [Source 1](https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-constants/ios/EXConstants.podspec) [Source 2](https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-constants/expo-module.config.json) [Source 3](https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-constants/ios/ConstantsModule.swift) |
+| expo-file-system | 57.0.7 | Partial | Unsupported | File operations have a macOS target; the native file/directory pickers reject FeatureNotAvailableOnPlatformException outside iOS. Core filesystem support remains supported; this is an API coverage limitation. [Source 1](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-file-system/ios/ExpoFileSystem.podspec) [Source 2](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-file-system/expo-module.config.json) [Source 3](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-file-system/ios/FileSystemModule.swift) |
+| expo-asset | 57.0.18 | Supported | Unsupported | macOS target and native asset downloading implementation through Expo Modules Core. [Source 1](https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-asset/ios/ExpoAsset.podspec) [Source 2](https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-asset/expo-module.config.json) [Source 3](https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-asset/ios/AssetModule.swift) |
+| expo-keep-awake | 57.0.2 | Unsupported | Unsupported | macOS is declared in the podspec, but isActivated returns false and setActivated only acts on iOS/tvOS. It compiles without implementing its core behavior on macOS. [Source 1](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-keep-awake/ios/ExpoKeepAwake.podspec) [Source 2](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-keep-awake/expo-module.config.json) [Source 3](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-keep-awake/ios/KeepAwakeModule.swift) |
+| expo-font | 57.0.4 | Partial | Unsupported | macOS font loading is implemented, but renderToImageAsync is excluded with #if !os(macOS). [Source 1](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-font/ios/ExpoFont.podspec) [Source 2](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-font/expo-module.config.json) [Source 3](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-font/ios/FontUtilsModule.swift) |
+| expo-linking | 57.0.10 | Supported | Unsupported | macOS pod target and Expo Linking module. It imports requireNativeModule(ExpoLinking), so JS delegation to RN Linking does not make the entire package Windows-compatible. [Source 1](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-linking/ios/ExpoLinking.podspec) [Source 2](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-linking/expo-module.config.json) [Source 3](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-linking/ios/ExpoLinkingModule.swift) [Source 4](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-linking/src/ExpoLinking.ts) |
+| expo-secure-store | 57.0.4 | Unsupported | Unsupported | Published podspec omits macOS; iOS/visionOS implementation is not a macOS module. [Source 1](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-secure-store/ios/ExpoSecureStore.podspec) [Source 2](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-secure-store/expo-module.config.json) [Source 3](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-secure-store/ios/SecureStoreModule.swift) |
+| expo-web-browser | 57.0.3 | Supported | Unsupported | Explicit macOS NSWindow/WKWebView implementation and macOS authentication session path. [Source 1](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-web-browser/ios/ExpoWebBrowser.podspec) [Source 2](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-web-browser/expo-module.config.json) [Source 3](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-web-browser/ios/WebBrowserSession.swift) |
+| expo-application | 57.0.3 | Unsupported | Unsupported | Published EXApplication podspec omits macOS; native implementation is mobile-oriented. Main renamed the podspec to ExpoApplication; that is not the audited published file. [Source 1](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-application/ios/EXApplication.podspec) [Source 2](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-application/expo-module.config.json) [Source 3](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-application/ios/ApplicationModule.swift) |
+| expo-symbols | 57.0.3 | Supported | Unsupported | Published macOS target and explicit NSImage/NSFont symbol rendering branch; ExpoView is supplied by Expo Modules Core. Symbol effects retain OS-version requirements. [Source 1](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-symbols/ios/ExpoSymbols.podspec) [Source 2](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-symbols/expo-module.config.json) [Source 3](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-symbols/ios/SymbolView.swift) |
+| expo-notifications | 57.0.20 | Unsupported | Unsupported | Published podspec omits macOS; no upstream RN Windows native implementation. [Source 1](https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-notifications/ios/ExpoNotifications.podspec) [Source 2](https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-notifications/expo-module.config.json) |
+| expo-image | 57.0.5 | Unsupported | Unsupported | Published podspec omits macOS; iOS UIKit image view does not establish RN-macOS support. [Source 1](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-image/ios/ExpoImage.podspec) [Source 2](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-image/expo-module.config.json) [Source 3](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-image/ios/ImageModule.swift) |
+| expo-glass-effect | 57.0.3 | Unsupported | Unsupported | Published podspec targets iOS/tvOS, not macOS. iOS Liquid Glass is not evidence of a macOS Expo module. [Source 1](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-glass-effect/ios/ExpoGlassEffect.podspec) [Source 2](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-glass-effect/expo-module.config.json) [Source 3](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-glass-effect/ios/GlassEffectModule.swift) |
+| expo-crypto | 57.0.3 | Supported | Unsupported | macOS target and platform-independent Apple crypto implementation through Expo Modules Core. [Source 1](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-crypto/ios/ExpoCrypto.podspec) [Source 2](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-crypto/expo-module.config.json) [Source 3](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-crypto/ios/CryptoModule.swift) |
+| expo-image-picker | 57.0.19 | Unsupported | Unsupported | Published podspec omits macOS; no macOS picker integration. [Source 1](https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-image-picker/ios/ExpoImagePicker.podspec) [Source 2](https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-image-picker/expo-module.config.json) [Source 3](https://github.com/expo/expo/blob/7687b07947a5c866adeb11abbceae72403ccb188/packages/expo-image-picker/ios/ImagePickerModule.swift) |
+| expo-device | 57.0.2 | Unsupported | Unsupported | Published podspec omits macOS; device code does not supply a macOS target. [Source 1](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-device/ios/ExpoDevice.podspec) [Source 2](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-device/expo-module.config.json) [Source 3](https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-device/ios/DeviceModule.swift) |
 
-The original list also includes: @expo/log-box, expo-eas-client, expo-local-authentication, expo-manifests, expo-mesh-gradient, expo-modules-core, expo-sqlite, expo-updates. Those remain outside the curated onstage list.
+## Historical evidence
 
-## All Expo entries in Directory
+The September 21 Directory snapshot and popularity counts remain in `rnconnection-assets/module-compatibility.json`. The `expo` array is historical, architecture-unspecified metadata; the slides use only `community` and `expoFeatured`, now carrying this audit. Previous RNL speaker notes and Jay’s reports informed the old table but do not override current implementation evidence. Vision Camera’s In progress entries specifically preserve Jay’s roadmap; no public desktop implementation PR was established in this review.
 
-This includes SDK and tooling entries present in Directory, not an assertion that Directory contains every Expo package. Upstream package status is kept separate from Frame adapters.
+## Follow-up verification
 
-| Package | macOS | Windows |
-| --- | --- | --- |
-| [@expo/app-integrity](https://github.com/expo/expo/tree/main/packages/expo-app-integrity) | ? | ? |
-| [@expo/dom-webview](https://github.com/expo/expo/tree/main/packages/%40expo/dom-webview) | ? | ? |
-| [@expo/fingerprint](https://github.com/expo/expo/tree/main/packages/@expo/fingerprint) | ? | ? |
-| [@expo/html-elements](https://github.com/expo/expo/tree/main/packages/html-elements) | ? | ? |
-| [@expo/metro-runtime](https://github.com/expo/expo/tree/main/packages/@expo/metro-runtime) | working | ? |
-| [@expo/router-server](https://github.com/expo/expo/tree/main/packages/%40expo/router-server) | ? | ? |
-| [expo](https://github.com/expo/expo/tree/main/packages/expo) | ? | ? |
-| [expo-age-range](https://github.com/expo/expo/tree/main/packages/expo-age-range) | ? | ? |
-| [expo-apple-authentication](https://github.com/expo/expo/tree/main/packages/expo-apple-authentication) | ? | ? |
-| [expo-application](https://github.com/expo/expo/tree/main/packages/expo-application) | ? | ? |
-| [expo-asset](https://github.com/expo/expo/tree/main/packages/expo-asset) | ? | ? |
-| [expo-audio](https://github.com/expo/expo/tree/main/packages/expo-audio) | ? | ? |
-| [expo-auth-session](https://github.com/expo/expo/tree/main/packages/expo-auth-session) | ? | ? |
-| [expo-background-fetch](https://github.com/expo/expo/tree/main/packages/expo-background-fetch) | ? | ? |
-| [expo-background-task](https://github.com/expo/expo/tree/main/packages/expo-background-task) | ? | ? |
-| [expo-battery](https://github.com/expo/expo/tree/main/packages/expo-battery) | ? | ? |
-| [expo-blur](https://github.com/expo/expo/tree/main/packages/expo-blur) | ? | ? |
-| [expo-brightness](https://github.com/expo/expo/tree/main/packages/expo-brightness) | ? | ? |
-| [expo-build-properties](https://github.com/expo/expo/tree/main/packages/expo-build-properties) | ? | ? |
-| [expo-calendar](https://github.com/expo/expo/tree/main/packages/expo-calendar) | ? | ? |
-| [expo-camera](https://github.com/expo/expo/tree/main/packages/expo-camera) | ? | ? |
-| [expo-cellular](https://github.com/expo/expo/tree/main/packages/expo-cellular) | ? | ? |
-| [expo-checkbox](https://github.com/expo/expo/tree/main/packages/expo-checkbox) | ? | ? |
-| [expo-clipboard](https://github.com/expo/expo/tree/main/packages/expo-clipboard) | ? | ? |
-| [expo-constants](https://github.com/expo/expo/tree/main/packages/expo-constants) | ? | ? |
-| [expo-contacts](https://github.com/expo/expo/tree/main/packages/expo-contacts) | ? | ? |
-| [expo-crypto](https://github.com/expo/expo/tree/main/packages/expo-crypto) | ? | ? |
-| [expo-dev-client](https://github.com/expo/expo/tree/main/packages/expo-dev-client) | ? | ? |
-| [expo-device](https://github.com/expo/expo/tree/main/packages/expo-device) | ? | ? |
-| [expo-document-picker](https://github.com/expo/expo/tree/main/packages/expo-document-picker) | ? | ? |
-| [expo-file-system](https://github.com/expo/expo/tree/main/packages/expo-file-system) | ? | ? |
-| [expo-font](https://github.com/expo/expo/tree/main/packages/expo-font) | ? | ? |
-| [expo-gl](https://github.com/expo/expo/tree/main/packages/expo-gl) | ? | ? |
-| [expo-glass-effect](https://github.com/expo/expo/tree/main/packages/expo-glass-effect) | ? | ? |
-| [expo-haptics](https://github.com/expo/expo/tree/main/packages/expo-haptics) | ? | ? |
-| [expo-image](https://github.com/expo/expo/tree/main/packages/expo-image) | ? | ? |
-| [expo-image-manipulator](https://github.com/expo/expo/tree/main/packages/expo-image-manipulator) | ? | ? |
-| [expo-image-picker](https://github.com/expo/expo/tree/main/packages/expo-image-picker) | ? | ? |
-| [expo-insights](https://github.com/expo/expo/tree/main/packages/expo-insights) | ? | ? |
-| [expo-intent-launcher](https://github.com/expo/expo/tree/main/packages/expo-intent-launcher) | ? | ? |
-| [expo-json-utils](https://github.com/expo/expo/tree/main/packages/expo-json-utils) | ? | ? |
-| [expo-keep-awake](https://github.com/expo/expo/tree/main/packages/expo-keep-awake) | ? | ? |
-| [expo-linear-gradient](https://github.com/expo/expo/tree/main/packages/expo-linear-gradient) | ? | ? |
-| [expo-linking](https://github.com/expo/expo/tree/main/packages/expo-linking) | ? | ? |
-| [expo-local-authentication](https://github.com/expo/expo/tree/main/packages/expo-local-authentication) | ? | ? |
-| [expo-localization](https://github.com/expo/expo/tree/main/packages/expo-localization) | ? | ? |
-| [expo-location](https://github.com/expo/expo/tree/main/packages/expo-location) | ? | ? |
-| [expo-mail-composer](https://github.com/expo/expo/tree/main/packages/expo-mail-composer) | ? | ? |
-| [expo-manifests](https://github.com/expo/expo/tree/main/packages/expo-manifests) | ? | ? |
-| [expo-maps](https://github.com/expo/expo/tree/main/packages/expo-maps) | ? | ? |
-| [expo-media-library](https://github.com/expo/expo/tree/main/packages/expo-media-library) | ? | ? |
-| [expo-mesh-gradient](https://github.com/expo/expo/tree/main/packages/expo-mesh-gradient) | ? | ? |
-| [expo-modules-jsi](https://github.com/expo/expo/tree/main/packages/expo-modules-jsi) | ? | ? |
-| [expo-navigation-bar](https://github.com/expo/expo/tree/main/packages/expo-navigation-bar) | ? | ? |
-| [expo-network](https://github.com/expo/expo/tree/main/packages/expo-network) | ? | ? |
-| [expo-notifications](https://github.com/expo/expo/tree/main/packages/expo-notifications) | ? | ? |
-| [expo-print](https://github.com/expo/expo/tree/main/packages/expo-print) | ? | ? |
-| [expo-router](https://github.com/expo/expo/tree/main/packages/expo-router) | ? | ? |
-| [expo-screen-capture](https://github.com/expo/expo/tree/main/packages/expo-screen-capture) | ? | ? |
-| [expo-screen-orientation](https://github.com/expo/expo/tree/main/packages/expo-screen-orientation) | ? | ? |
-| [expo-secure-store](https://github.com/expo/expo/tree/main/packages/expo-secure-store) | ? | ? |
-| [expo-sensors](https://github.com/expo/expo/tree/main/packages/expo-sensors) | ? | ? |
-| [expo-sharing](https://github.com/expo/expo/tree/main/packages/expo-sharing) | ? | ? |
-| [expo-sms](https://github.com/expo/expo/tree/main/packages/expo-sms) | ? | ? |
-| [expo-speech](https://github.com/expo/expo/tree/main/packages/expo-speech) | ? | ? |
-| [expo-splash-screen](https://github.com/expo/expo/tree/main/packages/expo-splash-screen) | ? | ? |
-| [expo-sqlite](https://github.com/expo/expo/tree/main/packages/expo-sqlite) | ? | ? |
-| [expo-status-bar](https://github.com/expo/expo/tree/main/packages/expo-status-bar) | ? | ? |
-| [expo-store-review](https://github.com/expo/expo/tree/main/packages/expo-store-review) | ? | ? |
-| [expo-structured-headers](https://github.com/expo/expo/tree/main/packages/expo-structured-headers) | ? | ? |
-| [expo-symbols](https://github.com/expo/expo/tree/main/packages/expo-symbols) | ? | ? |
-| [expo-system-ui](https://github.com/expo/expo/tree/main/packages/expo-system-ui) | ? | ? |
-| [expo-task-manager](https://github.com/expo/expo/tree/main/packages/expo-task-manager) | ? | ? |
-| [expo-tracking-transparency](https://github.com/expo/expo/tree/main/packages/expo-tracking-transparency) | ? | ? |
-| [expo-updates](https://github.com/expo/expo/tree/main/packages/expo-updates) | ? | ? |
-| [expo-video](https://github.com/expo/expo/tree/main/packages/expo-video) | ? | ? |
-| [expo-video-thumbnails](https://github.com/expo/expo/tree/main/packages/expo-video-thumbnails) | ? | ? |
-| [expo-web-browser](https://github.com/expo/expo/tree/main/packages/expo-web-browser) | ? | ? |
-| [expo-widgets](https://github.com/expo/expo/tree/main/packages/expo-widgets) | ? | ? |
-| [jest-expo](https://github.com/expo/expo/tree/main/packages/jest-expo) | ? | ? |
-| [patch-project](https://github.com/expo/expo/tree/main/packages/patch-project) | ? | ? |
-
-## Representative community libraries
-
-Eleven selected libraries. Directory metadata is supplemented by Jay's September 21 updates: MMKV, Skia and Nitro Modules work on macOS; Vision Camera is in progress on both platforms. These overrides are recorded per row in the JSON snapshot. Unknown status is displayed as `?`.
-
-| Package | macOS | Windows |
-| --- | --- | --- |
-| [react-native-reanimated](https://github.com/software-mansion/react-native-reanimated/tree/main/packages/react-native-reanimated) | working | ? |
-| [react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler/tree/main/packages/react-native-gesture-handler) | working | ? |
-| [react-native-svg](https://github.com/software-mansion/react-native-svg) | working | working |
-| [react-native-webview](https://github.com/react-native-webview/react-native-webview) | working | working |
-| [react-native-mmkv](https://github.com/margelo/react-native-mmkv/tree/main/packages/react-native-mmkv) | working | ? |
-| [@shopify/react-native-skia](https://github.com/Shopify/react-native-skia/tree/main/packages/skia) | working | ? |
-| [react-native-vision-camera](https://github.com/margelo/react-native-vision-camera/tree/main/packages/react-native-vision-camera) | in-progress | in-progress |
-| [react-native-worklets](https://github.com/software-mansion/react-native-reanimated/tree/main/packages/react-native-worklets) | ? | ? |
-| [@sentry/react-native](https://github.com/getsentry/sentry-react-native/tree/main/packages/core) | ? | ? |
-| [@react-native-community/netinfo](https://github.com/react-native-netinfo/react-native-netinfo) | working | working |
-| [react-native-nitro-modules](https://github.com/margelo/nitro/tree/main/packages/react-native-nitro-modules) | working | ? |
-
-## Replacement candidates
-
-[Directory query](https://reactnative.directory/api/libraries?order=downloads&limit=100&hasNativeCode=true&skipTools=true), checked September 21, 2026. Historical candidates used for selection; the current onstage list is above. Counts include dependency installs; they are not counts of apps or developers.
-
-| Package | Monthly downloads |
-| --- | ---: |
-| [@react-navigation/native](https://github.com/react-navigation/react-navigation/tree/main/packages/native) | 24,177,470 |
-| [react-native-worklets](https://github.com/software-mansion/react-native-reanimated/tree/main/packages/react-native-worklets) | 21,905,961 |
-| [@react-native-masked-view/masked-view](https://github.com/callstack/masked-view) | 13,931,892 |
-| [@sentry/react-native](https://github.com/getsentry/sentry-react-native/tree/main/packages/core) | 11,706,184 |
-| [@react-native-community/netinfo](https://github.com/react-native-netinfo/react-native-netinfo) | 10,691,097 |
-| [@react-native-community/datetimepicker](https://github.com/react-native-datetimepicker/datetimepicker) | 8,889,556 |
-| [react-native-get-random-values](https://github.com/LinusU/react-native-get-random-values) | 8,746,684 |
-| [react-native-keyboard-controller](https://github.com/kirillzyusko/react-native-keyboard-controller) | 8,242,628 |
-| [react-native-nitro-modules](https://github.com/margelo/nitro/tree/main/packages/react-native-nitro-modules) | 6,562,646 |
-| [@react-native-firebase/app](https://github.com/invertase/react-native-firebase/tree/main/packages/app) | 5,564,312 |
+Build a small Fabric/bridgeless sample per library with pinned RN-macOS and RN Windows versions, exercise its core API, and record the version tuple. NetInfo macOS needs that check before promotion from ?. Test WebView 15/16 separately from npm latest. Track the Nitro and NetInfo Windows PRs to release. No links or legend have been added to the slide layout.

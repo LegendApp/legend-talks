@@ -1134,13 +1134,17 @@ eyebrow: Story
 <!--
 React Native already has a huge ecosystem. We don't need to start over.
 
-Here are eleven familiar community libraries. This isn't a popularity ranking of the whole table.
+But a desktop checkmark isn't enough. Does it work on the new architecture?
 
-SVG, WebView and NetInfo list both desktop platforms. Reanimated and Gesture Handler list macOS. Nitro Modules, MMKV and Skia also work on macOS. Vision Camera support is in progress on both desktop platforms. The other question marks need investigation, even when we know a patched version can work in this app.
+We checked the actual repos. There is a lot of real macOS support here. Windows needs more work. SVG has a Fabric implementation, but things like text and masks are missing. Gesture Handler's Windows module is a no-op. Nitro and NetInfo have Windows PRs, but they haven't landed.
 
-This is a snapshot of React Native Directory, not a promise that every version and architecture works. Green means Directory lists support or I have confirmed it. The MMKV, Skia, Nitro Modules and Vision Camera statuses include my updates. A question mark means it isn't listed and we haven't tested it here. It doesn't mean broken.
+WebView is a good example of why versions matter. The default npm install is still 14, without Windows Fabric. Versions 15 and 16 added it, but there are still reported problems. So don't read that cross as saying nobody has built it.
 
-We need to test specific versions, record the architecture and platform, and get fixes upstream.
+Green means there is upstream implementation evidence, with a compatible version. It doesn't mean we tested every feature. Sentry on Windows is only JS reporting. NetInfo on Mac still needs a new-architecture runtime check. Vision Camera's in-progress status is the desktop work I told you about, not a released implementation.
+
+That's the work we need: test specific versions, document what works, and get fixes upstream.
+
+Repo audit and pinned sources: MODULE_COMPATIBILITY_AUDIT.md, September 22, 2026.
 -->
 
 ---
@@ -1155,13 +1159,17 @@ eyebrow: Story
 <!--
 And Expo is a big part of that ecosystem too.
 
-These are sixteen popular, desktop-relevant Expo packages, ranked by Directory's monthly npm downloads after filtering out mobile-specific UI, build tooling and internal infrastructure. These are upstream packages, without Frame adapters.
+These are sixteen popular Expo packages. Upstream packages, without Frame adapters.
 
-Eight of these were already on our working macOS list at React Native London: Asset, Constants, Crypto, FileSystem, Font, KeepAwake, Linking and WebBrowser. The Directory doesn't capture all of that, so this table also uses that presentation. This isn't a new runtime validation, and the old list doesn't establish Windows support. The question marks on the other rows don't mean none of them work. We need to test them and document the answer. Expo Desktop gets us started, but individual module support needs its own audit.
+Some already have real macOS implementations. Symbols even has an explicit AppKit implementation. But declaring Mac in a podspec doesn't mean the feature works. KeepAwake declares it, but does nothing on Mac.
 
-The full 81-entry snapshot is still in MODULE_COMPATIBILITY_AUDIT.md. Onstage we're focusing on things you actually want in a desktop app.
+FileSystem works for files, but its picker APIs aren't implemented on Mac. Font loading works, but rendering text to an image is missing. Those are partial, not blanket green checks.
 
-Source snapshot: rnconnection-assets/module-compatibility.json. Source: https://reactnative.directory/
+The Windows column is upstream Expo. Expo Modules Core doesn't ship the Windows native integration these packages need. That's separate from what Expo Desktop or a replacement module can provide.
+
+So we need more than a platform flag. We need to test the actual APIs on the new architecture and document the versions that work.
+
+Source review, not runtime certification. Full details: MODULE_COMPATIBILITY_AUDIT.md, September 22, 2026.
 -->
 
 ---

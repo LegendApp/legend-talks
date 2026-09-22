@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 import snapshot from "./rnconnection-assets/module-compatibility.json";
 
 const statusStyle = {
-  working: { symbol: "●", label: "Working", color: "#72efac" },
+  working: { symbol: "●", label: "Supported", color: "#72efac" },
   partial: { symbol: "◐", label: "Partial", color: "#ffd383" },
   unsupported: { symbol: "×", label: "Unsupported", color: "#ff929f" },
   "in-progress": { symbol: "◌", label: "In progress", color: "#ffd383" },
