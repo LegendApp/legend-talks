@@ -171,7 +171,7 @@ half4 main(float2 p) {
   float3 light=float3(0);
   float alpha=0.0;
   float ending=stepIndex>=2.0 ? 1.0-smoothstep(2.5,3.5,stepTime) : 1.0;
-  if(stepIndex<2.0) {
+  if(stepIndex>=1.0 && stepIndex<2.0) {
     float2 disk=float2(q.x+q.y*0.8,q.y*4.0);
     float r=length(disk);
     float rings=exp(-abs(r-210.0)/2.0)+exp(-abs(r-310.0)/1.1)*0.5;
@@ -280,8 +280,8 @@ export default function WaterTitle({ children, closing = false }: { children?: i
   const showLiquidType = Boolean(titleImage);
   return <>
     <Background priority={1}><View style={{flex:1,backgroundColor:"#050a10"}} /></Background>
-    {/* The title owns the full slide; ignore the surrounding template padding. */}
-    <View style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080 }}>
+    {/* This slide disables template padding and owns its full layout. */}
+    <View style={{ width: 1920, height: 1080 }}>
       <View style={{ flex: 1, opacity: showLiquidType ? 0 : 1 }}>
         <View ref={titleRef} collapsable={false} style={{ flex: 1, paddingHorizontal: 112, paddingVertical: 96, justifyContent: "center" }}>{children}</View>
       </View>
