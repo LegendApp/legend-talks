@@ -1,4 +1,4 @@
-import { appOrder, filmstripLeft, type AppId } from "./NineAppsGeometry";
+import { appOrder, filmstripLeft, filmstripWidth, type AppId } from "./NineAppsGeometry";
 
 export type Detail = "app" | "sidebar" | "composer" | "takeover";
 export type TourStep = { app: AppId; detail: Detail };
@@ -31,10 +31,12 @@ export function renderingGroup(app: AppId) {
 }
 // Normalized screenshot crops. Tune these per capture when the final media arrives.
 export const detailCrops = {
-  sidebar: { x: 0.02, y: 0.02, width: 0.26, height: 0.94 },
+  sidebar: { x: 0.02, y: 0.02, width: 0.26, height: 0.50 },
   composer: { x: 0.30, y: 0.77, width: 0.66, height: 0.21 },
 };
-export const composerRect = { x: filmstripLeft + 1180 * 0.30, y: 260 + 663.75 * 0.77, width: 1180 * 0.66, height: 663.75 * 0.21 };
+const videoHeight = filmstripWidth * 0.5625;
+const videoTop = 555 - filmstripWidth * 0.625 / 2 + filmstripWidth * 0.0625;
+export const composerRect = { x: filmstripLeft + filmstripWidth * 0.30, y: videoTop + videoHeight * 0.77, width: filmstripWidth * 0.66, height: videoHeight * 0.21 };
 // Capture-specific targets: show the upper sidebar at reading size, and center
 // the actual composer rather than the larger placeholder region.
 const reactNativeCrops = {
@@ -45,8 +47,8 @@ export function detailCamera(detail: Detail, app?: AppId) {
   if (detail === "app") return { x: 0, y: 0, scaleX: 1, scaleY: 1 };
   const crops = app === "react-native" ? reactNativeCrops : detailCrops;
   const crop = crops[detail === "sidebar" ? "sidebar" : "composer"];
-  const cx = filmstripLeft + (crop.x + crop.width / 2) * 1180;
-  const cy = 260 + (crop.y + crop.height / 2) * 663.75;
-  const scale = Math.min(3, 1696 / (crop.width * 1180), 780 / (crop.height * 663.75));
+  const cx = filmstripLeft + (crop.x + crop.width / 2) * filmstripWidth;
+  const cy = videoTop + (crop.y + crop.height / 2) * videoHeight;
+  const scale = Math.min(3, 1696 / (crop.width * filmstripWidth), 780 / (crop.height * videoHeight));
   return { x: (960 - cx) * scale, y: (app === "react-native" ? 0 : 60) + (540 - cy) * scale, scaleX: scale, scaleY: scale };
 }

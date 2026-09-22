@@ -8,14 +8,15 @@ import { MovingTitle } from "./MovingTitle";
 type CardLayout = ReturnType<typeof appCardLayout> & { height: number; captionHeight: number };
 
 /** Shared step-controlled carousel; interpolation and exit motion run on the UI thread. */
-export function AppCarousel<T extends string>({ items, position, mode = "filmstrip", renderCard }: {
+export function AppCarousel<T extends string>({ items, position, mode = "filmstrip", cardWidth = 1180, renderCard }: {
   items: readonly T[];
   position: number;
   mode?: SceneMode;
+  cardWidth?: number;
   renderCard: (id: T, layout: CardLayout) => ReactNode;
 }) {
   return <>{items.map((id, index) => {
-    const card = appCardLayout(index, mode);
+    const card = appCardLayout(index, mode, 0, cardWidth);
     const height = card.width * 0.625;
     return <FilmstripMotionView key={id} index={index} count={items.length} enabled={mode === "filmstrip"} position={position}
       style={{ position: "absolute", left: card.x - card.width / 2, top: card.y - height / 2,

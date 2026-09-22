@@ -1,10 +1,10 @@
 import { FocusRegion, SceneMotionView, SharedElement, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, type ReactNode } from "react";
 import { DeckBackground } from "./DeckBackground";
 import { detailCamera, tourStep } from "./NineAppsTour";
 import { MovingTitle } from "./MovingTitle";
 import { Image, Text, View } from "react-native";
-import { appOrder, type AppId, type SceneMode } from "./NineAppsGeometry";
+import { appOrder, filmstripWidth, type AppId, type SceneMode } from "./NineAppsGeometry";
 
 import { WebView } from "react-native-webview";
 // @ts-ignore Deck assets resolve to local file URLs in the deck compiler.
@@ -62,14 +62,15 @@ function FrameworkRecording({ id, playing }: { id: AppId; playing: boolean }) {
   const { page, poster } = recordings[id];
   const videoReadAccess = page.slice(0, page.lastIndexOf("/") + 1);
   const player = useRef<WebView>(null);
-  const syncPlayback = () => player.current?.injectJavaScript(
+  const source = useMemo(() => ({ uri: page }), [page]);
+  const syncPlayback = useCallback(() => player.current?.injectJavaScript(
     `(() => { const video = document.querySelector('video'); if (video) { ${playing ? "video.play().catch(() => {});" : "video.pause();"} } })(); true;`,
-  );
+  ), [playing]);
   // Synchronize an external media player, without replacing it on step changes.
-  useEffect(syncPlayback, [playing]);
+  useEffect(syncPlayback, [syncPlayback]);
   return <>
     <Image source={{ uri: poster }} resizeMode="contain" style={{ width: "100%", height: "100%" }} />
-    <WebView ref={player} source={{ uri: page }} allowingReadAccessToURL={videoReadAccess}
+    <WebView ref={player} source={source} allowingReadAccessToURL={videoReadAccess}
       originWhitelist={["file://*"]} mediaPlaybackRequiresUserAction={false} allowsInlineMediaPlayback
       onLoadEnd={syncPlayback}
       containerStyle={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
@@ -100,19 +101,19 @@ export function NineApps({ mode, children }: { mode: SceneMode; children?: React
       </MovingTitle>
     </SceneMotionView>}
     <SceneMotionView pose={camera} duration={650} style={{ width: 1920, height: 1080 }}>
-    <AppCarousel items={appOrder} position={selected} mode={mode} renderCard={(id, card) => {
+    <AppCarousel cardWidth={filmstripWidth} items={appOrder} position={selected} mode={mode} renderCard={(id, card) => {
       const { captionHeight } = card;
       const uri = recordings[id].poster;
       return (
         <SharedElement id={`nine-app-${id}`} style={{ flex: 1 }}>
           <View style={{ height: captionHeight, minHeight: 24, justifyContent: "center", alignItems: "center", opacity: mode === "hero" ? 0 : 1 }}>
-            <Text style={{ fontSize: Math.max(17, card.width * 0.027), fontWeight: "600", color: "#f1f5f9" }}>{names[id]}</Text>
+            <Text style={{ fontSize: mode === "filmstrip" ? 64 * card.width / filmstripWidth : Math.max(17, card.width * 0.027), fontWeight: "700", color: "#f1f5f9" }}>{names[id]}</Text>
           </View>
           <View style={{ flex: 1, borderRadius: 12, overflow: "hidden", borderWidth: 2,
             borderColor: id === "react-native" ? "#67e8f9" : "#33465e", backgroundColor: "#101e30" }}>
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#14253a" }}>
-              {!isPreview && mode !== "grid" && id === appOrder[selected] ?
-                <FrameworkRecording id={id} playing={phase === "playing"} />
+              {!isPreview && mode !== "grid" ?
+                <FrameworkRecording id={id} playing={phase === "playing" && id === appOrder[selected]} />
               : <Image source={{ uri }} resizeMode="contain" style={{ width: "100%", height: "100%" }} />}
             </View>
           </View>
