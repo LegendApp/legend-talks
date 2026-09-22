@@ -50,16 +50,23 @@ half4 main(float2 p) {
   float t=max(time,0.0);
   if(t>3.2) return half4(0);
   float4 color=float4(0);
-  for(int y=0;y<5;y++) for(int x=0;x<8;x++) {
-    float id=float(y*8+x);
-    float2 home=float2(-577.5+float(x)*165.0,-208.0+float(y)*104.0);
+  // Two independently tumbling triangles per cell; alternate the diagonal.
+  // Keep 40 fragments total, matching the previous shader workload.
+  for(int y=0;y<4;y++) for(int x=0;x<5;x++) for(int shard=0;shard<2;shard++) {
+    float id=float((y*5+x)*2+shard);
+    float side=shard==0 ? -1.0 : 1.0;
+    float diagonal=mod(float(x+y),2.0)<0.5 ? -1.0 : 1.0;
+    float2 offset=float2(side*diagonal*44.0,-side*65.0/3.0);
+    float2 home=float2(-528.0+float(x)*264.0,-195.0+float(y)*130.0)+offset;
     float seed=fract(sin(id*78.23+1.0)*43758.54);
     float2 velocity=float2(home.x*(0.6+seed),-240.0-seed*420.0);
     float2 center=home+velocity*t+float2(0,720.0*t*t);
     float angle=(seed-0.5)*t*11.0;
     float2 q=p-center;
     q=float2(q.x*cos(angle)+q.y*sin(angle),-q.x*sin(angle)+q.y*cos(angle));
-    float d=box(q,float2(82.5,52),0.0);
+    float2 cellPoint=q+offset;
+    float cut=side*dot(cellPoint,normalize(float2(-65.0*diagonal,132.0)));
+    float d=max(box(cellPoint,float2(132,65),0.0),cut);
     float a=mask(d);
     float4 piece=screenshot(q+home)*a;
     float glint=exp(-abs(d)*1.3)*piece.a*(0.5+0.5*sin(t*17.0+id));
