@@ -1,6 +1,6 @@
-import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
-import { useAnimatedShaderUniforms } from "@legend-apps/presentation";
-import { useState } from "react";
+import { Canvas, Fill, Shader, ImageShader, Skia, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
+import { useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
+import { useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
 import { DeckBackground } from "./DeckBackground";
 
@@ -85,13 +85,62 @@ half4 main(float2 p) {
 const waterEffect = Skia.RuntimeEffect.Make(waterTitleShader);
 if (!waterEffect) throw new Error("Could not compile title water effect");
 
+export const liquidTypeShader = `
+uniform shader image;
+uniform float time;
+float pulse(float2 p) {
+  float cell=floor(p.x/64.0)+floor(p.y/128.0)*29.0;
+  float seed=fract(sin(cell*127.1)*43758.5453);
+  return pow(max(0.0,sin(time*0.9+seed*6.28318)),12.0);
+}
+half4 main(float2 p) {
+  float wave=sin(p.x*0.013-time*1.3+p.y*0.006);
+  float amount=smoothstep(0.0,1.8,time);
+  float2 q=p+float2(sin(p.y*0.028+time*0.7)*1.4,wave*2.2)*amount;
+  float flash=pulse(p)*amount;
+  // Tiny local expansion is perceived as a breathing letter, without moving the layout.
+  float2 center=float2((floor(p.x/64.0)+0.5)*64.0,(floor(p.y/128.0)+0.5)*128.0);
+  q=mix(q,center+(q-center)/(1.0+flash*0.025),amount);
+  half4 ink=image.eval(q);
+  float halo=0.0;
+  for(int i=0;i<8;i++) {
+    float angle=float(i)*0.785398;
+    float2 direction=float2(cos(angle),sin(angle));
+    halo+=image.eval(q+direction*4.0).a*0.075;
+    halo+=image.eval(q+direction*9.0).a*0.025;
+  }
+  float sweep=pow(max(0.0,sin(p.x*0.004-p.y*0.009-time*0.7)),18.0)*amount;
+  float glow=halo*(0.10+flash*0.48+sweep*0.15)*(1.0-ink.a);
+  float shade=0.94+0.06*wave*amount;
+  float3 color=ink.rgb*shade+float3(0.94,0.97,1.0)*glow;
+  return half4(color,clamp(ink.a+glow,0.0,1.0));
+}`;
+const typeEffect = Skia.RuntimeEffect.Make(liquidTypeShader);
+if (!typeEffect) throw new Error("Could not compile liquid title typography");
+
 export default function WaterTitle({ children }: { children?: import("react").ReactNode }) {
   const [sources, setSources] = useState({ leftSource: [420, 650], rightSource: [1510, 650] });
   const uniforms = useAnimatedShaderUniforms(sources, 14);
+  const phase = usePresentationValue("playbackPhase");
+  const titleRef = useRef<View>(null);
+  const [titleImage, setTitleImage] = useState<SkImage>();
+  // Capture typography once after layout; only shader uniforms change on frames.
+  useEffect(() => {
+    let cancelled = false;
+    const cancel = snapshotCaptureQueue.enqueue(async () => {
+      const image = await makeImageFromView(titleRef);
+      if (cancelled) { image?.dispose(); return; }
+      if (image) setTitleImage(image);
+    });
+    return () => { cancelled = true; cancel(); };
+  }, [sources]);
+  const showLiquidType = Boolean(titleImage) && (phase === "playing" || phase === "preview");
   return <>
     <DeckBackground />
     <View style={{ width: 1920, height: 1080 }}>
-      <View style={{ flex: 1, paddingHorizontal: 112, paddingVertical: 96, justifyContent: "center" }}>{children}</View>
+      <View style={{ flex: 1, opacity: showLiquidType ? 0 : 1 }}>
+        <View ref={titleRef} collapsable={false} style={{ flex: 1, paddingHorizontal: 112, paddingVertical: 96, justifyContent: "center" }}>{children}</View>
+      </View>
       {/* Native text metrics anchor the water to the same two-line heading. */}
       <Text accessible={false} pointerEvents="none" onTextLayout={event => {
         const lines = event.nativeEvent.lines;
@@ -106,6 +155,9 @@ export default function WaterTitle({ children }: { children?: import("react").Re
         {'React Native is the best way\nto build desktop apps'}
       </Text>
       <Canvas pointerEvents="none" style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080 }}>
+        {showLiquidType && titleImage && <Fill><Shader source={typeEffect!} uniforms={uniforms}>
+          <ImageShader image={titleImage} fit="fill" rect={{ x: 0, y: 0, width: 1920, height: 1080 }} />
+        </Shader></Fill>}
         <Fill><Shader source={waterEffect!} uniforms={uniforms} /></Fill>
       </Canvas>
     </View>
