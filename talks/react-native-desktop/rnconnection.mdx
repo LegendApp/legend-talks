@@ -1091,7 +1091,7 @@ We checked the actual repos. There is a lot of real macOS support here. Windows 
 
 WebView is a good example of why versions matter. The default npm install is still 14, without Windows Fabric. Versions 15 and 16 added it, but there are still reported problems. So don't read that cross as saying nobody has built it.
 
-Green means there is upstream implementation evidence, with a compatible version. It doesn't mean we tested every feature. Sentry on Windows is only JS reporting. NetInfo on Mac still needs a new-architecture runtime check. Vision Camera's in-progress status is the desktop work I told you about, not a released implementation.
+Green means there is upstream implementation evidence, with a compatible version. It doesn't mean we tested every feature. Sentry on Windows is only JS reporting. NetInfo supports the new architecture on Mac; its Windows migration is still in a PR. Vision Camera's in-progress status is the desktop work I told you about, not a released implementation.
 
 That's the work we need: test specific versions, document what works, and get fixes upstream.
 

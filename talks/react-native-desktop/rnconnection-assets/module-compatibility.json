@@ -663,9 +663,9 @@
     {
       "name": "@react-native-community/netinfo",
       "source": "https://github.com/react-native-netinfo/react-native-netinfo",
-      "macos": "untested",
+      "macos": "working",
       "windows": "in-progress",
-      "statusNote": "macOS target exists and New Architecture pod dependencies are enabled, but Apple module is still RCTEventEmitter/legacy interop; this audit did not establish macOS bridgeless runtime support, so ?. Windows project still targets UWP. Open PR #805 migrates it to New Architecture; not released.",
+      "statusNote": "macOS New Architecture supported in released 12.0.1: shared Apple RNCNetInfo.mm implements NativeRNCNetInfoSpec and getTurboModule under RCT_NEW_ARCH_ENABLED, with explicit TARGET_OS_OSX branches; the podspec targets macOS and installs New Architecture dependencies. Earlier audit incorrectly inferred legacy-only integration from the header. Windows remains in progress: UWP project, unmerged PR #805.",
       "architectureAudit": {
         "checkedAt": "2026-09-22",
         "architecture": "new",
@@ -675,7 +675,9 @@
           "https://github.com/react-native-netinfo/react-native-netinfo/blob/d9923d2c15137b36bdc763d0d1f9dd118a4a1ca1/react-native-netinfo.podspec",
           "https://github.com/react-native-netinfo/react-native-netinfo/blob/d9923d2c15137b36bdc763d0d1f9dd118a4a1ca1/ios/RNCNetInfo.h",
           "https://github.com/react-native-netinfo/react-native-netinfo/blob/d9923d2c15137b36bdc763d0d1f9dd118a4a1ca1/windows/RNCNetInfoCPP/RNCNetInfoCPP.vcxproj",
-          "https://github.com/react-native-netinfo/react-native-netinfo/pull/805"
+          "https://github.com/react-native-netinfo/react-native-netinfo/pull/805",
+          "https://github.com/react-native-netinfo/react-native-netinfo/blob/v12.0.1/ios/RNCNetInfo.mm",
+          "https://github.com/react-native-netinfo/react-native-netinfo/blob/v12.0.1/src/internal/nativeModule.ts"
         ],
         "runtimeTested": false
       }
