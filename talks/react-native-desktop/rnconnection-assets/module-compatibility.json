@@ -786,10 +786,10 @@
     {
       "name": "expo-file-system",
       "source": "https://github.com/expo/expo/tree/main/packages/expo-file-system",
-      "macos": "partial",
+      "macos": "working",
       "windows": "unsupported",
       "monthlyDownloads": 34782427,
-      "statusNote": "File operations have a macOS target; the native file/directory pickers reject FeatureNotAvailableOnPlatformException outside iOS. Core filesystem support remains supported; this is an API coverage limitation. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "statusNote": "macOS support confirmed by Jay on 2026-09-22; show as supported. Core file operations have an upstream macOS target. The source audit found picker API gaps, which do not change this module-level status. Windows: no upstream Expo Modules Core Windows integration; adapters and forks are outside this table.",
       "architectureAudit": {
         "checkedAt": "2026-09-22",
         "architecture": "new",
@@ -800,7 +800,8 @@
           "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-file-system/expo-module.config.json",
           "https://github.com/expo/expo/blob/9e5319c0f821a27b7924841903abae50e2b41790/packages/expo-file-system/ios/FileSystemModule.swift"
         ],
-        "runtimeTested": false
+        "runtimeTested": false,
+        "userConfirmation": "Jay confirmed macOS support on 2026-09-22."
       }
     },
     {

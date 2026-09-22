@@ -1114,7 +1114,7 @@ These are sixteen popular Expo packages. Upstream packages, without Frame adapte
 
 Some already have real macOS implementations. Symbols even has an explicit AppKit implementation. But declaring Mac in a podspec doesn't mean the feature works. KeepAwake declares it, but does nothing on Mac.
 
-FileSystem works for files, but its picker APIs aren't implemented on Mac. Font loading works, but rendering text to an image is missing. Those are partial, not blanket green checks.
+FileSystem is supported on Mac. There are still individual API gaps to document. Font loading works too, but rendering text to an image is missing, so Font is marked partial.
 
 The Windows column is upstream Expo. Expo Modules Core doesn't ship the Windows native integration these packages need. That's separate from what Expo Desktop or a replacement module can provide.
 
@@ -1192,11 +1192,7 @@ eyebrow: 'React Native is the best way to build desktop apps'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
 
-<WaterTitle closing>
-
-# React Native is the best way{"\n"}to build desktop apps {shared=rnconnection-title shared-resize=preserve class="text-9xl"}
-
-</WaterTitle>
+# React Native is the best way to build desktop apps {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-8xl mb-0"}
 
 <!--
 I started all of this just trying to test LegendList.
