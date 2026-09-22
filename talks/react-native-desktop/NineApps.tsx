@@ -54,7 +54,8 @@ export function NineApps({ mode, children }: { mode: SceneMode; children?: React
               {id === "react-native" && phase === "playing" && (mode === "hero" || (mode === "filmstrip" && selected === 0)) ?
                 <WebView source={{ uri: rnVideoPage }} allowingReadAccessToURL={rnVideoPage.slice(0, rnVideoPage.lastIndexOf("/") + 1)}
                   originWhitelist={["file://*"]} mediaPlaybackRequiresUserAction={false} allowsInlineMediaPlayback
-                  scrollEnabled={false} style={{ width: "100%", height: "100%", backgroundColor: "#101e30" }} />
+                  containerStyle={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
+                  scrollEnabled={false} style={{ flex: 1, backgroundColor: "#101e30" }} />
               : uri ? <Image source={{ uri }} resizeMode="contain" style={{ width: "100%", height: "100%" }} /> : <>
                 <View style={{ position: "absolute", left: "2%", top: "2%", width: "26%", height: "94%", borderRadius: 12, borderWidth: 1, borderColor: "#94a3b8", justifyContent: "center", alignItems: "center" }}>
                   <Text style={{ color: "#f1f5f9", fontSize: Math.max(12, card.width * 0.018) }}>Sidebar</Text>
