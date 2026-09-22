@@ -305,7 +305,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
   }, [sources]);
   const showLiquidType = Boolean(titleImage);
   return <>
-    <Background priority={1}><View style={{flex:1,backgroundColor:"#050a10"}} /></Background>
+    <Background priority={1} intensityMultiplier={closing ? 1 : 3} maxIntensity={6}><View style={{flex:1,backgroundColor:"#050a10"}} /></Background>
     {/* This slide disables template padding and owns its full layout. */}
     <View style={{ width: 1920, height: 1080 }}>
       <View style={{ flex: 1, opacity: showLiquidType ? 0 : 1, zIndex: showLiquidType ? 0 : 1 }}>
