@@ -1,5 +1,5 @@
 import { FocusRegion, SceneMotionView, SharedElement, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { DeckBackground } from "./DeckBackground";
 import { detailCamera, tourStep } from "./NineAppsTour";
 import { MovingTitle } from "./MovingTitle";
@@ -13,6 +13,26 @@ import rnVideoPage from "./rnconnection-assets/react-native-scroll-proof.html";
 import rnPoster from "./rnconnection-assets/react-native-scroll-proof.jpg";
 
 import { AppCarousel } from "./AppCarousel";
+
+const videoSource = { uri: rnVideoPage };
+const videoReadAccess = rnVideoPage.slice(0, rnVideoPage.lastIndexOf("/") + 1);
+
+function ReactNativeRecording({ playing }: { playing: boolean }) {
+  const player = useRef<WebView>(null);
+  const syncPlayback = () => player.current?.injectJavaScript(
+    `(() => { const video = document.querySelector('video'); if (video) { ${playing ? "video.play().catch(() => {});" : "video.pause();"} } })(); true;`,
+  );
+  // Synchronize an external media player, without replacing it on step changes.
+  useEffect(syncPlayback, [playing]);
+  return <>
+    <Image source={{ uri: rnPoster }} resizeMode="contain" style={{ width: "100%", height: "100%" }} />
+    <WebView ref={player} source={videoSource} allowingReadAccessToURL={videoReadAccess}
+      originWhitelist={["file://*"]} mediaPlaybackRequiresUserAction={false} allowsInlineMediaPlayback
+      onLoadEnd={syncPlayback}
+      containerStyle={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
+      scrollEnabled={false} style={{ flex: 1, backgroundColor: "#101e30" }} />
+  </>;
+}
 
 const names: Record<AppId, string> = {
   "react-native": "React Native", appkit: "AppKit", swiftui: "SwiftUI", electron: "Electron",
@@ -30,6 +50,7 @@ export default function NineAppsFrame({ children }: PresentationTemplateProps) {
 export function NineApps({ mode, children }: { mode: SceneMode; children?: ReactNode }) {
   const step = usePresentationValue("stepIndex");
   const phase = usePresentationValue("playbackPhase");
+  const isPreview = usePresentationValue("isPreview");
   const tour = tourStep(step);
   const selected = mode === "filmstrip" ? appOrder.indexOf(tour.app) : 0;
   const camera = detailCamera(mode === "filmstrip" ? tour.detail : "app", tour.app);
@@ -51,11 +72,8 @@ export function NineApps({ mode, children }: { mode: SceneMode; children?: React
           <View style={{ flex: 1, borderRadius: 12, overflow: "hidden", borderWidth: 2,
             borderColor: id === "react-native" ? "#67e8f9" : "#33465e", backgroundColor: "#101e30" }}>
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#14253a" }}>
-              {id === "react-native" && phase === "playing" && (mode === "hero" || (mode === "filmstrip" && selected === 0)) ?
-                <WebView source={{ uri: rnVideoPage }} allowingReadAccessToURL={rnVideoPage.slice(0, rnVideoPage.lastIndexOf("/") + 1)}
-                  originWhitelist={["file://*"]} mediaPlaybackRequiresUserAction={false} allowsInlineMediaPlayback
-                  containerStyle={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
-                  scrollEnabled={false} style={{ flex: 1, backgroundColor: "#101e30" }} />
+              {id === "react-native" && !isPreview && mode !== "grid" ?
+                <ReactNativeRecording playing={phase === "playing" && (mode === "hero" || selected === 0)} />
               : uri ? <Image source={{ uri }} resizeMode="contain" style={{ width: "100%", height: "100%" }} /> : <>
                 <View style={{ position: "absolute", left: "2%", top: "2%", width: "26%", height: "94%", borderRadius: 12, borderWidth: 1, borderColor: "#94a3b8", justifyContent: "center", alignItems: "center" }}>
                   <Text style={{ color: "#f1f5f9", fontSize: Math.max(12, card.width * 0.018) }}>Sidebar</Text>
