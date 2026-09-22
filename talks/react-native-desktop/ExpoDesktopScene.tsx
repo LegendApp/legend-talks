@@ -229,12 +229,14 @@ half4 main(float2 p) {
     outColor=over(material(p-float2(912,100),float2(190,88),23.0,float3(0.07,0.16,0.27)),outColor);
   } else {
     float descent=clamp(elapsed()/0.85,0.0,1.0);
-    float drop=-470.0*(1.0-descent*descent*descent);
+    // Begin above the canvas, including the stretched glass rim and glow.
+    // The bridge enters by falling through the top instead of fading into view.
+    float drop=-820.0*(1.0-descent*descent*descent);
     float bounce=hit*sin(impact*18.0)*exp(-impact*7.0)*15.0;
     float2 center=float2(1476,350.0+drop+bounce);
     float stretch=1.0+0.45*sin(descent*3.14159);
     float2 q=(p-center)/float2(1.0/sqrt(stretch),stretch);
-    float appear=connection()*smoothstep(0.0,0.12,elapsed());
+    float appear=connection();
     // Meteor wake narrows into the single glass bridge; no extra panel layer.
     float wakeY=center.y-p.y;
     float wake=step(0.0,wakeY)*exp(-wakeY/95.0)*exp(-pow((p.x-center.x)/(70.0+wakeY*0.18),2.0))
