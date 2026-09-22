@@ -130,7 +130,7 @@ export function NineApps({ mode, children }: { mode: SceneMode; children?: React
         pose={{ x: card.x - 960, y: (filmstripWidth - card.width) * 0.28125,
           scaleX: scale, scaleY: scale, opacity: card.opacity }}
         style={{ position: "absolute", left: filmstripLeft, top: 67.5, width: filmstripWidth,
-          height: 97.5, justifyContent: "center", alignItems: "center", zIndex: 2000 + card.depth }}>
+          height: 97.5, justifyContent: "center", alignItems: "center", zIndex: card.depth * 10 + 1 }}>
         <Text numberOfLines={1} style={{ color: "#f8fafc", fontSize: 64, lineHeight: 78,
           fontWeight: "700", textAlign: "center" }}>{names[id]}</Text>
       </SceneMotionView>;
