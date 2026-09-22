@@ -122,7 +122,7 @@ half4 title(float2 p) {
   float2 secondPoint=p-float2(0,clearance);
   half4 second=secondPoint.y>=split ? image.eval(secondPoint) : half4(0);
   float2 q=titleUV(p);
-  for(int i=0;i<18;i++) {
+  if(stepIndex<2.0) for(int i=0;i<18;i++) {
     float3 hit=impacts[i];
     float2 delta=q-hit.xy;
     float bulge=hit.z*exp(-dot(delta,delta)/1600.0)*0.18;
@@ -137,46 +137,58 @@ float pulse(float2 p) {
   float seed=fract(sin(cell*127.1)*43758.5453);
   return pow(max(0.0,sin(time*0.9+seed*6.28318)),12.0);
 }
+float2 particleOrigin(float2 cell) {
+  float seed=fract(sin(dot(cell,float2(127.1,311.7)))*43758.5453);
+  return (cell+.5)*14.0+float2(seed-.5,fract(seed*17.1)-.5)*3.0;
+}
+float particleRadius(float2 cell) {
+  return 3.0+fract(sin(dot(cell,float2(91.7,53.3)))*17331.7)*3.5;
+}
 half4 main(float2 p) {
   if(stepIndex>=2.0) {
     float t=stepTime;
-    half4 result=half4(0);
-    // Each tile contains actual title pixels, retaining the letter silhouette.
-    // Reverse-map ballistic fragments rather than replacing them with particles.
-    for(int i=0;i<72;i++) {
-      float id=float(i);
-      float seed=fract(sin(id*127.1+5.0)*43758.5453);
-      float2 origin=float2(mod(id,12.0)*160.0+80.0,floor(id/12.0)*180.0+90.0);
-      float vx=(origin.x-960.0)*0.13+(seed-.5)*120.0;
-      float vy=-95.0-seed*110.0;
-      float hit=(-vy+sqrt(vy*vy+640.0*max(0.0,1035.0-origin.y)))/320.0;
-      float fall=min(t,hit);
-      float2 pos=origin+float2(vx*fall,vy*fall+160.0*fall*fall);
-      if(t<hit) {
-        float angle=(seed-.5)*t*.65;
-        float2 delta=p-pos;
-        float2 local=float2(cos(angle)*delta.x+sin(angle)*delta.y,-sin(angle)*delta.x+cos(angle)*delta.y);
-        if(abs(local.x)<80.0 && abs(local.y)<90.0) {
-          half4 ink=title(origin+local);
-          result=ink+result*(1.0-ink.a);
-        }
-      } else {
-        float settle=smoothstep(0.0,.6,t-hit);
-        float2 radius=float2(22.0+65.0*settle,4.0+10.0*settle);
-        float d=(length((p-float2(pos.x,1038.0))/radius)-1.0)*radius.y;
-        if(d<2.0) {
-          float ink=0.0;
-          for(int j=0;j<9;j++) {
-            float2 probe=origin+float2(mod(float(j),3.0)-1.0,floor(float(j)/3.0)-1.0)*45.0;
-            ink=max(ink,title(probe).a);
-          }
-          float alpha=(1.0-smoothstep(-.7,.7,d))*ink;
-          float white=.93-exp(-abs(d)/2.8)*.12;
-          result=half4(float3(white)*alpha,alpha)+result*(1.0-alpha);
+    float field=10000.0;
+    // Invert the shared ballistic trajectory to visit only nearby particles.
+    // Every particle samples ink once at its own fixed origin.
+    float2 source=float2((p.x+960.0*.18*t)/(1.0+.18*t),p.y+140.0*t-180.0*t*t);
+    float2 cell=floor(source/14.0);
+    for(int row=-1;row<=1;row++) for(int col=-1;col<=1;col++) {
+      float2 id=cell+float2(float(col),float(row));
+      float2 origin=particleOrigin(id);
+      if(origin.x<0.0 || origin.x>1920.0 || origin.y<0.0 || origin.y>1080.0) continue;
+      float2 pos=origin+float2((origin.x-960.0)*.18*t,-140.0*t+180.0*t*t);
+      if(pos.y>=1035.0) continue;
+      float d=length(p-pos)-particleRadius(id);
+      if(d<field && title(origin).a>.2) field=d;
+    }
+    // Only landed particles contribute liquid, at their exact landing x.
+    // Search source rows only in the narrow floor strip, not across the slide.
+    if(p.y>1010.0 && p.y<1060.0) {
+      for(int row=0;row<78;row++) {
+        float y=(float(row)+.5)*14.0;
+        float hit=(140.0+sqrt(19600.0+720.0*max(0.0,1035.0-y)))/360.0;
+        float x=(p.x+960.0*.18*hit)/(1.0+.18*hit);
+        float column=floor(x/14.0);
+        for(int col=-1;col<=1;col++) {
+          float2 id=float2(column+float(col),float(row));
+          float2 origin=particleOrigin(id);
+          if(origin.x<0.0 || origin.x>1920.0 || origin.y>1035.0) continue;
+          float arrival=(140.0+sqrt(19600.0+720.0*(1035.0-origin.y)))/360.0;
+          if(t<arrival) continue;
+          float landing=origin.x+(origin.x-960.0)*.18*arrival;
+          float r=particleRadius(id);
+          float settle=smoothstep(0.0,.55,t-arrival);
+          float2 size=float2(r*(1.0+2.0*settle),r*(1.0-.35*settle));
+          float d=(length((p-float2(landing,1035.0))/size)-1.0)*size.y;
+          if(d<field && title(origin).a>.2) field=d;
         }
       }
     }
-    return result*(1.0-smoothstep(4.7,5.4,t));
+    float alpha=1.0-smoothstep(-.7,.7,field);
+    float white=.93-exp(-abs(field)/2.8)*.12;
+    half4 particles=half4(float3(white)*alpha,alpha);
+    float reveal=smoothstep(0.0,.16,t);
+    return mix(title(p),particles,reveal)*(1.0-smoothstep(4.7,5.4,t));
   }
 
   float wave=sin(p.x*0.013-time*1.3+p.y*0.006);
