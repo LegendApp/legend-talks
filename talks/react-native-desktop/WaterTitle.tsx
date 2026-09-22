@@ -1,5 +1,5 @@
 import { Canvas, Fill, Shader, ImageShader, Skia, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
-import { useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
+import { useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
 import { useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
 import { DeckBackground } from "./DeckBackground";
@@ -8,6 +8,9 @@ export const waterTitleShader = `
 uniform float time;
 uniform float2 leftSource;
 uniform float2 rightSource;
+uniform float2 thirdSource;
+uniform float stepIndex;
+uniform float stepTime;
 float merge(float a,float b,float k) {
   k=max(k,0.001);
   float h=clamp(0.5+0.5*(b-a)/k,0.0,1.0);
@@ -66,7 +69,7 @@ float material(float2 p,float2 source,float local) {
   return d;
 }
 float field(float2 p) {
-  return min(material(p,leftSource,time-0.6),material(p,rightSource,time-1.65));
+  return min(min(material(p,leftSource,time-0.6),material(p,rightSource,time-1.65)),material(p,thirdSource,time-2.4));
 }
 half4 main(float2 p) {
   float d=field(p);
@@ -76,11 +79,12 @@ half4 main(float2 p) {
   normal=normal/max(0.001,length(normal));
   float edge=exp(-abs(d)/2.8);
   float light=clamp(dot(normal,normalize(float2(-0.6,-0.8))),0.0,1.0);
-  float tone=0.93-edge*0.20+edge*light*0.27;
+  float tone=0.28+edge*0.42+edge*light*0.30;
   // Match the white typography at the attachment, then reveal a glossy curved surface.
-  float nearLetter=1.0-smoothstep(0.0,16.0,min(length(p-leftSource),length(p-rightSource)));
+  float nearLetter=1.0-smoothstep(0.0,16.0,min(length(p-leftSource),min(length(p-rightSource),length(p-thirdSource))));
   float3 color=mix(float3(tone,tone+0.005,tone+0.01),float3(0.973,0.98,0.988),nearLetter);
-  return half4(clamp(color,0.0,1.0)*alpha,alpha);
+  float fade=stepIndex>=2.0 ? 1.0-smoothstep(2.2,3.4,stepTime) : 1.0;
+  return half4(clamp(color,0.0,1.0)*alpha,alpha)*fade;
 }`;
 const waterEffect = Skia.RuntimeEffect.Make(waterTitleShader);
 if (!waterEffect) throw new Error("Could not compile title water effect");
@@ -88,6 +92,24 @@ if (!waterEffect) throw new Error("Could not compile title water effect");
 export const liquidTypeShader = `
 uniform shader image;
 uniform float time;
+uniform float stepIndex;
+uniform float stepTime;
+uniform float feedTime;
+uniform float4 bestRect;
+float growth() { return stepIndex>=1.0 ? 1.0+0.8*(1.0-exp(-max(0.0,feedTime-(stepIndex>=2.0?stepTime:0.0))/12.0)) : 1.0; }
+float2 titleUV(float2 p) {
+  float g=growth();
+  float2 c=bestRect.xy+bestRect.zw*0.5;
+  float halfWidth=bestRect.z*g*0.5;
+  if(p.y<bestRect.y-40.0 || p.y>bestRect.y+bestRect.w+40.0) return p;
+  if(abs(p.x-c.x)<halfWidth) return c+(p-c)/g;
+  return p-float2(sign(p.x-c.x)*(g-1.0)*bestRect.z*0.5,0);
+}
+half4 title(float2 p) {
+  float2 q=titleUV(p);
+  if(stepIndex>=2.0 && q.x>bestRect.x && q.x<bestRect.x+bestRect.z && q.y>bestRect.y && q.y<bestRect.y+bestRect.w) return half4(0);
+  return image.eval(q);
+}
 float pulse(float2 p) {
   float cell=floor(p.x/64.0)+floor(p.y/128.0)*29.0;
   float seed=fract(sin(cell*127.1)*43758.5453);
@@ -101,27 +123,111 @@ half4 main(float2 p) {
   // Tiny local expansion is perceived as a breathing letter, without moving the layout.
   float2 center=float2((floor(p.x/64.0)+0.5)*64.0,(floor(p.y/128.0)+0.5)*128.0);
   q=mix(q,center+(q-center)/(1.0+flash*0.025),amount);
-  half4 ink=image.eval(q);
+  half4 ink=title(q);
   float halo=0.0;
   for(int i=0;i<8;i++) {
     float angle=float(i)*0.785398;
     float2 direction=float2(cos(angle),sin(angle));
-    halo+=image.eval(q+direction*4.0).a*0.075;
-    halo+=image.eval(q+direction*9.0).a*0.025;
+    halo+=title(q+direction*4.0).a*0.075;
+    halo+=title(q+direction*9.0).a*0.025;
   }
   float sweep=pow(max(0.0,sin(p.x*0.004-p.y*0.009-time*0.7)),18.0)*amount;
   float glow=halo*(0.10+flash*0.48+sweep*0.15)*(1.0-ink.a);
   float shade=0.94+0.06*wave*amount;
   float3 color=ink.rgb*shade+float3(0.94,0.97,1.0)*glow;
-  return half4(color,clamp(ink.a+glow,0.0,1.0));
+  float fade=stepIndex>=2.0 ? 1.0-smoothstep(0.5,2.8,stepTime) : 1.0;
+  return half4(color,clamp(ink.a+glow,0.0,1.0))*fade;
 }`;
+export const cosmicShader = `
+uniform float time;
+uniform float stepIndex;
+uniform float stepTime;
+uniform float4 bestRect;
+float hash(float n) { return fract(sin(n*127.1)*43758.5453); }
+half4 main(float2 p) {
+  float2 c=bestRect.xy+bestRect.zw*0.5;
+  float2 q=p-c;
+  float3 light=float3(0);
+  float alpha=0.0;
+  float ending=stepIndex>=2.0 ? 1.0-smoothstep(2.5,3.5,stepTime) : 1.0;
+  if(stepIndex<2.0) {
+    float2 disk=float2(q.x+q.y*0.8,q.y*4.0);
+    float r=length(disk);
+    float rings=exp(-abs(r-210.0)/2.0)+exp(-abs(r-310.0)/1.1)*0.5;
+    float angle=atan(disk.y,disk.x);
+    float stars=pow(max(0.0,sin(angle*47.0-time*0.8)),28.0);
+    light+=float3(0.5,0.66,0.9)*rings*(0.18+stars*0.8);
+    light+=float3(0.45,0.55,0.75)*exp(-length(q)/130.0)*0.12;
+    alpha=max(alpha,rings*0.45);
+    // Ambient radial stardust: angle bins avoid a large per-pixel particle loop.
+    float a=atan(q.y,q.x);
+    float lane=floor((a+3.14159)*36.0);
+    float seed=hash(lane);
+    float distance=70.0+mod(time*(12.0+seed*15.0)+seed*900.0,780.0);
+    float radial=exp(-abs(length(q)-distance)/(1.0+seed*2.0));
+    float beam=pow(max(0.0,cos((a+3.14159)*36.0-floor((a+3.14159)*36.0)-0.5)),140.0);
+    float star=radial*beam*(1.0-distance/900.0);
+    light+=star*float3(0.7,0.82,1.0); alpha=max(alpha,star);
+  }
+  if(stepIndex>=1.0 && stepIndex<2.0) {
+    for(int i=0;i<18;i++) {
+      float id=float(i);
+      float age=mod(stepTime+hash(id)*4.2,4.2);
+      float u=age/4.2;
+      float a=hash(id+9.0)*6.28318;
+      float2 start=c+float2(cos(a)*1000.0,sin(a)*700.0);
+      float2 pos=mix(start,c,smoothstep(0.0,1.0,u));
+      pos+=float2(sin(u*9.0+id),cos(u*7.0+id))*40.0*sin(u*3.14159);
+      float radius=(4.0+hash(id+21.0)*12.0)*(1.0-smoothstep(0.83,1.0,u));
+      float d=length(p-pos);
+      float rim=exp(-abs(d-radius)/1.2);
+      float glint=exp(-length(p-(pos-float2(radius*0.3)))/1.9);
+      float visible=smoothstep(0.0,0.3,stepTime)*smoothstep(0.0,0.08,u);
+      light+=(rim*float3(0.5,0.7,0.9)+glint)*visible;
+      alpha=max(alpha,(rim*0.75+glint)*visible);
+    }
+  }
+  if(stepIndex>=2.0) {
+    float t=stepTime;
+    float shock=exp(-abs(length(q)-t*1500.0)/max(2.0,20.0-t*10.0))*(1.0-smoothstep(0.4,1.0,t));
+    float core=exp(-length(q)/max(1.0,130.0*(1.0-t)))*(1.0-smoothstep(0.0,0.5,t));
+    light+=(shock*0.8+core)*float3(0.9,0.96,1.0); alpha=max(alpha,shock+core);
+    for(int i=0;i<24;i++) {
+      float id=float(i);
+      float side=mod(id,4.0);
+      float along=hash(id+31.0);
+      float2 hit=side<1.0 ? float2(5.0,along*1080.0) : side<2.0 ? float2(1915.0,along*1080.0) : side<3.0 ? float2(along*1920.0,5.0) : float2(along*1920.0,1075.0);
+      float arrival=0.4+hash(id+1.0)*0.4;
+      float u=min(1.0,t/arrival);
+      float2 pos=mix(c,hit,1.0-pow(1.0-u,2.0));
+      float r=3.0+hash(id+6.0)*8.0;
+      float2 delta=p-pos;
+      if(t>arrival) {
+        float spread=1.0+min(2.0,(t-arrival)*7.0);
+        delta/=side<2.0 ? float2(1.0,spread) : float2(spread,1.0);
+        r+=sin(atan(delta.y,delta.x)*5.0+id)*2.0;
+      }
+      float d=length(delta);
+      float body=1.0-smoothstep(r-1.0,r+1.0,d);
+      float rim=exp(-abs(d-r)/1.3);
+      light+=body*float3(0.25,0.31,0.38)+rim*float3(0.85,0.93,1.0);
+      alpha=max(alpha,body*0.8+rim*0.2);
+    }
+  }
+  alpha=clamp(alpha,0.0,1.0)*ending;
+  return half4(clamp(light,0.0,1.0)*alpha,alpha);
+}`;
+const cosmicEffect = Skia.RuntimeEffect.Make(cosmicShader);
+if (!cosmicEffect) throw new Error("Could not compile cosmic title");
+
 const typeEffect = Skia.RuntimeEffect.Make(liquidTypeShader);
 if (!typeEffect) throw new Error("Could not compile liquid title typography");
 
-export default function WaterTitle({ children }: { children?: import("react").ReactNode }) {
-  const [sources, setSources] = useState({ leftSource: [420, 650], rightSource: [1510, 650] });
-  const uniforms = useAnimatedShaderUniforms(sources, 14);
-  const phase = usePresentationValue("playbackPhase");
+export default function WaterTitle({ children, closing = false }: { children?: import("react").ReactNode; closing?: boolean }) {
+  const step = usePresentationValue("stepIndex");
+  useAdvanceAfterStep(closing ? -1 : 2, 3.6);
+  const [sources, setSources] = useState({ leftSource: [460, 650], rightSource: [1450, 650], thirdSource: [1520, 650], bestRect: [1190, 400, 255, 128] });
+  const uniforms = useAnimatedShaderUniforms(sources, 14, { clocks: { feedTime: 1 } });
   const titleRef = useRef<View>(null);
   const [titleImage, setTitleImage] = useState<SkImage>();
   // Capture typography once after layout; only shader uniforms change on frames.
@@ -134,9 +240,9 @@ export default function WaterTitle({ children }: { children?: import("react").Re
     });
     return () => { cancelled = true; cancel(); };
   }, [sources]);
-  const showLiquidType = Boolean(titleImage) && (phase === "playing" || phase === "preview");
+  const showLiquidType = Boolean(titleImage);
   return <>
-    <DeckBackground />
+    <DeckBackground speed={step >= 1 ? 1.8 : 0.6} />
     <View style={{ width: 1920, height: 1080 }}>
       <View style={{ flex: 1, opacity: showLiquidType ? 0 : 1 }}>
         <View ref={titleRef} collapsable={false} style={{ flex: 1, paddingHorizontal: 112, paddingVertical: 96, justifyContent: "center" }}>{children}</View>
@@ -149,12 +255,16 @@ export default function WaterTitle({ children }: { children?: import("react").Re
         const top = (1080 - (last.y + last.height) - 36) / 2;
         const baseline = top + last.y + last.ascender;
         const left = 112 + (1696 - last.width) / 2;
-        const next = { leftSource: [left + 23, baseline], rightSource: [left + last.width - 31, baseline] };
+        const first = lines[0];
+        const firstLeft = 112 + (1696 - first.width) / 2;
+        const next = { leftSource: [left + 78, baseline], rightSource: [left + last.width - 175, baseline + 22], thirdSource: [left + last.width - 100, baseline + 22],
+          bestRect: [firstLeft + first.width * 0.683, top + first.y, first.width * 0.151, 128] };
         setSources(old => JSON.stringify(old) === JSON.stringify(next) ? old : next);
       }} style={{ position: "absolute", left: 112, width: 1696, top: 0, opacity: 0, fontSize: 128, lineHeight: 128, fontWeight: "700", textAlign: "center" }}>
         {'React Native is the best way\nto build desktop apps'}
       </Text>
       <Canvas pointerEvents="none" style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080 }}>
+        <Fill><Shader source={cosmicEffect!} uniforms={uniforms} /></Fill>
         {showLiquidType && titleImage && <Fill><Shader source={typeEffect!} uniforms={uniforms}>
           <ImageShader image={titleImage} fit="fill" rect={{ x: 0, y: 0, width: 1920, height: 1080 }} />
         </Shader></Fill>}

@@ -9,7 +9,7 @@ import benchmarks from "./rnconnection-assets/benchmarks.json";
 import WaterTitle from "./WaterTitle";
 
 export default function Frame({ children }: PresentationTemplateProps) {
-  if (Children.toArray(children).some(child => isValidElement(child) && child.type === WaterTitle)) return <>{children}</>;
+  if (Children.toArray(children).some(child => isValidElement(child) && (child.type === WaterTitle || Children.toArray((child.props as { children?: ReactNode }).children).some(nested => isValidElement(nested) && nested.type === WaterTitle)))) return <>{children}</>;
   return (
     <>
       <DeckBackground />
