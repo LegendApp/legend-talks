@@ -32,7 +32,7 @@ export function NineApps({ mode, children }: { mode: SceneMode; children?: React
   const phase = usePresentationValue("playbackPhase");
   const tour = tourStep(step);
   const selected = mode === "filmstrip" ? appOrder.indexOf(tour.app) : 0;
-  const camera = detailCamera(mode === "filmstrip" ? tour.detail : "app");
+  const camera = detailCamera(mode === "filmstrip" ? tour.detail : "app", tour.app);
   return <FocusRegion id="nine-apps-stage" style={{ width: 1920, height: 1080, overflow: "hidden" }}>
     {mode !== "filmstrip" && <SceneMotionView initialPose={{ opacity: 0 }} pose={{ opacity: 1 }} duration={650} style={{ position: "absolute", left: 112, top: 65, width: 1696, zIndex: 2000 }}>
       <MovingTitle>

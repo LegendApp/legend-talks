@@ -35,11 +35,18 @@ export const detailCrops = {
   composer: { x: 0.30, y: 0.77, width: 0.66, height: 0.21 },
 };
 export const composerRect = { x: filmstripLeft + 1180 * 0.30, y: 260 + 663.75 * 0.77, width: 1180 * 0.66, height: 663.75 * 0.21 };
-export function detailCamera(detail: Detail) {
+// Capture-specific targets: show the upper sidebar at reading size, and center
+// the actual composer rather than the larger placeholder region.
+const reactNativeCrops = {
+  sidebar: { x: 0.005, y: 0.035, width: 0.21, height: 0.50 },
+  composer: { x: 0.265, y: 0.885, width: 0.675, height: 0.09 },
+};
+export function detailCamera(detail: Detail, app?: AppId) {
   if (detail === "app") return { x: 0, y: 0, scaleX: 1, scaleY: 1 };
-  const crop = detailCrops[detail === "sidebar" ? "sidebar" : "composer"];
+  const crops = app === "react-native" ? reactNativeCrops : detailCrops;
+  const crop = crops[detail === "sidebar" ? "sidebar" : "composer"];
   const cx = filmstripLeft + (crop.x + crop.width / 2) * 1180;
   const cy = 260 + (crop.y + crop.height / 2) * 663.75;
   const scale = Math.min(3, 1696 / (crop.width * 1180), 780 / (crop.height * 663.75));
-  return { x: (960 - cx) * scale, y: 60 + (540 - cy) * scale, scaleX: scale, scaleY: scale };
+  return { x: (960 - cx) * scale, y: (app === "react-native" ? 0 : 60) + (540 - cy) * scale, scaleX: scale, scaleY: scale };
 }
