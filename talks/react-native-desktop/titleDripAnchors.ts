@@ -45,12 +45,19 @@ export function titleDripAnchors(pixels: Uint8Array, width: number, height: numb
     if(occupied && run<0) run=x;
     if(!occupied && run>=0) { firstRuns.push([run,x-1]);run=-1; }
   }
-  let measured: {bestRect?: number[]}={};
+  let measured: {bestRect?: number[]; absorptionTargets?: number[][]}={};
   if(firstRuns.length>=8) {
     const i=firstRuns.length-7;
     const x0=(firstRuns[i-1][1]+firstRuns[i][0])/2;
     const x1=(firstRuns[i+3][1]+firstRuns[i+4][0])/2;
     measured={bestRect:[x0*1920/width,(firstTop-6)*1080/height,(x1-x0)*1920/width,(firstBottom-firstTop+12)*1080/height]};
+    const targets:number[][]=[];
+    for(let glyph=i;glyph<i+4;glyph++) {
+      const [left,right]=firstRuns[glyph];
+      const x=Math.round((left+right)/2);
+      for(let y=firstTop;y<=firstBottom;y++) if(ink(x,y)) {targets.push([x*1920/width,y*1080/height]);break;}
+    }
+    measured.absorptionTargets=targets;
   }
   return { ...measured, lineSplit, leftSource: anchor(runs[1]), rightSource: anchor(runs[runs.length - 3]), thirdSource: anchor(runs[runs.length - 2]) };
 }

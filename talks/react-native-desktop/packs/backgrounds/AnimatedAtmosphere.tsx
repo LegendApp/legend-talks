@@ -49,6 +49,8 @@ const sources: Record<AtmosphereVariant, string> = {
   droplets: `
     ${dropletGeometry}
     uniform float titleFeed;
+    uniform float backgroundTime;
+    uniform float4 drops[6];
     uniform float stepIndex;
     uniform float stepTime;
     uniform float4 bestRect;
@@ -74,22 +76,13 @@ const sources: Record<AtmosphereVariant, string> = {
       float field=mergeDistance(mergeDistance(mergeDistance(a,b),mergeDistance(c,d)),mergeDistance(e,f));
       // Buds and parent surfaces share one distance field and one material.
       if(titleFeed>0.5 && stepIndex==1.0) {
-        float2 target=(bestRect.xy+bestRect.zw*0.5)/float2(1920,1080)-0.5;
-        target.x*=resolution.x/resolution.y;
         for(int i=0;i<6;i++) {
-          float elapsed=stepTime-float(i)*0.48;
-          if(elapsed<0.0) continue;
-          float age=mod(elapsed,5.2);
-          float3 parent=backgroundDroplet(i,t);
-          float2 outward=normalize(parent.xy+float2(0.001));
-          float2 edge=parent.xy+outward*parent.z;
-          float release=smoothstep(1.8,4.7,age);
-          float2 bud=mix(edge+outward*0.11*smoothstep(0.0,1.8,age),target,release);
-          bud+=float2(-outward.y,outward.x)*sin(release*3.14159)*0.22;
-          float radius=0.022*smoothstep(0.0,0.8,age)*(1.0-smoothstep(4.4,4.9,age));
-          float distance=length(p-bud)-radius;
-          float neck=0.025*(1.0-smoothstep(0.85,1.65,age));
-          float h=max(neck-abs(field-distance),0.0)/max(neck,0.00001);
+          float4 drop=drops[i];
+          if(drop.w!=0.0 || drop.z<0.1) continue;
+          float2 pos=(drop.xy-float2(960,540))/1080.0;
+          float distance=length(p-pos)-drop.z/1080.0;
+          float neck=0.025;
+          float h=max(neck-abs(field-distance),0.0)/neck;
           field=min(field,distance)-h*h*neck*0.25;
         }
       }
@@ -109,7 +102,7 @@ const sources: Record<AtmosphereVariant, string> = {
     }
     half4 main(float2 position) {
       float2 p = (position / resolution - 0.5) * float2(resolution.x / resolution.y, 1.0);
-      float t = time * 0.6;
+      float t = (titleFeed>0.5 ? backgroundTime : time) * 0.6;
       float d = dropletDistance(p, t);
       float epsilon = 0.001;
       float2 gradient = float2(
@@ -256,7 +249,7 @@ export function AnimatedAtmosphere({ variant = "fluid", brightness = 1, speed = 
   const idleSpeed = 0.16;
   const motionSpeed = Number.isFinite(speed) ? Math.max(0, speed) : 1;
   const uniforms = useAnimatedShaderUniforms({
-    titleFeed, bestRect,
+    titleFeed, bestRect, backgroundTime: 0, drops: Array(24).fill(0),
     resolution: [Math.max(1, width), Math.max(1, height)],
     brightness: (Number.isFinite(brightness) ? Math.max(0, brightness) : 1) * intensity,
   }, 8, {
@@ -280,3 +273,5 @@ export function Smoke(props: AtmosphereProps) { return <AnimatedAtmosphere {...p
 export function Wireframe(props: AtmosphereProps) { return <AnimatedAtmosphere {...props} variant="wireframe" />; }
 
 const styles = StyleSheet.create({ fill: { ...StyleSheet.absoluteFillObject } });
+
+export const titleAtmosphereEffect = effects.droplets;

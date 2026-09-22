@@ -1,9 +1,9 @@
 import { titleDripAnchors } from "./titleDripAnchors";
 import { AlphaType, ColorType, Canvas, Fill, Shader, ImageShader, Skia, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
-import { Background, useBackgroundSize, useBackgroundIntensity, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
+import { Background, useBackgroundSize, useBackgroundIntensity, useTitleBubbleSimulation, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
 import { useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
-import { AnimatedAtmosphere } from "./packs/backgrounds";
+import { titleAtmosphereEffect } from "./packs/backgrounds/AnimatedAtmosphere";
 import { dropletGeometry } from "./packs/backgrounds/dropletGeometry";
 
 export const waterTitleShader = `
@@ -96,8 +96,10 @@ uniform float time;
 uniform float stepIndex;
 uniform float stepTime;
 uniform float feedTime;
+uniform float absorbedScale;
+uniform float3 impacts[6];
 uniform float4 bestRect;
-float growth() { return stepIndex>=1.0 ? 1.0+0.8*(1.0-exp(-max(0.0,feedTime-(stepIndex>=2.0?stepTime:0.0))/12.0)) : 1.0; }
+float growth() { return absorbedScale; }
 float2 titleUV(float2 p) {
   float g=growth();
   float2 c=bestRect.xy+bestRect.zw*0.5;
@@ -112,6 +114,12 @@ half4 title(float2 p) {
   float split=lineSplit;
   half4 second=p.y>=split ? image.eval(p) : half4(0);
   float2 q=titleUV(p);
+  for(int i=0;i<6;i++) {
+    float3 hit=impacts[i];
+    float2 delta=q-hit.xy;
+    float bulge=hit.z*exp(-dot(delta,delta)/1600.0)*0.18;
+    q-=delta*bulge;
+  }
   half4 first=q.y<split ? image.eval(q) : half4(0);
   if(stepIndex>=2.0 && q.x>bestRect.x && q.x<bestRect.x+bestRect.z) first=half4(0);
   return first+second*(1.0-first.a);
@@ -147,6 +155,7 @@ half4 main(float2 p) {
 export const cosmicShader = `
 ${dropletGeometry}
 uniform float2 resolution;
+uniform float4 drops[6];
 uniform float time;
 uniform float stepIndex;
 uniform float stepTime;
@@ -176,6 +185,18 @@ half4 main(float2 p) {
     float beam=pow(max(0.0,cos((a+3.14159)*36.0-floor((a+3.14159)*36.0)-0.5)),140.0);
     float star=radial*beam*(1.0-distance/900.0);
     light+=star*float3(0.7,0.82,1.0); alpha=max(alpha,star);
+  }
+  // Detached drops render independently above the background; they cannot
+  // disappear into another parent after pinch-off.
+  if(stepIndex==1.0) for(int i=0;i<6;i++) {
+    float4 drop=drops[i];
+    if(drop.w<1.0 || drop.z<0.1) continue;
+    float distance=length(p-drop.xy);
+    float fill=1.0-smoothstep(drop.z-1.0,drop.z+1.0,distance);
+    float rim=exp(-abs(distance-drop.z)/1.2);
+    float glint=exp(-length(p-drop.xy+float2(drop.z*.35))/2.5);
+    light+=fill*float3(.07,.11,.15)+rim*float3(.7,.85,1)+glint;
+    alpha=max(alpha,fill*.8+rim*.2);
   }
   if(stepIndex>=2.0) {
     float t=stepTime;
@@ -217,7 +238,8 @@ export default function WaterTitle({ children, closing = false }: { children?: i
   const step = usePresentationValue("stepIndex");
   useAdvanceAfterStep(closing ? -1 : 2, 3.6);
   const [sources, setSources] = useState({ leftSource: [460, 650], rightSource: [1450, 650], thirdSource: [1520, 650], lineSplit: 540, bestRect: [1190, 400, 255, 128] });
-  const uniforms = useAnimatedShaderUniforms(sources, 14, { clocks: { feedTime: 1 } });
+  const [targets,setTargets]=useState<number[][]>([]);
+  const visualUniforms = useAnimatedShaderUniforms(sources, 14, { clocks: { feedTime: 1 } });
   const { width, height } = useBackgroundSize();
   const intensity = useBackgroundIntensity();
   const speed = step >= 1 ? 1.8 : 0.6;
@@ -225,6 +247,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
   const backgroundUniforms = useAnimatedShaderUniforms({ ...sources,
     titleFeed: 1, resolution: [Math.max(1,width),Math.max(1,height)], brightness: 0.7*intensity,
   }, 8, { speed: speed*0.16, slideChangeBoost: speed*0.32, slideChangeDuration: 3.5 });
+  const uniforms = useTitleBubbleSimulation(backgroundUniforms,targets,visualUniforms);
   const titleRef = useRef<View>(null);
   const [titleImage, setTitleImage] = useState<SkImage>();
   const anchored = useRef(false);
@@ -239,7 +262,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
         const pixels=image.readPixels(0,0,{width:image.width(),height:image.height(),colorType:ColorType.RGBA_8888,alphaType:AlphaType.Unpremul});
         const anchors=pixels instanceof Uint8Array ? titleDripAnchors(pixels,image.width(),image.height()) : null;
         anchored.current=true;
-        if(anchors) setSources(old=>({...old,...anchors}));
+        if(anchors) { const {absorptionTargets,...geometry}=anchors; setSources(old=>({...old,...geometry}));setTargets(absorptionTargets ?? []); }
         setTitleImage(image);
       }
     });
@@ -247,7 +270,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
   }, [sources]);
   const showLiquidType = Boolean(titleImage);
   return <>
-    <Background priority={1}><AnimatedAtmosphere variant="droplets" speed={speed} brightness={0.7} titleFeed={1} bestRect={sources.bestRect} /></Background>
+    <Background priority={1}><View style={{flex:1,backgroundColor:"#050a10"}} /></Background>
     <View style={{ width: 1920, height: 1080 }}>
       <View style={{ flex: 1, opacity: showLiquidType ? 0 : 1 }}>
         <View ref={titleRef} collapsable={false} style={{ flex: 1, paddingHorizontal: 112, paddingVertical: 96, justifyContent: "center" }}>{children}</View>
@@ -270,7 +293,8 @@ export default function WaterTitle({ children, closing = false }: { children?: i
         {'React Native is the best way\nto build desktop apps'}
       </Text>
       <Canvas pointerEvents="none" style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080 }}>
-        <Fill><Shader source={cosmicEffect!} uniforms={backgroundUniforms} /></Fill>
+        <Fill><Shader source={titleAtmosphereEffect} uniforms={uniforms} /></Fill>
+        <Fill><Shader source={cosmicEffect!} uniforms={uniforms} /></Fill>
         {showLiquidType && titleImage && <Fill><Shader source={typeEffect!} uniforms={uniforms}>
           <ImageShader image={titleImage} fit="fill" rect={{ x: 0, y: 0, width: 1920, height: 1080 }} />
         </Shader></Fill>}
