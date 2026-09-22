@@ -4,7 +4,7 @@ import { DeckBackground } from "./DeckBackground";
 import { detailCamera, tourStep } from "./NineAppsTour";
 import { MovingTitle } from "./MovingTitle";
 import { Image, Text, View } from "react-native";
-import { appOrder, filmstripWidth, type AppId, type SceneMode } from "./NineAppsGeometry";
+import { appOrder, appCardLayout, filmstripLeft, filmstripWidth, type AppId, type SceneMode } from "./NineAppsGeometry";
 
 import { WebView } from "react-native-webview";
 // @ts-ignore Deck assets resolve to local file URLs in the deck compiler.
@@ -102,11 +102,6 @@ export function NineApps({ mode, children }: { mode: SceneMode; children?: React
     </SceneMotionView>}
     <SceneMotionView pose={camera} duration={650} style={{ width: 1920, height: 1080 }}>
     <AppCarousel cardWidth={filmstripWidth} items={appOrder} position={selected} mode={mode}
-      renderOverlay={mode === "filmstrip" ? (id, card) => <View pointerEvents="none" collapsable={false}
-        style={{ position: "absolute", top: 0, left: 0, right: 0, height: card.captionHeight, justifyContent: "center", alignItems: "center", zIndex: 1 }}>
-        <Text numberOfLines={1} style={{ color: "#f8fafc", fontSize: 64 * card.width / filmstripWidth,
-          lineHeight: 78 * card.width / filmstripWidth, fontWeight: "700", textAlign: "center" }}>{names[id]}</Text>
-      </View> : undefined}
       renderCard={(id, card) => {
       const { captionHeight } = card;
       const uri = recordings[id].poster;
@@ -126,6 +121,20 @@ export function NineApps({ mode, children }: { mode: SceneMode; children?: React
         </SharedElement>
       );
     }} />
+    {mode === "filmstrip" && appOrder.map((id, index) => {
+      const card = appCardLayout(index, mode, selected);
+      const scale = card.width / filmstripWidth;
+      // Keep native text laid out onstage; move it with the same carousel targets
+      // instead of capturing it into blurred snapshots or initially laying it offscreen.
+      return <SceneMotionView key={`title-${id}`} duration={500}
+        pose={{ x: card.x - 960, y: (filmstripWidth - card.width) * 0.28125,
+          scaleX: scale, scaleY: scale, opacity: card.opacity }}
+        style={{ position: "absolute", left: filmstripLeft, top: 67.5, width: filmstripWidth,
+          height: 97.5, justifyContent: "center", alignItems: "center", zIndex: 2000 + card.depth }}>
+        <Text numberOfLines={1} style={{ color: "#f8fafc", fontSize: 64, lineHeight: 78,
+          fontWeight: "700", textAlign: "center" }}>{names[id]}</Text>
+      </SceneMotionView>;
+    })}
     </SceneMotionView>
     {mode === "filmstrip" && tour.detail === "takeover" && <View pointerEvents="none" style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080, zIndex: 3000 }}>{children}</View>}
   </FocusRegion>;
