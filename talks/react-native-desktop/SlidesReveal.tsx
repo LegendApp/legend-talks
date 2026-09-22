@@ -1,5 +1,5 @@
 import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
-import { PlaybackKeyframeView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
+import { PlaybackKeyframeView, SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { View } from "react-native";
 import { SlidesHeader } from "./StoryDiagrams";
 import { GitHubLink } from "./GitHubLink";
@@ -79,9 +79,12 @@ export function SlidesReveal({ icon }: { icon: string }) {
   const step = usePresentationValue("stepIndex");
   const uniforms = useAnimatedShaderUniforms({}, 4, { clock: "step" });
   return <View style={{ width: 1696, height: 880, alignSelf: "center" }}>
-    <View style={{ zIndex: 2 }}>
+    {/* Put the initial shared-header bounds in the center in actual layout.
+        Only the screenshot step moves it; navigation must not target the top. */}
+    <SceneMotionView style={{ position: "absolute", top: 300, width: 1696, zIndex: 2 }}
+      pose={{ y: step >= 1 ? -300 : 0 }} duration={650}>
       <SlidesHeader icon={icon} />
-    </View>
+    </SceneMotionView>
     <Canvas pointerEvents="none" accessibilityLabel="Legend Slides screenshot placeholder"
       style={{ position: "absolute", left: -112, top: -100, width: 1920, height: 1180 }}>
       <Fill><Shader source={effect!} uniforms={uniforms} /></Fill>
