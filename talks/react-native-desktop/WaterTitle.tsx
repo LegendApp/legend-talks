@@ -1,6 +1,6 @@
 import { dropletMaterial } from "./packs/backgrounds/dropletMaterial";
 import { titleDripAnchors } from "./titleDripAnchors";
-import { AlphaType, ColorType, Canvas, Fill, Shader, ImageShader, Skia, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
+import { AlphaType, ColorType, Canvas, Fill, Shader, ImageShader, Skia, matchFont, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
 import { Background, useBackgroundSize, useBackgroundIntensity, useTitleBubbleSimulation, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
 import { useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
@@ -92,6 +92,12 @@ if (!waterEffect) throw new Error("Could not compile title water effect");
 
 export const liquidTypeShader = `
 uniform shader image;
+uniform shader bestImage;
+uniform float4 bestInkRect;
+half4 sourceInk(float2 p) {
+  if(p.x>=bestInkRect.x && p.x<=bestInkRect.x+bestInkRect.z && p.y>=bestInkRect.y && p.y<=bestInkRect.y+bestInkRect.w) return bestImage.eval(p);
+  return image.eval(p);
+}
 uniform float lineSplit;
 uniform float glyphCount;
 uniform float4 glyphs[64];
@@ -122,7 +128,7 @@ half4 title(float2 p) {
   float movedY=mix(cy,540.0,clamp((g-1.0)/1.5,0.0,1.0));
   float clearance=max(0.0,movedY-cy+bestRect.w*(g-1.0)*.5)+24.0*(g-1.0);
   float2 secondPoint=p-float2(0,clearance);
-  half4 second=secondPoint.y>=split ? image.eval(secondPoint) : half4(0);
+  half4 second=secondPoint.y>=split ? sourceInk(secondPoint) : half4(0);
   float2 q=titleUV(p);
   if(stepIndex<2.0) for(int i=0;i<18;i++) {
     float3 hit=impacts[i];
@@ -130,7 +136,7 @@ half4 title(float2 p) {
     float bulge=hit.z*exp(-dot(delta,delta)/1600.0)*0.18;
     q-=delta*bulge;
   }
-  half4 first=q.y<split ? image.eval(q) : half4(0);
+  half4 first=q.y<split ? sourceInk(q) : half4(0);
 
   return first+second*(1.0-first.a);
 }
@@ -143,39 +149,34 @@ half4 main(float2 p) {
   if(stepIndex>=2.0) {
     float t=stepTime;
     float g=growth();
-    float2 wordCenter=bestRect.xy+bestRect.zw*.5;
-    float2 moved=mix(wordCenter,float2(960,540),clamp((g-1.0)/1.5,0.0,1.0));
-    float down=max(0.0,moved.y-wordCenter.y+bestRect.w*(g-1.0)*.5)+24.0*(g-1.0);
-    float swell=1.0+.065*smoothstep(0.0,.28,t);
+    float2 original=bestRect.xy+bestRect.zw*.5;
+    float2 center=mix(original,float2(960,540),clamp((g-1.0)/1.5,0.0,1.0));
+    float remaining=1.0-smoothstep(0.0,1.35,t);
+    float scale=max(.001,g*remaining);
+    float angle=t*t*15.0;
+    float2 delta=p-center;
+    float2 local=float2(cos(angle)*delta.x+sin(angle)*delta.y,-sin(angle)*delta.x+cos(angle)*delta.y)/scale+original;
     half4 result=half4(0);
-    for(int i=0;i<64;i++) {
-      if(float(i)>=glyphCount) break;
-      float4 bounds=glyphs[i];
-      float2 original=bounds.xy+bounds.zw*.5;
-      float2 center=original;
-      float scale=1.0;
-      if(original.y<lineSplit) {
-        if(original.x>bestRect.x && original.x<bestRect.x+bestRect.z) {
-          scale=g*swell;
-          center=moved+(original-wordCenter)*scale;
-        } else {
-          center+=moved-wordCenter;
-          center.x+=sign(original.x-wordCenter.x)*(g*swell-1.0)*bestRect.z*.5;
-        }
-      } else center.y+=down;
-      float seed=fract(sin(float(i)*127.1+5.0)*43758.5453);
-      float fall=max(0.0,t-.28-seed*.24);
-      center+=float2((center.x-960.0)*.13*fall,-85.0*fall+430.0*fall*fall);
-      float angle=(seed-.5)*fall*.9;
-      float2 delta=p-center;
-      float2 local=float2(cos(angle)*delta.x+sin(angle)*delta.y,-sin(angle)*delta.x+cos(angle)*delta.y)/scale;
-      if(abs(local.x)<=bounds.z*.5 && abs(local.y)<=bounds.w*.5) {
-        half4 ink=image.eval(original+local);
-        result=ink+result*(1.0-ink.a);
-      }
+    if(remaining>.001 && local.x>bestRect.x && local.x<bestRect.x+bestRect.z && local.y>bestRect.y && local.y<bestRect.y+bestRect.w) result=sourceInk(local);
+    // Retain the other words briefly, then clear space around the spinning word.
+    float2 before=titleUV(p);
+    if(before.x<bestRect.x || before.x>bestRect.x+bestRect.z || p.y>lineSplit) {
+      half4 other=title(p)*(1.0-smoothstep(0.0,.35,t));
+      result=result+other*(1.0-result.a);
     }
-    if(glyphCount<1.0) result=title(p);
-    return result*(1.0-smoothstep(2.5,3.3,t));
+    for(int i=0;i<32;i++) {
+      float born=float(i)*.033;
+      float age=t-born;
+      if(age<0.0) continue;
+      float a=born*born*15.0+float(i)*2.39996;
+      float shrink=1.0-smoothstep(0.0,1.35,born);
+      float2 direction=float2(cos(a),sin(a));
+      float2 pos=center+direction*(bestRect.z*g*.35*shrink+age*430.0);
+      float radius=(5.0+fract(float(i)*.618)*7.0)*(1.0-smoothstep(.35,.85,age));
+      float alpha=1.0-smoothstep(radius-.7,radius+.7,length(p-pos));
+      if(radius>0.0) result=half4(float3(.97)*alpha,alpha)+result*(1.0-alpha);
+    }
+    return result;
   }
 
   float wave=sin(p.x*0.013-time*1.3+p.y*0.006);
@@ -265,8 +266,8 @@ if (!typeEffect) throw new Error("Could not compile liquid title typography");
 
 export default function WaterTitle({ children, closing = false }: { children?: import("react").ReactNode; closing?: boolean }) {
   const step = usePresentationValue("stepIndex");
-  useAdvanceAfterStep(closing ? -1 : 2, 3.4);
-  const [sources, setSources] = useState({ leftSource: [460, 650], rightSource: [1450, 650], thirdSource: [1520, 650], lineSplit: 540, glyphCount: 0, glyphs: Array(256).fill(0) as number[], bestRect: [1190, 400, 255, 128] });
+  useAdvanceAfterStep(closing ? -1 : 2, 2.0);
+  const [sources, setSources] = useState({ leftSource: [460, 650], rightSource: [1450, 650], thirdSource: [1520, 650], lineSplit: 540, bestInkRect: [1190,400,255,128], glyphCount: 0, glyphs: Array(256).fill(0) as number[], bestRect: [1190, 400, 255, 128] });
   const [targets,setTargets]=useState<number[][]>([]);
   const visualUniforms = useAnimatedShaderUniforms(sources, 14, { clocks: { feedTime: 1 } });
   const { width, height } = useBackgroundSize();
@@ -279,6 +280,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
   const uniforms = useTitleBubbleSimulation(backgroundUniforms,targets,visualUniforms);
   const titleRef = useRef<View>(null);
   const [titleImage, setTitleImage] = useState<SkImage>();
+  const [bestImage,setBestImage]=useState<SkImage>();
   const anchored = useRef(false);
   // Capture typography once after layout; only shader uniforms change on frames.
   useEffect(() => {
@@ -290,6 +292,12 @@ export default function WaterTitle({ children, closing = false }: { children?: i
       if (image) {
         const pixels=image.readPixels(0,0,{width:image.width(),height:image.height(),colorType:ColorType.RGBA_8888,alphaType:AlphaType.Unpremul});
         const anchors=pixels instanceof Uint8Array ? titleDripAnchors(pixels,image.width(),image.height()) : null;
+        // Rasterize only the enlarged word at 4x, avoiding a huge full-slide texture.
+        const font=matchFont({fontSize:512,fontWeight:"700"});
+        const bounds=font.measureText("best");
+        const surface=Skia.Surface.MakeOffscreen(Math.ceil(bounds.width),Math.ceil(bounds.height));
+        if(surface){const paint=Skia.Paint();paint.setColor(Skia.Color("white"));surface.getCanvas().drawText("best",-bounds.x,-bounds.y,paint,font);surface.flush();setBestImage(surface.makeImageSnapshot());surface.dispose();paint.dispose();}
+        font.dispose();
         anchored.current=true;
         if(anchors) { const {absorptionTargets,...geometry}=anchors; setSources(old=>({...old,...geometry}));setTargets(absorptionTargets ?? []); }
         setTitleImage(image);
@@ -316,7 +324,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
         const left = 112 + (1696 - last.width) / 2;
         const first = lines[0];
         const firstLeft = 112 + (1696 - first.width) / 2;
-        const next = { glyphCount: 0, glyphs: Array(256).fill(0) as number[], lineSplit: top + last.y - 4, leftSource: [left + 78, baseline], rightSource: [left + last.width - 175, baseline + 22], thirdSource: [left + last.width - 100, baseline + 22],
+        const next = { bestInkRect: [1190,400,255,128], glyphCount: 0, glyphs: Array(256).fill(0) as number[], lineSplit: top + last.y - 4, leftSource: [left + 78, baseline], rightSource: [left + last.width - 175, baseline + 22], thirdSource: [left + last.width - 100, baseline + 22],
           bestRect: [firstLeft + first.width * 0.683, top + first.y, first.width * 0.151, 128] };
         setSources(old => JSON.stringify(old) === JSON.stringify(next) ? old : next);
       }} style={{ position: "absolute", left: 112, width: 1696, top: 0, opacity: 0, fontSize: 128, lineHeight: 128, fontWeight: "700", textAlign: "center" }}>
@@ -327,6 +335,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
         {!closing && <Fill><Shader source={cosmicEffect!} uniforms={uniforms} /></Fill>}
         {!closing && showLiquidType && titleImage && <Fill><Shader source={typeEffect!} uniforms={uniforms}>
           <ImageShader image={titleImage} fit="fill" rect={{ x: 0, y: 0, width: 1920, height: 1080 }} />
+          <ImageShader image={bestImage ?? titleImage} fit="fill" rect={{x:sources.bestInkRect[0],y:sources.bestInkRect[1],width:sources.bestInkRect[2],height:sources.bestInkRect[3]}} />
         </Shader></Fill>}
         {closing && titleImage && <Fill><ImageShader image={titleImage} fit="fill" rect={{x:0,y:0,width:1920,height:1080}} /></Fill>}
         {closing && <Fill><Shader source={waterEffect!} uniforms={uniforms} /></Fill>}

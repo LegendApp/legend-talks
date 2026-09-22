@@ -45,7 +45,7 @@ export function titleDripAnchors(pixels: Uint8Array, width: number, height: numb
     if(occupied && run<0) run=x;
     if(!occupied && run>=0) { firstRuns.push([run,x-1]);run=-1; }
   }
-  let measured: {bestRect?: number[]; absorptionTargets?: number[][]}={};
+  let measured: {bestRect?: number[]; bestInkRect?: number[]; absorptionTargets?: number[][]}={};
   if(firstRuns.length>=8) {
     const i=firstRuns.length-7;
     const x0=(firstRuns[i-1][1]+firstRuns[i][0])/2;
@@ -59,6 +59,9 @@ export function titleDripAnchors(pixels: Uint8Array, width: number, height: numb
       for(let y=firstBottom;y>=firstTop;y--) if(ink(x,y)) {targets.push([x*1920/width,y*1080/height]);break;}
     }
     measured.absorptionTargets=targets;
+    let inkTop=firstBottom,inkBottom=firstTop;
+    for(let y=firstTop;y<=firstBottom;y++) for(let x=firstRuns[i][0];x<=firstRuns[i+3][1];x++) if(ink(x,y)){inkTop=Math.min(inkTop,y);inkBottom=Math.max(inkBottom,y);}
+    measured.bestInkRect=[firstRuns[i][0]*1920/width,inkTop*1080/height,(firstRuns[i+3][1]-firstRuns[i][0]+1)*1920/width,(inkBottom-inkTop+1)*1080/height];
   }
   const glyphs:number[]=[];
   for(const [lineRuns,y0,y1] of [[firstRuns,firstTop,firstBottom],[runs,top,bottom]] as const) {
