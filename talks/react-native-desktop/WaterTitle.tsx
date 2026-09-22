@@ -101,6 +101,9 @@ uniform float stepIndex;
 uniform float stepTime;
 uniform float feedTime;
 uniform float absorbedScale;
+uniform float2 exitCenter;
+uniform float4 drops[18];
+uniform float4 necks[18];
 uniform float3 impacts[18];
 uniform float4 bestRect;
 float growth() { return absorbedScale; }
@@ -143,56 +146,29 @@ float pulse(float2 p) {
 half4 main(float2 p) {
   if(stepIndex>=2.0) {
     float t=stepTime;
-    float g=growth();
     float2 original=bestRect.xy+bestRect.zw*.5;
-    float2 center=mix(original,float2(960,540),clamp((g-1.0)/1.5,0.0,1.0));
-    float2 cellSize=bestRect.zw/float2(12,5);
-    float2 local=(p-center)/g+original;
+    float2 local=(p-exitCenter)/max(.001,growth())+original;
     half4 result=half4(0);
-    if(local.x>bestRect.x && local.x<bestRect.x+bestRect.z && local.y>bestRect.y && local.y<bestRect.y+bestRect.w) {
-      float2 cell=floor((local-bestRect.xy)/cellSize);
-      float seed=fract(sin(dot(cell,float2(127.1,311.7)))*43758.5453);
-      float born=.25+seed*1.8;
-      result=sourceInk(local)*(1.0-smoothstep(born-.2,born+.3,t));
-    }
+    if(growth()>.01 && local.x>bestRect.x && local.x<bestRect.x+bestRect.z && local.y>bestRect.y && local.y<bestRect.y+bestRect.w) result=sourceInk(local);
     float2 before=titleUV(p);
-    if(before.x<bestRect.x || before.x>bestRect.x+bestRect.z || p.y>lineSplit) {
-      half4 other=title(p)*(1.0-smoothstep(0.0,.6,t));
-      result=result+other*(1.0-result.a);
-    }
-    for(int i=0;i<60;i++) {
-      float2 cell=float2(mod(float(i),12.0),floor(float(i)/12.0));
-      float seed=fract(sin(dot(cell,float2(127.1,311.7)))*43758.5453);
-      float born=.25+seed*1.8;
-      float age=t-born;
-      if(age<-.2) continue;
-      float2 origin=bestRect.xy+(cell+.5)*cellSize;
-      float2 start=center+(origin-original)*g;
-      float2 direction=normalize((origin-original)/bestRect.zw+float2(.01));
-      start=clamp(start,float2(10),float2(1910,1070));
-      float tx=direction.x>0.0?(1910.0-start.x)/max(.001,direction.x):(10.0-start.x)/min(-.001,direction.x);
-      float ty=direction.y>0.0?(1070.0-start.y)/max(.001,direction.y):(10.0-start.y)/min(-.001,direction.y);
-      float distance=min(tx,ty);
-      float speed=480.0;
-      float arrival=distance/speed;
-      float2 pos=start+direction*min(max(0.0,age)*speed,distance);
-      if(abs(p.x-pos.x)>105.0 || abs(p.y-pos.y)>105.0) continue;
-      float ink=0.0;
-      for(int j=0;j<9;j++) {
-        float2 offset=float2(mod(float(j),3.0)-1.0,floor(float(j)/3.0)-1.0)*cellSize*.3;
-        ink+=sourceInk(origin+offset).a/9.0;
+    if(before.x<bestRect.x || before.x>bestRect.x+bestRect.z || p.y>lineSplit) result+=title(p)*(1.0-smoothstep(0.0,.5,t))*(1.0-result.a);
+    for(int i=0;i<18;i++) {
+      float4 drop=drops[i],neck=necks[i];
+      if(drop.z<.1)continue;
+      float2 size=float2(drop.z);
+      if(drop.w==5.0) size=(drop.x<=10.0 || drop.x>=1910.0)?float2(drop.z*(1.0-.55*neck.w),drop.z*(1.0+2.3*neck.w)):float2(drop.z*(1.0+2.3*neck.w),drop.z*(1.0-.55*neck.w));
+      float d=(length((p-drop.xy)/size)-1.0)*min(size.x,size.y);
+      if(drop.w==3.0 && neck.z>0.0) {
+        float2 segment=drop.xy-neck.xy;
+        float u=clamp(dot(p-neck.xy,segment)/max(.001,dot(segment,segment)),0.0,1.0);
+        float connection=length(p-mix(neck.xy,drop.xy,u))-drop.z*neck.z*.7;
+        float h=max(8.0-abs(d-connection),0.0)/8.0;
+        d=min(d,connection)-h*h*2.0;
       }
-      if(ink<.05) continue;
-
-      float radius=(12.0+sqrt(ink)*18.0)*smoothstep(-.2,.3,age);
-      float settle=smoothstep(0.0,.45,age-arrival);
-      float2 size=tx<ty?float2(radius*(1.0-.55*settle),radius*(1.0+2.3*settle)):float2(radius*(1.0+2.3*settle),radius*(1.0-.55*settle));
-      size=max(size,float2(.001));
-      float d=(length((p-pos)/size)-1.0)*min(size.x,size.y);
-      float alpha=(1.0-smoothstep(-.7,.7,d))*(1.0-smoothstep(6.2,6.9,t));
-      if(radius>0.0) result=half4(float3(.97)*alpha,alpha)+result*(1.0-alpha);
+      float alpha=1.0-smoothstep(-.7,.7,d);
+      result=half4(float3(.97)*alpha,alpha)+result*(1.0-alpha);
     }
-    return result;
+    return result*(1.0-smoothstep(6.2,6.9,t));
   }
 
   float wave=sin(p.x*0.013-time*1.3+p.y*0.006);
