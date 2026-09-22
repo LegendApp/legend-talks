@@ -146,37 +146,48 @@ half4 main(float2 p) {
     float g=growth();
     float2 original=bestRect.xy+bestRect.zw*.5;
     float2 center=mix(original,float2(960,540),clamp((g-1.0)/1.5,0.0,1.0));
-    float remaining=1.0-smoothstep(0.0,3.2,t);
-    float scale=max(.001,g*remaining);
-    float angle=t*t*2.5;
-    float2 delta=p-center;
-    float2 local=float2(cos(angle)*delta.x+sin(angle)*delta.y,-sin(angle)*delta.x+cos(angle)*delta.y)/scale+original;
+    float2 cellSize=bestRect.zw/float2(12,5);
+    float2 local=(p-center)/g+original;
     half4 result=half4(0);
-    if(remaining>.001 && local.x>bestRect.x && local.x<bestRect.x+bestRect.z && local.y>bestRect.y && local.y<bestRect.y+bestRect.w) result=sourceInk(local);
-    // Retain the other words briefly, then clear space around the spinning word.
+    if(local.x>bestRect.x && local.x<bestRect.x+bestRect.z && local.y>bestRect.y && local.y<bestRect.y+bestRect.w) {
+      float2 cell=floor((local-bestRect.xy)/cellSize);
+      float seed=fract(sin(dot(cell,float2(127.1,311.7)))*43758.5453);
+      float born=.25+seed*1.8;
+      result=sourceInk(local)*(1.0-smoothstep(born-.2,born+.3,t));
+    }
     float2 before=titleUV(p);
     if(before.x<bestRect.x || before.x>bestRect.x+bestRect.z || p.y>lineSplit) {
-      half4 other=title(p)*(1.0-smoothstep(0.0,.35,t));
+      half4 other=title(p)*(1.0-smoothstep(0.0,.6,t));
       result=result+other*(1.0-result.a);
     }
-    for(int i=0;i<32;i++) {
-      float born=float(i)*.085;
+    for(int i=0;i<60;i++) {
+      float2 cell=float2(mod(float(i),12.0),floor(float(i)/12.0));
+      float seed=fract(sin(dot(cell,float2(127.1,311.7)))*43758.5453);
+      float born=.25+seed*1.8;
       float age=t-born;
-      if(age<0.0) continue;
-      float a=born*born*2.5+float(i)*2.39996;
-      float shrink=1.0-smoothstep(0.0,3.2,born);
-      float2 direction=float2(cos(a),sin(a));
-      float2 start=center+direction*bestRect.z*g*.35*shrink;
+      if(age<-.2) continue;
+      float2 origin=bestRect.xy+(cell+.5)*cellSize;
+      float2 start=center+(origin-original)*g;
+      float2 direction=normalize((origin-original)/bestRect.zw+float2(.01));
       start=clamp(start,float2(10),float2(1910,1070));
       float tx=direction.x>0.0?(1910.0-start.x)/max(.001,direction.x):(10.0-start.x)/min(-.001,direction.x);
       float ty=direction.y>0.0?(1070.0-start.y)/max(.001,direction.y):(10.0-start.y)/min(-.001,direction.y);
       float distance=min(tx,ty);
       float speed=480.0;
       float arrival=distance/speed;
-      float2 pos=start+direction*min(age*speed,distance);
-      float radius=5.0+fract(float(i)*.618)*7.0;
+      float2 pos=start+direction*min(max(0.0,age)*speed,distance);
+      if(abs(p.x-pos.x)>105.0 || abs(p.y-pos.y)>105.0) continue;
+      float ink=0.0;
+      for(int j=0;j<9;j++) {
+        float2 offset=float2(mod(float(j),3.0)-1.0,floor(float(j)/3.0)-1.0)*cellSize*.3;
+        ink+=sourceInk(origin+offset).a/9.0;
+      }
+      if(ink<.05) continue;
+
+      float radius=(12.0+sqrt(ink)*18.0)*smoothstep(-.2,.3,age);
       float settle=smoothstep(0.0,.45,age-arrival);
       float2 size=tx<ty?float2(radius*(1.0-.55*settle),radius*(1.0+2.3*settle)):float2(radius*(1.0+2.3*settle),radius*(1.0-.55*settle));
+      size=max(size,float2(.001));
       float d=(length((p-pos)/size)-1.0)*min(size.x,size.y);
       float alpha=(1.0-smoothstep(-.7,.7,d))*(1.0-smoothstep(6.2,6.9,t));
       if(radius>0.0) result=half4(float3(.97)*alpha,alpha)+result*(1.0-alpha);
