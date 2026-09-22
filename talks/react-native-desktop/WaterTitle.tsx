@@ -105,6 +105,7 @@ uniform float centerProgress;
 uniform float2 exitCenter;
 uniform float4 drops[72];
 uniform float4 necks[72];
+uniform float4 releasePulls[72];
 uniform float3 impacts[18];
 uniform float4 bestRect;
 float growth() { return absorbedScale; }
@@ -149,6 +150,19 @@ half4 main(float2 p) {
     float t=stepTime;
     float2 original=bestRect.xy+bestRect.zw*.5;
     float2 local=(p-exitCenter)/max(.001,growth())+original;
+    // Reverse absorption: outgoing mass tugs the actual glyph texture,
+    // then a damped recoil relaxes the edge after the connecting neck breaks.
+    float2 warp=float2(0);
+    for(int i=0;i<72;i++) {
+      float4 pull=releasePulls[i];
+      if(pull.z<.001) continue;
+      float2 anchor=(necks[i].xy-exitCenter)/max(.001,growth())+original;
+      float2 delta=local-anchor;
+      float influence=exp(-dot(delta,delta)/1000.0);
+      warp+=(pull.xy/max(.2,growth())+delta*pull.z*.18)*influence;
+    }
+    float limit=42.0/max(.2,growth());
+    local-=warp*min(1.0,limit/max(.001,length(warp)));
     half4 result=half4(0);
     if(growth()>.01 && local.x>bestRect.x && local.x<bestRect.x+bestRect.z && local.y>bestRect.y && local.y<bestRect.y+bestRect.w) result=sourceInk(local);
     float2 before=titleUV(p);
