@@ -1,8 +1,9 @@
 import { Canvas, Fill, Shader, ImageShader, Skia, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
-import { useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
+import { Background, useBackgroundSize, useBackgroundIntensity, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
 import { useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
-import { DeckBackground } from "./DeckBackground";
+import { AnimatedAtmosphere } from "./packs/backgrounds";
+import { dropletGeometry } from "./packs/backgrounds/dropletGeometry";
 
 export const waterTitleShader = `
 uniform float time;
@@ -118,14 +119,19 @@ float2 titleUV(float2 p) {
   float g=growth();
   float2 c=bestRect.xy+bestRect.zw*0.5;
   float halfWidth=bestRect.z*g*0.5;
-  if(p.y<bestRect.y-40.0 || p.y>bestRect.y+bestRect.w+40.0) return p;
+
   if(abs(p.x-c.x)<halfWidth) return c+(p-c)/g;
   return p-float2(sign(p.x-c.x)*(g-1.0)*bestRect.z*0.5,0);
 }
 half4 title(float2 p) {
+  // Composite separately clipped source lines. A destination-space cutoff
+  // sliced through the second line as the first line expanded.
+  float split=bestRect.y+bestRect.w;
+  half4 second=p.y>=split ? image.eval(p) : half4(0);
   float2 q=titleUV(p);
-  if(stepIndex>=2.0 && q.x>bestRect.x && q.x<bestRect.x+bestRect.z && q.y>bestRect.y && q.y<bestRect.y+bestRect.w) return half4(0);
-  return image.eval(q);
+  half4 first=q.y<split ? image.eval(q) : half4(0);
+  if(stepIndex>=2.0 && q.x>bestRect.x && q.x<bestRect.x+bestRect.z) first=half4(0);
+  return first+second*(1.0-first.a);
 }
 float pulse(float2 p) {
   float cell=floor(p.x/64.0)+floor(p.y/128.0)*29.0;
@@ -156,6 +162,8 @@ half4 main(float2 p) {
   return half4(color,clamp(ink.a+glow,0.0,1.0))*fade;
 }`;
 export const cosmicShader = `
+${dropletGeometry}
+uniform float2 resolution;
 uniform float time;
 uniform float stepIndex;
 uniform float stepTime;
@@ -189,10 +197,15 @@ half4 main(float2 p) {
   if(stepIndex>=1.0 && stepIndex<2.0) {
     for(int i=0;i<18;i++) {
       float id=float(i);
-      float age=mod(stepTime+hash(id)*4.2,4.2);
+      float elapsed=stepTime-hash(id)*4.2;
+      if(elapsed<0.0) continue;
+      float age=mod(elapsed,4.2);
       float u=age/4.2;
       float a=hash(id+9.0)*6.28318;
-      float2 start=c+float2(cos(a)*1000.0,sin(a)*700.0);
+      float3 body=backgroundDroplet(i-(i/6)*6,time*0.6);
+      float2 center=(body.xy/float2(resolution.x/resolution.y,1.0)+0.5)*float2(1920,1080);
+      float2 direction=normalize(c-center);
+      float2 start=center+direction*body.z*float2(1920.0*resolution.y/resolution.x,1080.0);
       float2 pos=mix(start,c,smoothstep(0.0,1.0,u));
       pos+=float2(sin(u*9.0+id),cos(u*7.0+id))*40.0*sin(u*3.14159);
       float radius=(4.0+hash(id+21.0)*12.0)*(1.0-smoothstep(0.83,1.0,u));
@@ -245,6 +258,13 @@ export default function WaterTitle({ children, closing = false }: { children?: i
   useAdvanceAfterStep(closing ? -1 : 2, 3.6);
   const [sources, setSources] = useState({ leftSource: [460, 650], rightSource: [1450, 650], thirdSource: [1520, 650], bestRect: [1190, 400, 255, 128] });
   const uniforms = useAnimatedShaderUniforms(sources, 14, { clocks: { feedTime: 1 } });
+  const { width, height } = useBackgroundSize();
+  const intensity = useBackgroundIntensity();
+  const speed = step >= 1 ? 1.8 : 0.6;
+  // One uniform object drives both the background and the emerging bubbles.
+  const backgroundUniforms = useAnimatedShaderUniforms({ ...sources,
+    resolution: [Math.max(1,width),Math.max(1,height)], brightness: 0.7*intensity,
+  }, 8, { speed: speed*0.16, slideChangeBoost: speed*0.32, slideChangeDuration: 3.5 });
   const titleRef = useRef<View>(null);
   const [titleImage, setTitleImage] = useState<SkImage>();
   // Capture typography once after layout; only shader uniforms change on frames.
@@ -259,7 +279,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
   }, [sources]);
   const showLiquidType = Boolean(titleImage);
   return <>
-    <DeckBackground speed={step >= 1 ? 1.8 : 0.6} />
+    <Background priority={-1}><AnimatedAtmosphere variant="droplets" sharedUniforms={backgroundUniforms} /></Background>
     <View style={{ width: 1920, height: 1080 }}>
       <View style={{ flex: 1, opacity: showLiquidType ? 0 : 1 }}>
         <View ref={titleRef} collapsable={false} style={{ flex: 1, paddingHorizontal: 112, paddingVertical: 96, justifyContent: "center" }}>{children}</View>
@@ -281,7 +301,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
         {'React Native is the best way\nto build desktop apps'}
       </Text>
       <Canvas pointerEvents="none" style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080 }}>
-        <Fill><Shader source={cosmicEffect!} uniforms={uniforms} /></Fill>
+        <Fill><Shader source={cosmicEffect!} uniforms={backgroundUniforms} /></Fill>
         {showLiquidType && titleImage && <Fill><Shader source={typeEffect!} uniforms={uniforms}>
           <ImageShader image={titleImage} fit="fill" rect={{ x: 0, y: 0, width: 1920, height: 1080 }} />
         </Shader></Fill>}

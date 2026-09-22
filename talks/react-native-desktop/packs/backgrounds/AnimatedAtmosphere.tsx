@@ -1,3 +1,4 @@
+import { dropletGeometry } from "./dropletGeometry";
 import { useAnimatedShaderUniforms, useBackgroundSize, useBackgroundIntensity } from "@legend-apps/presentation";
 import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
 import { StyleSheet, View } from "react-native";
@@ -44,6 +45,7 @@ const common = `
 
 const sources: Record<AtmosphereVariant, string> = {
   droplets: `
+    ${dropletGeometry}
     float mergeDistance(float a, float b) {
       float h = max(0.09 - abs(a - b), 0.0) / 0.09;
       return min(a, b) - h * h * 0.0225;
@@ -51,12 +53,18 @@ const sources: Record<AtmosphereVariant, string> = {
     float dropletDistance(float2 p, float t) {
       // Crossing orbits bring different neighbors together instead of leaving
       // one isolated satellite. Different periods keep the groups changing.
-      float a = length(p - float2(-0.36 + sin(t * 0.85) * 0.21, 0.16 + cos(t * 0.67) * 0.09)) - 0.185;
-      float b = length(p - float2(0.04 + cos(t * 0.92) * 0.23, 0.19 + sin(t * 0.73) * 0.10)) - 0.155;
-      float c = length(p - float2(0.38 + sin(t * 0.79 + 1.4) * 0.19, -0.19 + cos(t * 0.91) * 0.14)) - 0.14;
-      float d = length(p - float2(-0.32 + cos(t * 0.76 + 0.7) * 0.22, -0.22 + sin(t * 0.88) * 0.12)) - 0.13;
-      float e = length(p - float2(0.03 + sin(t * 0.69 + 2.1) * 0.26, -0.12 + cos(t * 0.83) * 0.20)) - 0.105;
-      float f = length(p - float2(0.42 + cos(t * 0.81 + 2.8) * 0.17, 0.21 + sin(t * 0.95) * 0.11)) - 0.115;
+      float3 aBody=backgroundDroplet(0,t);
+      float a=length(p-aBody.xy)-aBody.z;
+      float3 bBody=backgroundDroplet(1,t);
+      float b=length(p-bBody.xy)-bBody.z;
+      float3 cBody=backgroundDroplet(2,t);
+      float c=length(p-cBody.xy)-cBody.z;
+      float3 dBody=backgroundDroplet(3,t);
+      float d=length(p-dBody.xy)-dBody.z;
+      float3 eBody=backgroundDroplet(4,t);
+      float e=length(p-eBody.xy)-eBody.z;
+      float3 fBody=backgroundDroplet(5,t);
+      float f=length(p-fBody.xy)-fBody.z;
       return mergeDistance(mergeDistance(mergeDistance(a, b), mergeDistance(c, d)), mergeDistance(e, f));
     }
     float3 dropletBackdrop(float2 p) {
@@ -209,7 +217,7 @@ const effects = Object.fromEntries(Object.entries(sources).map(([name, source]) 
 })) as Record<AtmosphereVariant, NonNullable<ReturnType<typeof Skia.RuntimeEffect.Make>>>;
 
 /** One persistent canvas, driven by the host's UI-thread clock. Previews stay still. */
-export function AnimatedAtmosphere({ variant = "fluid", brightness = 1, speed = 1, slideChangeBoost }: AtmosphereProps & { variant?: AtmosphereVariant }) {
+export function AnimatedAtmosphere({ variant = "fluid", brightness = 1, speed = 1, slideChangeBoost, sharedUniforms }: AtmosphereProps & { variant?: AtmosphereVariant; sharedUniforms?: ReturnType<typeof useAnimatedShaderUniforms> }) {
   const intensity = useBackgroundIntensity();
   const { width, height } = useBackgroundSize();
   // Decks are evaluated at runtime, so props can bypass the TypeScript union.
@@ -230,7 +238,7 @@ export function AnimatedAtmosphere({ variant = "fluid", brightness = 1, speed = 
   return (
     <View pointerEvents="none" style={styles.fill}>
       <Canvas style={styles.fill}>
-        <Fill><Shader source={effect} uniforms={uniforms} /></Fill>
+        <Fill><Shader source={effect} uniforms={sharedUniforms ?? uniforms} /></Fill>
       </Canvas>
     </View>
   );
