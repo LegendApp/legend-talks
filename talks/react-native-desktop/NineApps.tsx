@@ -101,7 +101,13 @@ export function NineApps({ mode, children }: { mode: SceneMode; children?: React
       </MovingTitle>
     </SceneMotionView>}
     <SceneMotionView pose={camera} duration={650} style={{ width: 1920, height: 1080 }}>
-    <AppCarousel cardWidth={filmstripWidth} items={appOrder} position={selected} mode={mode} renderCard={(id, card) => {
+    <AppCarousel cardWidth={filmstripWidth} items={appOrder} position={selected} mode={mode}
+      renderOverlay={mode === "filmstrip" ? (id, card) => <View pointerEvents="none" collapsable={false}
+        style={{ position: "absolute", top: 0, left: 0, right: 0, height: card.captionHeight, justifyContent: "center", alignItems: "center", zIndex: 1 }}>
+        <Text numberOfLines={1} style={{ color: "#f8fafc", fontSize: 64 * card.width / filmstripWidth,
+          lineHeight: 78 * card.width / filmstripWidth, fontWeight: "700", textAlign: "center" }}>{names[id]}</Text>
+      </View> : undefined}
+      renderCard={(id, card) => {
       const { captionHeight } = card;
       const uri = recordings[id].poster;
       return (
@@ -121,10 +127,6 @@ export function NineApps({ mode, children }: { mode: SceneMode; children?: React
       );
     }} />
     </SceneMotionView>
-    {/* Step labels stay outside shared-element transforms, entrance clocks and video layers. */}
-    {mode === "filmstrip" && <View pointerEvents="none" collapsable={false} style={{ position: "absolute", left: 112, top: 65, width: 1696, height: 82, zIndex: 2000 }}>
-      <Text numberOfLines={1} style={{ color: "#f8fafc", fontSize: 64, lineHeight: 78, fontWeight: "700", textAlign: "center" }}>{names[tour.app]}</Text>
-    </View>}
     {mode === "filmstrip" && tour.detail === "takeover" && <View pointerEvents="none" style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080, zIndex: 3000 }}>{children}</View>}
   </FocusRegion>;
 }
