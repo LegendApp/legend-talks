@@ -115,7 +115,12 @@ half4 title(float2 p) {
   // Composite separately clipped source lines. A destination-space cutoff
   // sliced through the second line as the first line expanded.
   float split=lineSplit;
-  half4 second=p.y>=split ? image.eval(p) : half4(0);
+  float g=growth();
+  float cy=bestRect.y+bestRect.w*.5;
+  float movedY=mix(cy,540.0,clamp((g-1.0)/1.5,0.0,1.0));
+  float clearance=max(0.0,movedY-cy+bestRect.w*(g-1.0)*.5)+24.0*(g-1.0);
+  float2 secondPoint=p-float2(0,clearance);
+  half4 second=secondPoint.y>=split ? image.eval(secondPoint) : half4(0);
   float2 q=titleUV(p);
   for(int i=0;i<18;i++) {
     float3 hit=impacts[i];

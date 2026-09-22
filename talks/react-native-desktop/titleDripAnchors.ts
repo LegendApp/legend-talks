@@ -56,6 +56,7 @@ export function titleDripAnchors(pixels: Uint8Array, width: number, height: numb
       const [left,right]=firstRuns[glyph];
       const x=Math.round((left+right)/2);
       for(let y=firstTop;y<=firstBottom;y++) if(ink(x,y)) {targets.push([x*1920/width,y*1080/height]);break;}
+      for(let y=firstBottom;y>=firstTop;y--) if(ink(x,y)) {targets.push([x*1920/width,y*1080/height]);break;}
     }
     measured.absorptionTargets=targets;
   }
