@@ -147,7 +147,7 @@ float pulse(float2 p) {
 }
 half4 main(float2 p) {
   if(stepIndex>=2.0) {
-    float t=stepTime;
+    float t=stepTime*2.0;
     float2 original=bestRect.xy+bestRect.zw*.5;
     float2 local=(p-exitCenter)/max(.001,growth())+original;
     // Reverse absorption: outgoing mass tugs the actual glyph texture,
@@ -183,7 +183,7 @@ half4 main(float2 p) {
       float alpha=1.0-smoothstep(-.7,.7,d);
       result=half4(float3(.97)*alpha,alpha)+result*(1.0-alpha);
     }
-    return result*(1.0-smoothstep(9.2,9.9,t));
+    return result*(1.0-smoothstep(8.4,8.8,t));
   }
 
   float wave=sin(p.x*0.013-time*1.3+p.y*0.006);
@@ -231,19 +231,10 @@ half4 main(float2 p) {
     float r=length(disk);
     float rings=exp(-abs(r-210.0)/2.0)+exp(-abs(r-310.0)/1.1)*0.5;
     float angle=atan(disk.y,disk.x);
-    float stars=pow(max(0.0,sin(angle*47.0-time*0.8)),28.0);
-    light+=float3(0.5,0.66,0.9)*rings*(0.18+stars*0.8);
+    light+=float3(0.5,0.66,0.9)*rings*0.18;
     light+=float3(0.45,0.55,0.75)*exp(-length(q)/130.0)*0.12;
     alpha=max(alpha,rings*0.45);
-    // Ambient radial stardust: angle bins avoid a large per-pixel particle loop.
-    float a=atan(q.y,q.x);
-    float lane=floor((a+3.14159)*36.0);
-    float seed=hash(lane);
-    float distance=70.0+mod(time*(12.0+seed*15.0)+seed*900.0,780.0);
-    float radial=exp(-abs(length(q)-distance)/(1.0+seed*2.0));
-    float beam=pow(max(0.0,cos((a+3.14159)*36.0-floor((a+3.14159)*36.0)-0.5)),140.0);
-    float star=radial*beam*(1.0-distance/900.0);
-    light+=star*float3(0.7,0.82,1.0); alpha=max(alpha,star);
+
   }
   // Detached drops render independently above the background; they cannot
   // disappear into another parent after pinch-off.
@@ -273,7 +264,7 @@ if (!typeEffect) throw new Error("Could not compile liquid title typography");
 
 export default function WaterTitle({ children, closing = false }: { children?: import("react").ReactNode; closing?: boolean }) {
   const step = usePresentationValue("stepIndex");
-  useAdvanceAfterStep(closing ? -1 : 2, 10.0);
+  useAdvanceAfterStep(closing ? -1 : 2, 4.45);
   const [sources, setSources] = useState({ leftSource: [460, 650], rightSource: [1450, 650], thirdSource: [1520, 650], lineSplit: 540, bestInkRect: [1190,400,255,128], glyphCount: 0, glyphs: Array(256).fill(0) as number[], bestRect: [1190, 400, 255, 128] });
   const [targets,setTargets]=useState<number[][]>([]);
   const visualUniforms = useAnimatedShaderUniforms(sources, 14, { clocks: { feedTime: 1 } });
