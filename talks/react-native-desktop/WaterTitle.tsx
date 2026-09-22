@@ -1,8 +1,8 @@
 import { dropletMaterial } from "./packs/backgrounds/dropletMaterial";
 import { titleDripAnchors } from "./titleDripAnchors";
-import { AlphaType, ColorType, Canvas, Fill, Shader, ImageShader, Skia, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
-import { Background, useBackgroundSize, useBackgroundIntensity, useTitleBubbleSimulation, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
-import { useEffect, useRef, useState } from "react";
+import { AlphaType, ColorType, Canvas, Group, Path, Fill, Shader, ImageShader, Skia, matchFont, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
+import { Background, useBackgroundSize, useBackgroundIntensity, useTitleWordTransform, useTitleBubbleSimulation, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Text, View } from "react-native";
 import { titleAtmosphereEffect } from "./packs/backgrounds/AnimatedAtmosphere";
 import { dropletGeometry } from "./packs/backgrounds/dropletGeometry";
@@ -92,7 +92,12 @@ if (!waterEffect) throw new Error("Could not compile title water effect");
 
 export const liquidTypeShader = `
 uniform shader image;
-half4 sourceInk(float2 p) { return image.eval(p); }
+uniform float vectorBest;
+uniform float4 bestInkRect;
+half4 sourceInk(float2 p) {
+  if(vectorBest>.5 && p.x>=bestInkRect.x-1.0 && p.x<=bestInkRect.x+bestInkRect.z+1.0 && p.y>=bestInkRect.y-1.0 && p.y<=bestInkRect.y+bestInkRect.w+1.0) return half4(0);
+  return image.eval(p);
+}
 uniform float lineSplit;
 uniform float glyphCount;
 uniform float4 glyphs[64];
@@ -146,9 +151,9 @@ half4 main(float2 p) {
     float g=growth();
     float2 original=bestRect.xy+bestRect.zw*.5;
     float2 center=mix(original,float2(960,540),clamp((g-1.0)/1.5,0.0,1.0));
-    float remaining=1.0-smoothstep(0.0,1.35,t);
+    float remaining=1.0-smoothstep(0.0,3.2,t);
     float scale=max(.001,g*remaining);
-    float angle=t*t*15.0;
+    float angle=t*t*2.5;
     float2 delta=p-center;
     float2 local=float2(cos(angle)*delta.x+sin(angle)*delta.y,-sin(angle)*delta.x+cos(angle)*delta.y)/scale+original;
     half4 result=half4(0);
@@ -160,15 +165,25 @@ half4 main(float2 p) {
       result=result+other*(1.0-result.a);
     }
     for(int i=0;i<32;i++) {
-      float born=float(i)*.033;
+      float born=float(i)*.085;
       float age=t-born;
       if(age<0.0) continue;
-      float a=born*born*15.0+float(i)*2.39996;
-      float shrink=1.0-smoothstep(0.0,1.35,born);
+      float a=born*born*2.5+float(i)*2.39996;
+      float shrink=1.0-smoothstep(0.0,3.2,born);
       float2 direction=float2(cos(a),sin(a));
-      float2 pos=center+direction*(bestRect.z*g*.35*shrink+age*430.0);
-      float radius=(5.0+fract(float(i)*.618)*7.0)*(1.0-smoothstep(.35,.85,age));
-      float alpha=1.0-smoothstep(radius-.7,radius+.7,length(p-pos));
+      float2 start=center+direction*bestRect.z*g*.35*shrink;
+      start=clamp(start,float2(10),float2(1910,1070));
+      float tx=direction.x>0.0?(1910.0-start.x)/max(.001,direction.x):(10.0-start.x)/min(-.001,direction.x);
+      float ty=direction.y>0.0?(1070.0-start.y)/max(.001,direction.y):(10.0-start.y)/min(-.001,direction.y);
+      float distance=min(tx,ty);
+      float speed=480.0;
+      float arrival=distance/speed;
+      float2 pos=start+direction*min(age*speed,distance);
+      float radius=5.0+fract(float(i)*.618)*7.0;
+      float settle=smoothstep(0.0,.45,age-arrival);
+      float2 size=tx<ty?float2(radius*(1.0-.55*settle),radius*(1.0+2.3*settle)):float2(radius*(1.0+2.3*settle),radius*(1.0-.55*settle));
+      float d=(length((p-pos)/size)-1.0)*min(size.x,size.y);
+      float alpha=(1.0-smoothstep(-.7,.7,d))*(1.0-smoothstep(6.2,6.9,t));
       if(radius>0.0) result=half4(float3(.97)*alpha,alpha)+result*(1.0-alpha);
     }
     return result;
@@ -261,10 +276,21 @@ if (!typeEffect) throw new Error("Could not compile liquid title typography");
 
 export default function WaterTitle({ children, closing = false }: { children?: import("react").ReactNode; closing?: boolean }) {
   const step = usePresentationValue("stepIndex");
-  useAdvanceAfterStep(closing ? -1 : 2, 2.0);
+  useAdvanceAfterStep(closing ? -1 : 2, 7.0);
   const [sources, setSources] = useState({ leftSource: [460, 650], rightSource: [1450, 650], thirdSource: [1520, 650], lineSplit: 540, bestInkRect: [1190,400,255,128], glyphCount: 0, glyphs: Array(256).fill(0) as number[], bestRect: [1190, 400, 255, 128] });
   const [targets,setTargets]=useState<number[][]>([]);
-  const visualUniforms = useAnimatedShaderUniforms(sources, 14, { clocks: { feedTime: 1 } });
+  const vector=useMemo(()=>{
+    if(closing) return null;
+    try {
+      const font=matchFont({fontSize:128,fontWeight:"700"});
+      const path=Skia.Path.MakeFromText("best",0,0,font);
+      font.dispose();
+      if(!path) return null;
+      const b=path.getBounds();
+      return {path,bounds:[b.x,b.y,b.width,b.height]};
+    } catch { return null; }
+  },[closing]);
+  const visualUniforms = useAnimatedShaderUniforms({...sources,vectorBest:vector?1:0}, 14, { clocks: { feedTime: 1 } });
   const { width, height } = useBackgroundSize();
   const intensity = useBackgroundIntensity();
   const speed = step >= 1 ? 1.8 : 0.6;
@@ -273,6 +299,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
     titleFeed: 1, resolution: [Math.max(1,width),Math.max(1,height)], brightness: 0.7*intensity,
   }, 8, { speed: speed*0.16, slideChangeBoost: speed*0.32, slideChangeDuration: 3.5 });
   const uniforms = useTitleBubbleSimulation(backgroundUniforms,targets,visualUniforms);
+  const wordTransform=useTitleWordTransform(uniforms,sources.bestInkRect,vector?.bounds ?? [0,0,1,1]);
   const titleRef = useRef<View>(null);
   const [titleImage, setTitleImage] = useState<SkImage>();
   const anchored = useRef(false);
@@ -324,6 +351,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
         {!closing && showLiquidType && titleImage && <Fill><Shader source={typeEffect!} uniforms={uniforms}>
           <ImageShader image={titleImage} fit="fill" rect={{ x: 0, y: 0, width: 1920, height: 1080 }} />
         </Shader></Fill>}
+        {vector && titleImage && <Group transform={wordTransform}><Path path={vector.path} color="#f8fafc" /></Group>}
         {closing && titleImage && <Fill><ImageShader image={titleImage} fit="fill" rect={{x:0,y:0,width:1920,height:1080}} /></Fill>}
         {closing && <Fill><Shader source={waterEffect!} uniforms={uniforms} /></Fill>}
       </Canvas>
