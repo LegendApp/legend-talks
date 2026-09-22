@@ -46,6 +46,10 @@ const common = `
 const sources: Record<AtmosphereVariant, string> = {
   droplets: `
     ${dropletGeometry}
+    uniform float titleFeed;
+    uniform float stepIndex;
+    uniform float stepTime;
+    uniform float4 bestRect;
     float mergeDistance(float a, float b) {
       float h = max(0.09 - abs(a - b), 0.0) / 0.09;
       return min(a, b) - h * h * 0.0225;
@@ -65,7 +69,28 @@ const sources: Record<AtmosphereVariant, string> = {
       float e=length(p-eBody.xy)-eBody.z;
       float3 fBody=backgroundDroplet(5,t);
       float f=length(p-fBody.xy)-fBody.z;
-      return mergeDistance(mergeDistance(mergeDistance(a, b), mergeDistance(c, d)), mergeDistance(e, f));
+      float field=mergeDistance(mergeDistance(mergeDistance(a,b),mergeDistance(c,d)),mergeDistance(e,f));
+      // Buds and parent surfaces share one distance field and one material.
+      if(titleFeed>0.5 && stepIndex==1.0) {
+        float2 target=(bestRect.xy+bestRect.zw*0.5)/float2(1920,1080)-0.5;
+        target.x*=resolution.x/resolution.y;
+        for(int i=0;i<6;i++) {
+          float elapsed=stepTime-float(i)*0.48;
+          if(elapsed<0.0) continue;
+          float age=mod(elapsed,5.2);
+          float3 parent=backgroundDroplet(i,t);
+          float2 outward=normalize(parent.xy+float2(0.001));
+          float2 edge=parent.xy+outward*parent.z;
+          float release=smoothstep(1.25,4.7,age);
+          float2 bud=mix(edge+outward*0.046*smoothstep(0.0,1.6,age),target,release);
+          float radius=0.013*smoothstep(0.0,0.8,age)*(1.0-smoothstep(4.4,4.9,age));
+          float distance=length(p-bud)-radius;
+          float neck=0.025*(1.0-smoothstep(0.85,1.65,age));
+          float h=max(neck-abs(field-distance),0.0)/max(neck,0.00001);
+          field=min(field,distance)-h*h*neck*0.25;
+        }
+      }
+      return field;
     }
     float3 dropletBackdrop(float2 p) {
       // Sample this same environment at displaced coordinates inside each lens.
@@ -228,6 +253,7 @@ export function AnimatedAtmosphere({ variant = "fluid", brightness = 1, speed = 
   const idleSpeed = 0.16;
   const motionSpeed = Number.isFinite(speed) ? Math.max(0, speed) : 1;
   const uniforms = useAnimatedShaderUniforms({
+    titleFeed: 0, bestRect: [0,0,0,0],
     resolution: [Math.max(1, width), Math.max(1, height)],
     brightness: (Number.isFinite(brightness) ? Math.max(0, brightness) : 1) * intensity,
   }, 8, {

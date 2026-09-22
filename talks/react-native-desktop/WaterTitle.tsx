@@ -1,4 +1,5 @@
-import { Canvas, Fill, Shader, ImageShader, Skia, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
+import { titleDripAnchors } from "./titleDripAnchors";
+import { AlphaType, ColorType, Canvas, Fill, Shader, ImageShader, Skia, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
 import { Background, useBackgroundSize, useBackgroundIntensity, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
 import { useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
@@ -70,7 +71,7 @@ float material(float2 p,float2 source,float local) {
   return d;
 }
 float field(float2 p) {
-  return min(min(material(p,leftSource,time-0.6),material(p,rightSource,time-1.65)),material(p,thirdSource,time-2.4));
+  return merge(merge(material(p,leftSource,time-0.6),material(p,rightSource,time-1.65),12.0),material(p,thirdSource,time-2.4),12.0);
 }
 half4 main(float2 p) {
   float d=field(p);
@@ -93,9 +94,9 @@ half4 main(float2 p) {
   float ribbon=exp(-pow((n.y+0.42+n.x*0.23)/0.12,2.0));
   float fine=exp(-pow((n.y-0.67+n.x*0.12)/0.045,2.0));
   float edge=exp(-abs(d)/1.15);
-  float3 color=float3(0.065,0.13,0.18)+diffuse*float3(0.17,0.22,0.25);
-  color+=fresnel*float3(0.45,0.61,0.69)+spec*0.95;
-  color+=ribbon*float3(0.55,0.65,0.70)+fine*float3(0.32,0.48,0.55);
+  float3 color=float3(0.56,0.58,0.60)+diffuse*float3(0.22,0.22,0.22);
+  color+=fresnel*float3(0.25,0.26,0.27)+spec*0.95;
+  color+=ribbon*float3(0.23)+fine*float3(0.16);
   color+=edge*(0.18+0.55*max(0.0,-normal.y));
   // The lower lip is shaded below the raised surface rather than flat white.
   color*=1.0-0.48*poolWeight*smoothstep(0.35,0.95,normal.y);
@@ -194,29 +195,6 @@ half4 main(float2 p) {
     float star=radial*beam*(1.0-distance/900.0);
     light+=star*float3(0.7,0.82,1.0); alpha=max(alpha,star);
   }
-  if(stepIndex>=1.0 && stepIndex<2.0) {
-    for(int i=0;i<18;i++) {
-      float id=float(i);
-      float elapsed=stepTime-hash(id)*4.2;
-      if(elapsed<0.0) continue;
-      float age=mod(elapsed,4.2);
-      float u=age/4.2;
-      float a=hash(id+9.0)*6.28318;
-      float3 body=backgroundDroplet(i-(i/6)*6,time*0.6);
-      float2 center=(body.xy/float2(resolution.x/resolution.y,1.0)+0.5)*float2(1920,1080);
-      float2 direction=normalize(c-center);
-      float2 start=center+direction*body.z*float2(1920.0*resolution.y/resolution.x,1080.0);
-      float2 pos=mix(start,c,smoothstep(0.0,1.0,u));
-      pos+=float2(sin(u*9.0+id),cos(u*7.0+id))*40.0*sin(u*3.14159);
-      float radius=(4.0+hash(id+21.0)*12.0)*(1.0-smoothstep(0.83,1.0,u));
-      float d=length(p-pos);
-      float rim=exp(-abs(d-radius)/1.2);
-      float glint=exp(-length(p-(pos-float2(radius*0.3)))/1.9);
-      float visible=smoothstep(0.0,0.3,stepTime)*smoothstep(0.0,0.08,u);
-      light+=(rim*float3(0.5,0.7,0.9)+glint)*visible;
-      alpha=max(alpha,(rim*0.75+glint)*visible);
-    }
-  }
   if(stepIndex>=2.0) {
     float t=stepTime;
     float shock=exp(-abs(length(q)-t*1500.0)/max(2.0,20.0-t*10.0))*(1.0-smoothstep(0.4,1.0,t));
@@ -263,17 +241,25 @@ export default function WaterTitle({ children, closing = false }: { children?: i
   const speed = step >= 1 ? 1.8 : 0.6;
   // One uniform object drives both the background and the emerging bubbles.
   const backgroundUniforms = useAnimatedShaderUniforms({ ...sources,
-    resolution: [Math.max(1,width),Math.max(1,height)], brightness: 0.7*intensity,
+    titleFeed: 1, resolution: [Math.max(1,width),Math.max(1,height)], brightness: 0.7*intensity,
   }, 8, { speed: speed*0.16, slideChangeBoost: speed*0.32, slideChangeDuration: 3.5 });
   const titleRef = useRef<View>(null);
   const [titleImage, setTitleImage] = useState<SkImage>();
+  const anchored = useRef(false);
   // Capture typography once after layout; only shader uniforms change on frames.
   useEffect(() => {
+    if (anchored.current) return;
     let cancelled = false;
     const cancel = snapshotCaptureQueue.enqueue(async () => {
       const image = await makeImageFromView(titleRef);
       if (cancelled) { image?.dispose(); return; }
-      if (image) setTitleImage(image);
+      if (image) {
+        const pixels=image.readPixels(0,0,{width:image.width(),height:image.height(),colorType:ColorType.RGBA_8888,alphaType:AlphaType.Unpremul});
+        const anchors=pixels instanceof Uint8Array ? titleDripAnchors(pixels,image.width(),image.height()) : null;
+        anchored.current=true;
+        if(anchors) setSources(old=>({...old,...anchors}));
+        setTitleImage(image);
+      }
     });
     return () => { cancelled = true; cancel(); };
   }, [sources]);
@@ -286,6 +272,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
       </View>
       {/* Native text metrics anchor the water to the same two-line heading. */}
       <Text accessible={false} pointerEvents="none" onTextLayout={event => {
+        if(anchored.current) return;
         const lines = event.nativeEvent.lines;
         const last = lines[lines.length - 1];
         if (!last) return;
