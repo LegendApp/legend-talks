@@ -23,12 +23,14 @@ const reveal = [{ time: 0, x: 0, y: 15, opacity: 0 }, { time: 650, x: 0, y: 0, o
 const boxReveal = [{ time: 0, x: 0, y: 0, opacity: 0 }, { time: 650, x: 0, y: 0, opacity: 1 }];
 const hide = [{ time: 0, x: 0, y: 0, opacity: 1 }, { time: 380, x: 0, y: 0, opacity: 1 }, { time: 550, x: 0, y: 8, opacity: 0 }];
 const boxGeometry = [{ x: 5, y: 5, width: 502, height: 96, radius: 28 }];
-function FrameTitle({ icon }: { icon: string }) {
-  return <MovingTitle style={{ height: 150, alignItems: "center", justifyContent: "center" }}>
-    <View style={{ flexDirection: "row", alignItems: "center" }}>
+const titleReveal = [{ time: 0, x: 0, y: 0, opacity: 0 }, { time: 800, x: 0, y: 0, opacity: 1 }];
+export function FrameTitle({ icon, revealDelay }: { icon: string; revealDelay?: number }) {
+  const title = <View style={{ flexDirection: "row", alignItems: "center" }}>
       <Image source={{ uri: icon }} style={{ width: 140, height: 140 }} resizeMode="contain" />
       <Text style={{ color: "white", fontSize: 70, fontWeight: "600" }}>Legend Frame</Text>
-    </View>
+    </View>;
+  return <MovingTitle style={{ height: 150, alignItems: "center", justifyContent: "center" }}>
+    {revealDelay === undefined ? title : <PlaybackKeyframeView keyframes={titleReveal} delay={revealDelay} previewTime={10}>{title}</PlaybackKeyframeView>}
   </MovingTitle>;
 }
 export function FramePitch({ icon }: { icon: string }) {

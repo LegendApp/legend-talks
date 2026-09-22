@@ -1,6 +1,7 @@
-import { Blur, Canvas, Fill, Group, ImageShader, Paint, RuntimeShader, Shader, Skia, matchFont, useImage } from "@shopify/react-native-skia";
+import { Blur, Canvas, Fill, Group, ImageShader, Paint, RuntimeShader, Shader, Skia, matchFont } from "@shopify/react-native-skia";
 import { liquidGlassShader, useLiquidGlassPlayback, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { View } from "react-native";
+import { FrameTitle } from "./FramePitch";
 import { glassPanelMaterial } from "./GlassPanels";
 
 const capabilities = ["Windows", "Native menus", "Keyboard shortcuts", "Files & folders", "Open / save dialogs",
@@ -18,8 +19,8 @@ const shipping = publishing.map((label, i) => ({
   label, row: capabilities.length + i, wave: 4,
   x: i < 5 ? 340 : 1356, y: 105 + (i % 5) * 112,
 }));
-const rows = [...capabilities, ...publishing, "Your app", command, "Legend Frame"];
-const appRow = 25, commandRow = 26, brandRow = 27;
+const rows = [...capabilities, ...publishing, "Your app", command];
+const appRow = 25, commandRow = 26;
 const atlasWidth = 1600, rowHeight = 100;
 // Text is rasterized once. Motion, ripple, blur, cursor morph and character
 // reveal sample the same UI/GPU timeline; no native text reset can lag behind.
@@ -32,21 +33,19 @@ function makeTextAtlas() {
   paint.setAntiAlias(true);
   paint.setColor(Skia.Color("white"));
   let cell = 0;
-  let brandWidth = 0;
   rows.forEach((label, row) => {
     const font = matchFont({ fontFamily: row === commandRow ? "Menlo" : "Helvetica Neue",
-      fontSize: row === commandRow ? 60 : row === brandRow ? 80 : row === appRow ? 32 : 27, fontWeight: "600" });
+      fontSize: row === commandRow ? 60 : row === appRow ? 32 : 27, fontWeight: "600" });
     const bounds = font.measureText(label);
     canvas.drawText(label, (atlasWidth - bounds.width) / 2 - bounds.x,
       row * rowHeight + (rowHeight - bounds.height) / 2 - bounds.y, paint, font);
     if (row === commandRow) cell = bounds.width / command.length;
-    if (row === brandRow) brandWidth = bounds.width;
     font.dispose();
   });
   const image = surface.makeImageSnapshot();
   paint.dispose();
   surface.dispose();
-  return { image, cell, brandWidth };
+  return { image, cell };
 }
 const atlas = makeTextAtlas();
 const geometry = `
@@ -124,7 +123,6 @@ export const foundationsRippleShader = liquidGlassShader;
 
 export const frameCursorShader = `
 uniform shader labels;
-uniform shader icon;
 uniform float padding;
 uniform float time;
 uniform float stepIndex;
@@ -168,16 +166,6 @@ half4 main(float2 p) {
     half4 text=labels.eval(float2(p.x-left+800.0-cell*${command.length}.0*0.5,p.y-330.0+2650.0));
     result=text+result*(1.0-text.a);
   }
-  float brand=smoothstep(7.4,8.2,time);
-  if(abs(p.y-170.0)<49.0) {
-    half4 text=labels.eval(p-float2(912,170)+float2(800,2750))*brand;
-    result=text+result*(1.0-text.a);
-  }
-  float2 iconPoint=p-float2(${(848 - (atlas.brandWidth + 128) / 2 - 12).toFixed(6)},96);
-  if(iconPoint.x>=0.0 && iconPoint.x<148.0 && iconPoint.y>=0.0 && iconPoint.y<148.0) {
-    half4 mark=icon.eval(iconPoint)*brand;
-    result=mark+result*(1.0-mark.a);
-  }
   return result;
 }`;
 const network = Skia.RuntimeEffect.Make(foundationsNetworkShader);
@@ -191,9 +179,8 @@ const canvasPadding = 160;
 const canvasWidth = 1696 + canvasPadding * 2;
 const canvasHeight = 680 + canvasPadding * 2;
 
-export function DesktopFoundationsJourney({ icon }: { icon: Parameters<typeof useImage>[0] }) {
+export function DesktopFoundationsJourney({ icon }: { icon: string }) {
   const step = usePresentationValue("stepIndex");
-  const frameIcon = useImage(icon);
   const featureUniforms = useAnimatedShaderUniforms({ kind: 0, padding: canvasPadding }, 10, { clock: 5 });
   const shippingUniforms = useAnimatedShaderUniforms({ kind: 1, padding: canvasPadding }, 10, { clock: 5 });
   const glass = useLiquidGlassPlayback({ active: step >= 4, width: canvasWidth, height: canvasHeight });
@@ -210,10 +197,11 @@ export function DesktopFoundationsJourney({ icon }: { icon: Parameters<typeof us
           </Group>
         </Group>
         <Fill><Shader source={network!} uniforms={shippingUniforms}>{image}</Shader></Fill>
-        {frameIcon && <Fill><Shader source={cursor!} uniforms={cursorUniforms}>{image}
-          <ImageShader image={frameIcon} x={0} y={0} width={148} height={148} fit="fill" tx="decal" ty="decal" />
-        </Shader></Fill>}
+        <Fill><Shader source={cursor!} uniforms={cursorUniforms}>{image}</Shader></Fill>
       </Canvas>
+      {step >= 5 && <View style={{ position: "absolute", top: 95, left: 0, width: 1696 }}>
+        <FrameTitle icon={icon} revealDelay={7400} />
+      </View>}
     </View>
   </>;
 }
