@@ -1,3 +1,4 @@
+import { dropletMaterial } from "./packs/backgrounds/dropletMaterial";
 import { titleDripAnchors } from "./titleDripAnchors";
 import { AlphaType, ColorType, Canvas, Fill, Shader, ImageShader, Skia, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
 import { Background, useBackgroundSize, useBackgroundIntensity, useTitleBubbleSimulation, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
@@ -156,6 +157,9 @@ export const cosmicShader = `
 ${dropletGeometry}
 uniform float2 resolution;
 uniform float4 drops[6];
+uniform float whiten[6];
+uniform float brightness;
+${dropletMaterial}
 uniform float time;
 uniform float stepIndex;
 uniform float stepTime;
@@ -193,10 +197,15 @@ half4 main(float2 p) {
     if(drop.w<1.0 || drop.z<0.1) continue;
     float distance=length(p-drop.xy);
     float fill=1.0-smoothstep(drop.z-1.0,drop.z+1.0,distance);
-    float rim=exp(-abs(distance-drop.z)/1.2);
-    float glint=exp(-length(p-drop.xy+float2(drop.z*.35))/2.5);
-    light+=fill*float3(.07,.11,.15)+rim*float3(.7,.85,1)+glint;
-    alpha=max(alpha,fill*.8+rim*.2);
+    float2 normal=(p-drop.xy)/max(distance,0.001);
+    float3 glass=shadeDroplet((p-float2(960,540))/1080.0,(distance-drop.z)/1080.0,normal)*brightness;
+    float edge=exp(-abs(distance-drop.z)/2.8);
+    float lit=max(0.0,dot(normal,normalize(float2(-.6,-.8))));
+    float3 white=float3(.93-edge*.20+edge*lit*.27);
+    float blend=smoothstep(0.0,1.0,whiten[i]);
+    float3 color=mix(glass,white,blend);
+    light=mix(light,color,fill);
+    alpha=max(alpha,fill);
   }
   if(stepIndex>=2.0) {
     float t=stepTime;
