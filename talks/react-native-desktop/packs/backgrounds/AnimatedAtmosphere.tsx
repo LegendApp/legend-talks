@@ -91,7 +91,7 @@ const sources: Record<AtmosphereVariant, string> = {
     }
     ${dropletMaterial}
     half4 main(float2 position) {
-      float2 p = (position / resolution - 0.5) * float2(resolution.x / resolution.y, 1.0);
+      float2 p = (position-resolution*.5)/(min(resolution.x/1920.0,resolution.y/1080.0)*1080.0);
       float t = (titleFeed>0.5 ? backgroundTime : time) * 0.6;
       float d = dropletDistance(p, t);
       float epsilon = 0.001;
@@ -230,6 +230,7 @@ export function AnimatedAtmosphere({ variant = "fluid", brightness = 1, speed = 
     resolution: [Math.max(1, width), Math.max(1, height)],
     brightness: (Number.isFinite(brightness) ? Math.max(0, brightness) : 1) * intensity,
   }, 8, {
+    persistentBackground: variant === "droplets",
     speed: motionSpeed * idleSpeed,
     slideChangeBoost: motionSpeed * (slideChangeBoost ?? idleSpeed * 2),
     slideChangeDuration: 3.5,

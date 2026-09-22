@@ -274,7 +274,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
   // One uniform object drives both the background and the emerging bubbles.
   const backgroundUniforms = useAnimatedShaderUniforms({ ...sources,
     titleFeed: 1, resolution: [Math.max(1,width),Math.max(1,height)], brightness: 0.7*intensity,
-  }, 8, { speed: speed*0.16, slideChangeBoost: speed*0.32, slideChangeDuration: 3.5 });
+  }, 8, { persistentBackground: true, speed: speed*0.16, slideChangeBoost: speed*0.32, slideChangeDuration: 3.5 });
   const uniforms = useTitleBubbleSimulation(backgroundUniforms,targets,visualUniforms);
   const titleRef = useRef<View>(null);
   const [titleImage, setTitleImage] = useState<SkImage>();
