@@ -25,7 +25,8 @@ import { FrameworkComparison } from "./FrameworkComparison"
 import { CrossPlatformLanes } from "./CrossPlatformLanes"
 import { MeasurementTimeline } from "./MeasurementTimeline"
 import { HelloSizeJourney } from "./HelloSizeJourney"
-import { StoryMoment, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot, SlidesHeader, SlidesRelease } from "./StoryDiagrams"
+import { StoryMoment, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot } from "./StoryDiagrams"
+import { SlidesReveal } from "./SlidesReveal";
 import { ExistingModulesTitle } from "./ModuleCompatibility";
 import { FramePitch, FrameFoundations } from "./FramePitch";
 import { EverywhereMorph } from "./EverywhereMorph";
@@ -1045,65 +1046,7 @@ And underneath that... a WebView.
 
 It's React Native. Frame adds desktop APIs and tooling to that foundation.
 
-And here's an app built with these pieces. You've been looking at it the whole time.
--->
-
----
-eyebrow: 'The reveal'
-footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
----
-
-# One more thing... {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-8xl mb-0"}
-
-<!--
-And there's one more app I haven't shown you.
-
-Well, I have.
-
-You've been looking at it this whole time.
-
-[Pause.]
--->
-
----
-eyebrow: 'Built with the same idea'
-footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
----
-
-<SlidesHeader icon={slidesIcon} />
-
-<MediaSlot label="Presenter + audience windows → live source edit" />
-
-<!--
-This presentation app is React Native desktop too.
-
-It's called Legend Slides.
-
-The presenter view and the audience view are separate native windows. The deck is Markdown and MDX, and I can edit the source right here.
-
-And when Markdown isn't enough, I can drop in a native component or a shader and do all this ridiculous stuff.
-
-So yes, I made a presentation app to tell you about making desktop apps.
-
-[Show presenter view and one source edit.]
--->
-
----
-title: "Legend Slides · 0.0.1"
-eyebrow: 'Launch announcement'
-footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
----
-
-<SlidesRelease icon={slidesIcon} />
-
-<!--
-And I'm releasing version 0.0.1.
-
-It's open source, and the link is right here.
-
-This is very much an early version. But it's a real app, and I'm using it to give this talk.
-
-So if you want an example to learn from, or you want to make some very unnecessary slide animations, please try it.
+So that's the foundation. Now there's one part I need your help with.
 -->
 
 ---
@@ -1206,6 +1149,43 @@ If you want to help with the audit, please talk to me.
 -->
 
 
+
+---
+title: One more thing
+---
+
+# One more thing... {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-8xl mb-0"}
+
+<!--
+And there's one more app I haven't shown you.
+
+Well, I have. You've been looking at it this whole time.
+
+[Pause.]
+-->
+
+---
+title: Legend Slides
+steps: 3
+---
+
+<SlidesReveal icon={slidesIcon} />
+
+<!--
+1. This is Legend Slides. It's React Native desktop too.
+
+2. The presenter and audience views are separate native windows. The deck is Markdown and MDX. I can edit the source right here, and drop in native components and shaders for all this ridiculous stuff.
+
+[Show the app screenshot. Placeholder until the capture is ready.]
+
+So yes, I made a presentation app to tell you about making desktop apps.
+
+3. [Shatter the screenshot. Let the GitHub link appear.]
+
+It's open source. I'm releasing version 0.0.1. It's early, but it's a real app, and I'm using it to give this talk.
+
+If you want an example to learn from, or some very unnecessary slide animations, please try it.
+-->
 
 ---
 eyebrow: 'React Native is the best way to build desktop apps'

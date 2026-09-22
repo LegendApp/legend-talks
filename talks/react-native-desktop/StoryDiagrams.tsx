@@ -49,7 +49,7 @@ export function SlidesHeader({ icon }: { icon: string }) {
   return <MovingTitle style={{ alignSelf: "center" }}>
     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 24 }}>
       <Image source={{ uri: icon }} style={{ width: 100, height: 100 }} resizeMode="contain" />
-      <Text style={{ color: ink, fontSize: 72, fontWeight: "600" }}>Legend Slides</Text>
+      <Text style={{ color: ink, fontSize: 72, lineHeight: 100, fontWeight: "600", textAlignVertical: "center" }}>Legend Slides</Text>
     </View>
   </MovingTitle>;
 }
