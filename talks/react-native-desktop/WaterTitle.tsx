@@ -1,6 +1,6 @@
 import { dropletMaterial } from "./packs/backgrounds/dropletMaterial";
 import { titleDripAnchors } from "./titleDripAnchors";
-import { AlphaType, ColorType, Canvas, Fill, Shader, ImageShader, Skia, matchFont, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
+import { AlphaType, ColorType, Canvas, Fill, Shader, ImageShader, Skia, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
 import { Background, useBackgroundSize, useBackgroundIntensity, useTitleBubbleSimulation, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
 import { useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
@@ -92,12 +92,7 @@ if (!waterEffect) throw new Error("Could not compile title water effect");
 
 export const liquidTypeShader = `
 uniform shader image;
-uniform shader bestImage;
-uniform float4 bestInkRect;
-half4 sourceInk(float2 p) {
-  if(p.x>=bestInkRect.x && p.x<=bestInkRect.x+bestInkRect.z && p.y>=bestInkRect.y && p.y<=bestInkRect.y+bestInkRect.w) return bestImage.eval(p);
-  return image.eval(p);
-}
+half4 sourceInk(float2 p) { return image.eval(p); }
 uniform float lineSplit;
 uniform float glyphCount;
 uniform float4 glyphs[64];
@@ -280,7 +275,6 @@ export default function WaterTitle({ children, closing = false }: { children?: i
   const uniforms = useTitleBubbleSimulation(backgroundUniforms,targets,visualUniforms);
   const titleRef = useRef<View>(null);
   const [titleImage, setTitleImage] = useState<SkImage>();
-  const [bestImage,setBestImage]=useState<SkImage>();
   const anchored = useRef(false);
   // Capture typography once after layout; only shader uniforms change on frames.
   useEffect(() => {
@@ -292,12 +286,6 @@ export default function WaterTitle({ children, closing = false }: { children?: i
       if (image) {
         const pixels=image.readPixels(0,0,{width:image.width(),height:image.height(),colorType:ColorType.RGBA_8888,alphaType:AlphaType.Unpremul});
         const anchors=pixels instanceof Uint8Array ? titleDripAnchors(pixels,image.width(),image.height()) : null;
-        // Rasterize only the enlarged word at 4x, avoiding a huge full-slide texture.
-        const font=matchFont({fontSize:512,fontWeight:"700"});
-        const bounds=font.measureText("best");
-        const surface=Skia.Surface.MakeOffscreen(Math.ceil(bounds.width),Math.ceil(bounds.height));
-        if(surface){const paint=Skia.Paint();paint.setColor(Skia.Color("white"));surface.getCanvas().drawText("best",-bounds.x,-bounds.y,paint,font);surface.flush();setBestImage(surface.makeImageSnapshot());surface.dispose();paint.dispose();}
-        font.dispose();
         anchored.current=true;
         if(anchors) { const {absorptionTargets,...geometry}=anchors; setSources(old=>({...old,...geometry}));setTargets(absorptionTargets ?? []); }
         setTitleImage(image);
@@ -310,7 +298,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
     <Background priority={1}><View style={{flex:1,backgroundColor:"#050a10"}} /></Background>
     {/* This slide disables template padding and owns its full layout. */}
     <View style={{ width: 1920, height: 1080 }}>
-      <View style={{ flex: 1, opacity: showLiquidType ? 0 : 1 }}>
+      <View style={{ flex: 1, opacity: showLiquidType ? 0 : 1, zIndex: showLiquidType ? 0 : 1 }}>
         <View ref={titleRef} collapsable={false} style={{ flex: 1, paddingHorizontal: 112, paddingVertical: 96, justifyContent: "center" }}>{children}</View>
       </View>
       {/* Native text metrics anchor the water to the same two-line heading. */}
@@ -335,7 +323,6 @@ export default function WaterTitle({ children, closing = false }: { children?: i
         {!closing && <Fill><Shader source={cosmicEffect!} uniforms={uniforms} /></Fill>}
         {!closing && showLiquidType && titleImage && <Fill><Shader source={typeEffect!} uniforms={uniforms}>
           <ImageShader image={titleImage} fit="fill" rect={{ x: 0, y: 0, width: 1920, height: 1080 }} />
-          <ImageShader image={bestImage ?? titleImage} fit="fill" rect={{x:sources.bestInkRect[0],y:sources.bestInkRect[1],width:sources.bestInkRect[2],height:sources.bestInkRect[3]}} />
         </Shader></Fill>}
         {closing && titleImage && <Fill><ImageShader image={titleImage} fit="fill" rect={{x:0,y:0,width:1920,height:1080}} /></Fill>}
         {closing && <Fill><Shader source={waterEffect!} uniforms={uniforms} /></Fill>}
