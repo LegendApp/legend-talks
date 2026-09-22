@@ -54,9 +54,14 @@ export function titleDripAnchors(pixels: Uint8Array, width: number, height: numb
     const targets:number[][]=[];
     for(let glyph=i;glyph<i+4;glyph++) {
       const [left,right]=firstRuns[glyph];
-      const x=Math.round((left+right)/2);
-      for(let y=firstTop;y<=firstBottom;y++) if(ink(x,y)) {targets.push([x*1920/width,y*1080/height]);break;}
-      for(let y=firstBottom;y>=firstTop;y--) if(ink(x,y)) {targets.push([x*1920/width,y*1080/height]);break;}
+      for(let sample=0;sample<4;sample++) {
+        const x=Math.round(left+(right-left)*(sample+.5)/4);
+        for(let y=firstTop;y<=firstBottom;y++) if(ink(x,y)) {targets.push([x*1920/width,y*1080/height]);break;}
+        for(let y=firstBottom;y>=firstTop;y--) if(ink(x,y)) {targets.push([x*1920/width,y*1080/height]);break;}
+        const y=Math.round(firstTop+(firstBottom-firstTop)*(sample+.5)/4);
+        for(let x=left;x<=right;x++) if(ink(x,y)) {targets.push([x*1920/width,y*1080/height]);break;}
+        for(let x=right;x>=left;x--) if(ink(x,y)) {targets.push([x*1920/width,y*1080/height]);break;}
+      }
     }
     measured.absorptionTargets=targets;
     let inkTop=firstBottom,inkBottom=firstTop;

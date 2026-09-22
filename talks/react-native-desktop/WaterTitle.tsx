@@ -101,6 +101,7 @@ uniform float stepIndex;
 uniform float stepTime;
 uniform float feedTime;
 uniform float absorbedScale;
+uniform float centerProgress;
 uniform float2 exitCenter;
 uniform float4 drops[72];
 uniform float4 necks[72];
@@ -110,7 +111,7 @@ float growth() { return absorbedScale; }
 float2 titleUV(float2 p) {
   float g=growth();
   float2 c=bestRect.xy+bestRect.zw*0.5;
-  float2 moved=mix(c,float2(960,540),clamp((g-1.0)/1.5,0.0,1.0));
+  float2 moved=mix(c,float2(960,540),centerProgress);
   p-=moved-c;
   float halfWidth=bestRect.z*g*0.5;
 
@@ -123,7 +124,7 @@ half4 title(float2 p) {
   float split=lineSplit;
   float g=growth();
   float cy=bestRect.y+bestRect.w*.5;
-  float movedY=mix(cy,540.0,clamp((g-1.0)/1.5,0.0,1.0));
+  float movedY=mix(cy,540.0,centerProgress);
   float clearance=max(0.0,movedY-cy+bestRect.w*(g-1.0)*.5)+24.0*(g-1.0);
   float2 secondPoint=p-float2(0,clearance);
   half4 second=secondPoint.y>=split ? sourceInk(secondPoint) : half4(0);
