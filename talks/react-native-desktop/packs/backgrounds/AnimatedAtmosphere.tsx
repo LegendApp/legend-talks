@@ -51,7 +51,7 @@ const sources: Record<AtmosphereVariant, string> = {
     ${dropletGeometry}
     uniform float titleFeed;
     uniform float backgroundTime;
-    uniform float4 drops[6];
+    uniform float4 drops[18];
     uniform float stepIndex;
     uniform float stepTime;
     uniform float4 bestRect;
@@ -77,7 +77,7 @@ const sources: Record<AtmosphereVariant, string> = {
       float field=mergeDistance(mergeDistance(mergeDistance(a,b),mergeDistance(c,d)),mergeDistance(e,f));
       // Buds and parent surfaces share one distance field and one material.
       if(titleFeed>0.5 && stepIndex==1.0) {
-        for(int i=0;i<6;i++) {
+        for(int i=0;i<18;i++) {
           float4 drop=drops[i];
           if(drop.w!=0.0 || drop.z<0.1) continue;
           float2 pos=(drop.xy-float2(960,540))/1080.0;
@@ -226,7 +226,7 @@ export function AnimatedAtmosphere({ variant = "fluid", brightness = 1, speed = 
   const idleSpeed = 0.16;
   const motionSpeed = Number.isFinite(speed) ? Math.max(0, speed) : 1;
   const uniforms = useAnimatedShaderUniforms({
-    titleFeed, bestRect, backgroundTime: 0, drops: Array(24).fill(0),
+    titleFeed, bestRect, backgroundTime: 0, drops: Array(72).fill(0),
     resolution: [Math.max(1, width), Math.max(1, height)],
     brightness: (Number.isFinite(brightness) ? Math.max(0, brightness) : 1) * intensity,
   }, 8, {

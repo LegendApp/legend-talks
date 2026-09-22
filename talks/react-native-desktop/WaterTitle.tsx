@@ -98,12 +98,14 @@ uniform float stepIndex;
 uniform float stepTime;
 uniform float feedTime;
 uniform float absorbedScale;
-uniform float3 impacts[6];
+uniform float3 impacts[18];
 uniform float4 bestRect;
 float growth() { return absorbedScale; }
 float2 titleUV(float2 p) {
   float g=growth();
   float2 c=bestRect.xy+bestRect.zw*0.5;
+  float2 moved=mix(c,float2(960,540),clamp((g-1.0)/1.5,0.0,1.0));
+  p-=moved-c;
   float halfWidth=bestRect.z*g*0.5;
 
   if(abs(p.x-c.x)<halfWidth) return c+(p-c)/g;
@@ -115,14 +117,14 @@ half4 title(float2 p) {
   float split=lineSplit;
   half4 second=p.y>=split ? image.eval(p) : half4(0);
   float2 q=titleUV(p);
-  for(int i=0;i<6;i++) {
+  for(int i=0;i<18;i++) {
     float3 hit=impacts[i];
     float2 delta=q-hit.xy;
     float bulge=hit.z*exp(-dot(delta,delta)/1600.0)*0.18;
     q-=delta*bulge;
   }
   half4 first=q.y<split ? image.eval(q) : half4(0);
-  if(stepIndex>=2.0 && q.x>bestRect.x && q.x<bestRect.x+bestRect.z) first=half4(0);
+
   return first+second*(1.0-first.a);
 }
 float pulse(float2 p) {
@@ -131,6 +133,47 @@ float pulse(float2 p) {
   return pow(max(0.0,sin(time*0.9+seed*6.28318)),12.0);
 }
 half4 main(float2 p) {
+  if(stepIndex>=2.0) {
+    float t=stepTime;
+    half4 result=half4(0);
+    // Each tile contains actual title pixels, retaining the letter silhouette.
+    // Reverse-map ballistic fragments rather than replacing them with particles.
+    for(int i=0;i<72;i++) {
+      float id=float(i);
+      float seed=fract(sin(id*127.1+5.0)*43758.5453);
+      float2 origin=float2(mod(id,12.0)*160.0+80.0,floor(id/12.0)*180.0+90.0);
+      float vx=(origin.x-960.0)*0.13+(seed-.5)*120.0;
+      float vy=-95.0-seed*110.0;
+      float hit=(-vy+sqrt(vy*vy+640.0*max(0.0,1035.0-origin.y)))/320.0;
+      float fall=min(t,hit);
+      float2 pos=origin+float2(vx*fall,vy*fall+160.0*fall*fall);
+      if(t<hit) {
+        float angle=(seed-.5)*t*.65;
+        float2 delta=p-pos;
+        float2 local=float2(cos(angle)*delta.x+sin(angle)*delta.y,-sin(angle)*delta.x+cos(angle)*delta.y);
+        if(abs(local.x)<80.0 && abs(local.y)<90.0) {
+          half4 ink=title(origin+local);
+          result=ink+result*(1.0-ink.a);
+        }
+      } else {
+        float settle=smoothstep(0.0,.6,t-hit);
+        float2 radius=float2(22.0+65.0*settle,4.0+10.0*settle);
+        float d=(length((p-float2(pos.x,1038.0))/radius)-1.0)*radius.y;
+        if(d<2.0) {
+          float ink=0.0;
+          for(int j=0;j<9;j++) {
+            float2 probe=origin+float2(mod(float(j),3.0)-1.0,floor(float(j)/3.0)-1.0)*45.0;
+            ink=max(ink,title(probe).a);
+          }
+          float alpha=(1.0-smoothstep(-.7,.7,d))*ink;
+          float white=.93-exp(-abs(d)/2.8)*.12;
+          result=half4(float3(white)*alpha,alpha)+result*(1.0-alpha);
+        }
+      }
+    }
+    return result*(1.0-smoothstep(4.7,5.4,t));
+  }
+
   float wave=sin(p.x*0.013-time*1.3+p.y*0.006);
   float amount=smoothstep(0.0,1.8,time);
   float2 q=p+float2(sin(p.y*0.028+time*0.7)*1.4,wave*2.2)*amount;
@@ -156,8 +199,8 @@ half4 main(float2 p) {
 export const cosmicShader = `
 ${dropletGeometry}
 uniform float2 resolution;
-uniform float4 drops[6];
-uniform float whiten[6];
+uniform float4 drops[18];
+uniform float whiten[18];
 uniform float brightness;
 ${dropletMaterial}
 uniform float time;
@@ -192,7 +235,7 @@ half4 main(float2 p) {
   }
   // Detached drops render independently above the background; they cannot
   // disappear into another parent after pinch-off.
-  if(stepIndex==1.0) for(int i=0;i<6;i++) {
+  if(stepIndex==1.0) for(int i=0;i<18;i++) {
     float4 drop=drops[i];
     if(drop.w<1.0 || drop.z<0.1) continue;
     float distance=length(p-drop.xy);
@@ -207,33 +250,6 @@ half4 main(float2 p) {
     light=mix(light,color,fill);
     alpha=max(alpha,fill);
   }
-  if(stepIndex>=2.0) {
-    float t=stepTime;
-    float shock=exp(-abs(length(q)-t*1500.0)/max(2.0,20.0-t*10.0))*(1.0-smoothstep(0.4,1.0,t));
-    float core=exp(-length(q)/max(1.0,130.0*(1.0-t)))*(1.0-smoothstep(0.0,0.5,t));
-    light+=(shock*0.8+core)*float3(0.9,0.96,1.0); alpha=max(alpha,shock+core);
-    for(int i=0;i<24;i++) {
-      float id=float(i);
-      float side=mod(id,4.0);
-      float along=hash(id+31.0);
-      float2 hit=side<1.0 ? float2(5.0,along*1080.0) : side<2.0 ? float2(1915.0,along*1080.0) : side<3.0 ? float2(along*1920.0,5.0) : float2(along*1920.0,1075.0);
-      float arrival=0.4+hash(id+1.0)*0.4;
-      float u=min(1.0,t/arrival);
-      float2 pos=mix(c,hit,1.0-pow(1.0-u,2.0));
-      float r=3.0+hash(id+6.0)*8.0;
-      float2 delta=p-pos;
-      if(t>arrival) {
-        float spread=1.0+min(2.0,(t-arrival)*7.0);
-        delta/=side<2.0 ? float2(1.0,spread) : float2(spread,1.0);
-        r+=sin(atan(delta.y,delta.x)*5.0+id)*2.0;
-      }
-      float d=length(delta);
-      float body=1.0-smoothstep(r-1.0,r+1.0,d);
-      float rim=exp(-abs(d-r)/1.3);
-      light+=body*float3(0.25,0.31,0.38)+rim*float3(0.85,0.93,1.0);
-      alpha=max(alpha,body*0.8+rim*0.2);
-    }
-  }
   alpha=clamp(alpha,0.0,1.0)*ending;
   return half4(clamp(light,0.0,1.0)*alpha,alpha);
 }`;
@@ -245,7 +261,7 @@ if (!typeEffect) throw new Error("Could not compile liquid title typography");
 
 export default function WaterTitle({ children, closing = false }: { children?: import("react").ReactNode; closing?: boolean }) {
   const step = usePresentationValue("stepIndex");
-  useAdvanceAfterStep(closing ? -1 : 2, 3.6);
+  useAdvanceAfterStep(closing ? -1 : 2, 5.5);
   const [sources, setSources] = useState({ leftSource: [460, 650], rightSource: [1450, 650], thirdSource: [1520, 650], lineSplit: 540, bestRect: [1190, 400, 255, 128] });
   const [targets,setTargets]=useState<number[][]>([]);
   const visualUniforms = useAnimatedShaderUniforms(sources, 14, { clocks: { feedTime: 1 } });
@@ -304,11 +320,12 @@ export default function WaterTitle({ children, closing = false }: { children?: i
       </Text>
       <Canvas pointerEvents="none" style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080 }}>
         <Fill><Shader source={titleAtmosphereEffect} uniforms={uniforms} /></Fill>
-        <Fill><Shader source={cosmicEffect!} uniforms={uniforms} /></Fill>
-        {showLiquidType && titleImage && <Fill><Shader source={typeEffect!} uniforms={uniforms}>
+        {!closing && <Fill><Shader source={cosmicEffect!} uniforms={uniforms} /></Fill>}
+        {!closing && showLiquidType && titleImage && <Fill><Shader source={typeEffect!} uniforms={uniforms}>
           <ImageShader image={titleImage} fit="fill" rect={{ x: 0, y: 0, width: 1920, height: 1080 }} />
         </Shader></Fill>}
-        <Fill><Shader source={waterEffect!} uniforms={uniforms} /></Fill>
+        {closing && titleImage && <Fill><ImageShader image={titleImage} fit="fill" rect={{x:0,y:0,width:1920,height:1080}} /></Fill>}
+        {closing && <Fill><Shader source={waterEffect!} uniforms={uniforms} /></Fill>}
       </Canvas>
     </View>
   </>;
