@@ -102,8 +102,8 @@ uniform float stepTime;
 uniform float feedTime;
 uniform float absorbedScale;
 uniform float2 exitCenter;
-uniform float4 drops[18];
-uniform float4 necks[18];
+uniform float4 drops[72];
+uniform float4 necks[72];
 uniform float3 impacts[18];
 uniform float4 bestRect;
 float growth() { return absorbedScale; }
@@ -152,7 +152,7 @@ half4 main(float2 p) {
     if(growth()>.01 && local.x>bestRect.x && local.x<bestRect.x+bestRect.z && local.y>bestRect.y && local.y<bestRect.y+bestRect.w) result=sourceInk(local);
     float2 before=titleUV(p);
     if(before.x<bestRect.x || before.x>bestRect.x+bestRect.z || p.y>lineSplit) result+=title(p)*(1.0-smoothstep(0.0,.5,t))*(1.0-result.a);
-    for(int i=0;i<18;i++) {
+    for(int i=0;i<72;i++) {
       float4 drop=drops[i],neck=necks[i];
       if(drop.z<.1)continue;
       float2 size=float2(drop.z);
@@ -168,7 +168,7 @@ half4 main(float2 p) {
       float alpha=1.0-smoothstep(-.7,.7,d);
       result=half4(float3(.97)*alpha,alpha)+result*(1.0-alpha);
     }
-    return result*(1.0-smoothstep(6.2,6.9,t));
+    return result*(1.0-smoothstep(9.2,9.9,t));
   }
 
   float wave=sin(p.x*0.013-time*1.3+p.y*0.006);
@@ -196,7 +196,7 @@ half4 main(float2 p) {
 export const cosmicShader = `
 ${dropletGeometry}
 uniform float2 resolution;
-uniform float4 drops[18];
+uniform float4 drops[72];
 uniform float whiten[18];
 uniform float brightness;
 ${dropletMaterial}
@@ -258,7 +258,7 @@ if (!typeEffect) throw new Error("Could not compile liquid title typography");
 
 export default function WaterTitle({ children, closing = false }: { children?: import("react").ReactNode; closing?: boolean }) {
   const step = usePresentationValue("stepIndex");
-  useAdvanceAfterStep(closing ? -1 : 2, 7.0);
+  useAdvanceAfterStep(closing ? -1 : 2, 10.0);
   const [sources, setSources] = useState({ leftSource: [460, 650], rightSource: [1450, 650], thirdSource: [1520, 650], lineSplit: 540, bestInkRect: [1190,400,255,128], glyphCount: 0, glyphs: Array(256).fill(0) as number[], bestRect: [1190, 400, 255, 128] });
   const [targets,setTargets]=useState<number[][]>([]);
   const visualUniforms = useAnimatedShaderUniforms(sources, 14, { clocks: { feedTime: 1 } });

@@ -51,7 +51,7 @@ const sources: Record<AtmosphereVariant, string> = {
     ${dropletGeometry}
     uniform float titleFeed;
     uniform float backgroundTime;
-    uniform float4 drops[18];
+    uniform float4 drops[72];
     uniform float stepIndex;
     uniform float stepTime;
     uniform float4 bestRect;
@@ -226,7 +226,7 @@ export function AnimatedAtmosphere({ variant = "fluid", brightness = 1, speed = 
   const idleSpeed = 0.16;
   const motionSpeed = Number.isFinite(speed) ? Math.max(0, speed) : 1;
   const uniforms = useAnimatedShaderUniforms({
-    titleFeed, bestRect, backgroundTime: 0, drops: Array(72).fill(0),
+    titleFeed, bestRect, backgroundTime: 0, drops: Array(288).fill(0),
     resolution: [Math.max(1, width), Math.max(1, height)],
     brightness: (Number.isFinite(brightness) ? Math.max(0, brightness) : 1) * intensity,
   }, 8, {
