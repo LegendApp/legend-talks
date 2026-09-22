@@ -91,6 +91,7 @@ if (!waterEffect) throw new Error("Could not compile title water effect");
 
 export const liquidTypeShader = `
 uniform shader image;
+uniform float lineSplit;
 uniform float time;
 uniform float stepIndex;
 uniform float stepTime;
@@ -108,7 +109,7 @@ float2 titleUV(float2 p) {
 half4 title(float2 p) {
   // Composite separately clipped source lines. A destination-space cutoff
   // sliced through the second line as the first line expanded.
-  float split=bestRect.y+bestRect.w;
+  float split=lineSplit;
   half4 second=p.y>=split ? image.eval(p) : half4(0);
   float2 q=titleUV(p);
   half4 first=q.y<split ? image.eval(q) : half4(0);
@@ -215,7 +216,7 @@ if (!typeEffect) throw new Error("Could not compile liquid title typography");
 export default function WaterTitle({ children, closing = false }: { children?: import("react").ReactNode; closing?: boolean }) {
   const step = usePresentationValue("stepIndex");
   useAdvanceAfterStep(closing ? -1 : 2, 3.6);
-  const [sources, setSources] = useState({ leftSource: [460, 650], rightSource: [1450, 650], thirdSource: [1520, 650], bestRect: [1190, 400, 255, 128] });
+  const [sources, setSources] = useState({ leftSource: [460, 650], rightSource: [1450, 650], thirdSource: [1520, 650], lineSplit: 540, bestRect: [1190, 400, 255, 128] });
   const uniforms = useAnimatedShaderUniforms(sources, 14, { clocks: { feedTime: 1 } });
   const { width, height } = useBackgroundSize();
   const intensity = useBackgroundIntensity();
@@ -246,7 +247,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
   }, [sources]);
   const showLiquidType = Boolean(titleImage);
   return <>
-    <Background priority={-1}><AnimatedAtmosphere variant="droplets" speed={speed} brightness={0.7} titleFeed={1} bestRect={sources.bestRect} /></Background>
+    <Background priority={1}><AnimatedAtmosphere variant="droplets" speed={speed} brightness={0.7} titleFeed={1} bestRect={sources.bestRect} /></Background>
     <View style={{ width: 1920, height: 1080 }}>
       <View style={{ flex: 1, opacity: showLiquidType ? 0 : 1 }}>
         <View ref={titleRef} collapsable={false} style={{ flex: 1, paddingHorizontal: 112, paddingVertical: 96, justifyContent: "center" }}>{children}</View>
@@ -262,7 +263,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
         const left = 112 + (1696 - last.width) / 2;
         const first = lines[0];
         const firstLeft = 112 + (1696 - first.width) / 2;
-        const next = { leftSource: [left + 78, baseline], rightSource: [left + last.width - 175, baseline + 22], thirdSource: [left + last.width - 100, baseline + 22],
+        const next = { lineSplit: top + last.y - 4, leftSource: [left + 78, baseline], rightSource: [left + last.width - 175, baseline + 22], thirdSource: [left + last.width - 100, baseline + 22],
           bestRect: [firstLeft + first.width * 0.683, top + first.y, first.width * 0.151, 128] };
         setSources(old => JSON.stringify(old) === JSON.stringify(next) ? old : next);
       }} style={{ position: "absolute", left: 112, width: 1696, top: 0, opacity: 0, fontSize: 128, lineHeight: 128, fontWeight: "700", textAlign: "center" }}>

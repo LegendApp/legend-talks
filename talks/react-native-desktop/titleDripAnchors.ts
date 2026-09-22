@@ -2,13 +2,17 @@
 export function titleDripAnchors(pixels: Uint8Array, width: number, height: number) {
   const ink = (x: number, y: number) => pixels[(y * width + x) * 4 + 3] > 128;
   const rows: number[] = [];
-  for (let y = Math.floor(height / 2); y < height; y++) {
+  for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) if (ink(x, y)) { rows.push(y); break; }
   }
   if (!rows.length) return null;
-  let start = rows.length - 1;
-  while (start > 0 && rows[start] - rows[start - 1] <= 2) start--;
+  // Dots above i are separate ink bands, not separate lines. Use the largest
+  // inter-row gap to split the two lines, retaining all second-line accents.
+  let start = 1;
+  for(let i=2;i<rows.length;i++) if(rows[i]-rows[i-1]>rows[start]-rows[start-1]) start=i;
+  if(rows[start]-rows[start-1]<3) return null;
   const top = rows[start], bottom = rows[rows.length - 1];
+  const lineSplit=(rows[start-1]+top)*0.5*1080/height;
   const runs: [number, number][] = [];
   let left = -1;
   for (let x = 0; x <= width; x++) {
@@ -48,5 +52,5 @@ export function titleDripAnchors(pixels: Uint8Array, width: number, height: numb
     const x1=(firstRuns[i+3][1]+firstRuns[i+4][0])/2;
     measured={bestRect:[x0*1920/width,(firstTop-6)*1080/height,(x1-x0)*1920/width,(firstBottom-firstTop+12)*1080/height]};
   }
-  return { ...measured, leftSource: anchor(runs[1]), rightSource: anchor(runs[runs.length - 3]), thirdSource: anchor(runs[runs.length - 2]) };
+  return { ...measured, lineSplit, leftSource: anchor(runs[1]), rightSource: anchor(runs[runs.length - 3]), thirdSource: anchor(runs[runs.length - 2]) };
 }
