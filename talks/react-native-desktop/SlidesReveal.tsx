@@ -1,5 +1,5 @@
 import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
-import { PlaybackKeyframeView, SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
+import { PlaybackKeyframeView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { View } from "react-native";
 import { SlidesHeader } from "./StoryDiagrams";
 import { GitHubLink } from "./GitHubLink";
@@ -79,9 +79,9 @@ export function SlidesReveal({ icon }: { icon: string }) {
   const step = usePresentationValue("stepIndex");
   const uniforms = useAnimatedShaderUniforms({}, 4, { clock: "step" });
   return <View style={{ width: 1696, height: 880, alignSelf: "center" }}>
-    <SceneMotionView pose={{ y: step === 0 ? 300 : 0 }} duration={650} style={{ zIndex: 2 }}>
+    <View style={{ zIndex: 2 }}>
       <SlidesHeader icon={icon} />
-    </SceneMotionView>
+    </View>
     <Canvas pointerEvents="none" accessibilityLabel="Legend Slides screenshot placeholder"
       style={{ position: "absolute", left: -112, top: -100, width: 1920, height: 1180 }}>
       <Fill><Shader source={effect!} uniforms={uniforms} /></Fill>
