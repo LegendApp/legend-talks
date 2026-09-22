@@ -60,5 +60,13 @@ export function titleDripAnchors(pixels: Uint8Array, width: number, height: numb
     }
     measured.absorptionTargets=targets;
   }
-  return { ...measured, lineSplit, leftSource: anchor(runs[1]), rightSource: anchor(runs[runs.length - 3]), thirdSource: anchor(runs[runs.length - 2]) };
+  const glyphs:number[]=[];
+  for(const [lineRuns,y0,y1] of [[firstRuns,firstTop,firstBottom],[runs,top,bottom]] as const) {
+    for(const [x0,x1] of lineRuns) {
+      glyphs.push((x0-1)*1920/width,(y0-1)*1080/height,(x1-x0+3)*1920/width,(y1-y0+3)*1080/height);
+    }
+  }
+  const glyphCount=Math.min(64,glyphs.length/4);
+  while(glyphs.length<256) glyphs.push(0);
+  return { ...measured, lineSplit, glyphCount, glyphs: glyphs.slice(0,256), leftSource: anchor(runs[1]), rightSource: anchor(runs[runs.length - 3]), thirdSource: anchor(runs[runs.length - 2]) };
 }

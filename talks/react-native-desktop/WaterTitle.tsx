@@ -93,6 +93,8 @@ if (!waterEffect) throw new Error("Could not compile title water effect");
 export const liquidTypeShader = `
 uniform shader image;
 uniform float lineSplit;
+uniform float glyphCount;
+uniform float4 glyphs[64];
 uniform float time;
 uniform float stepIndex;
 uniform float stepTime;
@@ -137,58 +139,43 @@ float pulse(float2 p) {
   float seed=fract(sin(cell*127.1)*43758.5453);
   return pow(max(0.0,sin(time*0.9+seed*6.28318)),12.0);
 }
-float2 particleOrigin(float2 cell) {
-  float seed=fract(sin(dot(cell,float2(127.1,311.7)))*43758.5453);
-  return (cell+.5)*14.0+float2(seed-.5,fract(seed*17.1)-.5)*3.0;
-}
-float particleRadius(float2 cell) {
-  return 3.0+fract(sin(dot(cell,float2(91.7,53.3)))*17331.7)*3.5;
-}
 half4 main(float2 p) {
   if(stepIndex>=2.0) {
     float t=stepTime;
-    float field=10000.0;
-    // Invert the shared ballistic trajectory to visit only nearby particles.
-    // Every particle samples ink once at its own fixed origin.
-    float2 source=float2((p.x+960.0*.18*t)/(1.0+.18*t),p.y+140.0*t-180.0*t*t);
-    float2 cell=floor(source/14.0);
-    for(int row=-1;row<=1;row++) for(int col=-1;col<=1;col++) {
-      float2 id=cell+float2(float(col),float(row));
-      float2 origin=particleOrigin(id);
-      if(origin.x<0.0 || origin.x>1920.0 || origin.y<0.0 || origin.y>1080.0) continue;
-      float2 pos=origin+float2((origin.x-960.0)*.18*t,-140.0*t+180.0*t*t);
-      if(pos.y>=1035.0) continue;
-      float d=length(p-pos)-particleRadius(id);
-      if(d<field && title(origin).a>.2) field=d;
-    }
-    // Only landed particles contribute liquid, at their exact landing x.
-    // Search source rows only in the narrow floor strip, not across the slide.
-    if(p.y>1010.0 && p.y<1060.0) {
-      for(int row=0;row<78;row++) {
-        float y=(float(row)+.5)*14.0;
-        float hit=(140.0+sqrt(19600.0+720.0*max(0.0,1035.0-y)))/360.0;
-        float x=(p.x+960.0*.18*hit)/(1.0+.18*hit);
-        float column=floor(x/14.0);
-        for(int col=-1;col<=1;col++) {
-          float2 id=float2(column+float(col),float(row));
-          float2 origin=particleOrigin(id);
-          if(origin.x<0.0 || origin.x>1920.0 || origin.y>1035.0) continue;
-          float arrival=(140.0+sqrt(19600.0+720.0*(1035.0-origin.y)))/360.0;
-          if(t<arrival) continue;
-          float landing=origin.x+(origin.x-960.0)*.18*arrival;
-          float r=particleRadius(id);
-          float settle=smoothstep(0.0,.55,t-arrival);
-          float2 size=float2(r*(1.0+2.0*settle),r*(1.0-.35*settle));
-          float d=(length((p-float2(landing,1035.0))/size)-1.0)*size.y;
-          if(d<field && title(origin).a>.2) field=d;
+    float g=growth();
+    float2 wordCenter=bestRect.xy+bestRect.zw*.5;
+    float2 moved=mix(wordCenter,float2(960,540),clamp((g-1.0)/1.5,0.0,1.0));
+    float down=max(0.0,moved.y-wordCenter.y+bestRect.w*(g-1.0)*.5)+24.0*(g-1.0);
+    float swell=1.0+.065*smoothstep(0.0,.28,t);
+    half4 result=half4(0);
+    for(int i=0;i<64;i++) {
+      if(float(i)>=glyphCount) break;
+      float4 bounds=glyphs[i];
+      float2 original=bounds.xy+bounds.zw*.5;
+      float2 center=original;
+      float scale=1.0;
+      if(original.y<lineSplit) {
+        if(original.x>bestRect.x && original.x<bestRect.x+bestRect.z) {
+          scale=g*swell;
+          center=moved+(original-wordCenter)*scale;
+        } else {
+          center+=moved-wordCenter;
+          center.x+=sign(original.x-wordCenter.x)*(g*swell-1.0)*bestRect.z*.5;
         }
+      } else center.y+=down;
+      float seed=fract(sin(float(i)*127.1+5.0)*43758.5453);
+      float fall=max(0.0,t-.28-seed*.24);
+      center+=float2((center.x-960.0)*.13*fall,-85.0*fall+430.0*fall*fall);
+      float angle=(seed-.5)*fall*.9;
+      float2 delta=p-center;
+      float2 local=float2(cos(angle)*delta.x+sin(angle)*delta.y,-sin(angle)*delta.x+cos(angle)*delta.y)/scale;
+      if(abs(local.x)<=bounds.z*.5 && abs(local.y)<=bounds.w*.5) {
+        half4 ink=image.eval(original+local);
+        result=ink+result*(1.0-ink.a);
       }
     }
-    float alpha=1.0-smoothstep(-.7,.7,field);
-    float white=.93-exp(-abs(field)/2.8)*.12;
-    half4 particles=half4(float3(white)*alpha,alpha);
-    float reveal=smoothstep(0.0,.16,t);
-    return mix(title(p),particles,reveal)*(1.0-smoothstep(4.7,5.4,t));
+    if(glyphCount<1.0) result=title(p);
+    return result*(1.0-smoothstep(2.5,3.3,t));
   }
 
   float wave=sin(p.x*0.013-time*1.3+p.y*0.006);
@@ -278,8 +265,8 @@ if (!typeEffect) throw new Error("Could not compile liquid title typography");
 
 export default function WaterTitle({ children, closing = false }: { children?: import("react").ReactNode; closing?: boolean }) {
   const step = usePresentationValue("stepIndex");
-  useAdvanceAfterStep(closing ? -1 : 2, 5.5);
-  const [sources, setSources] = useState({ leftSource: [460, 650], rightSource: [1450, 650], thirdSource: [1520, 650], lineSplit: 540, bestRect: [1190, 400, 255, 128] });
+  useAdvanceAfterStep(closing ? -1 : 2, 3.4);
+  const [sources, setSources] = useState({ leftSource: [460, 650], rightSource: [1450, 650], thirdSource: [1520, 650], lineSplit: 540, glyphCount: 0, glyphs: Array(256).fill(0) as number[], bestRect: [1190, 400, 255, 128] });
   const [targets,setTargets]=useState<number[][]>([]);
   const visualUniforms = useAnimatedShaderUniforms(sources, 14, { clocks: { feedTime: 1 } });
   const { width, height } = useBackgroundSize();
@@ -329,7 +316,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
         const left = 112 + (1696 - last.width) / 2;
         const first = lines[0];
         const firstLeft = 112 + (1696 - first.width) / 2;
-        const next = { lineSplit: top + last.y - 4, leftSource: [left + 78, baseline], rightSource: [left + last.width - 175, baseline + 22], thirdSource: [left + last.width - 100, baseline + 22],
+        const next = { glyphCount: 0, glyphs: Array(256).fill(0) as number[], lineSplit: top + last.y - 4, leftSource: [left + 78, baseline], rightSource: [left + last.width - 175, baseline + 22], thirdSource: [left + last.width - 100, baseline + 22],
           bestRect: [firstLeft + first.width * 0.683, top + first.y, first.width * 0.151, 128] };
         setSources(old => JSON.stringify(old) === JSON.stringify(next) ? old : next);
       }} style={{ position: "absolute", left: 112, width: 1696, top: 0, opacity: 0, fontSize: 128, lineHeight: 128, fontWeight: "700", textAlign: "center" }}>
