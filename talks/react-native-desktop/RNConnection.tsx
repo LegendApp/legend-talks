@@ -2,11 +2,14 @@ export { Chart } from "./BenchmarkChart";
 import { FlowGlyph } from "./RNConnectionVisuals";
 import { PlaybackKeyframeView, type PresentationTemplateProps } from "@legend-apps/presentation";
 import { Text, View, type StyleProp, type ViewStyle } from "react-native";
-import { Fragment, type ReactNode } from "react";
+import { Children, isValidElement, Fragment, type ReactNode } from "react";
 import { DeckBackground } from "./DeckBackground";
 import benchmarks from "./rnconnection-assets/benchmarks.json";
 
+import WaterTitle from "./WaterTitle";
+
 export default function Frame({ children }: PresentationTemplateProps) {
+  if (Children.toArray(children).some(child => isValidElement(child) && child.type === WaterTitle)) return <>{children}</>;
   return (
     <>
       <DeckBackground />
