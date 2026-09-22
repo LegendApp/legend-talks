@@ -42,7 +42,11 @@ float4 screenshot(float2 p) {
 half4 main(float2 p) {
   p-=float2(960,570);
   if(stepIndex<1.0) return half4(0);
-  if(stepIndex<2.0) return screenshot(p)*smoothstep(0.0,0.55,time);
+  if(stepIndex<2.0) {
+    float entrance=smoothstep(0.0,0.65,time);
+    float2 source=(p-float2(0,48.0*(1.0-entrance)))/mix(0.9,1.0,entrance);
+    return screenshot(source)*entrance;
+  }
   float t=max(time,0.0);
   if(t>3.2) return half4(0);
   float4 color=float4(0);
@@ -73,9 +77,9 @@ const linkReveal = [{ time: 0, x: 0, y: 0, opacity: 0 }, { time: 650, x: 0, y: 0
 
 export function SlidesReveal({ icon }: { icon: string }) {
   const step = usePresentationValue("stepIndex");
-  const uniforms = useAnimatedShaderUniforms({}, 4);
+  const uniforms = useAnimatedShaderUniforms({}, 4, { clock: "step" });
   return <View style={{ width: 1696, height: 880, alignSelf: "center" }}>
-    <SceneMotionView pose={{ y: step === 0 ? 300 : 0 }} duration={650}>
+    <SceneMotionView pose={{ y: step === 0 ? 300 : 0 }} duration={650} style={{ zIndex: 2 }}>
       <SlidesHeader icon={icon} />
     </SceneMotionView>
     <Canvas pointerEvents="none" accessibilityLabel="Legend Slides screenshot placeholder"
