@@ -26,5 +26,27 @@ export function titleDripAnchors(pixels: Uint8Array, width: number, height: numb
     }
     return [0, 0];
   };
-  return { leftSource: anchor(runs[1]), rightSource: anchor(runs[runs.length - 3]), thirdSource: anchor(runs[runs.length - 2]) };
+  // Measure the first line independently, including whitespace around best.
+  let firstTop = -1, firstBottom = -1;
+  for (let y = 0; y < top; y++) {
+    let occupied = false;
+    for (let x = 0; x < width; x++) if (ink(x,y)) { occupied=true; break; }
+    if(occupied) { if(firstTop<0) firstTop=y; firstBottom=y; }
+  }
+  const firstRuns: [number,number][]=[];
+  let run=-1;
+  for(let x=0;x<=width;x++) {
+    let occupied=false;
+    if(x<width) for(let y=firstTop;y<=firstBottom;y++) if(y>=0 && ink(x,y)) { occupied=true; break; }
+    if(occupied && run<0) run=x;
+    if(!occupied && run>=0) { firstRuns.push([run,x-1]);run=-1; }
+  }
+  let measured: {bestRect?: number[]}={};
+  if(firstRuns.length>=8) {
+    const i=firstRuns.length-7;
+    const x0=(firstRuns[i-1][1]+firstRuns[i][0])/2;
+    const x1=(firstRuns[i+3][1]+firstRuns[i+4][0])/2;
+    measured={bestRect:[x0*1920/width,(firstTop-6)*1080/height,(x1-x0)*1920/width,(firstBottom-firstTop+12)*1080/height]};
+  }
+  return { ...measured, leftSource: anchor(runs[1]), rightSource: anchor(runs[runs.length - 3]), thirdSource: anchor(runs[runs.length - 2]) };
 }

@@ -47,7 +47,7 @@ float material(float2 p,float2 source,float local) {
   float volume=1.0-exp(-accumulated/26.0);
   float onset=smoothstep(0.0,0.22,accumulated);
   float rx=(24.0+112.0*sqrt(volume))*onset;
-  float ry=(7.0+24.0*sqrt(volume))*onset;
+  float ry=(5.0+17.0*sqrt(volume))*onset;
   if(onset>0.001) {
     float2 pool=p-float2(source.x,1035.0);
     float wobble=sin(pool.x*0.043+local*1.2)*0.7*exp(-abs(pool.x)/100.0);
@@ -79,29 +79,10 @@ half4 main(float2 p) {
   if(alpha<0.001) return half4(0);
   float2 normal=float2(field(p+float2(0.65,0))-field(p-float2(0.65,0)),field(p+float2(0,0.65))-field(p-float2(0,0.65)));
   normal=normal/max(0.001,length(normal));
-  // Reconstruct a rounded glass surface from its silhouette. The thicker pools
-  // use a broader curvature than the pendant drops and their thin filaments.
-  float poolWeight=smoothstep(990.0,1020.0,p.y);
-  float curvature=mix(9.0,29.0,poolWeight);
-  float radial=clamp(1.0+d/curvature,0.0,1.0);
-  float z=sqrt(max(0.001,1.0-radial*radial));
-  float3 n=normalize(float3(normal*radial,z));
-  float3 key=normalize(float3(-0.55,-0.7,0.65));
-  float diffuse=max(0.0,dot(n,key));
-  float fresnel=pow(1.0-z,3.0);
-  float spec=pow(max(0.0,dot(n,normalize(key+float3(0,0,1)))),32.0);
-  // Two reflected softboxes create a curved highlight and a finer white rim.
-  float ribbon=exp(-pow((n.y+0.42+n.x*0.23)/0.12,2.0));
-  float fine=exp(-pow((n.y-0.67+n.x*0.12)/0.045,2.0));
-  float edge=exp(-abs(d)/1.15);
-  float3 color=float3(0.56,0.58,0.60)+diffuse*float3(0.22,0.22,0.22);
-  color+=fresnel*float3(0.25,0.26,0.27)+spec*0.95;
-  color+=ribbon*float3(0.23)+fine*float3(0.16);
-  color+=edge*(0.18+0.55*max(0.0,-normal.y));
-  // The lower lip is shaded below the raised surface rather than flat white.
-  color*=1.0-0.48*poolWeight*smoothstep(0.35,0.95,normal.y);
-  float nearLetter=1.0-smoothstep(0.0,16.0,min(length(p-leftSource),min(length(p-rightSource),length(p-thirdSource))));
-  color=mix(color,float3(0.973,0.98,0.988),nearLetter);
+  float edge=exp(-abs(d)/2.8);
+  float light=clamp(dot(normal,normalize(float2(-0.6,-0.8))),0.0,1.0);
+  float tone=0.93-edge*0.20+edge*light*0.27;
+  float3 color=float3(tone,tone+0.005,tone+0.01);
   float fade=stepIndex>=2.0 ? 1.0-smoothstep(2.2,3.4,stepTime) : 1.0;
   return half4(clamp(color,0.0,1.0)*alpha,alpha)*fade;
 }`;
@@ -265,7 +246,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
   }, [sources]);
   const showLiquidType = Boolean(titleImage);
   return <>
-    <Background priority={-1}><AnimatedAtmosphere variant="droplets" sharedUniforms={backgroundUniforms} /></Background>
+    <Background priority={-1}><AnimatedAtmosphere variant="droplets" speed={speed} brightness={0.7} titleFeed={1} bestRect={sources.bestRect} /></Background>
     <View style={{ width: 1920, height: 1080 }}>
       <View style={{ flex: 1, opacity: showLiquidType ? 0 : 1 }}>
         <View ref={titleRef} collapsable={false} style={{ flex: 1, paddingHorizontal: 112, paddingVertical: 96, justifyContent: "center" }}>{children}</View>

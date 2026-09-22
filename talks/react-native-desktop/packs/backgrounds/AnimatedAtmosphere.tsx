@@ -10,6 +10,8 @@ export type AtmosphereProps = {
   speed?: number;
   /** Extra motion on slide changes, relative to speed. Set 0 to disable. */
   slideChangeBoost?: number;
+  titleFeed?: number;
+  bestRect?: number[];
 };
 export type AtmosphereVariant = "fluid" | "smoke" | "wireframe" | "glass" | "droplets";
 
@@ -242,7 +244,7 @@ const effects = Object.fromEntries(Object.entries(sources).map(([name, source]) 
 })) as Record<AtmosphereVariant, NonNullable<ReturnType<typeof Skia.RuntimeEffect.Make>>>;
 
 /** One persistent canvas, driven by the host's UI-thread clock. Previews stay still. */
-export function AnimatedAtmosphere({ variant = "fluid", brightness = 1, speed = 1, slideChangeBoost, sharedUniforms }: AtmosphereProps & { variant?: AtmosphereVariant; sharedUniforms?: ReturnType<typeof useAnimatedShaderUniforms> }) {
+export function AnimatedAtmosphere({ variant = "fluid", brightness = 1, speed = 1, slideChangeBoost, titleFeed = 0, bestRect = [0,0,0,0], sharedUniforms }: AtmosphereProps & { variant?: AtmosphereVariant; sharedUniforms?: ReturnType<typeof useAnimatedShaderUniforms> }) {
   const intensity = useBackgroundIntensity();
   const { width, height } = useBackgroundSize();
   // Decks are evaluated at runtime, so props can bypass the TypeScript union.
@@ -253,7 +255,7 @@ export function AnimatedAtmosphere({ variant = "fluid", brightness = 1, speed = 
   const idleSpeed = 0.16;
   const motionSpeed = Number.isFinite(speed) ? Math.max(0, speed) : 1;
   const uniforms = useAnimatedShaderUniforms({
-    titleFeed: 0, bestRect: [0,0,0,0],
+    titleFeed, bestRect,
     resolution: [Math.max(1, width), Math.max(1, height)],
     brightness: (Number.isFinite(brightness) ? Math.max(0, brightness) : 1) * intensity,
   }, 8, {
