@@ -184,11 +184,11 @@ variants, not part of the rehearsed running order:
 | --- | --- |
 | 50 | Shared foundations: 2,048 GPU particles travel through the roots |
 | 51 | Three rendering styles: perspective glass windows and dimensional controls |
-| 52 | Fake glass: composer-sized surface expands through a procedural wave field |
+| 52 | Glass takeover: measured composer bounds expand over a captured chat with frosting and edge refraction |
 | 53 | Existing modules: 256-node illustrative library constellation |
 | 54 | Background: 16 interacting droplets with persistent GPU state |
 
-These use TypeGPU for typed shader composition and uniform layout, and a new
+Except for the Skia capture-based glass takeover, these use TypeGPU for typed shader composition and uniform layout, and a new
 host-compiled UI-thread WebGPU path for frame submission and compute dispatch.
 The older TypeGPU host still uses a JS frame loop; these slides do not use it.
 Previews render a deterministic still. Outgoing views hold their last frame;
@@ -196,7 +196,7 @@ prepared slides do not submit frames. The background follows viewport size and
 the Appearance intensity setting.
 
 The droplet simulation uses ping-pong storage buffers with repulsion and wall
-bounces. The glass takeover uses procedural waves, not a fluid solver. The
+bounces. The glass takeover samples the paused chat using a Skia shader and the shared step clock; it is a presentation effect, not the OS material. The
 constellation does not represent audited library compatibility. The windows
 are shader illustrations, not actual native widgets.
 
