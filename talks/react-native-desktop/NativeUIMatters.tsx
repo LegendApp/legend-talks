@@ -1,3 +1,4 @@
+import { NativeComposerRecording } from "./NativeComposerRecording";
 import { Canvas, Fill, Group, Path, Rect, Shader, Skia, matchFont } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
@@ -131,7 +132,6 @@ sharedStateFont.dispose();
 if (!sharedStatePath) throw new Error("Could not create Shared State label outlines");
 
 function Example({ index, width, height }: { index: number; width: number; height: number }) {
-  const step = usePresentationValue("stepIndex");
   const uniforms = useAnimatedShaderUniforms({ stage: index }, 2, { clock: index });
   return <View style={{ width: 1180, height: 738, transformOrigin: "top left", transform: [{ scale: width / 1180 }] }}>
     <GlassPanels panels={containerPanels} width={1180} height={670} pulse={0.001} edgeMotion={0.5} />
@@ -154,16 +154,7 @@ function Example({ index, width, height }: { index: number; width: number; heigh
       {index === 0 && <View style={{ position: "absolute", left: 60, right: 60, top: 96, flexDirection: "row" }}>
         {["macOS", "Windows"].map(label => <Text key={label} style={{ width: 530, textAlign: "center", color: "white", fontSize: 28 }}>{label}</Text>)}
       </View>}
-    </> : <View style={{ height: 560, overflow: "hidden", borderRadius: 18, borderColor: "#66849b", borderWidth: 1 }}>
-      <SceneMotionView pose={{ scaleX: step === 2 ? 1.65 : 1, scaleY: step === 2 ? 1.65 : 1, y: step === 2 ? -130 : 0 }} duration={6500} style={{ width: 1180, height: 560, backgroundColor: "#102032" }}>
-        <View style={{ position: "absolute", left: 20, top: 25, bottom: 20, width: 235, borderRadius: 12, backgroundColor: "#1c3044" }} />
-        {[0, 1, 2, 3].map(i => <View key={i} style={{ position: "absolute", left: 290 + i % 2 * 100, top: 45 + i * 87, width: 610, height: 62, borderRadius: 14, backgroundColor: i % 2 ? "#254d71" : "#20364b" }} />)}
-        <Text style={{ position: "absolute", top: 205, left: 290, width: 780, textAlign: "center", color: "white", fontSize: 28 }}>Chat History scrolling video</Text>
-        <View style={{ position: "absolute", left: 285, bottom: 30, width: 840, height: 92, borderRadius: 24, backgroundColor: "#7396b344", borderColor: "#c6eaff", borderWidth: 2, alignItems: "center", justifyContent: "center" }}>
-          <Text style={{ color: "white", fontSize: 26 }}>Liquid Glass composer</Text>
-        </View>
-      </SceneMotionView>
-    </View>}
+    </> : <NativeComposerRecording />}
   </View>;
 }
 
