@@ -301,7 +301,9 @@ Electron is electron: 24,689,555. Tauri is @tauri-apps/cli: 8,326,594. Deno is d
 
 Deno covers only its npm installer, not other installation methods or desktop UI projects. Tauri can also be installed through Cargo. GPUI counts all crate versions, including the API's extra_downloads, but excludes direct Git dependencies. Caching and CI differ across registries, so this isn't a fair ranking of total adoption.
 
-AppKit and SwiftUI ship with Apple's SDK. Flutter itself is an SDK dependency; the discontinued flutter package on pub.dev is not a valid measure. I couldn't find public Compose download counts. Count unavailable means unknown, not zero.
+Flutter itself is an SDK dependency; the discontinued flutter package on pub.dev is not a valid measure. I couldn't find public Compose download counts in Maven Central or the Gradle Plugin Portal. Count unavailable means unknown, not zero.
+
+Flutter's 3.44 announcement reports 1.5 million monthly developers and 1.3 billion downloads across all of pub.dev in 30 days. Those are different metrics; neither belongs in a single-package downloads chart. Maven Central offers publisher download analytics, but not a public Compose monthly count I could verify.
 
 Sources:
 https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/react-native
@@ -312,6 +314,8 @@ https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/deno
 https://crates.io/api/v1/crates/gpui/downloads
 https://dart.dev/tools/pub/dependencies#sdk
 https://central.sonatype.org/publish/publish-portal-insights/
+https://flutter.dev/blog/whats-new-in-flutter-3-44
+https://plugins.gradle.org/plugin/org.jetbrains.compose
 Methodology: https://github.com/npm/registry/blob/main/docs/download-counts.md
 -->
 
