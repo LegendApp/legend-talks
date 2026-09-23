@@ -20,17 +20,17 @@ export function CompromiseQuestion() {
         </SceneMotionView>
         <SceneMotionView pose={{ x: question ? -nativeWidth - gap : 0 }} duration={800}>
           <View style={{ minWidth: 72 }} onLayout={event => setIsWidth(event.nativeEvent.layout.width)}>
-            <SceneMotionView pose={{ opacity: question ? 0 : 1 }} duration={450}>
+            <SceneMotionView pose={{ opacity: question ? 0 : 1 }} delay={320} duration={320}>
               <Text numberOfLines={1} style={textStyle}>is</Text>
             </SceneMotionView>
-            <SceneMotionView pose={{ opacity: question ? 1 : 0 }} duration={450} style={{ position: "absolute", top: 0, left: 0, right: 0 }}>
+            <SceneMotionView pose={{ opacity: question ? 1 : 0 }} delay={320} duration={320} style={{ position: "absolute", top: 0, left: 0, right: 0 }}>
               <Text numberOfLines={1} style={textStyle}>Is</Text>
             </SceneMotionView>
           </View>
         </SceneMotionView>
         <View>
           <Text style={textStyle}>a Compromise</Text>
-          <SceneMotionView pose={{ opacity: question ? 1 : 0 }} duration={800} style={{ position: "absolute", left: "100%", top: 0 }}>
+          <SceneMotionView pose={{ opacity: question ? 1 : 0 }} delay={320} duration={320} style={{ position: "absolute", left: "100%", top: 0 }}>
             <Text style={textStyle}>?</Text>
           </SceneMotionView>
         </View>
