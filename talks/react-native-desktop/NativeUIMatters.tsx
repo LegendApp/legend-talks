@@ -1,5 +1,5 @@
 import { NativeMusicRecording } from "./NativeMusicRecording";
-import { Canvas, Fill, Group, Path, Rect, Shader, Skia, matchFont } from "@shopify/react-native-skia";
+import { Canvas, Fill, Group, Path, Rect, RoundedRect, Shader, Skia, matchFont } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 import { AppCarousel } from "./AppCarousel";
@@ -100,14 +100,8 @@ half4 main(float2 p) {
         }
       }
     }
-    float halo=exp(-length((p-hub)/float2(145,57)))*0.45;
-    energy+=float3(0.12,0.5,1)*halo;
     float energyAlpha=clamp(max(energy.r,max(energy.g,energy.b)),0.0,1.0);
     c=half4(min(energy,float3(energyAlpha)),energyAlpha)+c*(1.0-energyAlpha);
-    float hubPulse=sin(time*1.3)*2.0;
-    c=put(c,box(p,hub,float2(110,34)+hubPulse,22)-8.0,half3(0.1,0.5,0.85),0.18);
-    c=put(c,box(p,hub,float2(110,34)+hubPulse,22),half3(0.13,0.27,0.4),1.0);
-    c=put(c,abs(box(p,hub,float2(110,34)+hubPulse,22))-1.0,half3(0.65,0.92,1),0.9);
     for(int window=0;window<3;window++) {
       float2 center=window==0?float2(590,455):window==1?float2(220,280):float2(960,280);
       c=put(c,box(p,center,float2(180,95),14),half3(0.07,0.13,0.2),1.0);
@@ -141,6 +135,8 @@ function Example({ index, width, height }: { index: number; width: number; heigh
         {/* Labels share the live GPU surface, avoiding native-text overlay ordering. */}
         <Group transform={[{ translateY: 84 }]}>
           <Rect x={0} y={0} width={1180} height={560}><Shader source={effect!} uniforms={uniforms} /></Rect>
+          <RoundedRect x={480} y={101} width={220} height={68} r={22} color="#214566" antiAlias />
+          <RoundedRect x={480} y={101} width={220} height={68} r={22} color="#77a9be" style="stroke" strokeWidth={1} antiAlias />
           <Path path={sharedStatePath!} color="white" antiAlias />
         </Group>
       </Canvas> : <Canvas style={{ width: 1180, height: 560 }}><Fill><Shader source={effect!} uniforms={uniforms} /></Fill></Canvas>}
