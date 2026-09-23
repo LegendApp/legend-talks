@@ -19,7 +19,17 @@ import codePoster from "./rnconnection-assets/app-recordings/code.png";
 import diffPage from "./rnconnection-assets/app-recordings/diff.html";
 // @ts-ignore Local media resolved by the deck compiler.
 import diffPoster from "./rnconnection-assets/app-recordings/diff.png";
+// @ts-ignore Local media resolved by the deck compiler.
+import photosPage from "./rnconnection-assets/app-recordings/photos.html";
+// @ts-ignore Local media resolved by the deck compiler.
+import photosPoster from "./rnconnection-assets/app-recordings/photos.png";
+// @ts-ignore Local media resolved by the deck compiler.
+import musicPage from "./rnconnection-assets/app-recordings/music.html";
+// @ts-ignore Local media resolved by the deck compiler.
+import musicPoster from "./rnconnection-assets/app-recordings/music.png";
 const appRecordings: Record<string, { page: string; poster: string }> = {
+  "Legend Photos": { page: photosPage, poster: photosPoster },
+  "Legend Music": { page: musicPage, poster: musicPoster },
   "Chat History": { page: chat_historyPage, poster: chat_historyPoster },
   "Code": { page: codePage, poster: codePoster },
   "Diff": { page: diffPage, poster: diffPoster },
