@@ -50,11 +50,12 @@ export function AppShowcase({ apps, title }: { apps: string[]; title: string }) 
   const step = usePresentationValue("stepIndex");
   const phase = usePresentationValue("playbackPhase");
   const isPreview = usePresentationValue("isPreview");
+  const hasRecordings = apps.every(name => Boolean(appRecordings[name]));
   return <View style={{ width: 1920, height: 1080, overflow: "hidden" }}>
-    <MovingTitle style={{ position: "absolute", left: 112, top: 65, width: 1696, zIndex: 2000 }}>
+    {!hasRecordings && <MovingTitle style={{ position: "absolute", left: 112, top: 65, width: 1696, zIndex: 2000 }}>
       <Text style={{ color: "#f8fafc", fontSize: 64, fontWeight: "700", textAlign: "center" }}>{title}</Text>
-    </MovingTitle>
-    <AppCarousel items={apps} position={step} renderCard={(name, card) => {
+    </MovingTitle>}
+    <AppCarousel cardWidth={hasRecordings ? 1600 : 1180} items={apps} position={step} renderCard={(name, card) => {
       const recording = appRecordings[name];
       if (!recording) return <MediaSlot label={name} height={card.height} />;
       return <View style={{ flex: 1 }}>
