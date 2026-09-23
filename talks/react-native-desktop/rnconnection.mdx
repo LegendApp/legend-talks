@@ -388,13 +388,16 @@ So I took Chat History.
 
 ---
 template: ./NineApps.tsx
+steps: 22
 transition: none
 ---
 
-<NineApps mode="hero" />
+<NineApps>
+  <TypeGPUShader code={takeoverProgram} width={1920} height={1080} previewTime={14} />
+</NineApps>
 
 <!--
-This is AI Chat History. This is the React Native version.
+1. This is AI Chat History. This is the React Native version.
 
 It looks like a chat app, but there's quite a bit of work behind opening it.
 
@@ -407,85 +410,58 @@ So we're exercising file access, parsing, list virtualization, and rich content 
 Open it, pick a conversation, read through it. That's the app I actually wanted. And it feels really good.
 
 But to compare the frameworks, I needed more than one version.
--->
 
----
-template: ./NineApps.tsx
-transition:
-  type: focus
-  from: nine-apps-stage
-  duration: 550
----
-
-<NineApps mode="grid" />
-
-<!--
-So I built it nine times.
+2. So I built it nine times.
 
 Which is a very reasonable thing to do when you just wanted to test a list.
 
 Same kind of app. Same content. Different ways of drawing it.
 
 Before we get into the numbers, I want to show you something you don't get from a benchmark chart.
--->
 
----
-template: ./NineApps.tsx
-steps: 20
-transition:
-  type: focus
-  from: nine-apps-stage
-  duration: 550
----
+3. Here's React Native.
 
-<NineApps mode="filmstrip">
-  <TypeGPUShader code={takeoverProgram} width={1920} height={1080} previewTime={14} />
-</NineApps>
+4. Look at the sidebar. That's the real macOS Liquid Glass material.
 
-<!--
-1. Here's React Native.
+5. And here's the composer. Same thing. This is where I'm actually typing and interacting with the app.
 
-2. Look at the sidebar. That's the real macOS Liquid Glass material.
+6. That's the kind of app I want on my Mac.
 
-3. And here's the composer. Same thing. This is where I'm actually typing and interacting with the app.
+7. Here's AppKit. Same native material.
 
-4. That's the kind of app I want on my Mac.
+8. And SwiftUI. Same thing. We can move through these pretty quickly.
 
-5. Here's AppKit. Same native material.
+9. Now Electron.
 
-6. And SwiftUI. Same thing. We can move through these pretty quickly.
+10. Look at the sidebar. To me, this just doesn't feel like a Mac app.
 
-7. Now Electron.
-
-8. Look at the sidebar. To me, this just doesn't feel like a Mac app.
-
-9. And the composer. We can style a web page to look similar, but this is not the same material.
+11. And the composer. We can style a web page to look similar, but this is not the same material.
 
 You can add native integrations to a browser app. This is what the browser implementation itself gives us.
 
-10. Zoom back out. The app does the job, but it feels different.
+12. Zoom back out. The app does the job, but it feels different.
 
-11. Here's Tauri. Different packaging, still browser content.
+13. Here's Tauri. Different packaging, still browser content.
 
-12. And Deno. I'm grouping the two Deno versions together for this visual tour; they're separate in the charts.
+14. And Deno. I'm grouping the two Deno versions together for this visual tour; they're separate in the charts.
 
-13. Now Flutter. We're drawing our own UI.
+15. Now Flutter. We're drawing our own UI.
 
-14. Here's its sidebar.
+16. Here's its sidebar.
 
-15. And the composer. Again, this is the framework's rendering, not the OS material.
+17. And the composer. Again, this is the framework's rendering, not the OS material.
 
-16. Back out to the full app.
+18. Back out to the full app.
 
-17. Compose Multiplatform. Same category: framework-drawn content. It's in this visual tour, but I don't have it in the measured charts.
+19. Compose Multiplatform. Same category: framework-drawn content. It's in this visual tour, but I don't have it in the measured charts.
 
-18. And finally GPUI. It's really fast. But it draws its own content too.
+20. And finally GPUI. It's really fast. But it draws its own content too.
 
-19. Here's the composer. This one is transparent, rather than using native backdrop blur.
+21. Here's the composer. This one is transparent, rather than using native backdrop blur.
 
 But we can draw whatever we want, right? So I made my own liquid glass.
 
-20. [Let the glass build inside the composer for five seconds, then slowly take over the slide over eight seconds. Pause.]
+22. [Let the glass build inside the composer for five seconds, then slowly take over the slide over eight seconds. Pause.]
 -->
 
 ---

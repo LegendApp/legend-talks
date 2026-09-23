@@ -68,11 +68,13 @@ export default function NineAppsFrame({ children }: PresentationTemplateProps) {
   return <><DeckBackground /><View style={{ flex: 1 }}>{children}</View></>;
 }
 
-export function NineApps({ mode, children }: { mode: SceneMode; children?: ReactNode }) {
+export function NineApps({ mode: requestedMode, children }: { mode?: SceneMode; children?: ReactNode }) {
   const step = usePresentationValue("stepIndex");
+  const mode = requestedMode ?? (step === 0 ? "hero" : step === 1 ? "grid" : "filmstrip");
+  const tourIndex = requestedMode ? step : Math.max(0, step - 2);
   const phase = usePresentationValue("playbackPhase");
   const isPreview = usePresentationValue("isPreview");
-  const tour = tourStep(step);
+  const tour = tourStep(tourIndex);
   const selected = mode === "filmstrip" ? appOrder.indexOf(tour.app) : 0;
   const camera = detailCamera(mode === "filmstrip" ? tour.detail : "app", tour.app);
   return <FocusRegion id="nine-apps-stage" style={{ width: 1920, height: 1080, overflow: "hidden" }}>
@@ -94,8 +96,8 @@ export function NineApps({ mode, children }: { mode: SceneMode; children?: React
           <View style={{ flex: 1, borderRadius: 12, overflow: "hidden", borderWidth: 2,
             borderColor: id === "react-native" ? "#67e8f9" : "#33465e", backgroundColor: "#101e30" }}>
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#14253a" }}>
-              {!isPreview && mode !== "grid" ?
-                <LocalRecording {...recordings[id]} playing={phase === "playing" && id === appOrder[selected]} />
+              {!isPreview ?
+                <LocalRecording {...recordings[id]} playing={mode !== "grid" && phase === "playing" && id === appOrder[selected]} />
               : <Image source={{ uri }} resizeMode="contain" style={{ width: "100%", height: "100%" }} />}
             </View>
           </View>

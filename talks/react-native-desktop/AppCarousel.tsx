@@ -1,4 +1,4 @@
-import { FilmstripMotionView, usePresentationValue } from "@legend-apps/presentation";
+import { FilmstripMotionView, SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
 import type { ReactNode } from "react";
 import { Image, Text, View } from "react-native";
 import { appCardLayout, type SceneMode } from "./NineAppsGeometry";
@@ -37,11 +37,14 @@ export function AppCarousel<T extends string>({ items, position, mode = "filmstr
 }) {
   return <>{items.map((id, index) => {
     const card = appCardLayout(index, mode, 0, cardWidth);
-    const height = card.width * 0.625;
+    const height = cardWidth * 0.625;
     return <FilmstripMotionView key={id} index={index} count={items.length} enabled={mode === "filmstrip"} position={position}
-      style={{ position: "absolute", left: card.x - card.width / 2, top: card.y - height / 2,
-        width: card.width, height, zIndex: card.depth }}>
-      {renderCard(id, { ...card, height, captionHeight: card.width * 0.0625 })}
+      style={{ position: "absolute", left: 960 + index * 900 - cardWidth / 2, top: 555 - height / 2,
+        width: cardWidth, height, zIndex: card.depth }}>
+      <SceneMotionView duration={550} pose={{ x: card.x - (960 + index * 900), y: card.y - 555,
+        scaleX: card.width / cardWidth, scaleY: card.width / cardWidth }} style={{ flex: 1 }}>
+        {renderCard(id, { ...card, width: cardWidth, height, captionHeight: cardWidth * 0.0625 })}
+      </SceneMotionView>
     </FilmstripMotionView>;
   })}</>;
 }
