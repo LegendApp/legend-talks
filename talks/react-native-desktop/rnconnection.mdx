@@ -389,7 +389,7 @@ Tauri is browser based but it uses the system WebView. Deno WebView does too, bu
 
 So choosing a system WebView doesn't automatically make every part of your app small.
 
-6. I think of these in buckets. React Native is well within the tiny app bucket. A few megabytes doesn’t matter that much in the baseline. Now group those sizes using the current cutoffs: under 26 MB, 26 to 157, and 157 or more.
+6. I think of these in buckets. React Native is well within the tiny app bucket. A few megabytes doesn’t matter that much in the baseline. But we definitely don't want to be pushing close to 300 megabytes for a Hello World app.
 -->
 
 ---
@@ -403,14 +403,13 @@ footer: 'Greeting workload · MB · settled physical footprint'
 <Chart workload="hello" metric="memory" />
 
 <!--
-And memory is the same kind of story.
+1. They perform similarly on memory.
 
 AppKit is about 17 MB. SwiftUI is about 19. React Native is about 24. Compose Multiplatform is about 225.
 
-There's some overhead. Of course there is. But we're talking about a few megabytes here.
+There's some overhead. Of course there is. But it’s just a few megabytes in the baseline.
 
-Now what happens when we make it do something?
-2. Now group Hello World memory: under 26 MB, 26 to 105, and 105 or more.
+2. Again I think about these in buckets. React Native is close to native. Flutter, GPUI, Deno, and Electron are in the next bucket. Deno CEF and Compose are huge. I’m not sure why. I think it might be a pending garbage collection, but I’m not sure if manually flushing GC makes the benchmark more or less fair.
 -->
 
 ---
@@ -420,11 +419,9 @@ eyebrow: 'From baseline to real work'
 # But hello world isn’t a real app {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
 
 <!--
-Hello World is useful for measuring the cost of bringing the framework along.
+But Hello World is only useful for establishing a baseline. What really matters is how real apps perform.
 
-But nobody opens a Hello World app all day.
-
-I want to know what happens with real data, a big list, scrolling, switching conversations. An actual app.
+I want to know what happens with real data, big virtualized lists, lots of file management, heavy parsing. An actual app.
 
 So I took Chat History.
 -->
@@ -438,67 +435,63 @@ transition: none
 <NineApps />
 
 <!--
-1. This is AI Chat History. This is the React Native version.
+1. This is AI Chat History, the React Native version. I was not trying to build a full AI chat app so it’s just tackling the heavy load time.
 
-It looks like a chat app, but there's quite a bit of work behind opening it.
+It traverses the filesystem to find conversations in both codex and claude histories, then parses lots of text files.
 
-It traverses the filesystem to find conversations, then parses lots of text files. This isn't just showing a hardcoded screen.
+Then there's a big list of chat history to virtualize. And when I open a conversation, it renders a LegendList with enriched-markdown per row. Which then parses and renders Markdown, code blocks, and embedded images.
 
-Then there's a big list to virtualize. And when I open a conversation, it has to render Markdown, code blocks, and embedded images.
+And then switching conversations needs to switch to and parse the new chat and scroll to the end.
 
-So we're exercising file access, parsing, list virtualization, and rich content rendering. And then doing it again when I switch conversations.
-
-Open it, pick a conversation, read through it. That's the app I actually wanted. And it feels really good.
+There’s no caching here, I wanted to test the full process without cheating.
 
 But to compare the frameworks, I needed more than one version.
 
 2. So I built it nine times.
 
-Which is a very reasonable thing to do when you just wanted to test a list.
+It was pretty easy to throw Codex at it. I could talk through architecture and optimization, even in languages I don’t know, and make sure it optimized all apps equally.
 
-Same kind of app. Same content. Different ways of drawing it.
+Before we get into the numbers, I want to focus on native UI.
 
-Before we get into the numbers, I want to show you something you don't get from a benchmark chart.
+3. This is the React Native version. It uses real liquid glass on mac for the titlebar, composer, and splitview.
 
-3. Here's React Native.
+4. Look at the sidebar. That's the real macOS Liquid Glass material. It’s pulling in the colors from the background.
 
-4. Look at the sidebar. That's the real macOS Liquid Glass material.
+Whether we all like liquid glass is a different question. But users expect their apps to look a certain way and we want to match that.
 
-5. And here's the composer. Same thing. This is where I'm actually typing and interacting with the app.
+5. And look at the composer. It’s liquid glass and does the cool glassy effects on content below it.
 
-6. That's the kind of app I want on my Mac.
+6. This is a real Mac app
 
-7. Here's AppKit. Same native material.
+7. Here's AppKit. It’s the same native material.
 
-8. And SwiftUI. Same thing. We can move through these pretty quickly.
+8. And SwiftUI is obviously native too.
 
-9. Now Electron.
+9. Now Electron. Electron hosts a web app inside a native window. So you don’t get native UI elements. Electron and all of the web frameworks are also using LegendList so it virtualizes very quickly.
 
-10. Look at the sidebar. To me, this just doesn't feel like a Mac app.
+10. Look at the sidebar. It’s just gray. Some apps make their sidebars blacker. But it’s not a native sidebar.
 
-11. And the composer. We can style a web page to look similar, but this is not the same material.
+11. And look at the composer. The web platform has a gaussian blur so that’s the best we can do.
 
-You can add native integrations to a browser app. This is what the browser implementation itself gives us.
+12. The app does the job, but it feels different than Mac apps
 
-12. Zoom back out. The app does the job, but it feels different.
+13. Here's Tauri. It’s rendered by a browser too so it looks the same as Electron. But it uses Safari on mac, which is significantly behind Chrome in features and sometimes buggy, so it can have some big problems. And then your app runs differently on different OS version. A user on an old version of macOS will have an old version of Safari. And on Windows it runs Edge. So good luck having your happ handle all the browser differences.
 
-13. Here's Tauri. Different packaging, still browser content.
+14. And Deno. It’s also a web app so it’s just a regular blur too.
 
-14. And Deno. I'm grouping the two Deno versions together for this visual tour; they're separate in the charts.
+15. Now Flutter. I know we all love Flutter here. Flutter can make desktop apps too. Flutter renders every pixel itself, so the Flutter framework or someone has to implement their own version of liquid glass. It’s not currently built in so I just used the builtin blur.
 
-15. Now Flutter. We're drawing our own UI.
+16. Its sidebar is also just a solid color because it doesn’t have a real liquid glass split view.
 
-16. Here's its sidebar.
+17. And the composer is the framework's blur implementation, not the OS material.
 
-17. And the composer. Again, this is the framework's rendering, not the OS material.
+18. So it’s fine too, but it doesn’t look like a native app.
 
-18. Back out to the full app.
-
-19. Compose Multiplatform. Same category: framework-drawn content. It's in this visual tour, but I don't have it in the measured charts.
+19. Compose Multiplatform is in the same category: framework-drawn content
 
 20. And finally GPUI. It's really fast. But it draws its own content too.
 
-21. Here's the composer. This one is transparent, rather than using native backdrop blur.
+21. Here's the composer. GPUI doesn’t have a way to blur individual views yet, so it’s just translucent.
 
 But we can draw whatever we want, right? So I made my own liquid glass.
 
@@ -514,19 +507,15 @@ steps: 3
 <NativeUIMatters />
 
 <!--
-OK. Obviously I got a little carried away with the glass.
+1. Fake native UI never looks right, and it becomes wrong when the OS updates.
 
-But this is why I care about native UI. It's not just about how the screenshot looks.
+But this is why I care about native UI.
 
-I want my Mac app to feel like a Mac app. And the Windows version should feel like a Windows app. Same product, but it should belong on the computer you're using.
+I want my Mac app to feel like a Mac app. And the Windows version should feel like a Windows app.
 
-[Advance to the windows.]
+2. One thing the webview apps don’t support well is such a basic thing, having multiple windows. They’re just sharing React or global state so it’s easy. Change the data in one and the others update.
 
-One app, multiple windows. These can share the same application state. Change the data in one and the others update. These slides are doing that with the presenter and audience windows.
-
-Electron can open multiple windows too. The point here is the shared application model.
-
-People already know how their computer works. Selecting text, moving focus, keyboard shortcuts, context menus. I don't want them to have to learn my version of all of that.
+3. People already know how their computer works. Selecting text, moving focus, keyboard shortcuts, context menus. I don't want them to have to learn my version of all of that.
 
 [Advance to the Music overlay. Let it zoom into the playback controls at the top.]
 
@@ -549,39 +538,27 @@ eyebrow: 'Chat History / architecture'
 <ChatArchitecture />
 
 <!--
-1. Before we get into the numbers, let me show you how the React Native version works.
+1. Before we get into the numbers, I’ll show you the general architecture of these apps.
 
-Here's where the work actually happens.
-
-First we find the chat files. That's native. The C++ catalog discovers the conversations on disk.
+First we find the chat files. That's done as natively as possible.
 
 2. Then we parse the metadata. Titles, providers, dates. Enough to show the list of chats without opening every conversation in full.
 
-3. When I select a chat, the C++ parser opens it and builds the transcript rows and markdown blocks. I expose that through Nitro Modules.
+3. When I select a chat, an extremely optimized C++ parser opens it and splits it by markdown blocks, not a full markdown parse. I expose that through Nitro Modules.
 
-This is a custom parser for this workload. I'm not saying every desktop app needs you to write a C++ parser.
+4. Then it goes over to React where LegendList virtualizes the messages and renders them with enriched markdown. The data remains in the native side, it doesn’t copy anything to javascript except block ids and metadata.
 
-4. Now React comes in. LegendList virtualizes the conversation.
+5. For each visible markdown row, Enriched Markdown renders it by block ID. So in this case the chat content is rendered natively while React composes the row.
 
-The data source gives it row indices and fetches metadata as needed. I don't need a giant JavaScript array containing every message's markdown.
+6. And React is where we have the app UI. The layout, the state, what happens when I select another chat. We use some native components like a SplitView and toolbar buttons, but it’s all rendered from React.
 
-5. For each visible markdown row, Enriched Markdown gets a native block ID. The content stays native for the markdown renderer. React still composes the row, including images and controls.
+7. The composer is a React component too. It handles input and renders a native liquid glass view under it.
 
-So React doesn't have to do every piece of work. It coordinates the pieces that are good at that work.
+8. And settings is all done in React as well, with a native SplitView on the left and a LegendList on the right.
 
-6. And React is where I build the app UI. The layout, the state, what happens when I select another chat.
-
-7. The composer is a React component too. It coordinates input and the native controls underneath it.
-
-8. And settings belong on that React side as well. These last three are UI responsibilities, not extra sequential stages that all run after a message renders.
-
-That's the split I want. Native code for the work that benefits from it. React for composing and coordinating the app.
-
-No WebView is required for this core UI. This is regular React Native, with native modules and native views.
+This is regular React Native, with native modules and native views.
 
 So what does that look like in the measurements?
-
-Implementation references: packages/chat-history/cpp/ChatCatalog.cpp; packages/chat-history/cpp/ChatTranscriptParser.cpp; packages/chat-history/src/ChatHistory.nitro.ts; apps/chat-history/src/TranscriptDataSource.ts; apps/chat-history/src/TranscriptRow.tsx; apps/chat-history/src/ChatComposer.tsx. Settings is an architectural responsibility here, not a measured startup phase.
 -->
 
 ---
@@ -595,16 +572,17 @@ footer: 'Video-derived ms · mixed-build reference · GPUI and Tauri single runs
 <Chart metric="content" />
 
 <!--
-Okay. Actual numbers.
+1. These are the latest measurements from the benchmarks. These results are extremely implementation dependant. I did a ton of iterations on each framework to make it as fast as it can be to make this a fair comparison, and that shifted the results widly. So it’s possible that a single optimization could make a big difference in any of them. And it also kind of proves that code quality still matters a ton.
 
-These are the latest usable measurements, not a synchronized final benchmark. GPUI and Tauri are new single runs after storage changes; the other affected apps still need remeasurement. So I would not call their timing changes a regression against earlier medians.
+AppKit is of course the fastest. GPUI and React Native are a bit behind.
 
-React Native gets to first content in about 393 milliseconds. AppKit is 319, and the new GPUI run is 366.
+2. These group pretty cleanly into buckets again. Tauri and SwiftUI are in the next bucket, not super fast but still fairly fast. SwiftUI surprised me. It’s fully native but it’s not super fast. I’m not a SwiftUI expert so it’s possible this could be faster. But this is as far as I could get optimizing with Codex.
+
+Tauri loads pretty fast since it’s the builtin webview whereas the other web based frameworks have to run a full chromium instance.
 
 Electron takes about 1.28 seconds. That's roughly three times as long as React Native in this app.
 
-So React Native isn't winning every number. But it's very close to the fastest, and this is doing real app work now.
-2. Here are the load-time bands from the overview: under 500 milliseconds, 500 to 1,000, and a second or more.
+So React Native isn't the absolute fastest, but it’s very close, and this is doing real app work now.
 -->
 
 ---
@@ -618,18 +596,15 @@ footer: 'Settled physical footprint · MB · includes attributed helper processe
 <Chart metric="memory" />
 
 <!--
-Now memory.
+1. Now let’s look at memory.
 
-AppKit is about 44 MB. React Native is 57. GPUI is now 80. SwiftUI is 87.
+Of course AppKit is the lowest at 44 MB. React Native is 57. GPUI is 80 and SwiftUI is 87.
 
-Tauri is now 136. Electron is 478.
+2. Now let’s make some buckets.
 
-GPUI and Tauri have new file-backed storage. Their initial memory dropped from 289 to 76, and from 364 to 136. Those are new single runs; the other affected apps still need remeasurement.
+Tauri is pretty close, but it’s 2 and a half times more than React Native.
 
-That's a big difference for an app that I might leave open all day.
-
-And this is why I care about more than build size. Using the system browser can make the download smaller, but it doesn't make the running app free.
-2. Now group by initial memory: under 105 MB, 105 to 315, and 315 or more.
+The bundled-browser apps are huge because they run full instances of Chromium. Using the system WebView can reduce the download size, but it doesn't make the running app free. I don't know what Flutter and Compose are doing.
 -->
 
 ---
@@ -643,14 +618,13 @@ footer: 'Video-derived action-to-visible-result ms · mixed builds · lower is b
 <Chart metric="jump" />
 
 <!--
-Let's actually use it. Jump to the top of a conversation.
+1. And now we measure actually using the app. First we jump scroll to the top of a conversation. This is the kind of interaction that makes an app feel fast.
 
-React Native is about 51 milliseconds. GPUI is about 55 in its new single run. I would not treat that tiny gap as a meaningful win.
+React Native does this in about 51 milliseconds, with a Legend List. GPUI is right behind at 55.
 
-This is the time from the action to the result appearing. It's not an FPS measurement.
+2. And let’s bucket it.
 
-But it's the kind of thing that makes an app feel instant.
-2. Using the same interaction-time cutoffs as switching, every app is under 250 milliseconds here.
+So React Native and GPUI do it in under 4 frames. Native frameworks and webview frameworks are worse, taking an extra frame or two. Surprisingly AppKit falls short here.
 -->
 
 ---
@@ -664,14 +638,9 @@ footer: 'Video-derived action-to-visible-result ms · mixed builds · lower is b
 <Chart metric="switch" />
 
 <!--
-And switch conversations.
+1. And then let’s try switching conversations. AppKit does really well at this one. React Native slower, but that’s largely a LegendList problem so I can try to make that faster.
 
-AppKit is about 88 milliseconds. React Native and GPUI are around 183 and 185. Tauri is about 226. Electron is about 679.
-
-Opening quickly is great, but I want the rest of the app to feel quick too.
-
-That's what these interactions are testing.
-2. Now group by switching time: under 250 milliseconds, 250 to 500, and 500 or more.
+2. GPUI and Tauri are similarly fast. Compose does relatively well in this one. SwiftUI is an actual native framework but it really struggles here. And of course Electron is very slow. That’s almost 4 times slower than React Native
 -->
 
 ---
@@ -685,16 +654,15 @@ footer: 'Measured September 18 · app bundles only · external grammars excluded
 <Chart metric="size" />
 
 <!--
-And the app itself is still small.
+1. And then let’s look at build size. The native apps are still tiny.
 
-React Native is about 19 MB. Electron is about 300.
+React Native is about 19 MB, while Electron is about 300 MB. GPUI is impressively small, and Tauri stays small because it uses the system WebView.
 
-AppKit and Tauri are smaller than React Native. So again, it doesn't win every category.
+React Native and Flutter are pretty small.
 
-These are just the app bundles. I've excluded the external syntax grammar packs from every app.
+2. But then bucketing it, Deno’s webview version adds some weight and Compose is fairly big.
 
-Small app, low memory, fast interactions. That's a pretty good combination.
-2. And the size bands: under 26 MB, 26 to 157, and 157 or more.
+2. Bucketing it, Deno WebView adds some weight and Compose is fairly big. Electron is about 16 times larger than the React Native app.
 -->
 
 ---
