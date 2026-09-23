@@ -1,12 +1,12 @@
 import { FocusRegion, SceneMotionView, SharedElement, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { DeckBackground } from "./DeckBackground";
 import { detailCamera, tourStep } from "./NineAppsTour";
 import { MovingTitle } from "./MovingTitle";
 import { Image, Text, View } from "react-native";
 import { appOrder, appCardLayout, filmstripLeft, filmstripWidth, type AppId, type SceneMode } from "./NineAppsGeometry";
 
-import { WebView } from "react-native-webview";
+import { LocalRecording } from "./LocalRecording";
 // @ts-ignore Deck assets resolve to local file URLs in the deck compiler.
 import react_nativePage from "./rnconnection-assets/framework-recordings/react-native.html";
 // @ts-ignore Deck assets resolve to local file URLs in the deck compiler.
@@ -58,31 +58,6 @@ const recordings: Record<AppId, { page: string; poster: string }> = {
   "gpui": { page: gpuiPage, poster: gpuiPoster },
 };
 
-function FrameworkRecording({ id, playing }: { id: AppId; playing: boolean }) {
-  const { page, poster } = recordings[id];
-  const videoReadAccess = page.slice(0, page.lastIndexOf("/") + 1);
-  const player = useRef<WebView>(null);
-  const [frameReady, setFrameReady] = useState(false);
-  const source = useMemo(() => ({ uri: page }), [page]);
-  const syncPlayback = useCallback(() => player.current?.injectJavaScript(
-    `(() => { const video = document.querySelector('video'); if (video) { ${playing ? "video.play().catch(() => {});" : "video.pause();"} } })(); true;`,
-  ), [playing]);
-  // Synchronize an external media player, without replacing it on step changes.
-  useEffect(syncPlayback, [syncPlayback]);
-  return <>
-    <Image source={{ uri: poster }} resizeMode="contain" style={{ width: "100%", height: "100%" }} />
-    <WebView ref={player} source={source} allowingReadAccessToURL={videoReadAccess}
-      originWhitelist={["file://*"]} mediaPlaybackRequiresUserAction={false} allowsInlineMediaPlayback
-      onLoadStart={() => setFrameReady(false)}
-      onMessage={event => { if (event.nativeEvent.data === "first-video-frame") setFrameReady(true); }}
-      onError={() => setFrameReady(false)}
-      onLoadEnd={syncPlayback}
-      containerStyle={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
-      scrollEnabled={false} style={{ flex: 1, backgroundColor: "#101e30" }} />
-    {!frameReady && <Image source={{ uri: poster }} resizeMode="contain"
-      style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, zIndex: 1, backgroundColor: "#101e30" }} />}
-  </>;
-}
 
 const names: Record<AppId, string> = {
   "react-native": "React Native", appkit: "AppKit", swiftui: "SwiftUI", electron: "Electron",
@@ -120,7 +95,7 @@ export function NineApps({ mode, children }: { mode: SceneMode; children?: React
             borderColor: id === "react-native" ? "#67e8f9" : "#33465e", backgroundColor: "#101e30" }}>
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#14253a" }}>
               {!isPreview && mode !== "grid" ?
-                <FrameworkRecording id={id} playing={phase === "playing" && id === appOrder[selected]} />
+                <LocalRecording {...recordings[id]} playing={phase === "playing" && id === appOrder[selected]} />
               : <Image source={{ uri }} resizeMode="contain" style={{ width: "100%", height: "100%" }} />}
             </View>
           </View>

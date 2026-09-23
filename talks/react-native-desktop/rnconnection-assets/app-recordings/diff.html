@@ -1,0 +1,24 @@
+<!doctype html>
+<html><head><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101e30}video{width:100%;height:100%;object-fit:contain;display:block}</style>
+</head><body><video muted loop playsinline poster="diff.png" src="diff.mov"></video><script>
+const video = document.querySelector("video");
+let reported = false;
+function reportFirstFrame() {
+  if (reported) return;
+  reported = true;
+  window.ReactNativeWebView?.postMessage("first-video-frame");
+}
+// A one-shot media readiness notification, not an animation clock.
+if (typeof video.requestVideoFrameCallback === "function") {
+  video.requestVideoFrameCallback(reportFirstFrame);
+} else {
+  function onTimeUpdate() {
+    if (video.currentTime > 0 && video.readyState >= 2) {
+      reportFirstFrame();
+      video.removeEventListener("timeupdate", onTimeUpdate);
+    }
+  }
+  video.addEventListener("timeupdate", onTimeUpdate);
+}
+</script></body></html>
