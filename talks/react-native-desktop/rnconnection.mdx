@@ -39,6 +39,8 @@ import { FramePitch, FrameFoundations } from "./FramePitch";
 import { EverywhereMorph } from "./EverywhereMorph";
 import { ReactNativeTitleDemo } from "./ReactNativeTitleDemo";
 import { NativeUIMatters } from "./NativeUIMatters";
+import { PlatformVersions } from "./PlatformVersions";
+import macosReleaseTracker from "./rnconnection-assets/macos-release-tracker.png";
 import { ExpoDesktopPortal } from "./ExpoDesktopPortal";
 import frameIcon from "./rnconnection-assets/legend-frame.png";
 import frameRunnerScreenshot from "./rnconnection-assets/frame-runner-cli.png";
@@ -977,6 +979,49 @@ It doesn't mean every Expo module suddenly works on desktop. There are still gap
 [Point to the GitHub link.]
 
 So now I can start with Expo. But I still need all the things that make a desktop app a desktop app.
+-->
+
+---
+title: Desktop is behind
+---
+
+# Desktop is behind {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<PlatformVersions />
+
+<!--
+There's another gap here. We're not all on the same React Native version.
+
+As of September 23, the latest stable npm releases are React Native 0.87.1 for iOS and Android, React Native macOS 0.81.9, and React Native Windows 0.84.0. These are the latest tags, not previews or release candidates.
+
+That makes sharing a codebase harder. Libraries and tooling may expect a newer React Native version than desktop supports. You have to find versions that work together, and sometimes carry patches.
+
+Expo Desktop helps with the Expo integration. It doesn't automatically bring the underlying React Native platform forks up to date.
+
+Sources, checked September 23, 2026:
+https://registry.npmjs.org/react-native/latest
+https://registry.npmjs.org/react-native-macos/latest
+https://registry.npmjs.org/react-native-windows/latest
+-->
+
+---
+title: macOS is catching up
+---
+
+# macOS is catching up {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<Image source={{ uri: macosReleaseTracker }} style={{ width: 1500, height: 600, alignSelf: "center" }} resizeMode="contain" accessibilityLabel="Open React Native macOS issue 3098: React Native macOS 0.83–0.87 PR stack and release tracker, opened September 21" />
+
+<!--
+But there's work happening to close that gap on Mac.
+
+This tracker lays out the PRs and release checkpoints from 0.83 through 0.87. It's real work in progress, not a claim that those stable releases have shipped. The issue is still open.
+
+That's encouraging. Getting desktop closer to the same version as mobile makes the whole ecosystem easier to share.
+
+And version alignment is one piece of the foundation. Then there are all the desktop-specific APIs an app needs.
+
+https://github.com/microsoft/react-native-macos/issues/3098
 -->
 
 ---
