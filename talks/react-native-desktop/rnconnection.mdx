@@ -49,6 +49,7 @@ import { SharedRoots } from "./SharedRoots"
 import musicIcon from "./rnconnection-assets/music-icon.png";
 import markdownIcon from "./rnconnection-assets/markdown-icon.png";
 import { NineApps } from "./NineApps"
+import { HelloWorldIntro } from "./HelloWorldIntro"
 import { FrameworkLanguages } from "./FrameworkLanguages"
 import { NativeReactions } from "./NativeReactions"
 import { AppShowcase } from "./AppCarousel"
@@ -313,24 +314,18 @@ But if something else is truly better, I should reconsider what I'm building wit
 -->
 
 ---
-title: Hello World
----
-
-# Hello World {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
----
+title: Hello World · first content
+steps: 2
 eyebrow: 'Hello World / first content'
 footer: 'Median ms · 10 measured rounds · small differences near recording cadence are ties'
 ---
 
-# Hello World · first content {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<Chart workload="hello" metric="content" />
+<HelloWorldIntro />
 
 <!--
-Let's start with Hello World. Just open a window and put something in it.
+1. Let's start with Hello World. Just open a window and put something in it.
 
-React Native is about 228 milliseconds. SwiftUI and GPUI are basically the same. The recording isn't precise enough for those tiny differences to mean anything.
+2. React Native is about 228 milliseconds. SwiftUI and GPUI are basically the same. The recording isn't precise enough for those tiny differences to mean anything.
 
 Compose Multiplatform is about 601 milliseconds to first content, with the window appearing at about 594. This is the latest supplied measurement; I don't have a run count for it.
 

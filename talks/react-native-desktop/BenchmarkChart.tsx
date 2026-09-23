@@ -37,8 +37,8 @@ export function BucketHeaders({ rows, metric, visible, workload = "chat" }: { ro
   </SceneMotionView>)}</>;
 }
 
-export function Chart({ metric, workload = "chat" }: { metric: Metric; workload?: "chat" | "hello" }) {
-  const grouped = usePresentationValue("stepIndex") >= 1;
+export function Chart({ metric, workload = "chat", groupAtStep = 1 }: { metric: Metric; workload?: "chat" | "hello"; groupAtStep?: number }) {
+  const grouped = usePresentationValue("stepIndex") >= groupAtStep;
   const rows = (workload === "chat" ? benchmarks.chat : benchmarks.hello)
     .map(row => ({ name: row.name, value: (row as unknown as Record<string, number>)[metric] }))
     .filter(row => Number.isFinite(row.value)).sort((a, b) => a.value - b.value);
