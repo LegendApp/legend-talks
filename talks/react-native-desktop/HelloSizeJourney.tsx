@@ -49,7 +49,7 @@ export function HelloSizeJourney() {
         {members.map(({ name, size }, index) => {
           const y = inBuckets ? buckets.positions[name] : grouped ? groupY + index * (focus >= 0 ? 68 : groupedRowSpacing)
             : chartLayout.top + rows.findIndex(row => row.name === name) * chartLayout.rowSpacing;
-          return <BenchmarkRow key={name} name={name} value={size} maximum={fullMaximum} metric="size" y={y}
+          return <BenchmarkRow key={name} name={name} value={size} maximum={fullMaximum} metric="size" decimals={1} y={y}
             groupColor={inBuckets ? bucketColors[bucketIndex(size, "size")] : group.color} grouped={grouped} duration={scene === 3 ? 1100 : 650} />;
         })}
       </View>;

@@ -9,9 +9,9 @@ export type Metric = "content" | "memory" | "size" | "jump" | "switch";
 const units: Record<Metric, string> = { content: "ms", memory: "MiB", size: "MiB", jump: "ms", switch: "ms" };
 
 /** Separate sibling markers keep text rigid while only the bar changes width. */
-export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grouped = false, duration = 650 }: {
+export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grouped = false, duration = 650, decimals = 0 }: {
   name: string; value: number; maximum: number; metric: Metric; y: number;
-  groupColor?: string; grouped?: boolean; duration?: number;
+  groupColor?: string; grouped?: boolean; duration?: number; decimals?: number;
 }) {
   const id = `benchmark-${name}`;
   const animateEntrance = useSharedElementEntrance(`${id}-bar`);
@@ -25,7 +25,7 @@ export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grou
       <ChartBar highlighted={highlighted} groupColor={groupColor} grouped={grouped} animateEntrance={animateEntrance} style={{ width, height: chartLayout.barHeight }} />
     </SharedElement>
     <SharedElement id={`${id}-value`} resize="preserve" style={{ position: "absolute", right: 0, top: 0, width: chartLayout.valueWidth, height: chartLayout.rowHeight }}>
-      <Text style={{ color: "#f1f5f9", textAlign: "right", fontSize: chartLayout.fontSize, lineHeight: chartLayout.lineHeight, fontVariant: ["tabular-nums"] }}>{value.toFixed(0)} {units[metric]}</Text>
+      <Text style={{ color: "#f1f5f9", textAlign: "right", fontSize: chartLayout.fontSize, lineHeight: chartLayout.lineHeight, fontVariant: ["tabular-nums"] }}>{value.toFixed(decimals)} {units[metric]}</Text>
     </SharedElement>
   </ScenePositionView>;
 }
@@ -47,7 +47,7 @@ export function Chart({ metric, workload = "chat" }: { metric: Metric; workload?
   return <View style={{ width: chartLayout.width, height: chartLayout.height, marginTop: chartLayout.marginTop, alignSelf: "center" }}>
     <BucketHeaders rows={rows} metric={metric} visible={grouped} workload={workload} />
     {rows.map(({ name, value }, index) => <BenchmarkRow key={name} name={name} value={value} metric={metric} maximum={maximum}
-      grouped={grouped} groupColor={bucketColors[bucketIndex(value, metric, workload)]}
+      decimals={workload === "hello" && metric === "size" ? 1 : 0} grouped={grouped} groupColor={bucketColors[bucketIndex(value, metric, workload)]}
       y={grouped ? buckets.positions[name] : chartLayout.top + index * chartLayout.rowSpacing} />)}
   </View>;
 }
