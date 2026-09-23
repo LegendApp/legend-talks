@@ -28,7 +28,7 @@ const reactions = [
   { uri: lowMemory, x: 426, y: 700, rotation: "-5deg", anchor: 18, height: 195 },
   { uri: rnFan, x: 1270, y: 713, rotation: "4deg", anchor: 21, height: 190 },
 ];
-const letterFade = [{ time: 0, x: 0, y: 0, opacity: 1 }, { time: 200, x: 0, y: 0, opacity: 1 }, { time: 650, x: 0, y: 0, opacity: 0 }];
+const letterFade = [{ time: 0, x: 0, y: 0, opacity: 1 }, { time: 200, x: 0, y: 0, opacity: 1 }, { time: 1100, x: 0, y: 0, opacity: 0 }];
 const cardFade = [{ time: 0, x: 0, y: 0, opacity: 0 }, { time: 100, x: 0, y: 0, opacity: 0 }, { time: 650, x: 0, y: 0, opacity: 1 }];
 
 export function NativeReactions() {
