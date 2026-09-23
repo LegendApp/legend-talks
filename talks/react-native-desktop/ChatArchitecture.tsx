@@ -7,8 +7,8 @@ const nodes = [
   { x: 155, y: 95, label: "Find chat files", icon: "M -20 -12 L -6 -12 L 0 -6 L 22 -6 L 22 18 L -20 18 Z" },
   { x: 155, y: 210, label: "Parse metadata", icon: "M -16 -21 L 17 -21 L 17 21 L -16 21 Z M -8 -10 L 9 -10 M -8 0 L 9 0 M -8 10 L 3 10" },
   { x: 155, y: 325, label: "Parse selected chat", icon: "M -21 -16 L 21 -16 L 21 12 L -4 12 L -15 23 L -15 12 L -21 12 Z M -10 -3 L 10 -3" },
-  { x: 1055, y: 325, label: "LegendList", detail: "Virtualize the chat", icon: "M -11 -17 L 22 -17 M -11 0 L 22 0 M -11 17 L 22 17 M -23 -17 L -19 -17 M -23 0 L -19 0 M -23 17 L -19 17" },
-  { x: 155, y: 465, label: "Enriched Markdown", detail: "Render message", icon: "M -24 -17 L 24 -17 L 24 17 L -24 17 Z M -16 9 L -16 -8 L -8 1 L 0 -8 L 0 9 M 13 -9 L 13 9 M 7 3 L 13 9 L 19 3" },
+  { x: 1055, y: 325, label: "LegendList", icon: "M -11 -17 L 22 -17 M -11 0 L 22 0 M -11 17 L 22 17 M -23 -17 L -19 -17 M -23 0 L -19 0 M -23 17 L -19 17" },
+  { x: 155, y: 465, label: "Enriched Markdown", icon: "M -24 -17 L 24 -17 L 24 17 L -24 17 Z M -16 9 L -16 -8 L -8 1 L 0 -8 L 0 9 M 13 -9 L 13 9 M 7 3 L 13 9 L 19 3" },
   { x: 1055, y: 465, label: "App UI", icon: "M -22 -18 L 22 -18 L 22 18 L -22 18 Z M -22 -7 L 22 -7 M -15 -12 L -12 -12" },
   { x: 1055, y: 580, label: "Composer", icon: "M -21 20 L -16 5 L 13 -23 L 24 -12 L -5 16 Z M -16 5 L -5 16 M 7 -17 L 18 -6" },
   { x: 1055, y: 695, label: "Settings", icon: "M -22 -14 L 22 -14 M -22 0 L 22 0 M -22 14 L 22 14 M -10 -20 L -10 -8 M 10 -6 L 10 6 M -5 8 L -5 20" },
@@ -82,7 +82,6 @@ export function ChatArchitecture() {
         </Canvas>
         <View style={{ position: "absolute", left: 168, top: 0, right: 10, height: 86, justifyContent: "center" }}>
           <Text style={{ color: "#ffffff", fontSize: 28, lineHeight: 35, fontWeight: "600" }}>{node.label}</Text>
-          {node.detail && <Text style={{ color: "#c8e3f5", fontSize: 23, lineHeight: 29 }}>{node.detail}</Text>}
         </View>
       </SceneMotionView>;
     })}
