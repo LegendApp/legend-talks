@@ -674,23 +674,13 @@ eyebrow: 'Chat History / four metrics'
 <MetricBuckets />
 
 <!--
-Here's everything together. Load time, memory, app size, and switching conversations.
+So let’s put it all together with load time, memory, app size, and switching conversations.
 
-Look at the groups. A few hundred milliseconds to load, or over a second. Tens of megabytes of memory, or hundreds.
+React Native is always in the top performance group. Compared to the best in each category it’s marginally bigger, marginally slower, marginally more memory. The only patlform that’s consistently better is AppKit.
 
-I've put the cutoffs right on the slide. These are practical bands, not a claim that everything in a band is tied. AppKit is still much smaller, and it switches faster.
+So to me this basically means that for performance, SwiftUI is not a viable option and React Native is better.
 
-Load time means stable first content. Memory is the initial settled physical footprint, including helpers. File size is the installed app without external grammar packs.
-
-All of the chat charts now use this mixed-build reference. GPUI and Tauri have new single runs with file-backed storage. RN is the September 19 ten-run median. Compose is September 18, and the other rows are September 17. The remaining storage updates need completed builds and remeasurement. App sizes are still the earlier snapshot.
-
-Now just follow React Native.
-
-It's in the first group every time.
-
-It doesn't win every number. But I don't have to choose between a fast app, a small app, and an app that doesn't eat all my memory.
-
-And I still get real native UI.
+GPUI has impressive performance but it’s generally either slightly better or slightly worse than React Native. But it’s not native UI so I much prefer React Native for that.
 -->
 
 ---
@@ -704,21 +694,9 @@ footer: 'Measured on macOS · current visuals require refreshed captures after n
 <BalanceDiagram />
 
 <!--
-1. So let's put those things together.
+1. So my conclusion is that purely for performance, I should choose either React Native or raw AppKit to slightly edge it out.
 
-For this diagram, fast means first content under 600 milliseconds and switching under 250. Low memory means under 105 MB.
-
-And native UI means native content views, not just native window buttons.
-
-AppKit gets all three. React Native gets all three.
-
-SwiftUI gets the native UI and low memory, but this implementation misses the speed cutoff. GPUI now meets both the performance and low-memory criteria. It draws its own UI. Tauri still misses the first-content cutoff at 626 milliseconds.
-
-2. And then we have this group.
-
-These are my cutoffs for this app. You can absolutely build good apps with those frameworks.
-
-But if I want this combination, React Native is looking really good. And unlike AppKit, it gives me a foundation I can use beyond macOS.
+2. And for performance, the others are not real options
 -->
 
 ---
@@ -731,11 +709,9 @@ footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 <ReactNativeTitleDemo />
 
 <!--
-It's React Native.
+And of course React Native has all the other benefits we all know about.
 
-That's the extra benefit. All the performance stuff we've just looked at stands on its own.
-
-But I also get to use the tools I already know. Components, hooks, state libraries, Fast Refresh.
+I get to use the tools I already know. Components, hooks, state libraries, Fast Refresh.
 
 I can change some UI and see it immediately. That's a really nice way to build desktop apps.
 -->
@@ -752,11 +728,9 @@ footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 <!--
 And this is the development experience I actually want.
 
-React Native on mobile. React Native on desktop. React on the web.
+React Native on mobile. React Native on tablets or foldables. React Native on desktop. React on the web.
 
 Share the state, the data, the logic, and the components that make sense to share.
-
-The interfaces should still fit the platform. A desktop app shouldn't just be a phone screen stretched sideways.
 
 But I don't want three completely separate codebases for the same product.
 -->
@@ -770,21 +744,21 @@ eyebrow: 'Cross-platform'
 <CrossPlatformLanes />
 
 <!--
-And then there's this.
+So let’s compare all of the frameworks’ cross platformness. We want a platform that can run everywhere easily.
 
-iOS. Android. macOS. Windows. Web.
+React Native is the only one that truly covers all five platforms.
 
-React Native isn't alone in covering all five. Flutter and Compose do too.
+Flutter supports web but it’s weird, it compiles Dart to JavaScript and then renders everything in a Canvas. So it’s not truly a regular HTML and DOM website. I don’t think that counts.
 
-Tauri does mobile and desktop. SwiftUI does Apple's platforms. AppKit is macOS. Electron, GPUI, and Deno are desktop frameworks.
+Compose kind of works on web but it converts the whole app to WebAssembly and renders with a canvas, so I don’t think that really counts.
 
-Full dots are supported application targets. Half-filled Web dots mean the web UI can be reused, but platform APIs need adaptation. That's why Tauri, Electron and Deno have a partial Web dot. Tauri's iOS and Android half dots are my assessment of the mobile experience, not a claim that those targets lack official support or a result of these desktop benchmarks. Linux isn't shown among these five platforms.
+Tauri started as a desktop framework but they recently added mobile. But I only found bad reviews of it, and it would be a webview on mobile, which we learned a long time ago is not a good way to build mobile apps. And while it’s not a web platform it’s effectively a web wrapper so it kind of counts.
 
-React Native gets here through React Native Web and the macOS and Windows implementations. Platform coverage doesn't mean every library works everywhere, or that all the platforms are equally mature.
+SwiftUI only runs on Apple's platforms. AppKit is only macOS, UIKit is the mobile version and is slightly different.
 
-The performance argument stands on its own. But I also want to share the state, the data, the logic, and the components that make sense to share. And adapt the interfaces to each platform.
+Electron and Deno are desktop frameworks but since they’re web wrappers it kind of counts as web.
 
-Sources: https://reactnative.dev/docs/out-of-tree-platforms · https://docs.flutter.dev/reference/supported-platforms · https://kotlinlang.org/docs/multiplatform/compose-compatibility-and-versioning.html · https://v2.tauri.app/ · https://developer.apple.com/swiftui/ · https://developer.apple.com/documentation/appkit · https://www.electronjs.org/docs/latest/ · https://github.com/zed-industries/zed/blob/main/crates/gpui/README.md · https://docs.deno.com/runtime/desktop/backends/
+And GPUI is desktop only, at least for now.
 -->
 
 ---
@@ -795,33 +769,13 @@ eyebrow: 'Writing versus maintaining'
 <AIMaintenance />
 
 <!--
-Step 1
+1. These days a lot of people are saying couldn't AI just build a separate native app for every platform?
 
-But couldn't AI just build a separate native app for every platform?
+Sure. You can write five different apps in four different languages for every platform. AI can do that pretty easily. I just tried it with making the chat history app in every framework.
 
-Sure. One for iOS. One for Android. Mac. Windows. Web.
+But then I have five totally different implementations of the same product. Even with that app I had problems where some rendered images slightly differently, or one’s parser wasn’t as efficient. I guess you can just throw a lot of tokens at validating they’re all totally exactly the same.
 
-AI can help write each of those. Getting a first version running can be surprisingly easy. And honestly pretty fun.
-
-But now I have five implementations of the same product.
-
-Step 2
-
-But getting them to run isn't the same as having apps I can confidently maintain.
-
-Now I find a bug. I have to fix it everywhere. And check every fix.
-
-AI can write Swift or Kotlin or Rust for me. But that doesn't automatically make me good at reviewing or optimizing all of them.
-
-And the implementations can quietly disagree. Different caching. Different sorting. Different behavior when something fails. AI doesn't catch every bug in one implementation. More implementations give me more places to miss one.
-
-Then the next feature comes along. Or a data migration. Or an accessibility fix. Same problem again.
-
-Separate native apps can absolutely work. Teams do it. But that's an ongoing cost, not just the cost of writing version one.
-
-I also like the iteration loop I already have with React Native. Fast Refresh, and shared JavaScript updates where OTA is supported and appropriate. That doesn't update native code, and native tools have their own preview workflows.
-
-I want AI helping me improve one shared implementation. And I want the platform-specific code to be there because the platform needs it.
+2. But then you have to maintain them five times. If a user finds a bug you have to fix it everywhere. And check and validate and PR every fix. Maybe the bug was only on one of the platforms. It’s hard to know. You can throw tons of tokens at it I guess. But how do you know 100% that it’s fully fixed everywhere?
 
 So I want to share the implementation. But I also want the performance and the native UI. Let's put those together.
 -->
@@ -836,24 +790,11 @@ footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 <!--
 This is why I think React Native is the best choice.
 
-Based on these Hello World and Chat History comparisons, it's the best combination of speed, memory, and real native UI among the cross-platform approaches I tested.
+It's the best combination of speed, memory, and real native UI among all of the frameworks I tested.
 
-AppKit wins some of the numbers. You've seen them.
+So this is the combination I want. Competitive performance. Native UI. Code I can share across platforms. I'm not choosing React Native because it’s a compromise. It’s because it’s the best.
 
-But I don't have to give up this whole combination to use React Native.
-
-So this is the combination I wanted. Competitive performance. Native UI. Code I can share across platforms. I'm not choosing React Native because I'm willing to compromise.
-
-But if it's this good, why aren't more people building desktop apps with it?
-
-Reading this chart: native UI means native content controls on desktop, not just window chrome. Full dots are supported application targets. Half-filled Web dots for Tauri, Electron and Deno mean reusable web UI; desktop APIs still need adaptation. Tauri's iOS and Android half dots reflect my reservations about the mobile experience. Both are officially supported; this is my assessment, not a finding from these desktop benchmarks.
-
-Benchmark results uses the same four Chat History bucket definitions as the earlier table: load time, memory, app size, and switching. Each little bar shows leading, middle, or trailing group with full, two-thirds, or one-third length. Those lengths encode categories, not percentages of performance. There is no combined score.
-
-AppKit, React Native, and GPUI are in the leading group for all four. Differences within a bucket don't change the credit. Deno uses the worse of its two backend buckets wherever they differ.
-
-These remain mixed-build reference measurements: GPUI and Tauri are new single runs, React Native is the September 19 ten-run median, and other rows are earlier measurements. App sizes are the earlier app-only snapshot. The groups describe this snapshot, not a statistically established ranking.
-
+But if it's this good…
 -->
 
 ---
@@ -862,11 +803,7 @@ title: "Why isn't everyone doing this?"
 
 # Why isn't everyone doing this? {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-8xl mb-0"}
 
-<!--
-So if it's this good, why isn't everyone doing this?
-
-[Pause.]
--->
+<!-- Why isn't everyone doing this? -->
 
 
 ---
@@ -880,21 +817,15 @@ eyebrow: Story
 <DesktopObjections />
 
 <!--
-1. So when I talk to people about React Native desktop, the pushback really comes down to these three things.
+1. When I talk to people about React Native desktop, the pushback really comes down to these three things. First is performance.
 
-Performance.
+2. But we just proved that’s solved. It has great performance.
 
-The libraries they already use don't all support desktop.
+Modules don’t all work on desktop.
 
 And then there's the desktop foundation. Getting a project started, getting it built, and all the native desktop APIs the app needs.
 
-2. Performance? We just did that.
-
-I don't think that belongs on the list of reasons to avoid React Native desktop anymore.
-
-So let's work on the other two.
-
-3. Start with desktop foundations. Before I can add a menu or another window, I need a project and a workflow.
+3. Let’s focus on that
 -->
 
 ---
@@ -906,19 +837,9 @@ eyebrow: 'Desktop foundations / Expo Desktop'
 <ExpoDesktopLayers />
 
 <!--
-1. I want to start with Expo. I already have a workflow I like for iOS, Android, and web.
+1. Of course we want to use Expo. But Expo doesn’t support desktop. So I need to have separate projects for mac and windows apps. But Jamie Birch has solved that
 
-But macOS and Windows are sitting outside that workflow. Desktop project setup, builds, and module compatibility still need work.
-
-2. That’s where Expo Desktop comes in.
-
-[Click. Expo Desktop drops into the broken connection. Let the impact, snap, and power surge finish.]
-
-It adds the desktop projects around that workflow, using React Native macOS and Windows.
-
-It's a community project. It gives us a starting point for desktop, not automatic compatibility for every Expo module.
-
-Now I can start an app. But a desktop app needs a lot more than a window.
+2. with Expo Desktop. It adds support for out of tree platforms to Expo, letting you have one monorepo for all of your React Native apps on every platform
 -->
 
 ---
@@ -928,15 +849,9 @@ title: Expo Desktop
 <ExpoDesktopPortal />
 
 <!--
-This is Expo Desktop. It's a community project by Jamie Birch.
+1. Expo doesn’t yet fully support desktop platforms, but Jamie has gotten it a long way towards working well. There are still gaps and rough edges. But it gives us a shared starting point instead of setting everything up ourselves.
 
-It brings the Expo workflow to React Native macOS and Windows. Desktop project generation, Metro configuration, and the work to make Expo modules run there.
-
-It doesn't mean every Expo module suddenly works on desktop. There are still gaps. But it gives us a shared starting point instead of setting everything up ourselves.
-
-[Point to the GitHub link.]
-
-So now I can start with Expo. But I still need all the things that make a desktop app a desktop app.
+It’s a really cool project.
 -->
 
 ---
@@ -950,16 +865,9 @@ title: Desktop is behind
 <!--
 There's another gap here. We're not all on the same React Native version.
 
-As of September 23, the latest stable npm releases are React Native 0.87.1 for iOS and Android, React Native macOS 0.81.9, and React Native Windows 0.84.0. These are the latest tags, not previews or release candidates.
+As of now, mobile is on 87. But Windows is on 84 and macOS is on 81.
 
-That makes sharing a codebase harder. Libraries and tooling may expect a newer React Native version than desktop supports. You have to find versions that work together, and sometimes carry patches.
-
-Expo Desktop helps with the Expo integration. It doesn't automatically bring the underlying React Native platform forks up to date.
-
-Sources, checked September 23, 2026:
-https://registry.npmjs.org/react-native/latest
-https://registry.npmjs.org/react-native-macos/latest
-https://registry.npmjs.org/react-native-windows/latest
+Expo Desktop helps with the Expo integration and sets your project to the latest common version. But it’s not great being so many version behind.
 -->
 
 ---
@@ -970,17 +878,7 @@ title: macOS is catching up
 
 <Image source={{ uri: macosReleaseTracker }} style={{ width: 1500, height: 600, alignSelf: "center" }} resizeMode="contain" accessibilityLabel="Open React Native macOS issue 3098: React Native macOS 0.83–0.87 PR stack and release tracker, opened September 21" />
 
-<!--
-But there's work happening to close that gap on Mac.
-
-This tracker lays out the PRs and release checkpoints from 0.83 through 0.87. It's real work in progress, not a claim that those stable releases have shipped. The issue is still open.
-
-That's encouraging. Getting desktop closer to the same version as mobile makes the whole ecosystem easier to share.
-
-And version alignment is one piece of the foundation. Then there are all the desktop-specific APIs an app needs.
-
-https://github.com/microsoft/react-native-macos/issues/3098
--->
+<!-- Luckily macOS is catching up. There’s a PR to get it to 87 which will hopefully be merged soon! -->
 
 ---
 title: Desktop foundations → Legend Frame
@@ -990,51 +888,25 @@ steps: 6
 <DesktopFoundationsJourney icon={frameIcon} />
 
 <!--
-1. I just want to build my app.
+1. That brings us to the modules problem. There are a lot of desktop features that don’t have libraries yet. We have tons of libraries for mobile, but React Native on desktop is not popular enough yet for people to have made the desktop libraries.
 
 2. But I need windows. Menus. Keyboard shortcuts. Files. Open and save dialogs.
 
-3. Then drag and drop. Clipboard. Notifications. A tray icon. Media controls.
+3. Then drag and drop. Notifications. A tray icon. Media controls.
 
 4. Deep links. App lifecycle. Preferences. Permissions. Updates.
 
-Every app I made needed another piece of this. React makes composing the interface easy. But somebody still has to write and maintain all of these native integrations.
+These work differently on mobile or just don’t exist yet. As I was making apps I needed to build all of these features for my app to use.
 
-Before I can build the thing I actually want to build, I need all of this.
+5. And that's just to get the app working. Then you have to ship it.
 
-These are the capabilities a desktop foundation needs to address. Not every app needs every module, and this isn't a claim that all of them are finished on every platform.
+You need to bootstrap the project. Link the native dependencies. Get the release build configured properly. Optimize the release build size, package it and publish it correctly, setup auto updating.
 
-5. [Let the glass ripple wash over the features. The publishing requirements grow out around them.]
+This was a lot to figure out and get working.
 
-And that's just the modules. Then you have to ship it.
+What we really need is something that gives me the all of these modules
 
-You need to bootstrap the project. Link the native dependencies. Get the release build configured properly.
-
-Those small build sizes I showed you didn't happen by accident. Architectures, stripping unused code, release settings. There's a lot to get right.
-
-Then there are modules that mostly work, but need a desktop patch. Signing. Entitlements. Notarization on Mac. Packaging. Publishing. A way to deliver updates.
-
-Getting a window on screen isn't the hard part. Getting a small app I can ship, and reproduce on another machine, is a whole other project.
-
-I don't want everybody to figure this out again.
-
-I want a command that gives me the modules and sets this up.
-
-6. [The network collapses into the big explosion. Let the particles gather into a cursor at the center, then let it type the command.]
-
-npx @legendapp/frame create.
-
-This is Legend Frame.
-
-Expo Desktop gives me the starting point. Frame brings together the desktop APIs and tooling I've been extracting from all these apps.
-
-The idea is that you start with the modules and the configuration already assembled. Then you build your app.
-
-The goal is much of the feature set of Electron, but in React Native. Windows, menus, system integrations, a way to develop the app and a way to ship it.
-
-That's the direction, not a claim that version 0.0.1 finishes every capability I just showed. I'll show what the CLI creates today.
-
-I don't mean running Electron APIs or putting Node in the app. I mean making it that practical to build a desktop app with native UI.
+6. [animation] and sets everything up correctly. So today I’m releasing Legend Frame.
 -->
 
 ---
@@ -1044,7 +916,7 @@ title: Legend Frame
 <FramePitch icon={frameIcon} />
 
 <!--
-1. Frame is the desktop APIs, the configuration, and the tooling, assembled into one framework.
+1. Frame gives you all of the desktop APIs, configuration, and tooling you need to build desktop apps.
 
 Start with Expo. Import the desktop features you need. Build your app.
 
