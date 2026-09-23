@@ -916,15 +916,9 @@ title: Legend Frame
 <FramePitch icon={frameIcon} />
 
 <!--
-1. Frame gives you all of the desktop APIs, configuration, and tooling you need to build desktop apps.
+Frame gives you desktop APIs, configuration, and tooling you need to build desktop apps.
 
-Start with Expo. Import the desktop features you need. Build your app.
-
-The goal is much of Electron's desktop feature set, with native UI and an Expo development experience. This is early, and the scope is still growing.
-
-I want moving an Electron app to Frame to be practical. That isn't drop-in API compatibility. Your business logic may carry over; the UI and integrations need adapting.
-
-[Reveal the imports one at a time. These are the desktop APIs your React app uses.]
+The goal is to make it as easy as Electron to build desktop apps, but with the performance and native UI of a React Native and Expo development experience. This is early, and the scope is still growing.
 -->
 
 ---
@@ -935,19 +929,13 @@ steps: 2
 <FrameFoundations icon={frameIcon} />
 
 <!--
-1. So what is it built on?
-
-Expo Desktop gives us desktop platform support.
+1. So how does it work? It runs on top of Expo Desktop which gives us desktop platform support.
 
 Building on the Expo workflow we already know.
 
-And underneath that... a WebView.
+And underneath that a WebView for cross platform support
 
-[Pause. Advance to break the WebView.]
-
-2. Absolutely not.
-
-[Let the X shatter the box and React Native appear.]
+2. I’m just kidding, it’s definitely not a webview.
 
 It's React Native. Frame adds desktop APIs and tooling to that foundation.
 
@@ -963,17 +951,11 @@ title: Frame Runner
 <Image source={{ uri: frameRunnerScreenshot }} style={{ width: 1696, height: 760, alignSelf: "center" }} resizeMode="contain" accessibilityLabel="Frame CLI running Metro with Fast Refresh and a command to open the macOS app in Frame Runner" />
 
 <!--
-Frame gives you the native modules you need for desktop.
+It also includes a Frame Runner app with those modules and common libraries like Reanimated and Skia already built in. It’s similar to something like Expo Go for desktop.
 
-And Frame Runner comes with those modules already built in. Think Expo Go for desktop.
+You just write JavaScript, press d, and your app opens. You don’t need a native build. You don't even need Xcode.
 
-You write JavaScript, press d, and your app opens. No native build. You don't even need Xcode.
-
-And you get Fast Refresh. Change the code and see it update.
-
-[Replace the CLI screenshot with a recording: run bun run macos, press d to open the app, then make a small JS edit and show Fast Refresh. The screenshot still uses the old "prebuilt runtime" name.]
-
-So let's go back to what's holding desktop back.
+You do still need a native build for building to production. And installing a native module will switch you to a development build similar to Expo Go. But this is a really easy way to get started.
 -->
 
 
@@ -988,17 +970,11 @@ eyebrow: Story
 <DesktopObjections returning />
 
 <!--
-1. So let's go back to these three boxes.
+1. So let's go back to what’s holding desktop back. We already know performance is solved
 
-Performance has already turned into a green checkmark.
+2. And Frame gets us pretty far along on desktop foundations.
 
-2. And the desktop modules? That's what Frame is for. There's more to build, but now we have a shared place to build it, and apps already using those pieces.
-
-3. Which leaves this one.
-
-Existing modules.
-
-And this is where I need your help.
+3. Which leaves existing modules, and this is where I need help
 -->
 
 ---
@@ -1011,19 +987,9 @@ eyebrow: Story
 <CompatibilitySnapshot />
 
 <!--
-React Native already has a huge ecosystem. We don't need to start over.
+React Native already has a huge ecosystem on mobile, and it’s doing pretty well on macOS already since it’s pretty close to iOS. But this is the table of supported libraries. There’s a ton that aren’t supported.
 
-But a desktop checkmark isn't enough. Does it work on the new architecture?
-
-We checked the actual repos. There is a lot of real macOS support here. Windows needs more work. SVG has a Fabric implementation, but things like text and masks are missing. Gesture Handler's Windows module is a no-op. Nitro and NetInfo have Windows PRs, but they haven't landed.
-
-WebView is a good example of why versions matter. The default npm install is still 14, without Windows Fabric. Versions 15 and 16 added it, but there are still reported problems. So don't read that cross as saying nobody has built it.
-
-Green means there is upstream implementation evidence, with a compatible version. It doesn't mean we tested every feature. Sentry on Windows is only JS reporting. NetInfo supports the new architecture on Mac; its Windows migration is still in a PR. Vision Camera's in-progress status is the desktop work I told you about, not a released implementation.
-
-That's the work we need: test specific versions, document what works, and get fixes upstream.
-
-Repo audit and pinned sources: MODULE_COMPATIBILITY_AUDIT.md, September 22, 2026.
+And Windows needs a lot work, windows modules are an entirely different platform so support just isn’t really there yet. But an LLM should be able to knock those out fairly quickly.
 -->
 
 ---
@@ -1035,21 +1001,7 @@ eyebrow: Story
 
 <CompatibilitySnapshot expo />
 
-<!--
-And Expo is a big part of that ecosystem too.
-
-These are sixteen popular Expo packages. Upstream packages, without Frame adapters.
-
-Some already have real macOS implementations. Symbols even has an explicit AppKit implementation. But declaring Mac in a podspec doesn't mean the feature works. KeepAwake declares it, but does nothing on Mac.
-
-FileSystem is supported on Mac. There are still individual API gaps to document. Font loading works too, but rendering text to an image is missing, so Font is marked partial.
-
-The Windows column is upstream Expo. Expo Modules Core doesn't ship the Windows native integration these packages need. That's separate from what Expo Desktop or a replacement module can provide.
-
-So we need more than a platform flag. We need to test the actual APIs on the new architecture and document the versions that work.
-
-Source review, not runtime certification. Full details: MODULE_COMPATIBILITY_AUDIT.md, September 22, 2026.
--->
+<!-- A lot of Expo Modules work on mac already. But Windows is still lacking there too. -->
 
 ---
 title: "Please help"
@@ -1059,21 +1011,19 @@ eyebrow: Story
 <MovingTitle><StoryMoment kind="invite" /></MovingTitle>
 
 <!--
-Please help.
+So please help.
 
-If you maintain a React Native library, add macOS and Windows support.
+This platform is incredible and has so much potential. But it’s not perfect yet.
 
-And you don't have to maintain a library to help. Pick a popular module, test it on desktop, and submit a PR.
+If you maintain a React Native library, please add macOS and Windows support.
 
-Sometimes it's a platform check or a small change. Sometimes there's real native work to do. Either way, we need to know.
+Or pick a module you use and want to work on desktop and offer to the maintainers to make a PR.
 
-Please put macOS and Windows in the support matrix.
+On mac it's often just a platform check or a small change. Sometimes there's real native work to do.
 
-Try a small example. File an issue. Send a PR. Add a test and document what works.
+Let's get all of the modules working on desktop.
 
-Let's get the modules working on desktop. Let's make it a first-class React Native platform, with tests and documented support, not an afterthought.
-
-If you want to help with the audit, please talk to me.
+If you want to help with this, please talk to me and I’ll try to help you.
 -->
 
 
@@ -1104,29 +1054,15 @@ steps: 4
 </SlidesReveal>
 
 <!--
-1. This is Legend Slides. It's React Native desktop too.
+1. This is Legend Slides. It's React Native macOS app.
 
-2. The presenter and audience views are separate native windows. The deck is Markdown and MDX. I can edit the source right here, and drop in native components and shaders for all this ridiculous stuff.
+2. The presenter and audience views are separate native windows. The deck is Markdown and MDX. I can edit the source right in the app with the code editor component I made for the code app, and it can use native components and shaders for all this ridiculous stuff.
 
-[Show the app screenshot. Placeholder until the capture is ready.]
+3. It uses Reanimated for the animations. Skia does the drawing, glass, and ripples.
 
-So yes, I made a presentation app to tell you about making desktop apps.
+I'm using TypeGPU for the particles. This one has 1500 particles moving on the GPU.
 
-3. [Shatter the screenshot. Reveal the live effects.]
-
-This is all React Native.
-
-Reanimated moves the native views. Skia does the drawing, the glass, the ripples.
-
-And TypeGPU lets me write GPU shaders in TypeScript. This one has fifteen hundred particles moving on the GPU.
-
-These are real demos running inside the slide. The same tools I've been using throughout this talk.
-
-4. [Show the GitHub link.]
-
-It's open source. I'm releasing version 0.0.1. It's early, but it's a real app, and I'm using it to give this talk.
-
-If you want an example to learn from, or some very unnecessary slide animations, please try it.
+4. It's open source. It's still early and I barely got it working in time for this talk. But I’m really happy with it so I’ll keep polishing it and use it for all of my future talks.
 -->
 
 ---
@@ -1138,11 +1074,9 @@ title: Markdown and React Native
 <!--
 And the deck is just Markdown. Write a heading. Write some text.
 
-When I need more, I put React Native right in the Markdown. This is MDX, so that View and Text are actual native components.
+When I need more, I can put React Native components right in the Markdown.
 
-Or I can import a component and put all the ridiculous animation in there.
-
-So you can start with a really simple deck and then make it do whatever you want.
+This hopefully is also good proof about how great React Native on desktop is.
 -->
 
 ---
@@ -1156,15 +1090,13 @@ template: ./RNConnection.tsx
 </WaterTitle>
 
 <!--
-I started all of this just trying to test LegendList.
-
-And now I really do think React Native is the best way to build desktop apps.
+I really do think React Native is the best way to build desktop apps.
 
 There are still rough edges. We need more modules to support desktop. Legend Frame is still early.
 
 But look at what we can already build. Small, really fast apps that feel like they belong on your computer. And we get to use React Native to do it.
 
-I'm really optimistic about where this can go. If we work on those gaps together, we can make all of our apps really fast and really great.
+I'm really optimistic about where this can go. If we work on this together, we can make all of our apps really fast and really great.
 
 Thank you!
 -->
