@@ -1,4 +1,4 @@
-import { NativeComposerRecording } from "./NativeComposerRecording";
+import { NativeMusicRecording } from "./NativeMusicRecording";
 import { Canvas, Fill, Group, Path, Rect, Shader, Skia, matchFont } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
@@ -154,7 +154,7 @@ function Example({ index, width, height }: { index: number; width: number; heigh
       {index === 0 && <View style={{ position: "absolute", left: 60, right: 60, top: 96, flexDirection: "row" }}>
         {["macOS", "Windows"].map(label => <Text key={label} style={{ width: 530, textAlign: "center", color: "white", fontSize: 28 }}>{label}</Text>)}
       </View>}
-    </> : <NativeComposerRecording />}
+    </> : <NativeMusicRecording />}
   </View>;
 }
 
