@@ -1,0 +1,194 @@
+{
+  "start": "2026-08-23",
+  "end": "2026-09-21",
+  "retrieved": "2026-09-23",
+  "rows": [
+    {
+      "name": "React Native",
+      "package": "react-native",
+      "downloads": 48356761,
+      "source": "https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/react-native",
+      "registry": "npm"
+    },
+    {
+      "name": "Electron",
+      "package": "electron",
+      "downloads": 24689555,
+      "source": "https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/electron",
+      "registry": "npm"
+    },
+    {
+      "name": "Tauri",
+      "package": "@tauri-apps/cli",
+      "downloads": 8326594,
+      "source": "https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/@tauri-apps/cli",
+      "registry": "npm"
+    },
+    {
+      "name": "Deno",
+      "package": "deno",
+      "downloads": 611982,
+      "source": "https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/deno",
+      "registry": "npm"
+    },
+    {
+      "name": "Expo",
+      "package": "expo",
+      "downloads": 31804819,
+      "source": "https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/expo",
+      "registry": "npm"
+    },
+    {
+      "name": "GPUI",
+      "package": "gpui",
+      "registry": "crates.io",
+      "downloads": 71756,
+      "source": "https://crates.io/api/v1/crates/gpui/downloads",
+      "dailyDownloads": [
+        {
+          "date": "2026-08-23",
+          "downloads": 2383
+        },
+        {
+          "date": "2026-08-24",
+          "downloads": 3395
+        },
+        {
+          "date": "2026-08-25",
+          "downloads": 1807
+        },
+        {
+          "date": "2026-08-26",
+          "downloads": 1803
+        },
+        {
+          "date": "2026-08-27",
+          "downloads": 2472
+        },
+        {
+          "date": "2026-08-28",
+          "downloads": 2090
+        },
+        {
+          "date": "2026-08-29",
+          "downloads": 1979
+        },
+        {
+          "date": "2026-08-30",
+          "downloads": 2689
+        },
+        {
+          "date": "2026-08-31",
+          "downloads": 1786
+        },
+        {
+          "date": "2026-09-01",
+          "downloads": 2348
+        },
+        {
+          "date": "2026-09-02",
+          "downloads": 3303
+        },
+        {
+          "date": "2026-09-03",
+          "downloads": 2619
+        },
+        {
+          "date": "2026-09-04",
+          "downloads": 2739
+        },
+        {
+          "date": "2026-09-05",
+          "downloads": 3628
+        },
+        {
+          "date": "2026-09-06",
+          "downloads": 2136
+        },
+        {
+          "date": "2026-09-07",
+          "downloads": 2848
+        },
+        {
+          "date": "2026-09-08",
+          "downloads": 2815
+        },
+        {
+          "date": "2026-09-09",
+          "downloads": 1745
+        },
+        {
+          "date": "2026-09-10",
+          "downloads": 1793
+        },
+        {
+          "date": "2026-09-11",
+          "downloads": 2200
+        },
+        {
+          "date": "2026-09-12",
+          "downloads": 1735
+        },
+        {
+          "date": "2026-09-13",
+          "downloads": 1979
+        },
+        {
+          "date": "2026-09-14",
+          "downloads": 4084
+        },
+        {
+          "date": "2026-09-15",
+          "downloads": 2163
+        },
+        {
+          "date": "2026-09-16",
+          "downloads": 2530
+        },
+        {
+          "date": "2026-09-17",
+          "downloads": 2066
+        },
+        {
+          "date": "2026-09-18",
+          "downloads": 1871
+        },
+        {
+          "date": "2026-09-19",
+          "downloads": 1701
+        },
+        {
+          "date": "2026-09-20",
+          "downloads": 1981
+        },
+        {
+          "date": "2026-09-21",
+          "downloads": 3068
+        }
+      ]
+    }
+  ],
+  "methodology": "Fixed 30-day registry download counts, not unique users or comparable adoption totals. npm includes React Native mobile usage, Expo overlaps React Native, Deno covers only its npm installer, Tauri uses its CLI without adding API or binary packages. GPUI sums all version_downloads plus meta.extra_downloads for the same dates; Cargo Git dependencies are excluded. Registry caching and CI behavior differ.",
+  "unavailable": [
+    {
+      "name": "AppKit",
+      "reason": "Bundled with Apple SDK; no separate public package download count",
+      "source": "https://developer.apple.com/documentation/appkit"
+    },
+    {
+      "name": "SwiftUI",
+      "reason": "Bundled with Apple SDK; no separate public package download count",
+      "source": "https://developer.apple.com/documentation/swiftui"
+    },
+    {
+      "name": "Flutter",
+      "reason": "SDK dependency, not the discontinued flutter package on pub.dev",
+      "source": "https://dart.dev/tools/pub/dependencies#sdk"
+    },
+    {
+      "name": "Compose",
+      "reason": "No public download count found; Maven publisher insights require publisher access",
+      "source": "https://central.sonatype.org/publish/publish-portal-insights/"
+    }
+  ]
+}

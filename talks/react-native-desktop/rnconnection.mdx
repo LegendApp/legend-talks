@@ -50,7 +50,7 @@ import markdownIcon from "./rnconnection-assets/markdown-icon.png";
 import { NineApps } from "./NineApps"
 import { HelloWorldIntro } from "./HelloWorldIntro"
 import { FrameworkLanguages } from "./FrameworkLanguages"
-import { NpmDownloadsChart } from "./NpmDownloadsChart"
+import { PackageDownloadsChart } from "./PackageDownloadsChart"
 import { NativeReactions } from "./NativeReactions"
 import { AppShowcase } from "./AppCarousel"
 import { MovingTitle } from "./MovingTitle"
@@ -285,28 +285,33 @@ I don't know all of these languages. And I never intended to build the same app 
 -->
 
 ---
-title: Monthly npm downloads
+title: Monthly package downloads
 ---
 
-# Monthly npm downloads {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+# Monthly package downloads {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
 
-<NpmDownloadsChart />
+<PackageDownloadsChart />
 
 <!--
-These are npm downloads, not people or apps. Same 30-day window for every bar: August 23 through September 21, 2026.
+These are package downloads, not people or apps. Same 30-day window: August 23 through September 21, 2026.
 
-React Native here is react-native-macos: 403,100. Electron is electron: 24,689,555. Tauri is @tauri-apps/cli: 8,326,594. Deno is deno: 611,982.
+React Native is the main react-native package: 48,356,761. Expo is expo: 31,804,819. Those include mobile, and Expo projects also use React Native. Don't add these together as separate users.
 
-That Deno number covers its npm installer, not its other installation methods, and it isn't a count of desktop UI projects. Tauri can also be installed through Cargo. Don't read this as a fair ranking of total adoption.
+Electron is electron: 24,689,555. Tauri is @tauri-apps/cli: 8,326,594. Deno is deno: 611,982. GPUI is gpui on crates.io: 71,756.
 
-AppKit and SwiftUI come with Apple's SDK. Flutter uses its SDK, Compose uses Gradle, and GPUI uses Cargo. Not on npm doesn't mean nobody uses them.
+Deno covers only its npm installer, not other installation methods or desktop UI projects. Tauri can also be installed through Cargo. GPUI counts all crate versions, including the API's extra_downloads, but excludes direct Git dependencies. Caching and CI differ across registries, so this isn't a fair ranking of total adoption.
 
-For context, the main react-native package has 48,356,761 downloads in the same window, including mobile. I don't want to present that as desktop adoption.
+AppKit and SwiftUI ship with Apple's SDK. Flutter itself is an SDK dependency; the discontinued flutter package on pub.dev is not a valid measure. I couldn't find public Compose download counts. Count unavailable means unknown, not zero.
 
-Sources: https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/react-native-macos
+Sources:
+https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/react-native
+https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/expo
 https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/electron
 https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/@tauri-apps/cli
 https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/deno
+https://crates.io/api/v1/crates/gpui/downloads
+https://dart.dev/tools/pub/dependencies#sdk
+https://central.sonatype.org/publish/publish-portal-insights/
 Methodology: https://github.com/npm/registry/blob/main/docs/download-counts.md
 -->
 
