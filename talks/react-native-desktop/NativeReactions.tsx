@@ -28,16 +28,16 @@ const reactions = [
   { uri: lowMemory, x: 426, y: 700, rotation: "-5deg", anchor: 18, height: 195 },
   { uri: rnFan, x: 1270, y: 713, rotation: "4deg", anchor: 21, height: 190 },
 ];
-const letterFade = [{ time: 0, x: 0, y: 0, opacity: 1 }, { time: 1250, x: 0, y: 0, opacity: 1 }, { time: 2650, x: 0, y: 0, opacity: 0 }];
-const cardFade = [{ time: 0, x: 0, y: 0, opacity: 0 }, { time: 450, x: 0, y: 0, opacity: 0 }, { time: 2050, x: 0, y: 0, opacity: 1 }];
+const letterFade = [{ time: 0, x: 0, y: 0, opacity: 1 }, { time: 200, x: 0, y: 0, opacity: 1 }, { time: 650, x: 0, y: 0, opacity: 0 }];
+const cardFade = [{ time: 0, x: 0, y: 0, opacity: 0 }, { time: 100, x: 0, y: 0, opacity: 0 }, { time: 650, x: 0, y: 0, opacity: 1 }];
 
 export function NativeReactions() {
   const revealed = usePresentationValue("stepIndex") > 0;
   return <View style={{ width: 1696, height: 850, alignSelf: "center" }}>
-    {reactions.map((reaction, index) => <SceneMotionView key={reaction.uri}
+    {reactions.map((reaction) => <SceneMotionView key={reaction.uri}
       pose={{ x: revealed ? reaction.x - letterX(reaction.anchor) : 0, y: revealed ? reaction.y - titleY : 0,
         scaleX: revealed ? 1 : 0.025, scaleY: revealed ? 1 : 0.025, opacity: revealed ? 1 : 0 }}
-      duration={2800 + index * 80}
+      duration={1500}
       style={{ position: "absolute", left: letterX(reaction.anchor) - 400, top: titleY - reaction.height / 2,
         width: 800, height: reaction.height }}>
       {revealed && <PlaybackKeyframeView keyframes={cardFade} style={{ flex: 1 }}>
@@ -48,14 +48,6 @@ export function NativeReactions() {
         </View>
       </PlaybackKeyframeView>}
     </SceneMotionView>)}
-    {revealed && reactions.map((reaction, index) => <PlaybackKeyframeView key={`spark-${index}`} keyframes={[
-      { time: 0, x: letterX(reaction.anchor), y: titleY, opacity: 0 },
-      { time: 600, x: letterX(reaction.anchor), y: titleY, opacity: 0.9 },
-      { time: 2500, x: reaction.x + (index % 2 ? -410 : 410), y: reaction.y - 50, opacity: 0.7 },
-      { time: 3400, x: reaction.x + (index % 2 ? -430 : 430), y: reaction.y - 90, opacity: 0 },
-    ]} style={{ position: "absolute", top: 0, left: 0 }}>
-      <Text style={{ fontSize: 22, color: "#8de6ff" }}>✦</Text>
-    </PlaybackKeyframeView>)}
     <MovingTitle style={{ position: "absolute", top: 340, left: 0, width: 1696, height: 92 }}>
       {letters.map((letter, index) => {
         const target = reactions.reduce((nearest, reaction) => Math.abs(reaction.anchor - index) < Math.abs(nearest.anchor - index) ? reaction : nearest);
@@ -63,7 +55,7 @@ export function NativeReactions() {
         return <SceneMotionView key={index}
           pose={{ x: revealed ? target.x - letterX(index) : 0, y: revealed ? target.y - titleY : 0,
             scaleX: revealed ? 3.8 : 1, scaleY: revealed ? 3.8 : 1 }}
-          duration={2800 + reactions.indexOf(target) * 80}
+          duration={1500}
           style={{ position: "absolute", left: letterX(index) - widths[index] / 2, width: widths[index], height: 92 }}>
           {revealed ? <PlaybackKeyframeView keyframes={letterFade}>{text}</PlaybackKeyframeView> : text}
         </SceneMotionView>;
