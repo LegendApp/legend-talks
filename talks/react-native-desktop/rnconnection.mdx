@@ -910,28 +910,6 @@ So if it's this good, why isn't everyone doing this?
 
 
 ---
-title: Frame Runner
----
-
-# Frame Runner {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<Image source={{ uri: frameRunnerScreenshot }} style={{ width: 1696, height: 760, alignSelf: "center" }} resizeMode="contain" accessibilityLabel="Frame CLI running Metro with Fast Refresh and a command to open the macOS app in Frame Runner" />
-
-<!--
-Frame gives you the native modules you need for desktop.
-
-And Frame Runner comes with those modules already built in. Think Expo Go for desktop.
-
-You write JavaScript, press d, and your app opens. No native build. You don't even need Xcode.
-
-And you get Fast Refresh. Change the code and see it update.
-
-[Replace the CLI screenshot with a recording: run bun run macos, press d to open the app, then make a small JS edit and show Fast Refresh. The screenshot still uses the old "prebuilt runtime" name.]
-
-So that's the foundation. Now there's one part I need your help with.
--->
-
----
 title: "What’s holding desktop back"
 steps: 3
 eyebrow: Story
@@ -1073,6 +1051,29 @@ I want moving an Electron app to Frame to be practical. That isn't drop-in API c
 
 [Reveal the imports one at a time. These are the desktop APIs your React app uses.]
 -->
+
+---
+title: Frame Runner
+---
+
+# Frame Runner {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<Image source={{ uri: frameRunnerScreenshot }} style={{ width: 1696, height: 760, alignSelf: "center" }} resizeMode="contain" accessibilityLabel="Frame CLI running Metro with Fast Refresh and a command to open the macOS app in Frame Runner" />
+
+<!--
+Frame gives you the native modules you need for desktop.
+
+And Frame Runner comes with those modules already built in. Think Expo Go for desktop.
+
+You write JavaScript, press d, and your app opens. No native build. You don't even need Xcode.
+
+And you get Fast Refresh. Change the code and see it update.
+
+[Replace the CLI screenshot with a recording: run bun run macos, press d to open the app, then make a small JS edit and show Fast Refresh. The screenshot still uses the old "prebuilt runtime" name.]
+
+And here's what it's built on.
+-->
+
 
 ---
 title: Legend Frame foundations
