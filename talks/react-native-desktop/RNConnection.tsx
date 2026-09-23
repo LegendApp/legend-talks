@@ -1,3 +1,4 @@
+import { displayMetric } from "./benchmarkUnits";
 export { Chart } from "./BenchmarkChart";
 import { FlowGlyph } from "./RNConnectionVisuals";
 import { PlaybackKeyframeView, type PresentationTemplateProps } from "@legend-apps/presentation";
@@ -73,7 +74,7 @@ export function Tradeoffs() {
         <View key={row.name} style={{ flexDirection: "row", padding: 12, borderRadius: 8, backgroundColor: row.name === "React Native" ? "#102326" : "transparent" }}>
           <Text style={{ width: 340, fontSize: 25, color: "#f8fafc", fontWeight: row.name === "React Native" ? "700" : "400" }}>{row.name}</Text>
           <Text style={{ width: 250, fontSize: 25, color: "#f1f5f9" }}>{row.content.toFixed(0)} ms</Text>
-          <Text style={{ width: 220, fontSize: 25, color: "#f1f5f9" }}>{row.memory.toFixed(0)} MiB</Text>
+          <Text style={{ width: 220, fontSize: 25, color: "#f1f5f9" }}>{displayMetric(row.memory, "memory").toFixed(0)} MB</Text>
           <Text style={{ fontSize: 25, color: "#f1f5f9" }}>{row.name === "GPUI" ? "Canvas; translucent composer" : row.ui}</Text>
         </View>
       ))}

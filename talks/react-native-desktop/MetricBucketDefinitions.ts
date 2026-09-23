@@ -1,7 +1,7 @@
 export const metrics = [
   { key: "content", title: "Load time", unit: "ms", limits: [500, 1000], bands: ["Under 500 ms", "500–1,000 ms", "1,000 ms and up"] },
-  { key: "memory", title: "Memory", unit: "MiB", limits: [100, 300], bands: ["Under 100 MiB", "100–300 MiB", "300 MiB and up"] },
-  { key: "size", title: "App size", unit: "MiB", limits: [25, 150], bands: ["Under 25 MiB", "25–150 MiB", "150 MiB and up"] },
+  { key: "memory", title: "Memory", unit: "MB", limits: [100, 300], bands: ["Under 105 MB", "105–315 MB", "315 MB and up"] },
+  { key: "size", title: "App size", unit: "MB", limits: [25, 150], bands: ["Under 26 MB", "26–157 MB", "157 MB and up"] },
   { key: "switch", title: "Switching", unit: "ms", limits: [250, 500], bands: ["Under 250 ms", "250–500 ms", "500 ms and up"] },
 ] as const;
 
@@ -11,7 +11,7 @@ export function metricBuckets(key: string, workload: "chat" | "hello" = "chat") 
     limits: [60, 75], bands: ["Under 60 ms", "60–75 ms", "Over 75 ms"],
   };
   if (key === "memory" && workload === "hello") return {
-    limits: [25, 100], bands: ["Under 25 MiB", "25–100 MiB", "100 MiB and up"],
+    limits: [25, 100], bands: ["Under 26 MB", "26–105 MB", "105 MB and up"],
   };
   return metrics.find(metric => metric.key === key)!;
 }

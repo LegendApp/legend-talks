@@ -337,7 +337,7 @@ But already, this doesn't look like some huge JavaScript performance penalty.
 ---
 eyebrow: 'Hello World / installed size'
 steps: 6
-footer: 'Greeting workload · newer installed-size snapshot · MiB'
+footer: 'Greeting workload · newer installed-size snapshot · MB'
 ---
 
 # Hello World · installed size {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
@@ -345,7 +345,7 @@ footer: 'Greeting workload · newer installed-size snapshot · MiB'
 <HelloSizeJourney />
 
 <!--
-1. Now look at installed size. React Native is about 7.2 MiB.
+1. Now look at installed size. React Native is about 7.5 MB.
 
 That's the app on disk, not a compressed download. These are ARM-only release builds, with the normal release optimizations applied.
 
@@ -355,19 +355,19 @@ That's the app on disk, not a compressed download. These are ARM-only release bu
 
 4. Electron brings its own browser. So does the CEF version of Deno. And you can really see that here.
 
-5. React Native brings Hermes and its runtime, but it's still a very small app. Flutter and GPUI bring their own rendering machinery. Compose Multiplatform is about 113 MiB in this build.
+5. React Native brings Hermes and its runtime, but it's still a very small app. Flutter and GPUI bring their own rendering machinery. Compose Multiplatform is about 119 MB in this build.
 
 Tauri gets to use the system WebView. Deno WebView does too, but still ships the Deno runtime.
 
 So choosing a system WebView doesn't automatically make every part of your app small.
 
-6. Now group those sizes using the same cutoffs as the overview: under 25 MiB, 25 to 150, and 150 or more.
+6. Now group those sizes using the same cutoffs as the overview: under 26 MB, 26 to 157, and 157 or more.
 -->
 
 ---
 eyebrow: 'Hello World / memory'
 steps: 2
-footer: 'Greeting workload · MiB · settled physical footprint'
+footer: 'Greeting workload · MB · settled physical footprint'
 ---
 
 # Hello World · memory {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
@@ -377,12 +377,12 @@ footer: 'Greeting workload · MiB · settled physical footprint'
 <!--
 And memory is the same kind of story.
 
-AppKit is about 16 MiB. SwiftUI is about 18. React Native is about 23. Compose Multiplatform is about 215.
+AppKit is about 17 MB. SwiftUI is about 19. React Native is about 24. Compose Multiplatform is about 225.
 
 There's some overhead. Of course there is. But we're talking about a few megabytes here.
 
 Now what happens when we make it do something?
-2. Now group Hello World memory: under 25 MiB, 25 to 100, and 100 or more.
+2. Now group Hello World memory: under 26 MB, 26 to 105, and 105 or more.
 -->
 
 ---
@@ -582,7 +582,7 @@ So React Native isn't winning every number. But it's very close to the fastest, 
 ---
 eyebrow: 'Chat History / initial memory'
 steps: 2
-footer: 'Settled physical footprint · MiB · includes attributed helper processes'
+footer: 'Settled physical footprint · MB · includes attributed helper processes'
 ---
 
 # Chat History · memory {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
@@ -592,7 +592,7 @@ footer: 'Settled physical footprint · MiB · includes attributed helper process
 <!--
 Now memory.
 
-AppKit is about 42 MiB. React Native is 54. GPUI is now 76. SwiftUI is 83.
+AppKit is about 44 MB. React Native is 57. GPUI is now 80. SwiftUI is 87.
 
 Tauri is now 136. Electron is 478.
 
@@ -601,7 +601,7 @@ GPUI and Tauri have new file-backed storage. Their initial memory dropped from 2
 That's a big difference for an app that I might leave open all day.
 
 And this is why I care about more than build size. Using the system browser can make the download smaller, but it doesn't make the running app free.
-2. Now group by initial memory: under 100 MiB, 100 to 300, and 300 or more.
+2. Now group by initial memory: under 105 MB, 105 to 315, and 315 or more.
 -->
 
 ---
@@ -649,7 +649,7 @@ That's what these interactions are testing.
 ---
 eyebrow: 'Chat History / app size'
 steps: 2
-footer: 'Measured September 18 · app bundles only · external grammars excluded · MiB'
+footer: 'Measured September 18 · app bundles only · external grammars excluded · MB'
 ---
 
 # Chat History · app size {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
@@ -659,14 +659,14 @@ footer: 'Measured September 18 · app bundles only · external grammars excluded
 <!--
 And the app itself is still small.
 
-React Native is about 18 MiB. Electron is about 286.
+React Native is about 19 MB. Electron is about 300.
 
 AppKit and Tauri are smaller than React Native. So again, it doesn't win every category.
 
 These are just the app bundles. I've excluded the external syntax grammar packs from every app.
 
 Small app, low memory, fast interactions. That's a pretty good combination.
-2. And the size bands: under 25 MiB, 25 to 150, and 150 or more.
+2. And the size bands: under 26 MB, 26 to 157, and 157 or more.
 -->
 
 ---
@@ -710,7 +710,7 @@ footer: 'Measured on macOS · current visuals require refreshed captures after n
 <!--
 1. So let's put those things together.
 
-For this diagram, fast means first content under 600 milliseconds and switching under 250. Low memory means under 100 MiB.
+For this diagram, fast means first content under 600 milliseconds and switching under 250. Low memory means under 105 MB.
 
 And native UI means native content views, not just native window buttons.
 

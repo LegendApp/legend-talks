@@ -1,3 +1,4 @@
+import { displayMetric } from "./benchmarkUnits";
 import { SceneMotionView, ScenePositionView, usePresentationValue, SharedElement, useSharedElementEntrance } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 import { ChartBar } from "./ChartBar";
@@ -6,7 +7,7 @@ import benchmarks from "./rnconnection-assets/benchmarks.json";
 
 export const chartLayout = { width: 1696, height: 710, top: 55, rowSpacing: 57, rowHeight: 43, fontSize: 34, lineHeight: 42, barLeft: 285, barWidth: 1210, barHeight: 30, valueWidth: 190, marginTop: 24 };
 export type Metric = "content" | "memory" | "size" | "jump" | "switch";
-const units: Record<Metric, string> = { content: "ms", memory: "MiB", size: "MiB", jump: "ms", switch: "ms" };
+const units: Record<Metric, string> = { content: "ms", memory: "MB", size: "MB", jump: "ms", switch: "ms" };
 
 /** Separate sibling markers keep text rigid while only the bar changes width. */
 export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grouped = false, duration = 650, decimals = 0 }: {
@@ -25,7 +26,7 @@ export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grou
       <ChartBar highlighted={highlighted} groupColor={groupColor} grouped={grouped} animateEntrance={animateEntrance} style={{ width, height: chartLayout.barHeight }} />
     </SharedElement>
     <SharedElement id={`${id}-value`} resize="preserve" style={{ position: "absolute", right: 0, top: 0, width: chartLayout.valueWidth, height: chartLayout.rowHeight }}>
-      <Text style={{ color: "#f1f5f9", textAlign: "right", fontSize: chartLayout.fontSize, lineHeight: chartLayout.lineHeight, fontVariant: ["tabular-nums"] }}>{value.toFixed(decimals)} {units[metric]}</Text>
+      <Text style={{ color: "#f1f5f9", textAlign: "right", fontSize: chartLayout.fontSize, lineHeight: chartLayout.lineHeight, fontVariant: ["tabular-nums"] }}>{displayMetric(value, metric).toFixed(decimals)} {units[metric]}</Text>
     </SharedElement>
   </ScenePositionView>;
 }
