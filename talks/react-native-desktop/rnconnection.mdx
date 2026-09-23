@@ -71,9 +71,9 @@ import slidesIcon from "./rnconnection-assets/slides-icon.png";
 </WaterTitle>
 
 <!--
-1. Hi everyone! I'm Jay. You might know me from Legend List or Legend State.
+1. Hi everyone! I'm Jay. You might know me from Legend List or Legend State. And I’ve been playing with building a lot of desktop apps recently.
 
-2. And I’ve been playing with building a lot of desktop apps recently, and I’m convinced that React Native is the best way to build desktop apps.
+2. And I’m convinced that React Native is the best way to build desktop apps.
 
 This is a pretty big claim. Best is a very absolute word and I do not use it lightly. So to back up that claim I gathered a lot of evidence and have been working on making React Native on desktop better.
 
@@ -154,9 +154,7 @@ steps: 2
 <!--
 1. But everyone was comparing them to fully native apps.
 
-If performance matters, why aren't you using Swift or Objective C? Native would be faster.
-
-2. These are the actual replies. One says React Native and performance should not be in the same sentence. Even a React Native fan did not believe it.
+2. If performance matters, why aren't you using Swift or Objective C? Native would be faster.
 
 I was excited about how much better these felt than Electron. But the comparison became binary, it should either be a slow web app or 100% fully native no compromises. People laughed at me for claiming I care about performance while using React Native.
 -->
@@ -191,13 +189,9 @@ template: ./NineApps.tsx
 <AppShowcase title="So I kept building" apps={["Code", "Diff", "Chat History"]} />
 
 <!--
-1. I didn't have benchmarks yet. I just liked using these apps, and I liked building them.
+1. I just kept building apps because it was awesome. Next I built⁠ Legend Code, to see if Legend List could power a code editor. It turns out that it can. It’s the fastest text editor I’ve found. It’s still just a prototype but shows a lot of promise.
 
-So I kept going.
-
-1. Code, to see if Legend List could power a code editor. It turns out that it can. It’s the fastest text editor I’ve found. It’s still just a prototype but shows a lot of promise.
-
-2. Diff, because I wanted a fast way to view diffs from AI and other apps slowed me down.
+2. Then Legend Diff, because I wanted a fast way to view diffs from AI and other apps slowed me down. Somehow this React Native app is faster than every native diffing app I tried.
 
 3. Chat History, because AI apps are all built as webview apps and just so unbelievably slow. So I wanted to see how much faster I could make it.
 
@@ -220,6 +214,8 @@ These apps all do pretty different things, but they all need a lot of the same d
 So I ended up building a big toolset, where I can pump out new apps very fast with all of this shared code. And every one of these apps is the fastest in its class, often by a wide margin.
 
 But every time I released one, people would tell me I should rewrite it natively. Or that I must not really care about performance. Because React Native isn’t good enough.
+
+Even my React Native expert friends tell me I’m wrong and that native is faster.
 -->
 
 ---
@@ -231,7 +227,7 @@ eyebrow: Story
 <MovingTitle><StoryMoment kind="question" /></MovingTitle>
 
 <!--
-1. But it seems like it is good enough. These apps are better than every other app. Why does everyone tell me it can’t be true?
+1. But it seems like it’s actually faster. These apps are better than every other app.
 
 Maybe my apps were too simple. Maybe I was comparing them to poorly built apps. Maybe I just really wanted React Native to win.
 
@@ -254,7 +250,7 @@ eyebrow: Story
 <!--
 1. First, a quick desktop framework tour, because most of us spend our time on mobile.
 
-AppKit is basically the macOS equivalent of UIKit. SwiftUI is Apple's declarative framework. And React Native macOS uses native views too.
+AppKit is basically the macOS equivalent of UIKit. SwiftUI is Apple's newer declarative framework, same as on mobile. And of course React Native macOS uses native views.
 
 2. Then there are the browser ones. Electron brings Chromium and Node with your app. Tauri uses the system WebView with a Rust backend.
 
@@ -262,7 +258,7 @@ For Deno, I tested both a system WebView and bundled Chromium through CEF. Same 
 
 3. And then there are frameworks that draw their own UI. Flutter, Compose Multiplatform, and GPUI, which is the Rust framework behind Zed.
 
-They can all talk to the OS. The difference here is who draws the content inside the window.
+They can all integrate with the OS. But they’re very different in how they run code and power the UI.
 -->
 
 ---
@@ -332,11 +328,7 @@ footer: 'September 17 report · macOS / Apple M4 · implementation comparison'
 <MeasurementTimeline />
 
 <!--
-1. I never really wanted to build this app in all of these platforms myself.
-
-But it was pretty easy to throw Codex at it. I could talk through architecture and optimization, even in languages I don't know.
-
-So I ended up building a bunch of apps, and a measurement system to compare them.
+1. I needed a measurement system that’s very correct to compare them. Of course they start with opening the app.
 
 2. At first I had the apps report their own load times. But they were measuring different things. A framework saying it's ready doesn't mean the user can see anything yet.
 
@@ -344,7 +336,7 @@ So I had it record videos and analyze the frames. Here's the click. Here's the w
 
 3. And here's the frame where the content actually appears. That's the thing I wanted to measure.
 
-It's still limited by the recording frame rate. Tiny differences aren't meaningful. But now we're using the same visible endpoint across the apps.
+So the benchmark works by recording video and finding the frame where content appears, and making sure it looks like it’s supposed to.
 
 I wanted React Native to win. I love React Native.
 
@@ -361,13 +353,11 @@ footer: 'Median ms · 10 measured rounds · small differences near recording cad
 <HelloWorldIntro />
 
 <!--
-1. Let's start with Hello World. Just open a window and put something in it.
+1. So I started with Hello World. Just open a window and put something in it. This establishes a baseline for what the frameworks can do.
 
-2. React Native is about 228 milliseconds. SwiftUI and GPUI are basically the same. The recording isn't precise enough for those tiny differences to mean anything.
+And a big caveat: I am not an expert in these frameworks. These numbers may be wrong. I did my best to optimize each one as much as possible. But it’s open source so if I made a mistake please PR a fix for it.
 
-Compose Multiplatform is about 601 milliseconds to first content, with the window appearing at about 594. This is the latest supplied measurement; I don't have a run count for it.
-
-AppKit is faster, at about 193.
+2. So here are the results. React Native is about 228 milliseconds and matches GPUI and SwiftUI; the recording isn't precise enough for those tiny differences to mean anything. AppKit is a bit faster. Other frameworks are slower.
 
 But already, this doesn't look like some huge JavaScript performance penalty.
 -->
@@ -385,21 +375,21 @@ footer: 'Greeting workload · newer installed-size snapshot · MB'
 <!--
 1. Now look at installed size. React Native is about 7.5 MB.
 
-That's the app on disk, not a compressed download. These are ARM-only release builds, with the normal release optimizations applied.
+That's the app on disk, not a compressed download. These are all ARM-only release builds, with the normal release optimizations applied.
 
 2. The interesting thing is what each app has to bring with it.
 
-3. AppKit and SwiftUI are tiny because the OS already has their UI frameworks.
+3. AppKit and SwiftUI are tiny because the OS already has their UI frameworks. And since it’s hello world there’s barely any code and no image assets or icon or anything.
 
-4. Electron brings its own browser. So does the CEF version of Deno. And you can really see that here.
+4. Electron builds in a full Chromium browser. So does the Chrome Embedded Framework version of Deno. Electron also includes a full [Node.js](https://Node.js), and Deno includes the full Deno runtime. And you can really see that in the build sizes.
 
-5. React Native brings Hermes and its runtime, but it's still a very small app. Flutter and GPUI bring their own rendering machinery. Compose Multiplatform is about 119 MB in this build.
+5. GPUI brings its own rendering system, and it’s impressively small. React Native brings Hermes and its own runtime, but it’s still a very small app. Flutter brings its own rendering machinery. Compose Multiplatform is about 119 MB in this build.
 
-Tauri gets to use the system WebView. Deno WebView does too, but still ships the Deno runtime.
+Tauri is browser based but it uses the system WebView. Deno WebView does too, but still includes the Deno runtime too.
 
 So choosing a system WebView doesn't automatically make every part of your app small.
 
-6. Now group those sizes using the same cutoffs as the overview: under 26 MB, 26 to 157, and 157 or more.
+6. I think of these in buckets. React Native is well within the tiny app bucket. A few megabytes doesn’t matter that much in the baseline. Now group those sizes using the current cutoffs: under 26 MB, 26 to 157, and 157 or more.
 -->
 
 ---
