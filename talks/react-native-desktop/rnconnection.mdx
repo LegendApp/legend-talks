@@ -64,13 +64,13 @@ import slidesIcon from "./rnconnection-assets/slides-icon.png";
 </WaterTitle>
 
 <!--
-Hi everyone! I'm Jay. You might know me from Legend List or Legend State.
+1. Hi everyone! I'm Jay. You might know me from Legend List or Legend State.
 
-I spend a lot of time trying to make React Native apps faster. And that led me somewhere I wasn't really expecting.
+2. And I’ve been playing with building a lot of desktop apps recently, and I’m convinced that React Native is the best way to build desktop apps.
 
-I think React Native is the best way to build desktop apps.
+This is a pretty big claim. Best is a very absolute word and I do not use it lightly. So to back up that claim I gathered a lot of evidence and have been working on making React Native on desktop better.
 
-Which is a pretty big claim. So I built a bunch of apps, and then I built some of them a bunch of times, to see if I could actually back that up.
+3. But before I get to that let’s start at the beginning
 -->
 
 ---
@@ -83,7 +83,7 @@ eyebrow: Story
 <!--
 This is where this whole journey started. React Native Directory.
 
-I was working on Legend List, and looking at its page in the directory.
+I was working on Legend List, and checked its page in the directory.
 -->
 
 ---
@@ -94,11 +94,9 @@ eyebrow: Story
 <Image source={{ uri: directoryScreenshot }} style={{ width: 1012, height: 880, alignSelf: "center" }} resizeMode="contain" accessibilityLabel="Legend List in React Native Directory, showing platform support checkmarks including macOS and Windows" />
 
 <!--
-I wanted those two checkmarks. macOS and Windows.
+I wanted those two checkmarks. macOS and Windows. Legend List is just JS so it should work everywhere, so I just needed a quick test to prove it. And it worked mostly fine, just needed some tweaks.
 
-This is the page now. But getting those checkmarks was the starting point. I just wanted to make sure Legend List worked there.
-
-I wasn't planning to build a whole bunch of desktop apps.
+But that sent me down a huge rabbit hole.
 -->
 
 ---
@@ -110,15 +108,11 @@ eyebrow: Story
 <MovingTitle><StoryMoment kind="discovery" /></MovingTitle>
 
 <!--
-1. I'd seen the talks about React Native on desktop, but I hadn't really tried it. I wanted those macOS and Windows checkmarks for Legend List. So I started testing it on macOS.
+1. I'd seen the talks about React Native on desktop, but I hadn't really tried it. So I started testing it on macOS.
 
-That was the whole plan. Test a list.
+2. But then I made some test apps to try it, and it was seriously really good.
 
-2. But then I started using it, and it was seriously really good.
-
-Tiny apps. Really fast. Real native UI. And I already knew how to build with it.
-
-So testing a list turned into a somewhat larger project.
+It made tiny apps that were really fast with real native UI. These apps felt better than every other app on my computer.
 -->
 
 
@@ -133,15 +127,13 @@ template: ./NineApps.tsx
 <AppShowcase title="Then I made apps I wanted" apps={["Legend Photos", "Legend Music"]} />
 
 <!--
-1. I started with Legend Photos. This was an app I actually wanted to use.
+1. I started with Legend Photos because I wanted to see how a list would perform with lots of images. It was incredible. It opened super fast, animations were very smooth, the app just flwe.
 
-And just look at how quickly they open.
+2. And then I made Legend Music, to try to recreate the winamp experience in a modern mac app.
 
-2. And then Legend Music.
+That's what got me excited. These apps both felt so much better than the Electron apps I was using. Small, instant, native UI.
 
-That's what got me excited. These felt so much better than the Electron apps I was using. Small, instant, native UI.
-
-So I tweeted about it.
+I felt a connection to my computer that I hadn’t felt in years. No delays, no load times, the app just felt natural to use.
 -->
 
 ---
@@ -153,7 +145,7 @@ steps: 2
 <NativeReactions />
 
 <!--
-1. But everyone started comparing them to fully native apps.
+1. But everyone was comparing them to fully native apps.
 
 If performance matters, why aren't you using Swift or Objective C? Native would be faster.
 
@@ -190,19 +182,17 @@ template: ./NineApps.tsx
 <AppShowcase title="So I kept building" apps={["Code", "Diff", "Chat History"]} />
 
 <!--
-I didn't have benchmarks yet. I just liked using these apps, and I liked building them.
+1. I didn't have benchmarks yet. I just liked using these apps, and I liked building them.
 
 So I kept going.
 
-1. Code, because sometimes I just want to open a file.
+1. Code, to see if Legend List could power a code editor. It turns out that it can. It’s the fastest text editor I’ve found. It’s still just a prototype but shows a lot of promise.
 
-2. Diff, because I want to see what changed.
+2. Diff, because I wanted a fast way to view diffs from AI and other apps slowed me down.
 
-3. And Chat History, because I wanted a good way to browse my AI conversations.
+3. Chat History, because AI apps are all built as webview apps and just so unbelievably slow. So I wanted to see how much faster I could make it.
 
-These are all released. They're separate apps, but a lot of the work underneath is the same.
-
-And once I had that shared code, making the next app got a lot easier.
+I released first versions of all of these already, and they all share a monorepo of libraries for doing all the native things I needed. So each one I work on makes all of them better.
 -->
 
 ---
@@ -214,19 +204,13 @@ eyebrow: Story
 <SharedRoots icons={[musicIcon, chatIcon, codeIcon, diffIcon, markdownIcon]} />
 
 <!--
-Music, Chat History, Code, Diff. And I'm working on Markdown too.
+And I'm working on a Markdown app too.
 
-They do very different things, but they all need a lot of the same desktop stuff.
+These apps all do pretty different things, but they all need a lot of the same desktop stuff.
 
-Windows, menus, files, keyboard shortcuts, storage, drag and drop.
+So I ended up building a big toolset, where I can pump out new apps very fast with all of this shared code. And every one of these apps is the fastest in its class, often by a wide margin.
 
-I really don't want to build all of that again every time I have another idea.
-
-So each app has its own React UI and a small manifest that picks the native capabilities it needs. The shared packages and native host do the rest.
-
-Fix it in one place, and all the apps can use it.
-
-That turns out to be pretty useful. We'll come back to it.
+But every time I released one, people would tell me I should rewrite it natively. Or that I must not really care about performance. Because React Native isn’t good enough.
 -->
 
 ---
@@ -238,11 +222,9 @@ eyebrow: Story
 <MovingTitle><StoryMoment kind="question" /></MovingTitle>
 
 <!--
-1. But that still didn't answer their question.
+1. But it seems like it is good enough. These apps are better than every other app. Why does everyone tell me it can’t be true?
 
-Was I just imagining the performance?
-
-Maybe my apps were just simpler. Maybe I was comparing them to badly built apps. Maybe I just really wanted React Native to win.
+Maybe my apps were too simple. Maybe I was comparing them to poorly built apps. Maybe I just really wanted React Native to win.
 
 2. So I measured it.
 
