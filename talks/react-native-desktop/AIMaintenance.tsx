@@ -11,13 +11,16 @@ const ease = (t: number) => t * t * (3 - 2 * t);
 
 export const maintenanceTreeShader = `
 uniform float time;
-uniform float maintenance;
+uniform float stepIndex;
+uniform float stepTime;
 ${branchMaterialShader}
 half4 main(float2 p) {
   float t=clamp((p.y-70.0)/500.0,0.0,1.0);
   float bend=t*t*(3.0-2.0*t);
-  float3 tint=mix(float3(0.08,0.58,1.0),float3(1.0,0.08,0.14),maintenance);
-  float3 light=mix(float3(0.6,0.91,1.0),float3(1.0,0.65,0.65),maintenance);
+  // Step identity and elapsed time come from the same UI-thread clock snapshot.
+  float colorMix=step(0.5,stepIndex)*smoothstep(0.0,1.2,stepTime);
+  float3 tint=mix(float3(0.08,0.58,1.0),float3(1.0,0.08,0.14),colorMix);
+  float3 light=mix(float3(0.6,0.91,1.0),float3(1.0,0.65,0.65),colorMix);
   float3 color=float3(0);
   for(int i=0;i<5;i++) {
     float endpoint=168.0+float(i)*340.0;
@@ -77,7 +80,7 @@ function CryingStream() {
 
 export function AIMaintenance() {
   const maintenance = usePresentationValue("stepIndex") > 0;
-  const uniforms = useAnimatedShaderUniforms({ maintenance: maintenance ? 1 : 0 }, 8);
+  const uniforms = useAnimatedShaderUniforms({}, 8);
   return <View style={{ width: 1696, height: 850, alignSelf: "center" }}>
     <MovingTitle><Text style={{ color: "#ffffff", fontSize: 72, lineHeight: 88, fontWeight: "600", textAlign: "center" }}>{maintenance ? "You maintain it five times" : "AI can write it five times"}</Text></MovingTitle>
     <View style={{ position: "absolute", left: 0, top: 120, width: 1696, height: 650 }}>
