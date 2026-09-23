@@ -21,7 +21,6 @@ steps: 3
 
 import WaterTitle from "./WaterTitle"
 
-import { takeoverProgram } from "./TypeGPUAlternates"
 import { Chart } from "./RNConnection"
 import { BalanceDiagram, MediaSlot } from "./RNConnectionVisuals"
 import { MetricBuckets } from "./MetricBuckets"
@@ -408,9 +407,7 @@ steps: 22
 transition: none
 ---
 
-<NineApps>
-  <TypeGPUShader code={takeoverProgram} width={1920} height={1080} previewTime={14} />
-</NineApps>
+<NineApps />
 
 <!--
 1. This is AI Chat History. This is the React Native version.

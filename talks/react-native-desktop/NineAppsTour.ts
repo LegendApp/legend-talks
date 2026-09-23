@@ -36,7 +36,27 @@ export const detailCrops = {
 };
 const videoHeight = filmstripWidth * 0.5625;
 const videoTop = 555 - filmstripWidth * 0.625 / 2 + filmstripWidth * 0.0625;
-export const composerRect = { x: filmstripLeft + filmstripWidth * 0.30, y: videoTop + videoHeight * 0.77, width: filmstripWidth * 0.66, height: videoHeight * 0.21 };
+// Measured composer bounds in the borderless 2560 × 1440 GPUI recording.
+const mediaHeight = videoHeight;
+const mediaWidth = mediaHeight * 16 / 9;
+const mediaLeft = filmstripLeft + (filmstripWidth - mediaWidth) / 2;
+export const composerRect = {
+  x: mediaLeft + 698 / 2560 * mediaWidth,
+  y: videoTop + 1208 / 1440 * mediaHeight,
+  width: 1684 / 2560 * mediaWidth,
+  height: 120 / 1440 * mediaHeight,
+  radius: 50 / 2560 * mediaWidth,
+};
+export function takeoverComposerRect() {
+  const camera = detailCamera("composer", "gpui");
+  return {
+    x: 960 + (composerRect.x - 960) * camera.scaleX + camera.x,
+    y: 540 + (composerRect.y - 540) * camera.scaleY + camera.y,
+    width: composerRect.width * camera.scaleX,
+    height: composerRect.height * camera.scaleY,
+    radius: composerRect.radius * camera.scaleX,
+  };
+}
 // Capture-specific targets: show the upper sidebar at reading size, and center
 // the actual composer rather than the larger placeholder region.
 const reactNativeCrops = {
