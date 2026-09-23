@@ -33,6 +33,8 @@ import { MeasurementTimeline } from "./MeasurementTimeline"
 import { HelloSizeJourney } from "./HelloSizeJourney"
 import { StoryMoment, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot } from "./StoryDiagrams"
 import { SlidesReveal } from "./SlidesReveal";
+import { SlidesFeatures, SlidesAuthoring } from "./SlidesFeatures";
+import { slidesFeatureParticles } from "./SlidesFeatureParticles";
 import { ExistingModulesTitle } from "./ModuleCompatibility";
 import { FramePitch, FrameFoundations } from "./FramePitch";
 import { EverywhereMorph } from "./EverywhereMorph";
@@ -1176,6 +1178,40 @@ So yes, I made a presentation app to tell you about making desktop apps.
 It's open source. I'm releasing version 0.0.1. It's early, but it's a real app, and I'm using it to give this talk.
 
 If you want an example to learn from, or some very unnecessary slide animations, please try it.
+-->
+
+---
+title: Legend Slides effects
+---
+
+<SlidesFeatures icon={slidesIcon}>
+  <TypeGPUShader code={slidesFeatureParticles} width={520} height={580} particles particleCount={1536} previewTime={3} />
+</SlidesFeatures>
+
+<!--
+This is all React Native.
+
+Reanimated moves the native views. Skia does the drawing, the glass, the ripples.
+
+And TypeGPU lets me write GPU shaders in TypeScript. This one has fifteen hundred particles moving on the GPU.
+
+These are real demos running inside the slide. The same tools I've been using throughout this talk.
+-->
+
+---
+title: Markdown and React Native
+---
+
+<SlidesAuthoring icon={slidesIcon} />
+
+<!--
+And the deck is just Markdown. Write a heading. Write some text.
+
+When I need more, I put React Native right in the Markdown. This is MDX, so that View and Text are actual native components.
+
+Or I can import a component and put all the ridiculous animation in there.
+
+So you can start with a really simple deck and then make it do whatever you want.
 -->
 
 ---
