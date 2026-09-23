@@ -50,6 +50,7 @@ import markdownIcon from "./rnconnection-assets/markdown-icon.png";
 import { NineApps } from "./NineApps"
 import { HelloWorldIntro } from "./HelloWorldIntro"
 import { FrameworkLanguages } from "./FrameworkLanguages"
+import { NpmDownloadsChart } from "./NpmDownloadsChart"
 import { NativeReactions } from "./NativeReactions"
 import { AppShowcase } from "./AppCarousel"
 import { MovingTitle } from "./MovingTitle"
@@ -281,6 +282,32 @@ The browser ones let you build the UI with web technologies. Tauri also has Rust
 Then Dart for Flutter, Kotlin for Compose, and Rust for GPUI.
 
 I don't know all of these languages. And I never intended to build the same app in all of them. But AI made that experiment practical.
+-->
+
+---
+title: Monthly npm downloads
+---
+
+# Monthly npm downloads {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<NpmDownloadsChart />
+
+<!--
+These are npm downloads, not people or apps. Same 30-day window for every bar: August 23 through September 21, 2026.
+
+React Native here is react-native-macos: 403,100. Electron is electron: 24,689,555. Tauri is @tauri-apps/cli: 8,326,594. Deno is deno: 611,982.
+
+That Deno number covers its npm installer, not its other installation methods, and it isn't a count of desktop UI projects. Tauri can also be installed through Cargo. Don't read this as a fair ranking of total adoption.
+
+AppKit and SwiftUI come with Apple's SDK. Flutter uses its SDK, Compose uses Gradle, and GPUI uses Cargo. Not on npm doesn't mean nobody uses them.
+
+For context, the main react-native package has 48,356,761 downloads in the same window, including mobile. I don't want to present that as desktop adoption.
+
+Sources: https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/react-native-macos
+https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/electron
+https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/@tauri-apps/cli
+https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/deno
+Methodology: https://github.com/npm/registry/blob/main/docs/download-counts.md
 -->
 
 ---

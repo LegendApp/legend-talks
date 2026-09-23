@@ -10,9 +10,9 @@ export type Metric = "content" | "memory" | "size" | "jump" | "switch";
 const units: Record<Metric, string> = { content: "ms", memory: "MB", size: "MB", jump: "ms", switch: "ms" };
 
 /** Separate sibling markers keep text rigid while only the bar changes width. */
-export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grouped = false, duration = 650, decimals = 0 }: {
-  name: string; value: number; maximum: number; metric: Metric; y: number;
-  groupColor?: string; grouped?: boolean; duration?: number; decimals?: number;
+export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grouped = false, duration = 650, decimals = 0, valueLabel }: {
+  name: string; value: number; maximum: number; metric?: Metric; y: number;
+  groupColor?: string; grouped?: boolean; duration?: number; decimals?: number; valueLabel?: string;
 }) {
   const id = `benchmark-${name}`;
   const animateEntrance = useSharedElementEntrance(`${id}-bar`);
@@ -26,7 +26,7 @@ export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grou
       <ChartBar highlighted={highlighted} groupColor={groupColor} grouped={grouped} animateEntrance={animateEntrance} style={{ width, height: chartLayout.barHeight }} />
     </SharedElement>
     <SharedElement id={`${id}-value`} resize="preserve" style={{ position: "absolute", right: 0, top: 0, width: chartLayout.valueWidth, height: chartLayout.rowHeight }}>
-      <Text style={{ color: "#f1f5f9", textAlign: "right", fontSize: chartLayout.fontSize, lineHeight: chartLayout.lineHeight, fontVariant: ["tabular-nums"] }}>{displayMetric(value, metric).toFixed(decimals)} {units[metric]}</Text>
+      <Text style={{ color: "#f1f5f9", textAlign: "right", fontSize: chartLayout.fontSize, lineHeight: chartLayout.lineHeight, fontVariant: ["tabular-nums"] }}>{valueLabel ?? (metric ? `${displayMetric(value, metric).toFixed(decimals)} ${units[metric]}` : value.toFixed(decimals))}</Text>
     </SharedElement>
   </ScenePositionView>;
 }
