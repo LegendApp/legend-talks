@@ -1,4 +1,4 @@
-import { SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
+import { PlaybackKeyframeView, SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
 import { Image, Text, View } from "react-native";
 import { MovingTitle } from "./MovingTitle";
 // @ts-ignore Deck-local asset URL.
@@ -16,29 +16,58 @@ import appkit from "./rnconnection-assets/native-reactions/appkit.png";
 import bareMetal from "./rnconnection-assets/native-reactions/bare-metal.png";
 
 const letters = Array.from("“Native would be faster”");
-const reactions = [nativeCocoa, mutuallyExclusive, appkit, bareMetal, lowMemory, rnFan].map((uri, index) => ({
-  uri, left: index % 2 === 0 ? 0 : 868, top: 35 + Math.floor(index / 2) * 255, height: 225,
-}));
+const widths = letters.map(letter => /[ ilft“”]/.test(letter) ? 23 : /[mw]/.test(letter) ? 57 : 40);
+const textLeft = (1696 - widths.reduce((sum, width) => sum + width, 0)) / 2;
+const letterX = (index: number) => textLeft + widths.slice(0, index).reduce((sum, width) => sum + width, 0) + widths[index] / 2;
+const titleY = 386;
+const reactions = [
+  { uri: nativeCocoa, x: 420, y: 165, rotation: "-6deg", anchor: 2, height: 220 },
+  { uri: mutuallyExclusive, x: 1280, y: 180, rotation: "6deg", anchor: 6, height: 190 },
+  { uri: appkit, x: 400, y: 427, rotation: "4deg", anchor: 10, height: 195 },
+  { uri: bareMetal, x: 1286, y: 455, rotation: "-4deg", anchor: 14, height: 215 },
+  { uri: lowMemory, x: 426, y: 700, rotation: "-5deg", anchor: 18, height: 195 },
+  { uri: rnFan, x: 1270, y: 713, rotation: "4deg", anchor: 21, height: 190 },
+];
+const letterFade = [{ time: 0, x: 0, y: 0, opacity: 1 }, { time: 1250, x: 0, y: 0, opacity: 1 }, { time: 2650, x: 0, y: 0, opacity: 0 }];
+const cardFade = [{ time: 0, x: 0, y: 0, opacity: 0 }, { time: 450, x: 0, y: 0, opacity: 0 }, { time: 2050, x: 0, y: 0, opacity: 1 }];
 
 export function NativeReactions() {
   const revealed = usePresentationValue("stepIndex") > 0;
   return <View style={{ width: 1696, height: 850, alignSelf: "center" }}>
     {reactions.map((reaction, index) => <SceneMotionView key={reaction.uri}
-      pose={{ opacity: revealed ? 1 : 0, scaleX: revealed ? 1 : 0.92, scaleY: revealed ? 1 : 0.92 }}
-      duration={950 + index * 100}
-      style={{ position: "absolute", left: reaction.left, top: reaction.top, width: 828, height: reaction.height }}>
-      <Image source={{ uri: reaction.uri }} resizeMode="contain" style={{ width: "100%", height: "100%" }} />
+      pose={{ x: revealed ? reaction.x - letterX(reaction.anchor) : 0, y: revealed ? reaction.y - titleY : 0,
+        scaleX: revealed ? 1 : 0.025, scaleY: revealed ? 1 : 0.025, opacity: revealed ? 1 : 0 }}
+      duration={2800 + index * 80}
+      style={{ position: "absolute", left: letterX(reaction.anchor) - 400, top: titleY - reaction.height / 2,
+        width: 800, height: reaction.height }}>
+      {revealed && <PlaybackKeyframeView keyframes={cardFade} style={{ flex: 1 }}>
+        <View style={{ flex: 1, transform: [{ rotate: reaction.rotation }], borderRadius: 18,
+          borderWidth: 1.5, borderColor: "#8bdcff", backgroundColor: "#06111d",
+          shadowColor: "#39bfff", shadowOpacity: 0.8, shadowRadius: 16, shadowOffset: { width: 0, height: 0 } }}>
+          <Image source={{ uri: reaction.uri }} resizeMode="contain" style={{ width: "100%", height: "100%", borderRadius: 17 }} />
+        </View>
+      </PlaybackKeyframeView>}
     </SceneMotionView>)}
-    <MovingTitle style={{ position: "absolute", top: 340, left: 0, width: 1696 }}>
-      <View style={{ flexDirection: "row", justifyContent: "center" }}>
-        {letters.map((letter, index) => <SceneMotionView key={index}
-          pose={{ x: revealed ? (index - (letters.length - 1) / 2) * 18 : 0,
-            y: revealed ? (index % 3 - 1) * 255 : 0,
-            scaleX: revealed ? 0.5 : 1, scaleY: revealed ? 0.5 : 1, opacity: revealed ? 0 : 1 }}
-          duration={700 + index * 14}>
-          <Text style={{ fontSize: 72, lineHeight: 92, fontWeight: "600", color: "#fff" }}>{letter === " " ? "\u00a0" : letter}</Text>
-        </SceneMotionView>)}
-      </View>
+    {revealed && reactions.map((reaction, index) => <PlaybackKeyframeView key={`spark-${index}`} keyframes={[
+      { time: 0, x: letterX(reaction.anchor), y: titleY, opacity: 0 },
+      { time: 600, x: letterX(reaction.anchor), y: titleY, opacity: 0.9 },
+      { time: 2500, x: reaction.x + (index % 2 ? -410 : 410), y: reaction.y - 50, opacity: 0.7 },
+      { time: 3400, x: reaction.x + (index % 2 ? -430 : 430), y: reaction.y - 90, opacity: 0 },
+    ]} style={{ position: "absolute", top: 0, left: 0 }}>
+      <Text style={{ fontSize: 22, color: "#8de6ff" }}>✦</Text>
+    </PlaybackKeyframeView>)}
+    <MovingTitle style={{ position: "absolute", top: 340, left: 0, width: 1696, height: 92 }}>
+      {letters.map((letter, index) => {
+        const target = reactions.reduce((nearest, reaction) => Math.abs(reaction.anchor - index) < Math.abs(nearest.anchor - index) ? reaction : nearest);
+        const text = <Text style={{ fontSize: 72, lineHeight: 92, fontWeight: "600", color: "#fff", textAlign: "center" }}>{letter === " " ? "\u00a0" : letter}</Text>;
+        return <SceneMotionView key={index}
+          pose={{ x: revealed ? target.x - letterX(index) : 0, y: revealed ? target.y - titleY : 0,
+            scaleX: revealed ? 3.8 : 1, scaleY: revealed ? 3.8 : 1 }}
+          duration={2800 + reactions.indexOf(target) * 80}
+          style={{ position: "absolute", left: letterX(index) - widths[index] / 2, width: widths[index], height: 92 }}>
+          {revealed ? <PlaybackKeyframeView keyframes={letterFade}>{text}</PlaybackKeyframeView> : text}
+        </SceneMotionView>;
+      })}
     </MovingTitle>
   </View>;
 }
