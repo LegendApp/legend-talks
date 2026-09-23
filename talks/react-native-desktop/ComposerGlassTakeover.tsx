@@ -9,8 +9,8 @@ const initialUniforms = {
   cornerRadius: rect.radius,
 };
 
-// Sample the actual paused chat. Refraction is confined to the curved bevel;
-// the body softly frosts that content instead of generating an opaque texture.
+// Refract the same live decoded frame as the card. A convex edge bends the
+// recording while the center stays clear; step time controls the exaggeration.
 export const composerGlassShader = `
 uniform shader backdrop;
 uniform float time;
@@ -42,20 +42,26 @@ half4 main(float2 position) {
     boxDistance(p + float2(0.5, 0), halfSize, radius) - boxDistance(p - float2(0.5, 0), halfSize, radius),
     boxDistance(p + float2(0, 0.5), halfSize, radius) - boxDistance(p - float2(0, 0.5), halfSize, radius)) + float2(0.00001));
   float depth = max(0.0, -distance);
-  float bevel = exp(-depth / mix(10.0, 32.0, wild));
+  float bevelWidth = mix(18.0, 65.0, wild);
+  float edge = clamp(1.0 - depth / bevelWidth, 0.0, 1.0);
+  float bevel = edge * edge * (3.0 - 2.0 * edge);
+  // A rounded meniscus: strongest bending just inside the silhouette.
+  float curvature = sin(edge * 1.5707963);
+  float3 surfaceNormal = normalize(float3(normal * curvature * 0.88,
+    sqrt(max(0.02, 1.0 - curvature * curvature * 0.77))));
   float lens = sqrt(max(0.0, 1.0 - pow(clamp(p.y / halfSize.y, -1.0, 1.0), 2.0)));
   float2 flow = float2(sin(p.y * 0.026 + time * 1.8), cos(p.x * 0.017 - time * 1.4));
-  float2 samplePoint = position - normal * bevel * mix(14.0, 85.0, wild) * reveal
+  float2 samplePoint = position - normal * curvature * mix(23.0, 105.0, wild) * reveal
     + flow * (8.0 + 55.0 * lens) * wild;
-  float blur = mix(1.8, 4.0, wild) * reveal;
+  float blur = mix(0.65, 3.0, wild) * reveal;
   half4 color = half4(0);
-  // Separable binomial weights approximate Gaussian frosting without repeated
-  // offset text outlines from a sparse ring of equally weighted samples.
-  for (int y = -2; y <= 2; y++) {
-    float wy = y == 0 ? 6.0 : ((y == -1 || y == 1) ? 4.0 : 1.0);
-    for (int x = -2; x <= 2; x++) {
-      float wx = x == 0 ? 6.0 : ((x == -1 || x == 1) ? 4.0 : 1.0);
-      color += sampleBackdrop(samplePoint + float2(x, y) * blur * 0.5) * (wx * wy / 256.0);
+  // Nine weighted taps keep the center readable and the live full-screen
+  // phase cheaper than the former 25-tap frosting pass.
+  for (int y = -1; y <= 1; y++) {
+    float wy = y == 0 ? 2.0 : 1.0;
+    for (int x = -1; x <= 1; x++) {
+      float wx = x == 0 ? 2.0 : 1.0;
+      color += sampleBackdrop(samplePoint + float2(x, y) * blur) * (wx * wy / 16.0);
     }
   }
   // Disperse the light only at the curved edge, keeping the initial body clear.
@@ -64,21 +70,28 @@ half4 main(float2 position) {
   color.b = mix(color.b, sampleBackdrop(samplePoint - normal * dispersion).b, 0.6);
   float rim = exp(-abs(distance + 0.7) * 1.3);
   float innerRim = exp(-abs(distance + mix(3.0, 9.0, wild)) * 0.7);
-  float light = pow(max(0.0, dot(normal, normalize(float2(-0.45, -0.85)))), 3.0);
-  float sheen = 0.5 + 0.5 * sin(time * 0.35 + position.x / 1200.0);
-  color.rgb = mix(color.rgb, half3(0.16), 0.04 * reveal);
-  color.rgb += half3(0.9, 0.95, 1.0) * rim * (0.20 + light * 0.55) * reveal;
-  color.rgb += half3(0.95) * innerRim * (0.08 + 0.3 * wild) * reveal;
+  float3 lightDirection = normalize(float3(-0.45, -0.65, 0.7));
+  float3 halfVector = normalize(lightDirection + float3(0, 0, 1));
+  float specular = pow(max(0.0, dot(surfaceNormal, halfVector)), 48.0);
+  float fresnel = pow(1.0 - surfaceNormal.z, 3.0);
+  float sweep = exp(-pow((p.x / max(halfSize.x, 1.0)
+    - sin(time * 0.65) * 1.2) * 8.0, 2.0));
+  float light = max(0.0, dot(normal, normalize(float2(-0.45, -0.85))));
+  // Neutral reflected light, a narrow bright rim, and a darker inner lip give
+  // the lens thickness without painting an opaque blue panel over the video.
+  color.rgb *= 1.0 - innerRim * 0.16 * reveal;
+  color.rgb += half3(0.94, 0.97, 1.0) * rim * (0.26 + light * 0.5) * reveal;
+  color.rgb += half3(1.0) * (specular * bevel * 0.52 + fresnel * 0.16
+    + sweep * bevel * 0.14) * reveal;
   float caustic = pow(max(0.0, sin(p.x * 0.016 + p.y * 0.035 + time * 2.0)), 12.0);
   color.rgb += half3(1.0) * caustic * bevel * 0.45 * wild;
-  color.rgb += half3(0.035) * bevel * sheen * reveal;
   float alpha = mask * reveal;
   return half4(color.rgb * alpha, alpha);
 }`;
 const effect = Skia.RuntimeEffect.Make(composerGlassShader);
 if (!effect) throw new Error("Could not compile composer glass");
 
-// Map the captured video pixels through exactly the same composer crop as the camera.
+// Map the live video pixels through exactly the same composer crop as the camera.
 const videoScale = rect.width / 1684;
 const videoRect = { x: rect.x - 698 * videoScale, y: rect.y - 1208 * videoScale,
   width: 2560 * videoScale, height: 1440 * videoScale };

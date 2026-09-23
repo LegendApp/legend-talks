@@ -78,7 +78,7 @@ export function NineApps({ mode: requestedMode }: { mode?: SceneMode }) {
   const tour = tourStep(tourIndex);
   const selected = mode === "filmstrip" ? appOrder.indexOf(tour.app) : 0;
   const gpuiVideo = useNativeVideo(isPreview ? null : gpuiPage.replace(/\.html$/, ".mp4"),
-    mode === "filmstrip" && phase === "playing" && tour.app === "gpui" && tour.detail !== "takeover");
+    mode === "filmstrip" && phase === "playing" && tour.app === "gpui");
   const titleProgress = usePlaybackTween({ position: selected }, 500);
   const camera = detailCamera(mode === "filmstrip" ? tour.detail : "app", tour.app);
   return <FocusRegion id="nine-apps-stage" style={{ width: 1920, height: 1080, overflow: "hidden" }}>
