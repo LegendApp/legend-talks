@@ -1,5 +1,5 @@
 import { CarouselBlurView, usePlaybackTween, FocusRegion, SceneMotionView, SharedElement, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
-import { useRef } from "react";
+import { useState } from "react";
 import { ComposerGlassTakeover } from "./ComposerGlassTakeover";
 import { DeckBackground } from "./DeckBackground";
 import { detailCamera, tourStep } from "./NineAppsTour";
@@ -70,7 +70,7 @@ export default function NineAppsFrame({ children }: PresentationTemplateProps) {
 }
 
 export function NineApps({ mode: requestedMode }: { mode?: SceneMode }) {
-  const captureRef = useRef<View>(null);
+  const [glassFrame, setGlassFrame] = useState<string>();
   const step = usePresentationValue("stepIndex");
   const mode = requestedMode ?? (step === 0 ? "hero" : step === 1 ? "grid" : "filmstrip");
   const tourIndex = requestedMode ? step : Math.max(0, step - 2);
@@ -86,7 +86,7 @@ export function NineApps({ mode: requestedMode }: { mode?: SceneMode }) {
       <Text style={{ color: "#f8fafc", fontSize: 64, fontWeight: "700", textAlign: "center" }}>AI Chat History</Text>
       </MovingTitle>
     </SceneMotionView>}
-    <View ref={captureRef} collapsable={false} style={{ width: 1920, height: 1080 }}>
+    <View style={{ width: 1920, height: 1080 }}>
     <SceneMotionView pose={camera} duration={650} style={{ width: 1920, height: 1080 }}>
     <AppCarousel cardWidth={filmstripWidth} items={appOrder} position={selected} mode={mode}
       renderCard={(id, card) => {
@@ -100,7 +100,7 @@ export function NineApps({ mode: requestedMode }: { mode?: SceneMode }) {
           <View style={{ flex: 1, borderRadius: 12, overflow: "hidden" }}>
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#14253a" }}>
               {!isPreview ?
-                <LocalRecording {...recordings[id]} playing={mode !== "grid" && phase === "playing" && id === appOrder[selected] && tour.detail !== "takeover"} />
+                <LocalRecording {...recordings[id]} onPausedFrame={id === "gpui" && tour.detail === "takeover" ? setGlassFrame : undefined} playing={mode !== "grid" && phase === "playing" && id === appOrder[selected] && tour.detail !== "takeover"} />
               : <Image source={{ uri }} resizeMode="contain" style={{ width: "100%", height: "100%" }} />}
             </View>
           </View>
@@ -126,6 +126,6 @@ export function NineApps({ mode: requestedMode }: { mode?: SceneMode }) {
     })}
     </SceneMotionView>
     </View>
-    {mode === "filmstrip" && tour.detail === "takeover" && <ComposerGlassTakeover sourceRef={captureRef} />}
+    {mode === "filmstrip" && tour.detail === "takeover" && <ComposerGlassTakeover frame={glassFrame} />}
   </FocusRegion>;
 }

@@ -1,7 +1,5 @@
-import { Canvas, Fill, ImageShader, Shader, Skia, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
-import { snapshotCaptureQueue, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
-import { useEffect, useState, type RefObject } from "react";
-import { View } from "react-native";
+import { Canvas, Fill, ImageShader, Shader, Skia, useImage } from "@shopify/react-native-skia";
+import { useAnimatedShaderUniforms } from "@legend-apps/presentation";
 import { takeoverComposerRect } from "./NineAppsTour";
 
 const rect = takeoverComposerRect();
@@ -23,7 +21,7 @@ float boxDistance(float2 p, float2 halfSize, float radius) {
 }
 half4 sampleBackdrop(float2 p) {
   half4 content = backdrop.eval(clamp(p, float2(0.5), float2(1919.5, 1079.5)));
-  return content + half4(0.035, 0.052, 0.075, 1.0) * (1.0 - content.a);
+  return content + half4(0.025, 0.025, 0.025, 1.0) * (1.0 - content.a);
 }
 half4 main(float2 position) {
   // Finish the realistic material at 0.8s, hold it for two full seconds,
@@ -67,43 +65,30 @@ half4 main(float2 position) {
   float innerRim = exp(-abs(distance + mix(3.0, 9.0, wild)) * 0.7);
   float light = pow(max(0.0, dot(normal, normalize(float2(-0.45, -0.85)))), 3.0);
   float sheen = 0.5 + 0.5 * sin(time * 0.35 + position.x / 1200.0);
-  color.rgb = mix(color.rgb, half3(0.13, 0.145, 0.16), 0.10 * reveal);
+  color.rgb = mix(color.rgb, half3(0.16), 0.04 * reveal);
   color.rgb += half3(0.9, 0.95, 1.0) * rim * (0.20 + light * 0.55) * reveal;
-  color.rgb += half3(0.55, 0.8, 1.0) * innerRim * (0.08 + 0.3 * wild) * reveal;
+  color.rgb += half3(0.95) * innerRim * (0.08 + 0.3 * wild) * reveal;
   float caustic = pow(max(0.0, sin(p.x * 0.016 + p.y * 0.035 + time * 2.0)), 12.0);
-  color.rgb += half3(0.5, 0.8, 1.0) * caustic * bevel * 0.45 * wild;
-  color.rgb += half3(0.012, 0.014, 0.017) * bevel * sheen * reveal;
+  color.rgb += half3(1.0) * caustic * bevel * 0.45 * wild;
+  color.rgb += half3(0.035) * bevel * sheen * reveal;
   float alpha = mask * reveal;
   return half4(color.rgb * alpha, alpha);
 }`;
 const effect = Skia.RuntimeEffect.Make(composerGlassShader);
 if (!effect) throw new Error("Could not compile composer glass");
 
-export function ComposerGlassTakeover({ sourceRef }: { sourceRef: RefObject<View | null> }) {
-  const isActive = usePresentationValue("isActive");
-  const isPreview = usePresentationValue("isPreview");
-  const [image, setImage] = useState<SkImage>();
+// Map the captured video pixels through exactly the same composer crop as the camera.
+const videoScale = rect.width / 1684;
+const videoRect = { x: rect.x - 698 * videoScale, y: rect.y - 1208 * videoScale,
+  width: 2560 * videoScale, height: 1440 * videoScale };
+
+export function ComposerGlassTakeover({ frame }: { frame?: string }) {
+  const image = useImage(frame ?? null);
   const uniforms = useAnimatedShaderUniforms(initialUniforms, 3, { clock: "step" });
-  useEffect(() => {
-    if (!isActive && !isPreview) return;
-    let cancelled = false;
-    let captured: SkImage | undefined;
-    const cancel = snapshotCaptureQueue.enqueue(async () => {
-      try {
-        const result = await makeImageFromView(sourceRef);
-        if (cancelled) { result?.dispose(); return; }
-        captured = result ?? undefined;
-        setImage(captured);
-      } catch {
-        // Keep the real composer visible if native capture is unavailable.
-      }
-    });
-    return () => { cancelled = true; cancel(); setImage(undefined); captured?.dispose(); };
-  }, [isActive, isPreview, sourceRef]);
   if (!image) return null;
   return <Canvas pointerEvents="none" style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080, zIndex: 3000 }}>
     <Fill><Shader source={effect!} uniforms={uniforms}>
-      <ImageShader image={image} fit="fill" rect={{ x: 0, y: 0, width: 1920, height: 1080 }} tx="clamp" ty="clamp" />
+      <ImageShader image={image} fit="fill" rect={videoRect} tx="clamp" ty="clamp" />
     </Shader></Fill>
   </Canvas>;
 }
