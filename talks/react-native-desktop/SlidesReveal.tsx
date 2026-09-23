@@ -1,5 +1,6 @@
 import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
 import { PlaybackKeyframeView, SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
+import type { ReactNode } from "react";
 import { View } from "react-native";
 import { SlidesHeader } from "./StoryDiagrams";
 import { GitHubLink } from "./GitHubLink";
@@ -41,7 +42,7 @@ float4 screenshot(float2 p) {
 }
 half4 main(float2 p) {
   p-=float2(960,570);
-  if(stepIndex<1.0) return half4(0);
+  if(stepIndex<1.0 || stepIndex>2.0) return half4(0);
   if(stepIndex<2.0) {
     float entrance=smoothstep(0.0,0.65,time);
     float2 source=(p-float2(0,48.0*(1.0-entrance)))/mix(0.9,1.0,entrance);
@@ -82,7 +83,7 @@ const effect = Skia.RuntimeEffect.Make(slidesShatterShader);
 if (!effect) throw new Error("Could not compile Slides screenshot shatter");
 const linkReveal = [{ time: 0, x: 0, y: 0, opacity: 0 }, { time: 650, x: 0, y: 0, opacity: 1 }];
 
-export function SlidesReveal({ icon }: { icon: string }) {
+export function SlidesReveal({ icon, children }: { icon: string; children: ReactNode }) {
   const step = usePresentationValue("stepIndex");
   const uniforms = useAnimatedShaderUniforms({}, 4, { clock: "step" });
   return <View style={{ width: 1696, height: 880, alignSelf: "center" }}>
@@ -96,8 +97,13 @@ export function SlidesReveal({ icon }: { icon: string }) {
       style={{ position: "absolute", left: -112, top: -100, width: 1920, height: 1180 }}>
       <Fill><Shader source={effect!} uniforms={uniforms} /></Fill>
     </Canvas>
-    {step >= 2 && <View style={{ position: "absolute", top: 405, width: 1696 }}>
+    {step === 2 && <View style={{ position: "absolute", top: 0, width: 1696 }}>
       <PlaybackKeyframeView keyframes={linkReveal} delay={1600} previewTime={4}>
+        {children}
+      </PlaybackKeyframeView>
+    </View>}
+    {step >= 3 && <View style={{ position: "absolute", top: 405, width: 1696 }}>
+      <PlaybackKeyframeView keyframes={linkReveal} previewTime={4}>
         <GitHubLink repository="LegendApp/legend-apps" label="Legend Slides on GitHub" />
       </PlaybackKeyframeView>
     </View>}

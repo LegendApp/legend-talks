@@ -54,10 +54,10 @@ function MotionDemo() {
     </PlaybackKeyframeView>)}
   </View>;
 }
-export function SlidesFeatures({ icon, children }: { icon: string; children: ReactNode }) {
+export function SlidesFeatures({ icon, children, showHeader = true }: { icon: string; children: ReactNode; showHeader?: boolean }) {
   const uniforms = useAnimatedShaderUniforms({}, 3);
   return <View style={{ width: 1696, height: 880 }}>
-    <SlidesHeader icon={icon} />
+    {showHeader && <SlidesHeader icon={icon} />}
     <GlassPanels panels={panels} width={1696} height={880} />
     {["Reanimated", "Skia", "TypeGPU"].map((label, index) => <Text key={label}
       style={{ position: "absolute", top: 160, left: index * 584, width: 528, textAlign: "center", color: "#f8fafc", fontSize: 48, fontWeight: "600" }}>{label}</Text>)}

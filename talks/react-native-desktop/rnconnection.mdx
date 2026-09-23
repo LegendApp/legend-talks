@@ -1264,10 +1264,14 @@ Well, I have. You've been looking at it this whole time.
 
 ---
 title: Legend Slides
-steps: 3
+steps: 4
 ---
 
-<SlidesReveal icon={slidesIcon} />
+<SlidesReveal icon={slidesIcon}>
+  <SlidesFeatures icon={slidesIcon} showHeader={false}>
+    <TypeGPUShader code={slidesFeatureParticles} width={520} height={580} particles particleCount={1536} previewTime={3} />
+  </SlidesFeatures>
+</SlidesReveal>
 
 <!--
 1. This is Legend Slides. It's React Native desktop too.
@@ -1278,22 +1282,8 @@ steps: 3
 
 So yes, I made a presentation app to tell you about making desktop apps.
 
-3. [Shatter the screenshot. Let the GitHub link appear.]
+3. [Shatter the screenshot. Reveal the live effects.]
 
-It's open source. I'm releasing version 0.0.1. It's early, but it's a real app, and I'm using it to give this talk.
-
-If you want an example to learn from, or some very unnecessary slide animations, please try it.
--->
-
----
-title: Legend Slides effects
----
-
-<SlidesFeatures icon={slidesIcon}>
-  <TypeGPUShader code={slidesFeatureParticles} width={520} height={580} particles particleCount={1536} previewTime={3} />
-</SlidesFeatures>
-
-<!--
 This is all React Native.
 
 Reanimated moves the native views. Skia does the drawing, the glass, the ripples.
@@ -1301,6 +1291,12 @@ Reanimated moves the native views. Skia does the drawing, the glass, the ripples
 And TypeGPU lets me write GPU shaders in TypeScript. This one has fifteen hundred particles moving on the GPU.
 
 These are real demos running inside the slide. The same tools I've been using throughout this talk.
+
+4. [Show the GitHub link.]
+
+It's open source. I'm releasing version 0.0.1. It's early, but it's a real app, and I'm using it to give this talk.
+
+If you want an example to learn from, or some very unnecessary slide animations, please try it.
 -->
 
 ---
