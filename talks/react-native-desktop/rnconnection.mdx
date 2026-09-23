@@ -40,6 +40,7 @@ import { ReactNativeTitleDemo } from "./ReactNativeTitleDemo";
 import { NativeUIMatters } from "./NativeUIMatters";
 import { ExpoDesktopPortal } from "./ExpoDesktopPortal";
 import frameIcon from "./rnconnection-assets/legend-frame.png";
+import frameRunnerScreenshot from "./rnconnection-assets/frame-runner-cli.png";
 import { DesktopFoundationsJourney } from "./DesktopFoundations"
 import { DesktopObjections } from "./DesktopObjections"
 import { SharedRoots } from "./SharedRoots"
@@ -859,6 +860,29 @@ So if it's this good, why isn't everyone doing this?
 [Pause.]
 -->
 
+
+---
+title: Frame Runner
+---
+
+# Frame Runner {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<Image source={{ uri: frameRunnerScreenshot }} style={{ width: 1696, height: 760, alignSelf: "center" }} resizeMode="contain" accessibilityLabel="Frame CLI running Metro with Fast Refresh and a command to open the macOS app in Frame Runner" />
+
+<!--
+Frame gives you the native modules you need for desktop.
+
+And Frame Runner comes with those modules already built in. Think Expo Go for desktop.
+
+You write JavaScript, press d, and your app opens. No native build. You don't even need Xcode.
+
+And you get Fast Refresh. Change the code and see it update.
+
+[Replace the CLI screenshot with a recording: run bun run macos, press d to open the app, then make a small JS edit and show Fast Refresh. The screenshot still uses the old "prebuilt runtime" name.]
+
+So that's the foundation. Now there's one part I need your help with.
+-->
+
 ---
 title: "What’s holding desktop back"
 steps: 3
@@ -1026,7 +1050,7 @@ And underneath that... a WebView.
 
 It's React Native. Frame adds desktop APIs and tooling to that foundation.
 
-So that's the foundation. Now there's one part I need your help with.
+And here's what it's like to use.
 -->
 
 ---
