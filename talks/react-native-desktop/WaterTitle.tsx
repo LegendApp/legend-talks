@@ -4,7 +4,7 @@ import { AlphaType, ColorType, Canvas, Fill, Shader, ImageShader, Skia, makeImag
 import { Background, useBackgroundSize, useBackgroundIntensity, useTitleBubbleSimulation, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
 import { useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
-import { titleAtmosphereEffect } from "./packs/backgrounds/AnimatedAtmosphere";
+import { AnimatedAtmosphere } from "./packs/backgrounds/AnimatedAtmosphere";
 import { dropletGeometry } from "./packs/backgrounds/dropletGeometry";
 
 export const waterTitleShader = `
@@ -271,10 +271,10 @@ export default function WaterTitle({ children, closing = false }: { children?: i
   const { width, height } = useBackgroundSize();
   const intensity = useBackgroundIntensity();
   const speed = step >= 1 ? 1.8 : 0.6;
-  // One uniform object drives both the background and the emerging bubbles.
+  // Read the persistent background clock; only the hosted atmosphere advances it.
   const backgroundUniforms = useAnimatedShaderUniforms({ ...sources,
     titleFeed: 1, resolution: [Math.max(1,width),Math.max(1,height)], brightness: 0.7*intensity,
-  }, 8, { persistentBackground: true, speed: speed*0.16, slideChangeBoost: speed*0.32, slideChangeDuration: 3.5 });
+  }, 8, { persistentBackground: "read" });
   const uniforms = useTitleBubbleSimulation(backgroundUniforms,targets,visualUniforms);
   const titleRef = useRef<View>(null);
   const [titleImage, setTitleImage] = useState<SkImage>();
@@ -298,7 +298,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
   }, [sources]);
   const showLiquidType = Boolean(titleImage);
   return <>
-    <Background priority={1} intensityMultiplier={closing ? 1 : 3} maxIntensity={6}><View style={{flex:1,backgroundColor:"#050a10"}} /></Background>
+    <Background priority={1} intensityMultiplier={closing ? 1 : 3} maxIntensity={6}><AnimatedAtmosphere variant="droplets" brightness={0.7} speed={closing ? 0.6 : speed} sharedUniforms={uniforms} /></Background>
     {/* This slide disables template padding and owns its full layout. */}
     <View style={{ width: 1920, height: 1080 }}>
       <View style={{ flex: 1, opacity: showLiquidType ? 0 : 1, zIndex: showLiquidType ? 0 : 1 }}>
@@ -322,7 +322,6 @@ export default function WaterTitle({ children, closing = false }: { children?: i
         {'React Native is the best way\nto build desktop apps'}
       </Text>
       <Canvas pointerEvents="none" style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080 }}>
-        <Fill><Shader source={titleAtmosphereEffect} uniforms={uniforms} /></Fill>
         {!closing && <Fill><Shader source={cosmicEffect!} uniforms={uniforms} /></Fill>}
         {!closing && showLiquidType && titleImage && <Fill><Shader source={typeEffect!} uniforms={uniforms}>
           <ImageShader image={titleImage} fit="fill" rect={{ x: 0, y: 0, width: 1920, height: 1080 }} />
