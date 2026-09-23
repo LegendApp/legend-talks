@@ -1,4 +1,4 @@
-import { FocusRegion, SceneMotionView, SharedElement, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
+import { CarouselBlurView, usePlaybackTween, FocusRegion, SceneMotionView, SharedElement, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
 import type { ReactNode } from "react";
 import { DeckBackground } from "./DeckBackground";
 import { detailCamera, tourStep } from "./NineAppsTour";
@@ -76,6 +76,7 @@ export function NineApps({ mode: requestedMode, children }: { mode?: SceneMode; 
   const isPreview = usePresentationValue("isPreview");
   const tour = tourStep(tourIndex);
   const selected = mode === "filmstrip" ? appOrder.indexOf(tour.app) : 0;
+  const titleProgress = usePlaybackTween({ position: selected }, 500);
   const camera = detailCamera(mode === "filmstrip" ? tour.detail : "app", tour.app);
   return <FocusRegion id="nine-apps-stage" style={{ width: 1920, height: 1080, overflow: "hidden" }}>
     {mode !== "filmstrip" && <SceneMotionView initialPose={{ opacity: 0 }} pose={{ opacity: 1 }} duration={650} style={{ position: "absolute", left: 112, top: 65, width: 1696, zIndex: 2000 }}>
@@ -93,8 +94,7 @@ export function NineApps({ mode: requestedMode, children }: { mode?: SceneMode; 
           <View style={{ height: captionHeight, minHeight: 24, justifyContent: "center", alignItems: "center", opacity: mode === "grid" ? 1 : 0 }}>
             {mode === "grid" && <Text style={{ fontSize: Math.max(17, card.width * 0.027), fontWeight: "700", color: "#f1f5f9" }}>{names[id]}</Text>}
           </View>
-          <View style={{ flex: 1, borderRadius: 12, overflow: "hidden", borderWidth: 2,
-            borderColor: id === "react-native" ? "#67e8f9" : "#33465e", backgroundColor: "#101e30" }}>
+          <View style={{ flex: 1, borderRadius: 12, overflow: "hidden" }}>
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#14253a" }}>
               {!isPreview ?
                 <LocalRecording {...recordings[id]} playing={mode !== "grid" && phase === "playing" && id === appOrder[selected]} />
@@ -107,15 +107,18 @@ export function NineApps({ mode: requestedMode, children }: { mode?: SceneMode; 
     {mode === "filmstrip" && appOrder.map((id, index) => {
       const card = appCardLayout(index, mode, selected);
       const scale = card.width / filmstripWidth;
-      // Keep native text laid out onstage; move it with the same carousel targets
-      // instead of capturing it into blurred snapshots or initially laying it offscreen.
+      // Keep text laid out onstage and blur it with the same focus curve as the video.
       return <SceneMotionView key={`title-${id}`} duration={500}
         pose={{ x: card.x - 960, y: (filmstripWidth - card.width) * 0.28125,
           scaleX: scale, scaleY: scale, opacity: card.opacity }}
         style={{ position: "absolute", left: filmstripLeft, top: 67.5, width: filmstripWidth,
           height: 97.5, justifyContent: "center", alignItems: "center", zIndex: card.depth * 10 + 1 }}>
+        <CarouselBlurView progress={titleProgress} index={index} enabled>
+        <View style={{ width: filmstripWidth, flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Text numberOfLines={1} style={{ color: "#f8fafc", fontSize: 64, lineHeight: 78,
           fontWeight: "700", textAlign: "center" }}>{names[id]}</Text>
+        </View>
+        </CarouselBlurView>
       </SceneMotionView>;
     })}
     </SceneMotionView>

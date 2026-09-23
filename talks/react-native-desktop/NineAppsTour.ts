@@ -29,10 +29,10 @@ export function renderingGroup(app: AppId) {
   const index = appOrder.indexOf(app);
   return index < 3 ? "Native views" : index < 6 ? "Browser-rendered" : "Canvas-rendered";
 }
-// Normalized screenshot crops. Tune these per capture when the final media arrives.
+// Normalized recording crops. Electron, Flutter and GPUI share these composer bounds.
 export const detailCrops = {
   sidebar: { x: 0.02, y: 0.02, width: 0.26, height: 0.50 },
-  composer: { x: 0.30, y: 0.77, width: 0.66, height: 0.21 },
+  composer: { x: 698 / 2560, y: 1208 / 1440, width: 1684 / 2560, height: 120 / 1440 },
 };
 const videoHeight = filmstripWidth * 0.5625;
 const videoTop = 555 - filmstripWidth * 0.625 / 2 + filmstripWidth * 0.0625;
@@ -50,5 +50,5 @@ export function detailCamera(detail: Detail, app?: AppId) {
   const cx = filmstripLeft + (crop.x + crop.width / 2) * filmstripWidth;
   const cy = videoTop + (crop.y + crop.height / 2) * videoHeight;
   const scale = Math.min(3, 1696 / (crop.width * filmstripWidth), 780 / (crop.height * videoHeight));
-  return { x: (960 - cx) * scale, y: (app === "react-native" ? 0 : 60) + (540 - cy) * scale, scaleX: scale, scaleY: scale };
+  return { x: (960 - cx) * scale, y: (540 - cy) * scale, scaleX: scale, scaleY: scale };
 }
