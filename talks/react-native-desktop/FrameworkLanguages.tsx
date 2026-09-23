@@ -1,5 +1,6 @@
 import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
+import { useState } from "react";
 import { Text, View } from "react-native";
 import { GlassPanels } from "./GlassPanels";
 import { branchMaterialShader } from "./BranchMaterial";
@@ -8,7 +9,7 @@ const rows = [
   ["React Native", "TypeScript"],
   ["Electron", "TypeScript"],
   ["Deno", "TypeScript"],
-  ["Tauri", "Web UI + Rust"],
+  ["Tauri", "TypeScript + Rust"],
   ["GPUI", "Rust"],
   ["AppKit", "Swift / Objective-C"],
   ["SwiftUI", "Swift"],
@@ -52,14 +53,25 @@ half4 main(float2 p) {
 if (!flowEffect) throw new Error("Could not compile language connection");
 const textStyle = { color: "#f8fafc", fontSize: 38, lineHeight: 52 } as const;
 
-// Native opacity compositing blends white into the accent on the same playback
-// timeline as the moving label, without JS-driven color updates.
-function FocusLanguage({ focused, color, label }: { focused: boolean; color: string; label: string }) {
-  return <View>
-    <Text style={{ ...textStyle, textAlign: "center" }}>{label}</Text>
+// Measure each naturally laid-out label once; native poses move the same text
+// from its table position to the center of its expanded panel.
+function MovingLabel({ focused, label, color, center, sourceLeft = 78, title = false }: {
+  focused: boolean; label: string; color: string; center: number; sourceLeft?: number; title?: boolean;
+}) {
+  const [bounds, setBounds] = useState({ x: 0, width: 0 });
+  const style = { ...textStyle, fontWeight: title ? "600" as const : undefined };
+  return <View style={{ alignSelf: "flex-start" }}
+    onLayout={({ nativeEvent: { layout } }) => setBounds(previous =>
+      previous.x === layout.x && previous.width === layout.width ? previous : { x: layout.x, width: layout.width })}>
+    <SceneMotionView pose={{ x: focused ? center - sourceLeft - bounds.x - bounds.width / 2 : 0,
+      y: focused ? (title ? 80 : 310) - tauriTop : 0,
+      scaleX: focused ? (title ? 1.8 : 1.65) : 1, scaleY: focused ? (title ? 1.8 : 1.65) : 1 }}
+    duration={850} style={{ alignSelf: "flex-start" }}>
+    <Text style={style}>{label}</Text>
     <SceneMotionView pose={{ opacity: focused ? 1 : 0 }} duration={850}
       style={{ position: "absolute", inset: 0 }}>
-      <Text style={{ ...textStyle, color, textAlign: "center" }}>{label}</Text>
+      <Text style={{ ...style, color }}>{label}</Text>
+    </SceneMotionView>
     </SceneMotionView>
   </View>;
 }
@@ -91,22 +103,19 @@ export function FrameworkLanguages() {
     <Canvas pointerEvents="none" style={{ position: "absolute", inset: 0 }}>
       <Fill><Shader source={flowEffect!} uniforms={uniforms} /></Fill>
     </Canvas>
-    {/* Keep these text nodes mounted: the row itself expands into the diagram. */}
-    <SceneMotionView pose={{ x: focused ? 720 : 0, y: focused ? 80 - tauriTop : 0, scaleX: focused ? 1.8 : 1, scaleY: focused ? 1.8 : 1 }}
-      duration={850} style={{ position: "absolute", left: -122, top: tauriTop, width: 500, height: 60 }}>
-      <Text style={{ ...textStyle, fontWeight: "600", textAlign: "center" }}>Tauri</Text>
-    </SceneMotionView>
-    <SceneMotionView pose={{ x: focused ? -533 : 0, y: focused ? 310 - tauriTop : 0, scaleX: focused ? 1.65 : 1, scaleY: focused ? 1.65 : 1 }}
-      duration={850} style={{ position: "absolute", left: 808, top: tauriTop, width: 200, height: 60 }}>
-      <FocusLanguage focused={focused} color="#83ecff" label="Web UI" />
-    </SceneMotionView>
-    <SceneMotionView pose={{ opacity: focused ? 0 : 1 }} duration={250} style={{ position: "absolute", left: 1008, top: tauriTop }}>
-      <Text style={textStyle}>+</Text>
-    </SceneMotionView>
-    <SceneMotionView pose={{ x: focused ? 192 : 0, y: focused ? 310 - tauriTop : 0, scaleX: focused ? 1.65 : 1, scaleY: focused ? 1.65 : 1 }}
-      duration={850} style={{ position: "absolute", left: 1054, top: tauriTop, width: 150, height: 60 }}>
-      <FocusLanguage focused={focused} color="#ffe0a0" label="Rust" />
-    </SceneMotionView>
+    {/* Match the other rows' layout; only transforms change on expansion. */}
+    <View style={{ position: "absolute", left: 78, top: tauriTop, width: 1540, height: 52, flexDirection: "row" }}>
+      <View style={{ width: 730 }}>
+        <MovingLabel focused={focused} label="Tauri" color="#f8fafc" center={848} title />
+      </View>
+      <View style={{ flexDirection: "row" }}>
+        <MovingLabel focused={focused} label="TypeScript" color="#83ecff" center={375} sourceLeft={808} />
+        <SceneMotionView pose={{ opacity: focused ? 0 : 1 }} duration={250}>
+          <Text style={textStyle}> + </Text>
+        </SceneMotionView>
+        <MovingLabel focused={focused} label="Rust" color="#ffe0a0" center={1321} sourceLeft={808} />
+      </View>
+    </View>
     <SceneMotionView pose={{ opacity: focused ? 1 : 0 }} duration={850} style={{ position: "absolute", inset: 0 }}>
       {focusPanels.map((panel, index) => <View key={index} style={{ position: "absolute", left: panel.x, top: 406, width: panel.width, alignItems: "center" }}>
         <Text style={{ ...textStyle, color: "#c1d8eb", fontSize: 30 }}>{index === 0 ? "Frontend" : "Native backend"}</Text>
