@@ -5,16 +5,17 @@ import { GlassPanels } from "./GlassPanels";
 import { branchMaterialShader } from "./BranchMaterial";
 
 const rows = [
-  ["React Native", "TypeScript / JavaScript"],
+  ["React Native", "TypeScript"],
+  ["Electron", "TypeScript"],
+  ["Deno", "TypeScript"],
+  ["Tauri", "Web UI + Rust"],
+  ["GPUI", "Rust"],
   ["AppKit", "Swift / Objective-C"],
   ["SwiftUI", "Swift"],
-  ["Electron", "TypeScript / JavaScript"],
-  ["Tauri", "Web UI + Rust"],
-  ["Deno", "TypeScript / JavaScript"],
   ["Flutter", "Dart"],
   ["Compose", "Kotlin"],
-  ["GPUI", "Rust"],
 ];
+const tauriTop = 102 + rows.findIndex(([name]) => name === "Tauri") * 73;
 const tablePanels = [{ x: 18, y: 16, width: 1660, height: 742, radius: 28 }];
 const focusPanels = [
   { x: 90, y: 220, width: 570, height: 390, radius: 32 },
@@ -51,6 +52,18 @@ half4 main(float2 p) {
 if (!flowEffect) throw new Error("Could not compile language connection");
 const textStyle = { color: "#f8fafc", fontSize: 38, lineHeight: 52 } as const;
 
+// Native opacity compositing blends white into the accent on the same playback
+// timeline as the moving label, without JS-driven color updates.
+function FocusLanguage({ focused, color, label }: { focused: boolean; color: string; label: string }) {
+  return <View>
+    <Text style={{ ...textStyle, textAlign: "center" }}>{label}</Text>
+    <SceneMotionView pose={{ opacity: focused ? 1 : 0 }} duration={850}
+      style={{ position: "absolute", inset: 0 }}>
+      <Text style={{ ...textStyle, color, textAlign: "center" }}>{label}</Text>
+    </SceneMotionView>
+  </View>;
+}
+
 export function FrameworkLanguages() {
   const focused = usePresentationValue("stepIndex") > 0;
   const uniforms = useAnimatedShaderUniforms({}, 8);
@@ -61,15 +74,14 @@ export function FrameworkLanguages() {
       <Text style={{ ...textStyle, position: "absolute", left: 808, top: 30, color: "#b7cde1", fontSize: 32 }}>What you write</Text>
       <View style={{ position: "absolute", left: 762, top: 16, width: 1, height: 742, backgroundColor: "#8acfff40" }} />
       {rows.map(([name], i) => <View key={name} style={{ position: "absolute", left: 20, top: 92 + i * 73, width: 1656, height: 73,
-        borderTopWidth: 1, borderColor: name === "React Native" ? "#91ebffbb" : "#8acfff40",
-        backgroundColor: name === "React Native" ? "#1bcfff24" : "transparent" }} />)}
+        borderTopWidth: 1, borderColor: "#8acfff40" }} />)}
     </SceneMotionView>
     {rows.filter(([name]) => name !== "Tauri").map(([name, language]) => {
       const index = rows.findIndex(row => row[0] === name);
       return <SceneMotionView key={name} pose={{ opacity: focused ? 0.06 : 1 }} duration={550}
         style={{ position: "absolute", left: 78, top: 102 + index * 73, width: 1540, height: 52, flexDirection: "row" }}>
-        <Text style={{ ...textStyle, width: 730, fontWeight: "600", color: name === "React Native" ? "#83ecff" : "#f8fafc" }}>{name}</Text>
-        <Text style={{ ...textStyle, color: name === "React Native" ? "#83ecff" : "#d9efff" }}>{language}</Text>
+        <Text style={{ ...textStyle, width: 730, fontWeight: "600" }}>{name}</Text>
+        <Text style={textStyle}>{language}</Text>
       </SceneMotionView>;
     })}
     <SceneMotionView pose={{ opacity: focused ? 1 : 0, scaleX: focused ? 1 : 0.88, scaleY: focused ? 1 : 0.12 }}
@@ -80,20 +92,20 @@ export function FrameworkLanguages() {
       <Fill><Shader source={flowEffect!} uniforms={uniforms} /></Fill>
     </Canvas>
     {/* Keep these text nodes mounted: the row itself expands into the diagram. */}
-    <SceneMotionView pose={{ x: focused ? 720 : 0, y: focused ? -314 : 0, scaleX: focused ? 1.8 : 1, scaleY: focused ? 1.8 : 1 }}
-      duration={850} style={{ position: "absolute", left: -122, top: 394, width: 500, height: 60 }}>
+    <SceneMotionView pose={{ x: focused ? 720 : 0, y: focused ? 80 - tauriTop : 0, scaleX: focused ? 1.8 : 1, scaleY: focused ? 1.8 : 1 }}
+      duration={850} style={{ position: "absolute", left: -122, top: tauriTop, width: 500, height: 60 }}>
       <Text style={{ ...textStyle, fontWeight: "600", textAlign: "center" }}>Tauri</Text>
     </SceneMotionView>
-    <SceneMotionView pose={{ x: focused ? -533 : 0, y: focused ? -84 : 0, scaleX: focused ? 1.65 : 1, scaleY: focused ? 1.65 : 1 }}
-      duration={850} style={{ position: "absolute", left: 808, top: 394, width: 200, height: 60 }}>
-      <Text style={{ ...textStyle, color: "#83ecff", textAlign: "center" }}>Web UI</Text>
+    <SceneMotionView pose={{ x: focused ? -533 : 0, y: focused ? 310 - tauriTop : 0, scaleX: focused ? 1.65 : 1, scaleY: focused ? 1.65 : 1 }}
+      duration={850} style={{ position: "absolute", left: 808, top: tauriTop, width: 200, height: 60 }}>
+      <FocusLanguage focused={focused} color="#83ecff" label="Web UI" />
     </SceneMotionView>
-    <SceneMotionView pose={{ opacity: focused ? 0 : 1 }} duration={250} style={{ position: "absolute", left: 1008, top: 394 }}>
+    <SceneMotionView pose={{ opacity: focused ? 0 : 1 }} duration={250} style={{ position: "absolute", left: 1008, top: tauriTop }}>
       <Text style={textStyle}>+</Text>
     </SceneMotionView>
-    <SceneMotionView pose={{ x: focused ? 192 : 0, y: focused ? -84 : 0, scaleX: focused ? 1.65 : 1, scaleY: focused ? 1.65 : 1 }}
-      duration={850} style={{ position: "absolute", left: 1054, top: 394, width: 150, height: 60 }}>
-      <Text style={{ ...textStyle, color: "#ffe0a0", textAlign: "center" }}>Rust</Text>
+    <SceneMotionView pose={{ x: focused ? 192 : 0, y: focused ? 310 - tauriTop : 0, scaleX: focused ? 1.65 : 1, scaleY: focused ? 1.65 : 1 }}
+      duration={850} style={{ position: "absolute", left: 1054, top: tauriTop, width: 150, height: 60 }}>
+      <FocusLanguage focused={focused} color="#ffe0a0" label="Rust" />
     </SceneMotionView>
     <SceneMotionView pose={{ opacity: focused ? 1 : 0 }} duration={850} style={{ position: "absolute", inset: 0 }}>
       {focusPanels.map((panel, index) => <View key={index} style={{ position: "absolute", left: panel.x, top: 406, width: panel.width, alignItems: "center" }}>
