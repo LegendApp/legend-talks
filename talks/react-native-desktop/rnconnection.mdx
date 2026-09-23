@@ -49,6 +49,7 @@ import { SharedRoots } from "./SharedRoots"
 import musicIcon from "./rnconnection-assets/music-icon.png";
 import markdownIcon from "./rnconnection-assets/markdown-icon.png";
 import { NineApps } from "./NineApps"
+import { FrameworkLanguages } from "./FrameworkLanguages"
 import { NativeReactions } from "./NativeReactions"
 import { AppShowcase } from "./AppCarousel"
 import { MovingTitle } from "./MovingTitle"
@@ -259,6 +260,26 @@ For Deno, I tested both a system WebView and bundled Chromium through CEF. Same 
 3. And then there are frameworks that draw their own UI. Flutter, Compose Multiplatform, and GPUI, which is the Rust framework behind Zed.
 
 They can all talk to the OS. The difference here is who draws the content inside the window.
+-->
+
+---
+title: What you write
+---
+
+# What you write {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<FrameworkLanguages />
+
+<!--
+These aren't just different renderers. They're different languages and ecosystems.
+
+With React Native, I'm writing TypeScript and React. AppKit can be Swift or Objective-C, and SwiftUI is Swift.
+
+The browser ones let you build the UI with web technologies. Tauri also has Rust on the native side. These are the usual application languages, not every language each framework can call into.
+
+Then Dart for Flutter, Kotlin for Compose, and Rust for GPUI.
+
+I don't know all of these languages. And I never intended to build the same app in all of them. But AI made that experiment practical.
 -->
 
 ---
