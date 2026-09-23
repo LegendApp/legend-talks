@@ -75,9 +75,9 @@ export function AppShowcase({ apps, title }: { apps: string[]; title: string }) 
         <View style={{ height: card.captionHeight, alignItems: "center", justifyContent: "center" }}>
           <Text style={{ color: "#f8fafc", fontSize: card.width * 0.035, fontWeight: "600" }}>{name}</Text>
         </View>
-        <View style={{ flex: 1, borderRadius: 12, overflow: "hidden", backgroundColor: "#101e30" }}>
+        <View style={{ flex: 1, overflow: "hidden" }}>
           {isPreview ? <Image source={{ uri: recording.poster }} resizeMode="contain" style={{ width: "100%", height: "100%" }} />
-            : <LocalRecording {...recording} playing={phase === "playing" && apps[step] === name} />}
+            : <LocalRecording {...recording} transparent playing={phase === "playing" && apps[step] === name} />}
         </View>
       </View>;
     }} />

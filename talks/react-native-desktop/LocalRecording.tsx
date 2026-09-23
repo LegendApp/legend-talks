@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Image } from "react-native";
 import { WebView } from "react-native-webview";
 
-export function LocalRecording({ page, poster, playing }: { page: string; poster: string; playing: boolean }) {
+export function LocalRecording({ page, poster, playing, transparent = false }: { page: string; poster: string; playing: boolean; transparent?: boolean }) {
+  const backgroundColor = transparent ? "transparent" : "#101e30";
   const videoReadAccess = page.slice(0, page.lastIndexOf("/") + 1);
   const player = useRef<WebView>(null);
   const [frameReady, setFrameReady] = useState(false);
@@ -21,8 +22,8 @@ export function LocalRecording({ page, poster, playing }: { page: string; poster
       onError={() => setFrameReady(false)}
       onLoadEnd={syncPlayback}
       containerStyle={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
-      scrollEnabled={false} style={{ flex: 1, backgroundColor: "#101e30" }} />
+      scrollEnabled={false} style={{ flex: 1, backgroundColor }} />
     {!frameReady && <Image source={{ uri: poster }} resizeMode="contain"
-      style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, zIndex: 1, backgroundColor: "#101e30" }} />}
+      style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, zIndex: 1, backgroundColor }} />}
   </>;
 }
