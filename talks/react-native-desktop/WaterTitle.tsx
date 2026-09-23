@@ -166,7 +166,7 @@ half4 main(float2 p) {
     half4 result=half4(0);
     if(growth()>.01 && local.x>bestRect.x && local.x<bestRect.x+bestRect.z && local.y>bestRect.y && local.y<bestRect.y+bestRect.w) result=sourceInk(local);
     float2 before=titleUV(p);
-    if(before.x<bestRect.x || before.x>bestRect.x+bestRect.z || p.y>lineSplit) result+=title(p)*(1.0-smoothstep(0.0,.5,t))*(1.0-result.a);
+    if(before.x<bestRect.x || before.x>bestRect.x+bestRect.z || p.y>lineSplit) result+=title(p)*(1.0-smoothstep(0.0,1.0,t))*(1.0-result.a);
     for(int i=0;i<72;i++) {
       float4 drop=drops[i],neck=necks[i];
       if(drop.z<.1)continue;
