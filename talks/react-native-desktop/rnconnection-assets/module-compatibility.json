@@ -760,6 +760,22 @@
         ],
         "runtimeTested": false
       }
+    },
+    {
+      "name": "react-native-enriched-markdown",
+      "source": "https://github.com/software-mansion/enriched-markdown",
+      "macos": "working",
+      "windows": "unsupported",
+      "statusNote": "Supports macOS via react-native-macos and requires Fabric on native platforms. Windows is not a supported native target. Slides uses the macOS implementation with local patches.",
+      "architectureAudit": {
+        "checkedAt": "2026-09-23",
+        "architecture": "new",
+        "evidence": [
+          "https://github.com/software-mansion/enriched-markdown",
+          "https://github.com/software-mansion/enriched-markdown/blob/main/docs/MACOS.md"
+        ],
+        "runtimeTested": false
+      }
     }
   ],
   "replacementSelection": {
