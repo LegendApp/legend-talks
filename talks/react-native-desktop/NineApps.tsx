@@ -1,5 +1,5 @@
-import { CarouselBlurView, usePlaybackTween, FocusRegion, SceneMotionView, SharedElement, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
-import { useState } from "react";
+import { CarouselBlurView, useNativeVideo, usePlaybackTween, FocusRegion, SceneMotionView, SharedElement, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
+import { Canvas, Image as SkiaImage } from "@shopify/react-native-skia";
 import { ComposerGlassTakeover } from "./ComposerGlassTakeover";
 import { DeckBackground } from "./DeckBackground";
 import { detailCamera, tourStep } from "./NineAppsTour";
@@ -70,7 +70,6 @@ export default function NineAppsFrame({ children }: PresentationTemplateProps) {
 }
 
 export function NineApps({ mode: requestedMode }: { mode?: SceneMode }) {
-  const [glassFrame, setGlassFrame] = useState<string>();
   const step = usePresentationValue("stepIndex");
   const mode = requestedMode ?? (step === 0 ? "hero" : step === 1 ? "grid" : "filmstrip");
   const tourIndex = requestedMode ? step : Math.max(0, step - 2);
@@ -78,6 +77,8 @@ export function NineApps({ mode: requestedMode }: { mode?: SceneMode }) {
   const isPreview = usePresentationValue("isPreview");
   const tour = tourStep(tourIndex);
   const selected = mode === "filmstrip" ? appOrder.indexOf(tour.app) : 0;
+  const gpuiVideo = useNativeVideo(isPreview ? null : gpuiPage.replace(/\.html$/, ".mp4"),
+    mode === "filmstrip" && phase === "playing" && tour.app === "gpui" && tour.detail !== "takeover");
   const titleProgress = usePlaybackTween({ position: selected }, 500);
   const camera = detailCamera(mode === "filmstrip" ? tour.detail : "app", tour.app);
   return <FocusRegion id="nine-apps-stage" style={{ width: 1920, height: 1080, overflow: "hidden" }}>
@@ -99,8 +100,13 @@ export function NineApps({ mode: requestedMode }: { mode?: SceneMode }) {
           </View>
           <View style={{ flex: 1, borderRadius: 12, overflow: "hidden" }}>
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#14253a" }}>
-              {!isPreview ?
-                <LocalRecording {...recordings[id]} onPausedFrame={id === "gpui" && tour.detail === "takeover" ? setGlassFrame : undefined} playing={mode !== "grid" && phase === "playing" && id === appOrder[selected] && tour.detail !== "takeover"} />
+              {!isPreview && id === "gpui" ? <>
+                <Image source={{ uri }} resizeMode="contain" style={{ width: "100%", height: "100%" }} />
+                <Canvas style={{ position: "absolute", left: 0, top: 0, width: card.width, height: card.height - captionHeight }}>
+                  <SkiaImage image={gpuiVideo.currentFrame} x={0} y={0} width={card.width} height={card.height - captionHeight} fit="contain" />
+                </Canvas>
+              </> : !isPreview ?
+                <LocalRecording {...recordings[id]} playing={mode !== "grid" && phase === "playing" && id === appOrder[selected] && tour.detail !== "takeover"} />
               : <Image source={{ uri }} resizeMode="contain" style={{ width: "100%", height: "100%" }} />}
             </View>
           </View>
@@ -126,6 +132,6 @@ export function NineApps({ mode: requestedMode }: { mode?: SceneMode }) {
     })}
     </SceneMotionView>
     </View>
-    {mode === "filmstrip" && tour.detail === "takeover" && <ComposerGlassTakeover frame={glassFrame} />}
+    {mode === "filmstrip" && tour.detail === "takeover" && <ComposerGlassTakeover frame={gpuiVideo.currentFrame} />}
   </FocusRegion>;
 }

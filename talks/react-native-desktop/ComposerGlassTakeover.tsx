@@ -1,4 +1,5 @@
-import { Canvas, Fill, ImageShader, Shader, Skia, useImage } from "@shopify/react-native-skia";
+import { Canvas, Fill, ImageShader, Shader, Skia, type SkImage } from "@shopify/react-native-skia";
+import type { SharedValue } from "react-native-reanimated";
 import { useAnimatedShaderUniforms } from "@legend-apps/presentation";
 import { takeoverComposerRect } from "./NineAppsTour";
 
@@ -82,13 +83,11 @@ const videoScale = rect.width / 1684;
 const videoRect = { x: rect.x - 698 * videoScale, y: rect.y - 1208 * videoScale,
   width: 2560 * videoScale, height: 1440 * videoScale };
 
-export function ComposerGlassTakeover({ frame }: { frame?: string }) {
-  const image = useImage(frame ?? null);
+export function ComposerGlassTakeover({ frame }: { frame: SharedValue<SkImage | null> }) {
   const uniforms = useAnimatedShaderUniforms(initialUniforms, 3, { clock: "step" });
-  if (!image) return null;
   return <Canvas pointerEvents="none" style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080, zIndex: 3000 }}>
     <Fill><Shader source={effect!} uniforms={uniforms}>
-      <ImageShader image={image} fit="fill" rect={videoRect} tx="clamp" ty="clamp" />
+      <ImageShader image={frame} fit="fill" rect={videoRect} tx="clamp" ty="clamp" />
     </Shader></Fill>
   </Canvas>;
 }

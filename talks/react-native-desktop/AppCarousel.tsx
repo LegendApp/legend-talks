@@ -77,7 +77,7 @@ export function AppShowcase({ apps, title }: { apps: string[]; title: string }) 
         </View>
         <View style={{ flex: 1, overflow: "hidden" }}>
           {isPreview ? <Image source={{ uri: recording.poster }} resizeMode="contain" style={{ width: "100%", height: "100%" }} />
-            : <LocalRecording {...recording} transparent playing={phase === "playing" && apps[step] === name} />}
+            : <LocalRecording {...recording} extension="mov" transparent playing={phase === "playing" && apps[step] === name} />}
         </View>
       </View>;
     }} />
