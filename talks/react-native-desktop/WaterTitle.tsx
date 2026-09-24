@@ -173,6 +173,22 @@ half4 main(float2 p) {
       float2 size=float2(drop.z);
       if(drop.w==5.0) size=(drop.x<=10.0 || drop.x>=1910.0)?float2(drop.z*(1.0-.55*neck.w),drop.z*(1.0+2.3*neck.w)):float2(drop.z*(1.0+2.3*neck.w),drop.z*(1.0-.55*neck.w));
       float d=(length((p-drop.xy)/size)-1.0)*min(size.x,size.y);
+      // Reuse the closing slide's four-bead impact splash, rotated inward
+      // from whichever edge this simulated drop actually struck. neck.w is
+      // the impact age normalized over 0.45s, so replay/reset stays in sync.
+      if(drop.w==5.0 && neck.w<1.0) {
+        float hit=neck.w*0.45;
+        float fade=1.0-smoothstep(0.25,0.45,hit);
+        float2 inward=drop.x<=10.0 ? float2(1,0) : drop.x>=1910.0 ? float2(-1,0)
+          : drop.y<=10.0 ? float2(0,1) : float2(0,-1);
+        float2 tangent=float2(-inward.y,inward.x);
+        for(int bead=0;bead<4;bead++) {
+          float side=float(bead)-1.5;
+          float2 pos=drop.xy+tangent*side*85.0*hit
+            +inward*(115.0*hit-230.0*hit*hit);
+          d=min(d,length(p-pos)-2.7*fade);
+        }
+      }
       if(drop.w==3.0 && neck.z>0.0) {
         float2 segment=drop.xy-neck.xy;
         float u=clamp(dot(p-neck.xy,segment)/max(.001,dot(segment,segment)),0.0,1.0);
