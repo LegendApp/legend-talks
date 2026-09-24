@@ -611,7 +611,7 @@
       "name": "react-native-webview",
       "source": "https://github.com/react-native-webview/react-native-webview",
       "macos": "working",
-      "windows": "unsupported",
+      "windows": "in-progress",
       "statusNote": "Default npm latest 14.0.1 supports macOS Fabric but not Windows Fabric. Windows Fabric landed in v15; v16 also exists, but is not npm latest. v16 has an open blank-URL-source report (#3990). The Windows cross is for the default release, not a claim that no Fabric implementation exists.",
       "architectureAudit": {
         "checkedAt": "2026-09-22",

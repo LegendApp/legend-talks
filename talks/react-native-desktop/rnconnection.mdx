@@ -78,6 +78,8 @@ import slidesIcon from "./rnconnection-assets/slides-icon.png";
 This is a pretty big claim. Best is a very absolute word and I do not use it lightly. So to back up that claim I gathered a lot of evidence and have been working on making React Native on desktop better.
 
 3. But before I get to that let’s start at the beginning
+
+[Transition is automatic]
 -->
 
 ---
@@ -115,7 +117,7 @@ eyebrow: Story
 <MovingTitle><StoryMoment kind="discovery" /></MovingTitle>
 
 <!--
-1. I'd seen the talks about React Native on desktop, but I hadn't really tried it. So I started playing with it on macOS.
+1. I'd seen the conference talks by Microsoft about React Native on desktop, but I hadn't really tried it. So I started playing with it on macOS.
 
 2. But then I made some test apps to try it, and it was seriously really good.
 
@@ -134,13 +136,15 @@ template: ./NineApps.tsx
 <AppShowcase title="Then I made apps I wanted" apps={["Legend Photos", "Legend Music"]} />
 
 <!--
-1. I started with Legend Photos because I wanted to see how a list would perform with lots of images. It was incredible. It opened super fast, animations were very smooth, the app just flwe.
+1. I started with Legend Photos because I wanted to see how a list in a grid would perform with lots of images. It was incredible. It opened super fast, animations were very smooth, the app just flew.
 
 2. And then I made Legend Music, to try to recreate the winamp experience in a modern mac app.
 
-That's what got me excited. These apps both felt so much better than the Electron apps I was using. Small, instant, native UI.
+That's when I got super excited. These apps both felt so much better than the Electron apps I was using. Small, instant, native UI.
 
 I felt a connection to my computer that I hadn’t felt in years. No delays, no load times, the app just felt natural to use.
+
+So I tweeted about it.
 -->
 
 ---
@@ -189,11 +193,11 @@ template: ./NineApps.tsx
 <AppShowcase title="So I kept building" apps={["Code", "Diff", "Chat History"]} />
 
 <!--
-1. I just kept building apps because it was awesome. Next I built⁠ Legend Code, to see if Legend List could power a code editor. It turns out that it can. It’s the fastest text editor I’ve found. It’s still just a prototype but shows a lot of promise.
+1. I just kept building apps because it was awesome. Next I built⁠ Legend Code, to see if Legend List could power a code editor. It turns out that it can. It’s the fastest text editor I’ve found. It’s still just a prototype but it shows a lot of promise.
 
 2. Then Legend Diff, because I wanted a fast way to view diffs from AI and other apps slowed me down. Somehow this React Native app is faster than every native diffing app I tried.
 
-3. Chat History, because AI apps are all built as webview apps and just so unbelievably slow. So I wanted to see how much faster I could make it.
+3. Then Chat History, because AI apps are all built as webview apps and are just so unbelievably slow. So I wanted to see how much faster I could make it.
 
 I released first versions of all of these already, and they all share a monorepo of libraries for doing all the native things I needed. So each one I work on makes all of them better.
 -->
@@ -207,8 +211,6 @@ eyebrow: Story
 <SharedRoots icons={[musicIcon, chatIcon, codeIcon, diffIcon, markdownIcon]} />
 
 <!--
-And I'm working on a Markdown app too.
-
 These apps all do pretty different things, but they all need a lot of the same desktop stuff.
 
 So I ended up building a big toolset, where I can pump out new apps very fast with all of this shared code. And every one of these apps is the fastest in its class, often by a wide margin.
@@ -227,7 +229,7 @@ eyebrow: Story
 <MovingTitle><StoryMoment kind="question" /></MovingTitle>
 
 <!--
-1. But it seems like it’s actually faster. These apps are better than every other app.
+1. But it seems like React Native is actually faster.
 
 Maybe my apps were too simple. Maybe I was comparing them to poorly built apps. Maybe I just really wanted React Native to win.
 
@@ -250,13 +252,13 @@ eyebrow: Story
 <!--
 1. First, a quick desktop framework tour, because most of us spend our time on mobile.
 
-AppKit is basically the macOS equivalent of UIKit. SwiftUI is Apple's newer declarative framework, same as on mobile. And of course React Native macOS uses native views.
+AppKit is basically the macOS equivalent of UIKit. SwiftUI is Apple's newer declarative framework, same as on mobile. And of course React Native uses native views.
 
-2. Then there are the browser ones. Electron brings Chromium and Node with your app. Tauri uses the system WebView with a Rust backend.
+2. Then there are the browser ones. Electron bundles Chromium and Node with your app. Tauri uses the system WebView with a Rust backend.
 
-For Deno, I tested both a system WebView and bundled Chromium through CEF. Same basic idea: the content is HTML and CSS.
+For Deno, I tested both a system WebView and bundled Chromium through CEF. 
 
-3. And then there are frameworks that draw their own UI. Flutter, Compose Multiplatform, and GPUI, which is the Rust framework behind Zed.
+3. And then there are frameworks that render every pixel on a canvas. Flutter, Compose Multiplatform, and GPUI, which is the Rust framework behind Zed.
 
 They can all integrate with the OS. But they’re very different in how they run code and power the UI.
 -->
@@ -271,13 +273,15 @@ steps: 2
 <FrameworkLanguages />
 
 <!--
-These aren't just different renderers. They're different languages and ecosystems.
+1. These are all different languages and ecosystems.
 
-With React Native, I'm writing TypeScript and React. AppKit can be Swift or Objective-C, and SwiftUI is Swift.
+With React Native, I'm writing TypeScript and React. AppKit can be Swift or Objective-C, and SwiftUI is obviously Swift.
 
-The browser ones let you build the UI with web technologies. Tauri also has Rust on the native side. These are the usual application languages, not every language each framework can call into.
+The browser ones let you build the UI with web technologies.
 
-Then Dart for Flutter, Kotlin for Compose, and Rust for GPUI.
+Then Rust for GPUI, Dart for Flutter, Kotlin for Compose.
+
+2. Tauri is a weird one. It’s javascript on the web side and Rust on the native side. So you need to know both.
 
 I don't know all of these languages. And I never intended to build the same app in all of them. But AI made that experiment practical.
 -->
@@ -291,30 +295,11 @@ title: Monthly package downloads
 <PackageDownloadsChart />
 
 <!--
-These are package downloads, not people or apps. Same 30-day window: August 23 through September 21, 2026.
+Looking at package downloads is interesting. People often tell me that nobody builds desktop apps, mobile is where the market is. 
 
-React Native is the main react-native package: 48,356,761. Expo is expo: 31,804,819. Those include mobile, and Expo projects also use React Native. Don't add these together as separate users.
+But Electron has almost as many users as Expo. And if you add Tauri to that, there’s more desktop developers than Expo developers.
 
-Electron is electron: 24,689,555. Tauri is @tauri-apps/cli: 8,326,594. Deno is deno: 611,982. GPUI is gpui on crates.io: 71,756.
-
-Deno covers only its npm installer, not other installation methods or desktop UI projects. Tauri can also be installed through Cargo. GPUI counts all crate versions, including the API's extra_downloads, but excludes direct Git dependencies. Caching and CI differ across registries, so this isn't a fair ranking of total adoption.
-
-Flutter itself is an SDK dependency; the discontinued flutter package on pub.dev is not a valid measure. I couldn't find public Compose download counts in Maven Central or the Gradle Plugin Portal. Count unavailable means unknown, not zero.
-
-Flutter's 3.44 announcement reports 1.5 million monthly developers and 1.3 billion downloads across all of pub.dev in 30 days. Those are different metrics; neither belongs in a single-package downloads chart. Maven Central offers publisher download analytics, but not a public Compose monthly count I could verify.
-
-Sources:
-https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/react-native
-https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/expo
-https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/electron
-https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/@tauri-apps/cli
-https://api.npmjs.org/downloads/point/2026-08-23:2026-09-21/deno
-https://crates.io/api/v1/crates/gpui/downloads
-https://dart.dev/tools/pub/dependencies#sdk
-https://central.sonatype.org/publish/publish-portal-insights/
-https://flutter.dev/blog/whats-new-in-flutter-3-44
-https://plugins.gradle.org/plugin/org.jetbrains.compose
-Methodology: https://github.com/npm/registry/blob/main/docs/download-counts.md
+So it seems like the desktop app opportunity is at least as big as mobile.
 -->
 
 ---
@@ -328,13 +313,13 @@ footer: 'September 17 report · macOS / Apple M4 · implementation comparison'
 <MeasurementTimeline />
 
 <!--
-1. I needed a measurement system that’s very correct to compare them. Of course they start with opening the app.
+1. So let’s get into the measuring. I needed a measurement system that’s very correct to compare them.
 
 2. At first I had the apps report their own load times. But they were measuring different things. A framework saying it's ready doesn't mean the user can see anything yet.
 
-So I had it record videos and analyze the frames. Here's the click. Here's the window.
+So I had it record videos and analyze the frames. Start from the click, open the window.
 
-3. And here's the frame where the content actually appears. That's the thing I wanted to measure.
+3. And then there’s the frame where the content actually appears. That's the thing I wanted to measure.
 
 So the benchmark works by recording video and finding the frame where content appears, and making sure it looks like it’s supposed to.
 
@@ -807,12 +792,12 @@ title: "Why isn't everyone doing this?"
 
 
 ---
-title: "What’s holding desktop back"
+title: "What’s holding RN desktop back"
 steps: 3
 eyebrow: Story
 ---
 
-# What’s holding desktop back {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+# What’s holding RN desktop back {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
 
 <DesktopObjections />
 
@@ -965,12 +950,12 @@ You do still need a native build for building to production. And installing a na
 
 
 ---
-title: "What’s holding desktop back"
+title: "What’s holding RN desktop back"
 steps: 3
 eyebrow: Story
 ---
 
-# What’s holding desktop back {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+# What’s holding RN desktop back {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
 
 <DesktopObjections returning />
 
