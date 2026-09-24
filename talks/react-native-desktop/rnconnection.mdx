@@ -197,7 +197,7 @@ template: ./NineApps.tsx
 
 2. Then Legend Diff, because I wanted a fast way to view diffs from AI and other apps were slowing me down. Somehow this React Native app is faster than every native diffing app I tried.
 
-3. Then Chat History, because AI apps are all built as webview apps and are just so unbelievably slow. So I wanted to see how much faster I could make it.
+3. Then Chat History, because AI apps are all built as webview apps and are just so unbelievably slow. So I wanted to see how much faster I could make it. It turned out much faster than every other chat app.
 
 I released first versions of all of these already, and they all share a monorepo of libraries for doing all the native things I needed. So each one I work on makes all of them better.
 -->
@@ -252,11 +252,11 @@ eyebrow: Story
 <!--
 1. First, a quick desktop framework tour, because most of us spend our time on mobile.
 
-AppKit is basically the macOS equivalent of UIKit. SwiftUI is Apple's newer declarative framework, same as on mobile. And of course React Native uses native views.
+AppKit is basically the macOS equivalent of UIKit. SwiftUI is Apple's newer framework, same as on mobile. And of course React Native uses native views.
 
 2. Then there are the browser ones. Electron bundles Chromium and Node with your app. Tauri uses the system WebView with a Rust backend.
 
-For Deno, I tested both a system WebView and bundled Chromium through CEF.
+For Deno, I tested both a system WebView and bundled Chromium.
 
 3. And then there are frameworks that render every pixel on a canvas. Flutter, Compose Multiplatform, and GPUI, which is the Rust framework behind Zed.
 
