@@ -25,7 +25,7 @@ const hide = [{ time: 0, x: 0, y: 0, opacity: 1 }, { time: 380, x: 0, y: 0, opac
 const boxGeometry = [{ x: 5, y: 5, width: 502, height: 96, radius: 28 }];
 const titleReveal = [{ time: 0, x: 0, y: 0, opacity: 0 }, { time: 800, x: 0, y: 0, opacity: 1 }];
 export function FrameTitle({ icon, revealDelay }: { icon: string; revealDelay?: number }) {
-  const title = <View style={{ flexDirection: "row", alignItems: "center" }}>
+  const title = <View style={{ flexDirection: "row", alignItems: "center", gap: 28 }}>
       <Image source={{ uri: icon }} style={{ width: 140, height: 140 }} resizeMode="contain" />
       <Text style={{ color: "white", fontSize: 70, fontWeight: "600" }}>Legend Spark</Text>
     </View>;
