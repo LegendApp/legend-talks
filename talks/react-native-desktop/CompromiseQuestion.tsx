@@ -19,7 +19,7 @@ export function CompromiseQuestion() {
           <Text style={textStyle} onLayout={event => setNativeWidth(event.nativeEvent.layout.width)}>React Native</Text>
         </SceneMotionView>
         <SceneMotionView pose={{ x: question ? -nativeWidth - gap : 0 }} duration={800}>
-          <View style={{ minWidth: 72 }} onLayout={event => setIsWidth(event.nativeEvent.layout.width)}>
+          <View onLayout={event => setIsWidth(event.nativeEvent.layout.width)}>
             <SceneMotionView pose={{ opacity: question ? 0 : 1 }} delay={320} duration={320}>
               <Text numberOfLines={1} style={textStyle}>is</Text>
             </SceneMotionView>
