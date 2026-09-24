@@ -81,9 +81,9 @@ const source = [
   ['  </Text>', '#67e8f9'],
   ['</View>', '#67e8f9'],
 ];
-export function SlidesAuthoring({ icon }: { icon: string }) {
+export function SlidesAuthoring({ icon, showHeader = true }: { icon: string; showHeader?: boolean }) {
   return <View style={{ width: 1696, height: 880 }}>
-    <SlidesHeader icon={icon} />
+    {showHeader && <SlidesHeader icon={icon} />}
     <GlassPanels panels={authorPanels} width={1696} height={880} />
     <Text style={{ position: "absolute", top: 150, left: 4, width: 910, color: "#f8fafc", fontSize: 42, textAlign: "center", fontWeight: "600" }}>Markdown + React Native</Text>
     <Text style={{ position: "absolute", top: 150, left: 1004, width: 688, color: "#f8fafc", fontSize: 42, textAlign: "center", fontWeight: "600" }}>Your slide</Text>

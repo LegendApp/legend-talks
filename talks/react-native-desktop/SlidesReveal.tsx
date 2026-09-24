@@ -67,7 +67,7 @@ const effect = Skia.RuntimeEffect.Make(slidesShatterShader);
 if (!effect) throw new Error("Could not compile Slides screenshot shatter");
 const linkReveal = [{ time: 0, x: 0, y: 0, opacity: 0 }, { time: 650, x: 0, y: 0, opacity: 1 }];
 
-export function SlidesReveal({ icon, children }: { icon: string; children: ReactNode }) {
+export function SlidesReveal({ icon, children, authoring }: { icon: string; children: ReactNode; authoring: ReactNode }) {
   const screenshotImage = useImage(screenshotAsset);
   const step = usePresentationValue("stepIndex");
   const uniforms = useAnimatedShaderUniforms({}, 4, { clock: "step" });
@@ -85,10 +85,15 @@ export function SlidesReveal({ icon, children }: { icon: string; children: React
     </Canvas>}
     {step === 2 && <View style={{ position: "absolute", top: 0, width: 1696 }}>
       <PlaybackKeyframeView keyframes={linkReveal} delay={1600} previewTime={4}>
+        {authoring}
+      </PlaybackKeyframeView>
+    </View>}
+    {step === 3 && <View style={{ position: "absolute", top: 0, width: 1696 }}>
+      <PlaybackKeyframeView keyframes={linkReveal} previewTime={4}>
         {children}
       </PlaybackKeyframeView>
     </View>}
-    {step >= 3 && <View style={{ position: "absolute", top: 405, width: 1696 }}>
+    {step >= 4 && <View style={{ position: "absolute", top: 405, width: 1696 }}>
       <PlaybackKeyframeView keyframes={linkReveal} previewTime={4}>
         <GitHubLink repository="LegendApp/legend-apps" label="Legend Slides on GitHub" />
       </PlaybackKeyframeView>

@@ -1049,10 +1049,10 @@ Well, I have. You've been looking at it this whole time.
 
 ---
 title: Legend Slides
-steps: 4
+steps: 5
 ---
 
-<SlidesReveal icon={slidesIcon}>
+<SlidesReveal icon={slidesIcon} authoring={<SlidesAuthoring icon={slidesIcon} showHeader={false} />}>
   <SlidesFeatures icon={slidesIcon} showHeader={false}>
     <TypeGPUShader code={slidesFeatureParticles} width={520} height={580} particles particleCount={1536} previewTime={3} />
   </SlidesFeatures>
@@ -1063,25 +1063,15 @@ steps: 4
 
 2. The presenter and audience views are separate native windows. The deck is Markdown and MDX. I can edit the source right in the app with the code editor component I made for the code app, and it can use native components and shaders for all this ridiculous stuff.
 
-3. It uses Reanimated for the animations. Skia does the drawing, glass, and ripples.
+3. And the deck is just Markdown. Write a heading. Write some text. When I need more, I can put React Native components right in the Markdown.
+
+This hopefully is also good proof about how great React Native on desktop is.
+
+4. It uses Reanimated for the animations. Skia does the drawing, glass, and ripples.
 
 I'm using TypeGPU for the particles. This one has 1500 particles moving on the GPU.
 
-4. It's open source. It's still early and I barely got it working in time for this talk. But I’m really happy with it so I’ll keep polishing it and use it for all of my future talks.
--->
-
----
-title: Markdown and React Native
----
-
-<SlidesAuthoring icon={slidesIcon} />
-
-<!--
-And the deck is just Markdown. Write a heading. Write some text.
-
-When I need more, I can put React Native components right in the Markdown.
-
-This hopefully is also good proof about how great React Native on desktop is.
+5. It's open source. It's still early and I barely got it working in time for this talk. But I’m really happy with it so I’ll keep polishing it and use it for all of my future talks.
 -->
 
 ---
