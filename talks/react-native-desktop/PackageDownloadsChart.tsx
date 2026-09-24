@@ -12,7 +12,7 @@ export function PackageDownloadsChart() {
   return <View style={{ width: chartLayout.width, height: chartLayout.height,
     marginTop: chartLayout.marginTop, alignSelf: "center" }}>
     {rows.map((row, index) => <BenchmarkRow key={row.package}
-      name={row.name}
+      name={row.name} highlighted={false}
       value={row.downloads} maximum={maximum} valueLabel={compactCount(row.downloads)}
       y={chartLayout.top + index * chartLayout.rowSpacing} />)}
     {downloads.unavailable.map(({ name }, index) => <View key={name} style={{ position: "absolute",

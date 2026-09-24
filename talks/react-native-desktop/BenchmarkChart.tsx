@@ -10,13 +10,12 @@ export type Metric = "content" | "memory" | "size" | "jump" | "switch";
 const units: Record<Metric, string> = { content: "ms", memory: "MB", size: "MB", jump: "ms", switch: "ms" };
 
 /** Separate sibling markers keep text rigid while only the bar changes width. */
-export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grouped = false, duration = 650, decimals = 0, valueLabel }: {
+export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grouped = false, duration = 650, decimals = 0, valueLabel, highlighted = name === "React Native" }: {
   name: string; value: number; maximum: number; metric?: Metric; y: number;
-  groupColor?: string; grouped?: boolean; duration?: number; decimals?: number; valueLabel?: string;
+  groupColor?: string; grouped?: boolean; duration?: number; decimals?: number; valueLabel?: string; highlighted?: boolean;
 }) {
   const id = `benchmark-${name}`;
   const animateEntrance = useSharedElementEntrance(`${id}-bar`);
-  const highlighted = name === "React Native";
   const width = Math.max(2, value / maximum * chartLayout.barWidth);
   return <ScenePositionView y={y} duration={duration} style={{ left: 0, width: chartLayout.width, height: chartLayout.rowHeight }}>
     <SharedElement id={`${id}-label`} resize="preserve" style={{ position: "absolute", left: 0, top: 0, width: 280, height: chartLayout.rowHeight }}>
