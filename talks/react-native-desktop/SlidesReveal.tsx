@@ -80,7 +80,7 @@ export function SlidesReveal({ icon, children }: { icon: string; children: React
     {screenshotImage && <Canvas pointerEvents="none" accessibilityLabel="Legend Slides presenter window screenshot"
       style={{ position: "absolute", left: -112, top: -100, width: 1920, height: 1180 }}>
       <Fill><Shader source={effect!} uniforms={uniforms}>
-        <ImageShader image={screenshotImage} fit="fill" rect={{ x: 0, y: 0, width: 1040, height: 710.638 }} tx="clamp" ty="clamp" />
+        <ImageShader image={screenshotImage} fit="contain" rect={{ x: 0, y: 0, width: 1040, height: 710.638 }} tx="clamp" ty="clamp" />
       </Shader></Fill>
     </Canvas>}
     {step === 2 && <View style={{ position: "absolute", top: 0, width: 1696 }}>
