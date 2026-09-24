@@ -103,12 +103,12 @@ const families = [
 
 export function RendererFamilies() {
   const step = usePresentationValue("stepIndex");
-  return <View style={{ width: 1696, height: 650, marginTop: 50, flexDirection: "row", gap: 56, alignSelf: "center" }}>
+  return <View style={{ width: 1696, height: 720, marginTop: 50, flexDirection: "row", gap: 56, alignSelf: "center" }}>
     {families.map(([name, description], index) => <SceneMotionView key={name}
       pose={{ opacity: step >= index ? 1 : 0.2 }} duration={600} style={{ width: 528, alignItems: "center" }}>
       <Text style={{ color: "#f8fafc", fontSize: 38, fontWeight: "600", marginBottom: 22 }}>{name}</Text>
       <GlassWindow family={index} />
-      <Text style={{ color: "#e5f2fa", fontSize: 36, lineHeight: 44, textAlign: "center", marginTop: 16 }}>{description}</Text>
+      <Text style={{ color: "#e5f2fa", fontSize: 44, lineHeight: 62, textAlign: "center", marginTop: 16 }}>{description}</Text>
     </SceneMotionView>)}
   </View>;
 }
