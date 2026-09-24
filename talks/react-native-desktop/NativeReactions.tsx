@@ -21,12 +21,12 @@ const textLeft = (1696 - widths.reduce((sum, width) => sum + width, 0)) / 2;
 const letterX = (index: number) => textLeft + widths.slice(0, index).reduce((sum, width) => sum + width, 0) + widths[index] / 2;
 const titleY = 386;
 const reactions = [
-  { uri: nativeCocoa, x: 420, y: 165, rotation: "-6deg", anchor: 2, height: 220 },
-  { uri: mutuallyExclusive, x: 1280, y: 180, rotation: "6deg", anchor: 6, height: 190 },
-  { uri: appkit, x: 400, y: 427, rotation: "4deg", anchor: 10, height: 195 },
-  { uri: bareMetal, x: 1286, y: 455, rotation: "-4deg", anchor: 14, height: 215 },
-  { uri: lowMemory, x: 426, y: 700, rotation: "-5deg", anchor: 18, height: 195 },
-  { uri: rnFan, x: 1270, y: 713, rotation: "4deg", anchor: 21, height: 190 },
+  { uri: nativeCocoa, x: 390, y: 125, rotation: "-4deg", anchor: 2, height: 242 },
+  { uri: mutuallyExclusive, x: 1306, y: 145, rotation: "4deg", anchor: 6, height: 209 },
+  { uri: appkit, x: 370, y: 427, rotation: "3deg", anchor: 10, height: 215 },
+  { uri: bareMetal, x: 1320, y: 455, rotation: "-3deg", anchor: 14, height: 237 },
+  { uri: lowMemory, x: 390, y: 735, rotation: "-4deg", anchor: 18, height: 215 },
+  { uri: rnFan, x: 1300, y: 755, rotation: "3deg", anchor: 21, height: 209 },
 ];
 const letterFade = [{ time: 0, x: 0, y: 0, opacity: 1 }, { time: 200, x: 0, y: 0, opacity: 1 }, { time: 800, x: 0, y: 0, opacity: 0 }];
 const cardFade = [{ time: 0, x: 0, y: 0, opacity: 0 }, { time: 100, x: 0, y: 0, opacity: 0 }, { time: 650, x: 0, y: 0, opacity: 1 }];
@@ -38,8 +38,8 @@ export function NativeReactions() {
       pose={{ x: revealed ? reaction.x - letterX(reaction.anchor) : 0, y: revealed ? reaction.y - titleY : 0,
         scaleX: revealed ? 1 : 0.025, scaleY: revealed ? 1 : 0.025, opacity: revealed ? 1 : 0 }}
       duration={1500}
-      style={{ position: "absolute", left: letterX(reaction.anchor) - 400, top: titleY - reaction.height / 2,
-        width: 800, height: reaction.height }}>
+      style={{ position: "absolute", left: letterX(reaction.anchor) - 440, top: titleY - reaction.height / 2,
+        width: 880, height: reaction.height }}>
       {revealed && <PlaybackKeyframeView keyframes={cardFade} style={{ flex: 1 }}>
         <View style={{ flex: 1, transform: [{ rotate: reaction.rotation }], borderRadius: 18,
           borderWidth: 1.5, borderColor: "#8bdcff", backgroundColor: "#06111d",
