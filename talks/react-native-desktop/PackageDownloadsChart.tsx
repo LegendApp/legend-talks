@@ -15,7 +15,7 @@ export function PackageDownloadsChart() {
     marginTop: chartLayout.marginTop, alignSelf: "center" }}>
     {rows.map((row, index) => <BenchmarkRow key={row.package}
       name={row.name} highlighted={false}
-      grouped={emphasizeElectron && row.package === "electron"} groupColor="#f28b91"
+      grouped={emphasizeElectron && row.package === "electron"} groupColor="#f28b91" tintText={row.package === "electron"}
       value={row.downloads} maximum={maximum} valueLabel={compactCount(row.downloads)}
       y={chartLayout.top + index * chartLayout.rowSpacing} />)}
     {downloads.unavailable.map(({ name }, index) => <View key={name} style={{ position: "absolute",
