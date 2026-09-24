@@ -89,8 +89,8 @@ export function SlidesReveal({ icon, children }: { icon: string; children: React
   return <View style={{ width: 1696, height: 880, alignSelf: "center" }}>
     {/* Put the initial shared-header bounds in the center in actual layout.
         Only the screenshot step moves it; navigation must not target the top. */}
-    <SceneMotionView style={{ position: "absolute", top: 300, width: 1696, zIndex: 2 }}
-      pose={{ y: step >= 1 ? -300 : 0 }} duration={650}>
+    <SceneMotionView style={{ position: "absolute", top: (880 - 100) / 2, width: 1696, zIndex: 2 }}
+      pose={{ y: step >= 1 ? -(880 - 100) / 2 : 0 }} duration={650}>
       <SlidesHeader icon={icon} />
     </SceneMotionView>
     <Canvas pointerEvents="none" accessibilityLabel="Legend Slides screenshot placeholder"
