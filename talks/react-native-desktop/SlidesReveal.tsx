@@ -24,7 +24,8 @@ float4 screenshot(float2 p) {
   return screenshotImage.eval(p+float2(520,355.319))*a;
 }
 half4 main(float2 p) {
-  p-=float2(960,570);
+  // Enlarge both the intact screenshot and its shards with one camera transform.
+  p=(p-float2(960,600))/1.18;
   if(stepIndex<1.0 || stepIndex>2.0) return half4(0);
   if(stepIndex<2.0) {
     float entrance=smoothstep(0.0,0.65,time);
