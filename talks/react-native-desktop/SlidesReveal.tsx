@@ -1,7 +1,7 @@
 import { Canvas, Fill, ImageShader, Shader, Skia, useImage } from "@shopify/react-native-skia";
 import { PlaybackKeyframeView, ScenePositionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import type { ReactNode } from "react";
-import { View } from "react-native";
+import { Linking, Pressable, Text, View } from "react-native";
 import { SlidesHeader } from "./StoryDiagrams";
 import { GitHubLink } from "./GitHubLink";
 
@@ -96,6 +96,10 @@ export function SlidesReveal({ icon, children, authoring }: { icon: string; chil
     {step >= 4 && <View style={{ position: "absolute", top: 405, width: 1696 }}>
       <PlaybackKeyframeView keyframes={linkReveal} previewTime={4}>
         <GitHubLink repository="LegendApp/legend-apps" label="Legend Slides on GitHub" />
+        <Pressable accessibilityRole="link" accessibilityLabel="legend.so" onPress={() => Linking.openURL("https://legend.so")}
+          style={{ alignSelf: "center", padding: 16, marginTop: 24 }}>
+          <Text style={{ color: "#68ddff", fontSize: 54, fontWeight: "600" }}>legend.so</Text>
+        </Pressable>
       </PlaybackKeyframeView>
     </View>}
   </View>;
