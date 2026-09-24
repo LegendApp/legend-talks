@@ -1,4 +1,4 @@
-import { Canvas, Fill, ImageShader, Shader, Skia, useImage } from "@shopify/react-native-skia";
+import { Canvas, Fill, ImageShader, Path, Shader, Skia, useImage } from "@shopify/react-native-skia";
 import { PlaybackKeyframeView, ScenePositionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import type { ReactNode } from "react";
 import { Linking, Pressable, Text, View } from "react-native";
@@ -96,9 +96,12 @@ export function SlidesReveal({ icon, children, authoring }: { icon: string; chil
     {step >= 4 && <View style={{ position: "absolute", top: 405, width: 1696 }}>
       <PlaybackKeyframeView keyframes={linkReveal} previewTime={4}>
         <GitHubLink repository="LegendApp/legend-apps" label="Legend Slides on GitHub" />
-        <Pressable accessibilityRole="link" accessibilityLabel="legend.so" onPress={() => Linking.openURL("https://legend.so")}
-          style={{ alignSelf: "center", padding: 16, marginTop: 24 }}>
-          <Text style={{ color: "#68ddff", fontSize: 54, fontWeight: "600" }}>legend.so</Text>
+        <Pressable accessibilityRole="link" accessibilityLabel="https://legend.so" onPress={() => Linking.openURL("https://legend.so")}
+          style={{ alignSelf: "center", padding: 16, marginTop: 24, flexDirection: "row", alignItems: "center", gap: 22 }}>
+          <Canvas style={{ width: 56, height: 56 }}>
+            <Path path="M 28 4 A 24 24 0 1 0 28 52 A 24 24 0 1 0 28 4 M 4 28 H 52 M 28 4 C 12 18 12 38 28 52 C 44 38 44 18 28 4" color="white" style="stroke" strokeWidth={2.5} strokeCap="round" strokeJoin="round" />
+          </Canvas>
+          <Text style={{ color: "#68ddff", fontSize: 54, fontWeight: "600" }}>https://legend.so</Text>
         </Pressable>
       </PlaybackKeyframeView>
     </View>}
