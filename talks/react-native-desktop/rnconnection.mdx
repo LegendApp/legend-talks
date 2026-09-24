@@ -43,7 +43,7 @@ import { PlatformVersions } from "./PlatformVersions";
 import macosReleaseTracker from "./rnconnection-assets/macos-release-tracker.png";
 import { ExpoDesktopPortal } from "./ExpoDesktopPortal";
 import frameIcon from "./rnconnection-assets/legend-frame.png";
-import frameRunnerScreenshot from "./rnconnection-assets/frame-runner-cli.png";
+import { FrameRunnerDemo } from "./FrameRunnerDemo";
 import { DesktopFoundationsJourney } from "./DesktopFoundations"
 import { DesktopObjections } from "./DesktopObjections"
 import { SharedRoots } from "./SharedRoots"
@@ -944,14 +944,19 @@ And here's what it's like to use.
 
 ---
 title: Frame Runner
+steps: 2
 ---
 
 # Frame Runner {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
 
-<Image source={{ uri: frameRunnerScreenshot }} style={{ width: 760 * 1042 / 1318, height: 760, alignSelf: "center", borderRadius: 24, overflow: "hidden" }} resizeMode="contain" accessibilityLabel="Frame CLI running Metro with Fast Refresh and a command to open the macOS app in Frame Runner" />
+<FrameRunnerDemo />
 
 <!--
 It also includes a Frame Runner app with those modules and common libraries like Reanimated and Skia already built in. It’s similar to something like Expo Go for desktop.
+
+[Advance to the highlighted commands.]
+
+Press g to switch desktop to a development build. Press d to open the prebuilt macOS runtime. Press b to build and open the macOS development build.
 
 You just write JavaScript, press d, and your app opens. You don’t need a native build. You don't even need Xcode.
 
