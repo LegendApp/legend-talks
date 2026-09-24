@@ -49,7 +49,7 @@ export function AppCarousel<T extends string>({ items, position, mode = "filmstr
     const card = appCardLayout(index, mode, 0, cardWidth);
     const height = cardWidth * 0.625;
     return <FilmstripMotionView key={id} index={index} count={items.length} enabled={mode === "filmstrip"} position={position}
-      style={{ position: "absolute", left: 960 + index * 900 - cardWidth / 2, top: 555 - height / 2,
+      style={{ position: "absolute", left: 960 - cardWidth / 2, top: 555 - height / 2,
         width: cardWidth, height, zIndex: card.depth }}>
       <SceneMotionView duration={550} pose={{ x: card.x - (960 + index * 900), y: card.y - 555,
         scaleX: card.width / cardWidth, scaleY: card.width / cardWidth }} style={{ flex: 1 }}>
