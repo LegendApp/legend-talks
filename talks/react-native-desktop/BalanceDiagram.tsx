@@ -64,7 +64,7 @@ const refractionSource = `
 `;
 const refraction = Skia.RuntimeEffect.Make(refractionSource);
 if (!refraction) throw new Error("Could not compile the Venn text refraction shader");
-const frameworkFont = matchFont({ fontFamily: "Helvetica Neue", fontSize: 30 });
+const frameworkFont = matchFont({ fontFamily: "Helvetica Neue", fontSize: 40 });
 
 function Glass({ fail = false, children }: { fail?: boolean; children: ReactNode }) {
   const uniforms = useAnimatedShaderUniforms({ fail: fail ? 1 : 0 }, 8);
@@ -127,19 +127,19 @@ const failBadges = [makeBadge("Fail", 260, 360, 226, -Math.PI / 2, 3.4, "rgba(78
 function Framework({ name, x, y }: { name: string; x: number; y: number }) {
   const font = frameworkFont;
   const width = font.measureText(name).width;
-  return <SkiaText text={name} font={font} x={x - width / 2} y={y + 11}
+  return <SkiaText text={name} font={font} x={x - width / 2} y={y + 14}
     color="#ffffff" />;
 }
 
 export function BalanceDiagram() {
   const showFail = usePresentationValue("stepIndex") > 0;
-  return <View accessible accessibilityLabel={showFail ? "Performance, Memory, Native UI: React Native and AppKit meet all three; GPUI meets Performance and Memory; SwiftUI meets Memory and Native UI. Fail: Flutter, Tauri, Electron, Deno, Compose" : "Performance, Memory, Native UI: React Native and AppKit meet all three; GPUI meets Performance and Memory; SwiftUI meets Memory and Native UI"} style={{ width: 1696, height: 740, alignSelf: "center", marginTop: 16, overflow: "hidden", transform: [{ scale: 0.94 }] }}>
+  return <View accessible accessibilityLabel={showFail ? "Performance, Memory, Native UI: React Native and AppKit meet all three; GPUI meets Performance and Memory; SwiftUI meets Memory and Native UI. Fail: Flutter, Tauri, Electron, Deno, Compose" : "Performance, Memory, Native UI: React Native and AppKit meet all three; GPUI meets Performance and Memory; SwiftUI meets Memory and Native UI"} style={{ width: 1696, height: 740, alignSelf: "center", marginTop: 16, overflow: "hidden", transform: [{ scale: 1.02 }] }}>
     <SceneMotionView duration={480} pose={{ x: showFail ? 0 : 348 }}
       style={{ position: "absolute", width: 1000, height: 740 }}>
       <Glass>
       <Framework name="GPUI" x={500} y={150} />
       <Framework name="React Native" x={500} y={335} />
-      <Framework name="AppKit" x={500} y={385} />
+      <Framework name="AppKit" x={500} y={395} />
       <Framework name="SwiftUI" x={660} y={450} />
       </Glass>
     </SceneMotionView>
