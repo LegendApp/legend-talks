@@ -23,8 +23,9 @@ export function CompromiseQuestion() {
             <SceneMotionView pose={{ opacity: question ? 0 : 1 }} delay={320} duration={320}>
               <Text numberOfLines={1} style={textStyle}>is</Text>
             </SceneMotionView>
-            <SceneMotionView pose={{ opacity: question ? 1 : 0 }} delay={320} duration={320} style={{ position: "absolute", top: 0, left: 0, right: 0 }}>
-              <Text numberOfLines={1} style={textStyle}>Is</Text>
+            <SceneMotionView pose={{ opacity: question ? 1 : 0 }} delay={320} duration={320} style={{ position: "absolute", top: 0, left: 0, width: 120 }}>
+              {/* Independent overlay width avoids clipping the wider capital I without adding row spacing. */}
+              <Text style={textStyle}>Is</Text>
             </SceneMotionView>
           </View>
         </SceneMotionView>
