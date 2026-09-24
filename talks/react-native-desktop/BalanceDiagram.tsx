@@ -38,8 +38,8 @@ const glassSource = deformationSource + `
     if (fail > 0.5) {
       return bubble(p, float2(260, 360), 226.0, float3(0.53, 0.25, 0.30), 3.4);
     }
-    half4 performance = bubble(p, float2(365,275), 255.0, float3(0.20,0.56,0.57), 0.0);
-    half4 memory = bubble(p, float2(635,275), 255.0, float3(0.31,0.45,0.70), 2.0);
+    half4 performance = bubble(p, float2(395,275), 255.0, float3(0.20,0.56,0.57), 0.0);
+    half4 memory = bubble(p, float2(605,275), 255.0, float3(0.31,0.45,0.70), 2.0);
     half4 nativeUI = bubble(p, float2(500,450), 255.0, float3(0.51,0.38,0.68), 4.2);
     return over(nativeUI, over(memory, performance));
   }
@@ -58,8 +58,8 @@ const refractionSource = `
     float strength = pow(0.5 + 0.5 * wave, 3.0);
     float2 offset = float2(sin(p.y * 0.012 + t), cos(p.x * 0.01 - t)) * strength * 4.0;
     half4 ink = image.eval(p + offset);
-    // Passing light subtly changes the lettering as the lens travels across it.
-    return half4(min(ink.rgb * (0.78 + strength * 0.34), float3(ink.a)), ink.a);
+    // Refract the lettering without tinting or dimming its pure white ink.
+    return ink;
   }
 `;
 const refraction = Skia.RuntimeEffect.Make(refractionSource);
@@ -118,8 +118,8 @@ function makeBadge(label: string, x: number, y: number, radius: number, angle: n
   };
 }
 const vennBadges = [
-  makeBadge("Performance", 365, 275, 255, -2.478, 0, "rgba(34,74,79,0.8)"),
-  makeBadge("Memory", 635, 275, 255, -0.664, 2, "rgba(44,57,85,0.8)"),
+  makeBadge("Performance", 395, 275, 255, -2.478, 0, "rgba(34,74,79,0.8)"),
+  makeBadge("Memory", 605, 275, 255, -0.664, 2, "rgba(44,57,85,0.8)"),
   makeBadge("Native UI", 500, 450, 255, Math.PI / 2, 4.2, "rgba(62,46,78,0.8)", true),
 ];
 const failBadges = [makeBadge("Fail", 260, 360, 226, -Math.PI / 2, 3.4, "rgba(78,40,49,0.8)")];
