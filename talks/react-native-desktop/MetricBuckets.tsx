@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 import { metrics } from "./MetricBucketDefinitions";
 import benchmarks from "./rnconnection-assets/benchmarks.json";
 
-// All chat comparisons share the mixed-build reference measurements.
+// All chat comparisons share the latest reference measurements.
 const rows = benchmarks.chat;
 
 

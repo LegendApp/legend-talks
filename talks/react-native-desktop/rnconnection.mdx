@@ -564,7 +564,7 @@ So what does that look like in the measurements?
 ---
 eyebrow: 'Chat History / first content'
 steps: 2
-footer: 'Video-derived ms · mixed-build reference · GPUI and Tauri single runs'
+footer: 'Video-derived ms · September 24 reference'
 ---
 
 # Chat History · first content {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
@@ -580,7 +580,7 @@ AppKit is of course the fastest. GPUI and React Native are a bit behind.
 
 Tauri loads pretty fast since it’s the builtin webview whereas the other web based frameworks have to run a full chromium instance.
 
-Electron takes about 1.28 seconds. That's roughly three times as long as React Native in this app.
+Electron takes about 1.19 seconds. That's roughly three times as long as React Native in this app.
 
 So React Native isn't the absolute fastest, but it’s very close, and this is doing real app work now.
 -->
@@ -598,19 +598,19 @@ footer: 'Settled physical footprint · MB · includes attributed helper processe
 <!--
 1. Now let’s look at memory.
 
-Of course AppKit is the lowest at 44 MB. React Native is 57. GPUI is 80 and SwiftUI is 87.
+Of course AppKit is the lowest at 46 MB. React Native is 57. GPUI is 65 and SwiftUI is 89.
 
 2. Now let’s make some buckets.
 
 Tauri is pretty close, but it’s 2 and a half times more than React Native.
 
-The bundled-browser apps are huge because they run full instances of Chromium. Using the system WebView can reduce the download size, but it doesn't make the running app free. I don't know what Flutter and Compose are doing.
+The bundled-browser apps are huge because they run full instances of Chromium. Using the system WebView can reduce the download size, but it doesn't make the running app free. Flutter is down to about 111 MB now. Compose still uses about 366 MB.
 -->
 
 ---
 eyebrow: 'Chat History / jump to top'
 steps: 2
-footer: 'Video-derived action-to-visible-result ms · mixed builds · lower is better'
+footer: 'Video-derived action-to-visible-result ms · September 24 reference · lower is better'
 ---
 
 # Chat History · jump to top {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
@@ -620,7 +620,7 @@ footer: 'Video-derived action-to-visible-result ms · mixed builds · lower is b
 <!--
 1. And now we measure actually using the app. First we jump scroll to the top of a conversation. This is the kind of interaction that makes an app feel fast.
 
-React Native does this in about 51 milliseconds, with a Legend List. GPUI is right behind at 55.
+React Native does this in about 54 milliseconds, with a Legend List. GPUI is slightly ahead at 51.
 
 2. And let’s bucket it.
 
@@ -630,7 +630,7 @@ So React Native and GPUI do it in under 4 frames. Native frameworks and webview 
 ---
 eyebrow: 'Chat History / switch'
 steps: 2
-footer: 'Video-derived action-to-visible-result ms · mixed builds · lower is better'
+footer: 'Video-derived action-to-visible-result ms · September 24 reference · lower is better'
 ---
 
 # Chat History · switch conversation {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
@@ -640,7 +640,7 @@ footer: 'Video-derived action-to-visible-result ms · mixed builds · lower is b
 <!--
 1. And then let’s try switching conversations. AppKit does really well at this one. React Native slower, but that’s largely a LegendList problem so I can try to make that faster.
 
-2. GPUI and Tauri are similarly fast. Compose does relatively well in this one. SwiftUI is an actual native framework but it really struggles here. And of course Electron is very slow. That’s almost 4 times slower than React Native
+2. GPUI and Tauri are similarly fast. Compose does relatively well in this one. SwiftUI is an actual native framework but it really struggles here. And of course Electron is very slow. That’s about 3 times slower than React Native
 -->
 
 ---
