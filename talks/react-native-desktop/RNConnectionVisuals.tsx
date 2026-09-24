@@ -76,7 +76,7 @@ export function NativeDataDiagram() {
 
 export function PlatformDiagram({ scope = false }: { scope?: boolean }) {
   return <View style={{ alignItems: "center", marginTop: 20 }}>
-    <Text style={{ color: white, fontSize: 38 }}>{scope ? "Legend Frame" : "Shared React logic"}</Text>
+    <Text style={{ color: white, fontSize: 38 }}>{scope ? "Legend Spark" : "Shared React logic"}</Text>
     <View style={{ width: 2, height: 45, backgroundColor: line }} />
     <View style={{ width: 1050, height: 2, backgroundColor: line }} />
     <View style={{ flexDirection: "row", gap: 70 }}>

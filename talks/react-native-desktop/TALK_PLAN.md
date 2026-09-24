@@ -32,7 +32,7 @@ reasons to accept a weaker desktop experience.
 | 3–8 min | Look at the combination: speed, memory, native UI. | First-content, interaction, and memory charts; size as supporting evidence; a synthesis slide connecting results to rendering approach. |
 | 8–11 min | React is composing a native application. | Native views, native data ownership, a short React/native interface example, and real desktop behavior from the apps. |
 | 11–13 min | And then you get React—and potentially every platform. | Familiar React/TypeScript, fast iteration, shared product logic across mobile, desktop, and web, with platform-appropriate interfaces. |
-| 13–17 min | Let's make this easier to build and ship. | Introduce Legend Framework, its desktop capabilities, development workflow, current release scope, and longer-term ambition. |
+| 13–17 min | Let's make this easier to build and ship. | Introduce Legend Spark, its desktop capabilities, development workflow, current release scope, and longer-term ambition. |
 | 17–20 min | This presentation is another example. Join in. | Reveal Legend Slides, announce its planned open-source 0.0.1 release, show GitHub links, and invite developers and maintainers to participate. |
 
 ## The comparison is the centerpiece
@@ -153,7 +153,7 @@ and framework links clearly labeled:
 
 - Slides source: https://github.com/LegendApp/legend-apps/tree/main/apps/slides
   (verify the public default branch/path and release destination before making QR codes).
-- Framework: https://github.com/LegendApp/legend-framework
+- Framework: https://github.com/LegendApp/legend-spark
   (verify public availability and onboarding before the talk).
 
 Close with two concrete asks: developers, try building a desktop app; library

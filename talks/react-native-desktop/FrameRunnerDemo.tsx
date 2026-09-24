@@ -16,7 +16,7 @@ export function FrameRunnerDemo() {
       x: focused ? 72 : 0, y: focused ? -405 : 0 }} duration={1000}
       style={{ position: "absolute", left: (1696 - width) / 2, width, height: 760 }}>
       <Image source={{ uri: screenshot }} style={{ width, height: 760, borderRadius: 16 }} resizeMode="contain"
-        accessibilityLabel="Frame Runner CLI. Press g: switch desktop to development build. Press d: open macOS prebuilt runtime. Press b: build and open macOS development build." />
+        accessibilityLabel="Spark Runner CLI. Press g: switch desktop to development build. Press d: open macOS prebuilt runtime. Press b: build and open macOS development build." />
       <SceneMotionView pose={{ opacity: focused ? 1 : 0 }} duration={850} style={{ position: "absolute", inset: 0 }}>
         {dimBands.map(([top, bottom]) => <View key={top} style={{ position: "absolute", left: 0, right: 0,
           top: top * scale, height: (bottom - top) * scale, backgroundColor: "#181818d9" }} />)}

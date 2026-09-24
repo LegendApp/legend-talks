@@ -24,7 +24,7 @@ export function StoryMoment({ kind }: { kind: "discovery" | "question" | "frame"
   </View>;
   const quotes = kind === "question" ? ["Was I just imagining it?", "So I measured it"]
     : kind === "objections" ? ["“I’d build native”", "“Electron has an ecosystem”", "“It’s hard to get started”"]
-    : kind === "frame" ? ["Legend Frame", "Electron’s ambition.\nReact Native’s foundation."]
+    : kind === "frame" ? ["Legend Spark", "Electron’s ambition.\nReact Native’s foundation."]
     : ["Please help", "Please help"];
   const current = Math.min(step, quotes.length - 1);
   return <View style={{ height: 420, justifyContent: "center" }}>

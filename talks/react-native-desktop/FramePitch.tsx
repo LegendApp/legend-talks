@@ -10,7 +10,7 @@ const effect = Skia.RuntimeEffect.Make(objectionGlassShader
   .replace("float elapsed = min(mix(time,6.0,settled),6.0);", "float elapsed = clamp(time,0.0,6.0);")
   .replaceAll("-240.0", "-65.0").replaceAll("238.0", "65.0")
   .replaceAll("-245.0", "-65.0").replaceAll("246.0", "65.0"));
-if (!effect) throw new Error("Could not compile Frame foundation reveal");
+if (!effect) throw new Error("Could not compile Spark foundation reveal");
 const imports = [
   ["useNativeMenu", "menus"],
   ["createTray", "tray"],
@@ -27,7 +27,7 @@ const titleReveal = [{ time: 0, x: 0, y: 0, opacity: 0 }, { time: 800, x: 0, y: 
 export function FrameTitle({ icon, revealDelay }: { icon: string; revealDelay?: number }) {
   const title = <View style={{ flexDirection: "row", alignItems: "center" }}>
       <Image source={{ uri: icon }} style={{ width: 140, height: 140 }} resizeMode="contain" />
-      <Text style={{ color: "white", fontSize: 70, fontWeight: "600" }}>Legend Frame</Text>
+      <Text style={{ color: "white", fontSize: 70, fontWeight: "600" }}>Legend Spark</Text>
     </View>;
   return <MovingTitle style={{ height: 150, alignItems: "center", justifyContent: "center" }}>
     {revealDelay === undefined ? title : <PlaybackKeyframeView keyframes={titleReveal} delay={revealDelay} previewTime={10}>{title}</PlaybackKeyframeView>}
@@ -39,7 +39,7 @@ export function FramePitch({ icon }: { icon: string }) {
     <View style={{ marginTop: 50, alignSelf: "center" }}>
       {imports.map(([name, path], index) => <PlaybackKeyframeView key={path} keyframes={reveal} delay={index * 550} previewTime={5} clock="slide">
         <Text style={{ color: "white", fontFamily: "Menlo", fontSize: 27, marginBottom: 34 }}>
-          {"import { "}<Text style={{ color: "#83dfff" }}>{name}</Text>{` } from "@legendapp/frame/${path}"`}
+          {"import { "}<Text style={{ color: "#83dfff" }}>{name}</Text>{` } from "@legendapp/spark/${path}"`}
         </Text>
       </PlaybackKeyframeView>)}
     </View>
@@ -86,7 +86,7 @@ half4 main(float2 p) {
   return half4(min(light,float3(a)),a);
 }`;
 const branches = Skia.RuntimeEffect.Make(foundationBranchesShader);
-if (!branches) throw new Error("Could not compile Frame foundation branches");
+if (!branches) throw new Error("Could not compile Spark foundation branches");
 function FoundationBox({ title }: { title: string }) {
   return <View style={{ width: 512, height: 106, alignItems: "center", justifyContent: "center" }}>
     <GlassPanels panels={boxGeometry} width={512} height={106} />

@@ -36,7 +36,7 @@ npm `latest` is **14.0.1**, while GitHub’s latest release is **16.0.0**. Windo
 
 ## Expo Modules
 
-These are upstream Expo packages, without Frame adapters or desktop forks. They use Expo Modules Core: [platform registration](https://github.com/expo/expo/blob/3c760625d530c6b13508a0e8498744b42065056b/packages/expo-modules-core/expo-module.config.json) and [macOS/Fabric pod configuration](https://github.com/expo/expo/blob/3c760625d530c6b13508a0e8498744b42065056b/packages/expo-modules-core/ExpoModulesCore.podspec). The upstream native runtime registers Apple/Android, not Windows. Browser fallback files are not Windows native implementations. macOS support presumes a compatible Expo Modules Core/RN-macOS integration (such as the desktop setup discussed in the talk), not stock create-expo-app desktop support.
+These are upstream Expo packages, without Spark adapters or desktop forks. They use Expo Modules Core: [platform registration](https://github.com/expo/expo/blob/3c760625d530c6b13508a0e8498744b42065056b/packages/expo-modules-core/expo-module.config.json) and [macOS/Fabric pod configuration](https://github.com/expo/expo/blob/3c760625d530c6b13508a0e8498744b42065056b/packages/expo-modules-core/ExpoModulesCore.podspec). The upstream native runtime registers Apple/Android, not Windows. Browser fallback files are not Windows native implementations. macOS support presumes a compatible Expo Modules Core/RN-macOS integration (such as the desktop setup discussed in the talk), not stock create-expo-app desktop support.
 
 | Library | npm latest inspected | macOS | Windows | Evidence and qualification |
 | --- | --- | --- | --- | --- |

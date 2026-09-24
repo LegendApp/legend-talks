@@ -847,7 +847,7 @@
       "macos": "working",
       "windows": "unsupported",
       "monthlyDownloads": 35787647,
-      "statusNote": "macOS pod target and native Constants implementation through Expo Modules Core. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "statusNote": "macOS pod target and native Constants implementation through Expo Modules Core. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Spark adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
       "architectureAudit": {
         "checkedAt": "2026-09-22",
         "architecture": "new",
@@ -888,7 +888,7 @@
       "macos": "working",
       "windows": "unsupported",
       "monthlyDownloads": 32531594,
-      "statusNote": "macOS target and native asset downloading implementation through Expo Modules Core. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "statusNote": "macOS target and native asset downloading implementation through Expo Modules Core. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Spark adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
       "architectureAudit": {
         "checkedAt": "2026-09-22",
         "architecture": "new",
@@ -908,7 +908,7 @@
       "macos": "unsupported",
       "windows": "unsupported",
       "monthlyDownloads": 30471274,
-      "statusNote": "macOS is declared in the podspec, but isActivated returns false and setActivated only acts on iOS/tvOS. It compiles without implementing its core behavior on macOS. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "statusNote": "macOS is declared in the podspec, but isActivated returns false and setActivated only acts on iOS/tvOS. It compiles without implementing its core behavior on macOS. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Spark adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
       "architectureAudit": {
         "checkedAt": "2026-09-22",
         "architecture": "new",
@@ -928,7 +928,7 @@
       "macos": "partial",
       "windows": "unsupported",
       "monthlyDownloads": 30314014,
-      "statusNote": "macOS font loading is implemented, but renderToImageAsync is excluded with #if !os(macOS). Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "statusNote": "macOS font loading is implemented, but renderToImageAsync is excluded with #if !os(macOS). Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Spark adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
       "architectureAudit": {
         "checkedAt": "2026-09-22",
         "architecture": "new",
@@ -948,7 +948,7 @@
       "macos": "working",
       "windows": "unsupported",
       "monthlyDownloads": 22339293,
-      "statusNote": "macOS pod target and Expo Linking module. It imports requireNativeModule(ExpoLinking), so JS delegation to RN Linking does not make the entire package Windows-compatible. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "statusNote": "macOS pod target and Expo Linking module. It imports requireNativeModule(ExpoLinking), so JS delegation to RN Linking does not make the entire package Windows-compatible. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Spark adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
       "architectureAudit": {
         "checkedAt": "2026-09-22",
         "architecture": "new",
@@ -969,7 +969,7 @@
       "macos": "unsupported",
       "windows": "unsupported",
       "monthlyDownloads": 20844456,
-      "statusNote": "Published podspec omits macOS; iOS/visionOS implementation is not a macOS module. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "statusNote": "Published podspec omits macOS; iOS/visionOS implementation is not a macOS module. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Spark adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
       "architectureAudit": {
         "checkedAt": "2026-09-22",
         "architecture": "new",
@@ -989,7 +989,7 @@
       "macos": "working",
       "windows": "unsupported",
       "monthlyDownloads": 18764052,
-      "statusNote": "Explicit macOS NSWindow/WKWebView implementation and macOS authentication session path. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "statusNote": "Explicit macOS NSWindow/WKWebView implementation and macOS authentication session path. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Spark adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
       "architectureAudit": {
         "checkedAt": "2026-09-22",
         "architecture": "new",
@@ -1009,7 +1009,7 @@
       "macos": "unsupported",
       "windows": "unsupported",
       "monthlyDownloads": 17815881,
-      "statusNote": "Published EXApplication podspec omits macOS; native implementation is mobile-oriented. Main renamed the podspec to ExpoApplication; that is not the audited published file. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "statusNote": "Published EXApplication podspec omits macOS; native implementation is mobile-oriented. Main renamed the podspec to ExpoApplication; that is not the audited published file. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Spark adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
       "architectureAudit": {
         "checkedAt": "2026-09-22",
         "architecture": "new",
@@ -1029,7 +1029,7 @@
       "macos": "working",
       "windows": "unsupported",
       "monthlyDownloads": 17437092,
-      "statusNote": "Published macOS target and explicit NSImage/NSFont symbol rendering branch; ExpoView is supplied by Expo Modules Core. Symbol effects retain OS-version requirements. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "statusNote": "Published macOS target and explicit NSImage/NSFont symbol rendering branch; ExpoView is supplied by Expo Modules Core. Symbol effects retain OS-version requirements. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Spark adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
       "architectureAudit": {
         "checkedAt": "2026-09-22",
         "architecture": "new",
@@ -1049,7 +1049,7 @@
       "macos": "unsupported",
       "windows": "unsupported",
       "monthlyDownloads": 16371548,
-      "statusNote": "Published podspec omits macOS; no upstream RN Windows native implementation. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "statusNote": "Published podspec omits macOS; no upstream RN Windows native implementation. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Spark adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
       "architectureAudit": {
         "checkedAt": "2026-09-22",
         "architecture": "new",
@@ -1068,7 +1068,7 @@
       "macos": "unsupported",
       "windows": "unsupported",
       "monthlyDownloads": 15595012,
-      "statusNote": "Published podspec omits macOS; iOS UIKit image view does not establish RN-macOS support. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "statusNote": "Published podspec omits macOS; iOS UIKit image view does not establish RN-macOS support. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Spark adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
       "architectureAudit": {
         "checkedAt": "2026-09-22",
         "architecture": "new",
@@ -1088,7 +1088,7 @@
       "macos": "unsupported",
       "windows": "unsupported",
       "monthlyDownloads": 15387478,
-      "statusNote": "Published podspec targets iOS/tvOS, not macOS. iOS Liquid Glass is not evidence of a macOS Expo module. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "statusNote": "Published podspec targets iOS/tvOS, not macOS. iOS Liquid Glass is not evidence of a macOS Expo module. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Spark adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
       "architectureAudit": {
         "checkedAt": "2026-09-22",
         "architecture": "new",
@@ -1108,7 +1108,7 @@
       "macos": "working",
       "windows": "unsupported",
       "monthlyDownloads": 14196052,
-      "statusNote": "macOS target and platform-independent Apple crypto implementation through Expo Modules Core. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "statusNote": "macOS target and platform-independent Apple crypto implementation through Expo Modules Core. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Spark adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
       "architectureAudit": {
         "checkedAt": "2026-09-22",
         "architecture": "new",
@@ -1128,7 +1128,7 @@
       "macos": "unsupported",
       "windows": "unsupported",
       "monthlyDownloads": 13701891,
-      "statusNote": "Published podspec omits macOS; no macOS picker integration. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "statusNote": "Published podspec omits macOS; no macOS picker integration. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Spark adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
       "architectureAudit": {
         "checkedAt": "2026-09-22",
         "architecture": "new",
@@ -1148,7 +1148,7 @@
       "macos": "unsupported",
       "windows": "unsupported",
       "monthlyDownloads": 11775708,
-      "statusNote": "Published podspec omits macOS; device code does not supply a macOS target. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Frame adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
+      "statusNote": "Published podspec omits macOS; device code does not supply a macOS target. Windows: published Expo Modules Core registers Apple/Android only; no upstream Windows native implementation. Spark adapters, forks, web fallbacks and Expo Desktop replacement modules are outside this upstream-package table.",
       "architectureAudit": {
         "checkedAt": "2026-09-22",
         "architecture": "new",

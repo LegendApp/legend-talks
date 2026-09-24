@@ -8,7 +8,7 @@ unset until rehearsal; the expanded story and 20-step visual tour need a fresh p
 Discovery while testing Legend List → Photos and Music → tweeting about the Electron comparison → “Native would be faster” → the compromise objection →
 Chat History, Code and Diff on shared foundations → rendering primer → Hello World →
 real-app visual tour and measurements → technical verdict → React Native everywhere →
-three objections → Expo Desktop → Legend Frame → Slides 0.0.1 → ecosystem invitation.
+three objections → Expo Desktop → Legend Spark → Slides 0.0.1 → ecosystem invitation.
 
 The technical thesis stands separately from familiarity: among the cross-platform
 approaches tested on macOS, React Native offers the best overall combination of
@@ -50,7 +50,7 @@ speed, memory efficiency and native content UI. AppKit's individual wins remain 
 | 32 | What’s holding desktop back — three boxes, then strike Performance |
 | 33 | That last one is fixable |
 | 34 | Built on Expo Desktop |
-| 35 | Legend Frame → Electron’s ambition. React Native’s foundation. — 2 steps |
+| 35 | Legend Spark → Electron’s ambition. React Native’s foundation. — 2 steps |
 | 36 | From development to shipping |
 | 37 | Desktop tools for React |
 | 38 | Early · Useful · Growing |
@@ -123,7 +123,7 @@ measurements are unchanged.
 Opening footage also needs Photos and Music, followed by Chat History, Code and Diff.
 Compatibility copy is a local integration snapshot, not a completed library audit.
 Expo-shaped adapters are subsets; Margelo Runtimes uses pinned patches. Refresh
-release and library status before presenting. The framework is now named Legend Frame.
+release and library status before presenting. The framework is now named Legend Spark.
 
 ## Visual storytelling pass
 
@@ -133,7 +133,7 @@ maintainer invitation use two deliberate typography steps. The three objections 
 Shared foundations: Music, Chat History, Code, Diff and Markdown → sculpted roots and native capabilities (two steps).
 Rendering primer: three matching windows progressively reveal platform controls,
 browser content and a drawing surface. Labels identify these as schematic models.
-Expo Desktop: mobile/web → desktop targets → Frame capabilities. Compatibility:
+Expo Desktop: mobile/web → desktop targets → Spark capabilities. Compatibility:
 one sparse status row per step. The rendering, Expo Desktop and compatibility diagrams each have three steps.
 
 The release slide uses the real Slides icon, version and GitHub destination.

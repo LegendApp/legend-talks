@@ -9,7 +9,7 @@ const capabilities = ["Windows", "Native menus", "Keyboard shortcuts", "Files & 
   "Deep links", "App lifecycle", "Preferences", "Permissions", "Updates"];
 const publishing = ["Project setup", "Native linking", "Release builds", "Binary size", "Compatibility patches",
   "Signing & entitlements", "Notarization", "Packaging", "Publishing", "Updates"];
-const command = "npx @legendapp/frame create";
+const command = "npx @legendapp/spark create";
 const features = capabilities.map((label, i) => ({
   label, row: i, wave: Math.floor(i / 5) + 1,
   x: i < 5 ? 154 : i < 10 ? 1542 : i < 13 ? 498 + (i - 10) * 350 : 648 + (i - 13) * 400,
@@ -26,7 +26,7 @@ const atlasWidth = 1600, rowHeight = 100;
 // reveal sample the same UI/GPU timeline; no native text reset can lag behind.
 function makeTextAtlas() {
   const surface = Skia.Surface.Make(atlasWidth, rows.length * rowHeight);
-  if (!surface) throw new Error("Could not create Frame text atlas");
+  if (!surface) throw new Error("Could not create Spark text atlas");
   const canvas = surface.getCanvas();
   canvas.clear(Skia.Color("transparent"));
   const paint = Skia.Paint();
@@ -171,7 +171,7 @@ half4 main(float2 p) {
 const network = Skia.RuntimeEffect.Make(foundationsNetworkShader);
 const ripple = Skia.RuntimeEffect.Make(foundationsRippleShader);
 const cursor = Skia.RuntimeEffect.Make(frameCursorShader);
-if (!network || !ripple || !cursor) throw new Error("Could not compile the Frame reveal");
+if (!network || !ripple || !cursor) throw new Error("Could not compile the Spark reveal");
 
 // Leave transparent space for the 24px blur kernel, refraction, and panel glow.
 // Keep the logical stage fixed; only the raster surface and filter bounds grow.
