@@ -126,9 +126,11 @@ sharedStateFont.dispose();
 if (!sharedStatePath) throw new Error("Could not create Shared State label outlines");
 
 function Example({ index, width, height }: { index: number; width: number; height: number }) {
-  const uniforms = useAnimatedShaderUniforms({ stage: index }, 2, { clock: index });
+  const step = usePresentationValue("stepIndex");
+  const active = step === index;
+  const uniforms = useAnimatedShaderUniforms({ stage: index }, 2, { clock: index, active });
   return <View style={{ width: 1180, height: 738, transformOrigin: "top left", transform: [{ scale: width / 1180 }] }}>
-    {index < 2 && <GlassPanels panels={containerPanels} width={1180} height={670} pulse={0.001} edgeMotion={0.5} />}
+    {index < 2 && <GlassPanels active={active} panels={containerPanels} width={1180} height={670} pulse={0.001} edgeMotion={0.5} />}
     {index === 0 && <View style={{ height: 84 }} />}
     {index < 2 ? <>
       {index === 1 ? <Canvas style={{ width: 1180, height: 650 }}>
