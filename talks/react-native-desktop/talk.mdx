@@ -208,18 +208,18 @@ transition: none
 ---
 
 <Scene eyebrow="TypeGPU" title="We have enough sidebars now" footer="384 illustrated sidebars · one instanced draw · shader-driven motion">
-  <TypeGPU scene={sidebarStorm} width={1680} height={580} previewTime={6} />
+  <TypeGPUShader code={sidebarStorm} particles particleCount={sidebarCount} width={1680} height={580} previewTime={6} />
 </Scene>
 
-<!-- 10:20–10:55. “The design review asked for more sidebar.” Pause while the 384 little windows move. This is a separate WebGPU scene authored with TypeGPU. One instanced draw renders 384 quads; their motion comes from the vertex shader. It is not a boids compute simulation and I have not benchmarked its throughput. It shows another available tool in the same RN app. Source: sidebarStorm.ts; https://docs.swmansion.com/TypeGPU/. -->
+<!-- 10:20–10:55. “The design review asked for more sidebar.” Pause while the 384 little windows move. This is a WebGPU shader program rendered by the shared-clock host. One instanced draw renders 384 quads; their motion comes from the vertex shader. It is not a boids compute simulation and I have not benchmarked its throughput. It shows another available tool in the same RN app. Source: sidebarStorm.ts; https://docs.swmansion.com/TypeGPU/. -->
 
 ---
 
-<Scene eyebrow="TypeGPU" title="The shader is TypeScript">
-  <CodePanel code={snippets.gpu} label="sidebarStorm.ts · vertex and draw excerpts" detail="React owns the scene. The vertex shader moves the sidebars." />
+<Scene eyebrow="TypeGPU" title="The shader stays on the GPU">
+  <CodePanel code={snippets.gpu} label="sidebarStorm.ts · vertex shader excerpt" detail="React owns the scene. The shared clock drives vertex-shader motion." />
 </Scene>
 
-<!-- 10:55–11:20. “That motion is written in a language you already use.” TypeGPU resolves the typed shader functions to WGSL for WebGPU. This arithmetic executes on the GPU, not as 384 React component updates. Point out the draw call and move on; this is not a shader programming workshop. In this typed vertex callback the library handles the GPU context. Do not imply any arbitrary TypeScript API can execute on the GPU. Source: sidebarStorm.ts and TypeGPU docs. -->
+<!-- 10:55–11:20. “React owns the content; the GPU owns the motion.” The deck supplies WGSL to the host renderer, which owns frame submission on the shared playback clock. This arithmetic executes on the GPU, not as 384 React component updates. Point out the vertex arithmetic and move on; this is not a shader programming workshop. The host handles the GPU context and timing. Do not imply any arbitrary TypeScript API can execute on the GPU. Source: sidebarStorm.ts and TypeGPU docs. -->
 
 ---
 eyebrow: "Development"
@@ -415,7 +415,7 @@ eyebrow: "Your next project"
 ---
 
 <Scene eyebrow="Effect gallery / TypeGPU" title="1,024 fragments become visible rows" footer={`${gpuConstellationCount} particles · one instanced draw · shader-driven motion`}>
-  <TypeGPU scene={gpuConstellation} width={1680} height={580} previewTime={6} />
+  <TypeGPUShader code={gpuConstellation} particles particleCount={gpuConstellationCount} width={1680} height={580} previewTime={6} />
 </Scene>
 
 <!-- EFFECT GALLERY. OPTIONAL. A TypeGPU scene moves 1,024 fragments from a native-data cloud into five visible-row bands with one instanced draw. The motion is a visual metaphor for selective access and is not a benchmark of the real data boundary. Proposed pack path: slides:data/gpu-constellation. -->
@@ -503,7 +503,7 @@ eyebrow: "Your next project"
 ---
 
 <Scene eyebrow="Effect gallery / TypeGPU" title="4,096 particles become an interface" footer={`${gpuInterfaceRevealCount} particles · one instanced draw · shader-driven assembly`}>
-  <TypeGPU scene={gpuInterfaceReveal} width={1680} height={580} previewTime={6} />
+  <TypeGPUShader code={gpuInterfaceReveal} particles particleCount={gpuInterfaceRevealCount} width={1680} height={580} previewTime={6} />
 </Scene>
 
 <!-- EFFECT GALLERY. OPTIONAL. One TypeGPU instanced draw spirals 4,096 fragments into a desktop-interface grid. It is an effect demonstration, not a benchmark, and it keeps the per-particle animation on the GPU rather than creating 4,096 React components. Proposed pack path: slides:data/gpu-interface-reveal. -->

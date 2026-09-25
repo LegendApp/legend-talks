@@ -18,7 +18,7 @@ import { Text, View } from "react-native"
 import { AmbientAurora } from "./packs/backgrounds"
 import { Scene, BigStatement, ChatIllustration, GlassChatControls } from "./Scene"
 import { GlassCaption } from "./GlassCaption"
-import { sidebarStorm } from "./sidebarStorm"
+import { sidebarStorm, sidebarCount } from "./sidebarStorm"
 import { AgentDeviceScan } from "./packs/automation"
 import { NativeOrbitLottie } from "./packs/animation"
 import { BenchmarkArrival } from "./packs/charts"
@@ -124,7 +124,7 @@ import { SpotlightDemo, FreezeDemo, ProgressiveDemo, WipeDemo, CalloutDemo, Code
 ---
 
 <Scene eyebrow="TypeGPU" title="Sidebar storm" footer="384 illustrated sidebars · one instanced draw · shader-driven motion">
-  <TypeGPU scene={sidebarStorm} width={1680} height={580} previewTime={6} />
+  <TypeGPUShader code={sidebarStorm} particles particleCount={sidebarCount} width={1680} height={580} previewTime={6} />
 </Scene>
 
 <!-- 384 illustrated sidebars move in one instanced TypeGPU draw. A visual demonstration, not a throughput benchmark. -->
@@ -188,7 +188,7 @@ import { SpotlightDemo, FreezeDemo, ProgressiveDemo, WipeDemo, CalloutDemo, Code
 ---
 
 <Scene eyebrow="Effect gallery / TypeGPU" title="1,024 fragments become visible rows" footer={`${gpuConstellationCount} particles · one instanced draw · shader-driven motion`}>
-  <TypeGPU scene={gpuConstellation} width={1680} height={580} previewTime={6} />
+  <TypeGPUShader code={gpuConstellation} particles particleCount={gpuConstellationCount} width={1680} height={580} previewTime={6} />
 </Scene>
 
 <!-- A TypeGPU scene moves 1,024 fragments from a native-data cloud into five visible-row bands with one instanced draw. The motion is a visual metaphor for selective access and is not a benchmark of the real data boundary. Pack prototype: slides:data/gpu-constellation. -->
@@ -276,7 +276,7 @@ import { SpotlightDemo, FreezeDemo, ProgressiveDemo, WipeDemo, CalloutDemo, Code
 ---
 
 <Scene eyebrow="Effect gallery / TypeGPU" title="4,096 particles become an interface" footer={`${gpuInterfaceRevealCount} particles · one instanced draw · shader-driven assembly`}>
-  <TypeGPU scene={gpuInterfaceReveal} width={1680} height={580} previewTime={6} />
+  <TypeGPUShader code={gpuInterfaceReveal} particles particleCount={gpuInterfaceRevealCount} width={1680} height={580} previewTime={6} />
 </Scene>
 
 <!-- One TypeGPU instanced draw spirals 4,096 fragments into a desktop-interface grid. It is an effect demonstration, not a benchmark, and it keeps the per-particle animation on the GPU rather than creating 4,096 React components. Pack prototype: slides:data/gpu-interface-reveal. -->
