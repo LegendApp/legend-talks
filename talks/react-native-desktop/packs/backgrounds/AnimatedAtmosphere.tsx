@@ -1,3 +1,4 @@
+import { dropletField } from "./dropletField";
 import { dropletMaterial } from "./dropletMaterial";
 import { dropletGeometry } from "./dropletGeometry";
 import { useBackgroundInteractionUniforms, useAnimatedShaderUniforms, useBackgroundSize, useBackgroundIntensity } from "@legend-apps/presentation";
@@ -55,36 +56,22 @@ const sources: Record<AtmosphereVariant, string> = {
     uniform float stepIndex;
     uniform float stepTime;
     uniform float4 bestRect;
-    float mergeDistance(float a, float b) {
-      float h = max(0.09 - abs(a - b), 0.0) / 0.09;
-      return min(a, b) - h * h * 0.0225;
-    }
-    float dropletDistance(float2 p, float t) {
-      // Crossing orbits bring different neighbors together instead of leaving
-      // one isolated satellite. Different periods keep the groups changing.
-      float3 aBody=backgroundDroplet(0,t);
-      float a=length(p-aBody.xy)-aBody.z;
-      float3 bBody=backgroundDroplet(1,t);
-      float b=length(p-bBody.xy)-bBody.z;
-      float3 cBody=backgroundDroplet(2,t);
-      float c=length(p-cBody.xy)-cBody.z;
-      float3 dBody=backgroundDroplet(3,t);
-      float d=length(p-dBody.xy)-dBody.z;
-      float3 eBody=backgroundDroplet(4,t);
-      float e=length(p-eBody.xy)-eBody.z;
-      float3 fBody=backgroundDroplet(5,t);
-      float f=length(p-fBody.xy)-fBody.z;
-      float field=mergeDistance(mergeDistance(mergeDistance(a,b),mergeDistance(c,d)),mergeDistance(e,f));
+    ${dropletField}
+    float3 dropletDistance(float2 p, float t) {
+      float3 a=circleField(p,backgroundDroplet(0,t));
+      float3 b=circleField(p,backgroundDroplet(1,t));
+      float3 c=circleField(p,backgroundDroplet(2,t));
+      float3 d=circleField(p,backgroundDroplet(3,t));
+      float3 e=circleField(p,backgroundDroplet(4,t));
+      float3 f=circleField(p,backgroundDroplet(5,t));
+      float3 field=mergeField(mergeField(mergeField(a,b,0.09),mergeField(c,d,0.09),0.09),mergeField(e,f,0.09),0.09);
       // Buds and parent surfaces share one distance field and one material.
       if(titleFeed>0.5 && stepIndex==1.0) {
         for(int i=0;i<18;i++) {
           float4 drop=drops[i];
           if(drop.w!=0.0 || drop.z<0.1) continue;
           float2 pos=(drop.xy-float2(960,540))/1080.0;
-          float distance=length(p-pos)-drop.z/1080.0;
-          float neck=0.025;
-          float h=max(neck-abs(field-distance),0.0)/neck;
-          field=min(field,distance)-h*h*neck*0.25;
+          field=mergeField(field,circleField(p,float3(pos,drop.z/1080.0)),0.025);
         }
       }
       return field;
@@ -93,13 +80,10 @@ const sources: Record<AtmosphereVariant, string> = {
     half4 main(float2 position) {
       float2 p = (position-resolution*.5)/(min(resolution.x/1920.0,resolution.y/1080.0)*1080.0);
       float t = (titleFeed>0.5 ? backgroundTime : time) * 0.6;
-      float d = dropletDistance(p, t);
-      float epsilon = 0.001;
-      float2 gradient = float2(
-        dropletDistance(p + float2(epsilon, 0), t) - dropletDistance(p - float2(epsilon, 0), t),
-        dropletDistance(p + float2(0, epsilon), t) - dropletDistance(p - float2(0, epsilon), t));
+      float3 field = dropletDistance(p, t);
+      float2 gradient = field.yz;
       float2 normal = gradient / max(length(gradient), 0.00001);
-      float3 color=shadeDroplet(p,d,normal);
+      float3 color=shadeDroplet(p,field.x,normal);
       return half4(color * brightness, 1.0);
     }
   `,
