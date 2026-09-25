@@ -11,6 +11,7 @@ float hash(float2 p) { return fract(sin(dot(p,float2(127.1,311.7)))*43758.5453);
 float3 stream(float2 p,float t) {
   float3 light=float3(0);
   float envelope=smoothstep(248.0,270.0,p.x)*(1.0-smoothstep(1390.0,1610.0,p.x));
+  if(envelope<=0.0 || abs(p.y-330.0)>430.0) return light;
   for(int lane=0;lane<19;lane++) {
     float l=float(lane);
     float speed=65.0+hash(float2(l,9))*95.0;

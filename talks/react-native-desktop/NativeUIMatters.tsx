@@ -76,6 +76,8 @@ half4 main(float2 p) {
       float2 along=axis/distance;
       float2 across=float2(-along.y,along.x);
       float x=dot(p-hub,along);
+      // No visible particle contribution outside this branch's glow envelope.
+      if(x < -180.0 || x > distance+180.0 || abs(dot(p-hub,across)) > 230.0) continue;
       // Local cell lookup keeps dense streams bounded in cost, like the portal.
       for(int lane=0;lane<12;lane++) {
         float l=float(lane);
