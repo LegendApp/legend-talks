@@ -12,6 +12,8 @@ float glassBox(float2 p,float2 size,float radius) {
   return length(max(q,0.0))+min(max(q.x,q.y),0.0)-radius;
 }
 float4 glassPanel(float2 p,float2 size,float radius,float clock) {
+  // Bound the glow before evaluating the expensive lighting material.
+  if(any(greaterThan(abs(p),size*(1.0+abs(pulse))+float2(120.0+abs(edgeMotion))))) return float4(0);
   float breath=0.5+0.5*sin(clock*0.85);
   float angle=atan(p.y,p.x);
   float2 breathingSize=size*(1.0+pulse*(breath-0.5));
@@ -49,8 +51,21 @@ export function createGlassPanelsShader(panels: readonly GlassPanelShape[]) {
   }`).join("\n")}\nreturn half4(result); }`;
 }
 
+// Shared across presenter, audience and prepared instances; bounded for edited decks.
+const effects = new Map<string, NonNullable<ReturnType<typeof Skia.RuntimeEffect.Make>>>();
+function compilePanels(source: string) {
+  const cached = effects.get(source);
+  if (cached) return cached;
+  const effect = Skia.RuntimeEffect.Make(source);
+  if (!effect) throw new Error("Could not compile glass panels");
+  if (effects.size >= 32) effects.delete(effects.keys().next().value!);
+  effects.set(source, effect);
+  return effect;
+}
+
 /** Pass stable panel geometry. Pulsing and shimmer use the presentation GPU clock. */
-export function GlassPanels({ panels, width, height, pulse = 0.003, edgeMotion = 1.2 }: {
+export function GlassPanels({ panels, width, height, pulse = 0.003, edgeMotion = 1.2, active = true }: {
+  active?: boolean;
   panels: readonly GlassPanelShape[];
   width: number;
   height: number;
@@ -59,12 +74,8 @@ export function GlassPanels({ panels, width, height, pulse = 0.003, edgeMotion =
   /** Edge displacement in logical slide pixels; zero keeps the contour rigid. */
   edgeMotion?: number;
 }) {
-  const effect = useMemo(() => {
-    const compiled = Skia.RuntimeEffect.Make(createGlassPanelsShader(panels));
-    if (!compiled) throw new Error("Could not compile glass panels");
-    return compiled;
-  }, [panels]);
-  const uniforms = useAnimatedShaderUniforms({ pulse, edgeMotion }, 8);
+  const effect = useMemo(() => compilePanels(createGlassPanelsShader(panels)), [panels]);
+  const uniforms = useAnimatedShaderUniforms({ pulse, edgeMotion }, 8, { active });
   return <Canvas pointerEvents="none" style={{ position: "absolute", left: 0, top: 0, width, height }}>
     <Fill><Shader source={effect} uniforms={uniforms} /></Fill>
   </Canvas>;
