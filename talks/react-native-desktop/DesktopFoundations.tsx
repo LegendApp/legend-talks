@@ -70,6 +70,12 @@ const float pulse=0.003;
 const float edgeMotion=1.2;
 ${glassPanelMaterial}
 ${geometry}
+half4 panelAt(float2 p,float2 size,float radius,float clock) {
+  // The material's outer glow is negligible beyond 120px. Avoid evaluating
+  // its trigonometry and lighting across the entire canvas for every panel.
+  if(any(greaterThan(abs(p),size+float2(120.0)))) return half4(0);
+  return half4(glassPanel(p,size,radius,clock));
+}
 half4 textAt(float2 p,float row) {
   if(abs(p.y)>49.0 || abs(p.x)>799.0) return half4(0);
   return labels.eval(p+float2(800,row*100.0+50.0));
@@ -78,13 +84,16 @@ half4 main(float2 p) {
   p -= float2(padding);
   float collapse=stepIndex>=5.0 ? smoothstep(0.0,1.35,time) : 0.0;
   float visibility=1.0-collapse;
+  // The command preview has no boxes. Do not shade 25 invisible glass panels
+  // (including the blurred layer) just to multiply their result by zero.
+  if(visibility<=0.0) return half4(0);
   float2 hub=float2(848,330);
   float3 light=float3(0);
   float alpha=0.0;
   half4 ink=half4(0);
   half4 panels=half4(0);
   ${[...features, ...shipping].map((n, i) => `{
-    if(kind==${i < features.length ? "0.0" : "1.0"}) {
+    if(kind==${i < features.length ? "0.0" : "1.0"} && stepIndex>=${n.wave}.0) {
       float delay=${i < features.length ? ((i % 5) * .10).toFixed(2) : (0.55 + (i - features.length) * .08).toFixed(2)};
       float growth=stepIndex>${n.wave}.0 ? 1.0 : stepIndex<${n.wave}.0 ? 0.0 : smoothstep(delay,delay+0.65,stepTime);
       float2 end=mix(hub,float2(${n.x}.0,${n.y}.0),growth*visibility);
@@ -92,7 +101,7 @@ half4 main(float2 p) {
       float d=segment(p,hub,end);
       float pulse=0.8+0.2*sin(slideTime*2.0+${i}.0);
       float line=(exp(-d*0.20)*0.22+exp(-d*1.4)*0.8)*show;
-      half4 panel=half4(glassPanel((p-end)/max(0.01,visibility),float2(145,36),17.0,slideTime+${i}.0*1.7))*show;
+      half4 panel=panelAt((p-end)/max(0.01,visibility),float2(145,36),17.0,slideTime+${i}.0*1.7)*show;
       panels=panel+panels*(1.0-panel.a);
       light+=float3(0.22,0.75,1.0)*line*pulse;
       for(int j=0;j<3;j++) {
@@ -106,7 +115,7 @@ half4 main(float2 p) {
     }
   }`).join("\n")}
   if(kind<0.5) {
-    half4 panel=half4(glassPanel((p-hub)/max(0.01,visibility),float2(140,83),24.0,slideTime))*visibility;
+    half4 panel=panelAt((p-hub)/max(0.01,visibility),float2(140,83),24.0,slideTime)*visibility;
     panels=panel+panels*(1.0-panel.a);
     half4 label=textAt((p-hub)/max(0.01,visibility),25.0)*visibility;
     ink=label+ink*(1.0-label.a);
@@ -148,7 +157,9 @@ half4 main(float2 p) {
   float shockRadius=burst*750.0;
   float shock=exp(-pow((length(p-hub)-shockRadius)/24.0,2.0));
   light+=float3(0.24,0.75,1.0)*shock*exp(-burst*1.1)*charge*(1.0-morph);
-  for(int i=0;i<96;i++) {
+  // Once the explosion has become the cursor, none of its 96 particles remain.
+  // This also keeps the static command preview cheap when navigating backward.
+  if(morph<1.0 && charge>0.0) for(int i=0;i<96;i++) {
     float id=float(i);
     float angle=id*2.39996;
     float expansion=1.0-exp(-burst*3.0);
