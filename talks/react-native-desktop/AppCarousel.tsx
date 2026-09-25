@@ -1,4 +1,5 @@
-import { FilmstripMotionView, SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
+import { FilmstripMotionView } from "./FilmstripMotionView";
+import { SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
 import type { ReactNode } from "react";
 import { Image, Text, View } from "react-native";
 import { appCardLayout, type SceneMode } from "./NineAppsGeometry";

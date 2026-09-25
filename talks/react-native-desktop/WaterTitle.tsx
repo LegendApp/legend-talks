@@ -1,7 +1,8 @@
+import { useTitleBubbleSimulation } from "./useTitleBubbleSimulation";
 import { dropletMaterial } from "./packs/backgrounds/dropletMaterial";
 import { titleDripAnchors } from "./titleDripAnchors";
 import { AlphaType, ColorType, Canvas, Fill, Shader, ImageShader, Skia, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
-import { Background, useBackgroundSize, useBackgroundIntensity, useTitleBubbleSimulation, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
+import { Background, useBackgroundSize, useBackgroundIntensity, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
 import { useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
 import { AnimatedAtmosphere } from "./packs/backgrounds/AnimatedAtmosphere";

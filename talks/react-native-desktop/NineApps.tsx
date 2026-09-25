@@ -1,4 +1,5 @@
-import { CarouselBlurView, useNativeVideo, usePlaybackTween, FocusRegion, SceneMotionView, SharedElement, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
+import { CarouselBlurView } from "./CarouselBlurView";
+import { useNativeVideo, usePlaybackTween, FocusRegion, SceneMotionView, SharedElement, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
 import { Canvas, Image as SkiaImage } from "@shopify/react-native-skia";
 import { ComposerGlassTakeover } from "./ComposerGlassTakeover";
 import { DeckBackground } from "./DeckBackground";

@@ -2,7 +2,7 @@
 
 The complete `rnconnection.mdx` talk, including alternate slides, uses host-owned playback or navigation timing. Deck components specify geometry, shaders, poses, durations, and keyframes. They do not start animation clocks.
 
-| Behavior | Shared app API | Timeline |
+| Behavior | API | Timeline |
 | --- | --- | --- |
 | Background, glass, roots, renderer windows, platform lanes | `useAnimatedShaderUniforms` | Slide clock; background scope stays continuous across slides |
 | Expo connection, module waves | Shader `stepIndex` and `stepTime` | Current step |
@@ -11,7 +11,7 @@ The complete `rnconnection.mdx` talk, including alternate slides, uses host-owne
 | Native poses and interrupted moves | `SceneMotionView`, `usePlaybackTween` | Shared step clock |
 | Chart row grouping | `ScenePositionView` | Shared tween; fixed native layout for measurement |
 | Chart entrance vs matched resize | `useSharedElementEntrance` | Host shared-element lifecycle |
-| Carousel position, scale, opacity, stacking | `FilmstripMotionView` | Shared tween |
+| Carousel position, scale, opacity, stacking | Deck-local `FilmstripMotionView` | Shared tween |
 | Carousel exit | `NavigationExitView` | Audience navigation progress |
 | Emoji paths and ecosystem label | `PlaybackKeyframeView` | Explicit slide or step clock |
 | TypeGPU simulations | `TypeGPUShader` | Shared step time; simulation resets on activation/step change |
@@ -20,6 +20,8 @@ The complete `rnconnection.mdx` talk, including alternate slides, uses host-owne
 Mounting a shader after a step does not create a new clock. Choose its timeline explicitly. The objections use step 1 rather than remounting their Canvas to restart elapsed slide time.
 
 Preparation samples zero. Previews sample a deterministic still. Activation resets playback. Outgoing effects freeze while navigation animates their exit. Without an audience window, the presenter's current slide still plays.
+
+Title bubble simulation, filmstrip placement, and carousel blur live beside the deck. Their explicit `"worklet"` functions are compiled by the deck compiler; they still consume host playback and navigation clocks. Keep worklet directives on deck callbacks because bundling renames hook imports before worklet compilation.
 
 ## Adding effects
 
