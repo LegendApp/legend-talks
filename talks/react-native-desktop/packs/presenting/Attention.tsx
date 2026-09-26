@@ -6,23 +6,31 @@ import Animated, { measure, runOnUI, useAnimatedRef, useAnimatedStyle, useDerive
 import { calloutBounds, relativeBounds, type Bounds } from "./geometry";
 import { FrameView } from "../shared/FrameView";
 
-type Target = { id: string; ref: AnimatedRef<View> };
-const Registration = createContext<(id: string, ref?: AnimatedRef<View>) => void>(() => {});
+type Target = { id: string; ref: AnimatedRef<View>; moving: boolean };
+const Registration = createContext<(id: string, ref?: AnimatedRef<View>, moving?: boolean) => void>(() => {});
+const InvalidateLayout = createContext<() => void>(() => {});
 const Measurements = createContext<{ width: number; height: number; targets: SharedValue<Record<string, Bounds>> } | null>(null);
 export function AttentionStage({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
   const host = useAnimatedRef<View>();
+  const [layoutRevision, setLayoutRevision] = useState(0);
+  const [invalidate] = useState(() => () => setLayoutRevision(value => value + 1));
   const [targets, setTargets] = useState<Target[]>([]);
   const [size, setSize] = useState({ width: 0, height: 0 });
   const bounds = useSharedValue<Record<string, Bounds>>({});
-  const [register] = useState(() => (id: string, ref?: AnimatedRef<View>) => setTargets(old => [...old.filter(target => target.id !== id), ...(ref ? [{ id, ref }] : [])]));
+  const [register] = useState(() => (id: string, ref?: AnimatedRef<View>, moving = false) => setTargets(old => [...old.filter(target => target.id !== id), ...(ref ? [{ id, ref, moving }] : [])]));
   const active = usePresentationValue("isActive");
   const preview = usePresentationValue("isPreview");
-  const measureTargets = () => {
+  const measureTargets = (full: boolean) => {
     "worklet";
     const root = measure(host);
     if (!root || !size.width || !size.height) return;
     const next: Record<string, Bounds> = {};
     for (const target of targets) {
+      if (!full && !target.moving) {
+        const cached = bounds.value[target.id];
+        if (cached) next[target.id] = cached;
+        continue;
+      }
       const box = measure(target.ref);
       if (box) next[target.id] = relativeBounds({ x: box.pageX, y: box.pageY, width: box.width, height: box.height },
         { x: root.pageX, y: root.pageY, width: root.width, height: root.height }, size);
@@ -30,22 +38,24 @@ export function AttentionStage({ children, style }: { children: ReactNode; style
     const old = bounds.value;
     if (Object.keys(old).length !== Object.keys(next).length || Object.keys(next).some(id => !old[id] || Object.keys(next[id]).some(key => next[id][key as keyof Bounds] !== old[id][key as keyof Bounds]))) bounds.value = next;
   };
-  const frame = useFrameCallback(measureTargets, false);
+  // Static geometry is refreshed by layout events; only transformed targets poll.
+  const frame = useFrameCallback(() => { "worklet"; measureTargets(false); }, false);
   useLayoutEffect(() => {
-    runOnUI(measureTargets)();
-    frame.setActive(active && !preview);
+    runOnUI(measureTargets)(true);
+    frame.setActive(active && !preview && targets.some(target => target.moving));
     return () => frame.setActive(false);
-  }, [targets, size, active, preview, frame]);
-  return <Registration.Provider value={register}><Measurements.Provider value={{ ...size, targets: bounds }}>
+  }, [targets, size, layoutRevision, active, preview, frame]);
+  return <Registration.Provider value={register}><InvalidateLayout.Provider value={invalidate}><Measurements.Provider value={{ ...size, targets: bounds }}>
     <Animated.View ref={host} collapsable={false} style={[styles.stage, style]} onLayout={({ nativeEvent: { layout } }) => setSize(old => old.width === layout.width && old.height === layout.height ? old : { width: layout.width, height: layout.height })}>{children}</Animated.View>
-  </Measurements.Provider></Registration.Provider>;
+  </Measurements.Provider></InvalidateLayout.Provider></Registration.Provider>;
 }
-export function AttentionTarget({ id, children, style, frameStyle }: { id: string; children: ReactNode; style?: StyleProp<ViewStyle>; frameStyle?: () => ViewStyle }) {
+export function AttentionTarget({ id, children, style, frameStyle, moving = Boolean(frameStyle) }: { id: string; children: ReactNode; style?: StyleProp<ViewStyle>; frameStyle?: () => ViewStyle; moving?: boolean }) {
   const register = useContext(Registration);
+  const invalidate = useContext(InvalidateLayout);
   const ref = useAnimatedRef<View>();
-  useLayoutEffect(() => { register(id, ref); return () => register(id); }, [id, ref, register]);
+  useLayoutEffect(() => { register(id, ref, moving); return () => register(id); }, [id, ref, register, moving]);
   const animatedStyle = useAnimatedStyle(() => frameStyle?.() ?? {});
-  return <Animated.View ref={ref} collapsable={false} style={[style, animatedStyle]}>{children}</Animated.View>;
+  return <Animated.View ref={ref} onLayout={invalidate} collapsable={false} style={[style, animatedStyle]}>{children}</Animated.View>;
 }
 export function Spotlight({ target, darkness = 0.78, padding = 18 }: { target?: string; darkness?: number; padding?: number }) {
   const context = useContext(Measurements)!;

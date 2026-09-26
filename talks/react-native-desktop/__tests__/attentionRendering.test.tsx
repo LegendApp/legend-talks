@@ -17,7 +17,7 @@ test("UI measurements move annotations without React renders and clear removed t
     plugins: [[require.resolve("babel-plugin-react-compiler"), { panicThreshold: "all_errors", target: "19" }]],
   });
   const frames = [];
-  let movingX = 10, styleRenders = 0;
+  let movingX = 10, staticX = 600, styleRenders = 0, measurements = 0;
   const derived = read => ({ get value() { return read(); } });
   const mocks = {
     "react-native": { View: "view", Text: "text", StyleSheet: { create: value => value, absoluteFill: {} } },
@@ -32,7 +32,7 @@ test("UI measurements move annotations without React renders and clear removed t
       useSharedValue: value => React.useRef({value}).current,
       useAnimatedStyle: derived, useDerivedValue: derived,
       runOnUI: fn => fn,
-      measure: ref => ref.current?.bounds(),
+      measure: ref => { measurements++; return ref.current?.bounds(); },
       useFrameCallback: read => {
         const latest = React.useRef(read); latest.current = read;
         return React.useMemo(() => { const frame = {active: false, setActive(active) { this.active = active; }, tick() { if (this.active) latest.current(); }}; frames.push(frame); return frame; }, []);
@@ -43,7 +43,7 @@ test("UI measurements move annotations without React renders and clear removed t
   new Function("require", "module", "exports", code)(name => mocks[name] ?? require(name), module, module.exports);
   const { AttentionStage, AttentionTarget, Callout, Spotlight } = module.exports;
   const render = (moving = true) => <AttentionStage>
-    {moving && <AttentionTarget id="moving" style={{tag: "moving"}}>A</AttentionTarget>}
+    {moving && <AttentionTarget moving id="moving" style={{tag: "moving"}}>A</AttentionTarget>}
     <AttentionTarget id="static" style={{tag: "static"}}>B</AttentionTarget>
     <Callout target="moving">Moving</Callout><Callout target="static">Static</Callout><Spotlight target="moving" />
   </AttentionStage>;
@@ -53,12 +53,14 @@ test("UI measurements move annotations without React renders and clear removed t
   try {
     await act(() => { tree = create(render(), {createNodeMock: element => ({bounds() {
       const tag = element.props.style?.[0]?.tag;
-      return tag ? {pageX: tag === "moving" ? movingX : 600, pageY: 80, width: 100, height: 50} : {pageX: 0, pageY: 0, width: 1000, height: 600};
+      return tag ? {pageX: tag === "moving" ? movingX : staticX, pageY: 80, width: 100, height: 50} : {pageX: 0, pageY: 0, width: 1000, height: 600};
     }})}); });
     await resize(1000, 600); tick();
     const paths = () => tree.root.findAllByType("path").map(node => node.props.path.value);
     const before = paths(); const renders = styleRenders;
+    measurements = 0;
     movingX += 80; tick();
+    expect(measurements).toBe(2);
     expect(paths()[0]).not.toBe(before[0]);
     expect(paths()[1]).toBe(before[1]);
     expect(styleRenders).toBe(renders);
@@ -66,6 +68,13 @@ test("UI measurements move annotations without React renders and clear removed t
     expect(paths()[1]).not.toBe(before[1]);
     await act(() => tree.update(render(false))); tick();
     expect(paths()[0]).toBe("");
+    measurements = 0;
+    for (let i = 0; i < 120; i++) tick();
+    expect(measurements).toBe(0);
+    const oldStaticPath = paths()[1];
+    staticX += 40;
+    await act(() => tree.root.findAllByType("animated-view").find(node => node.props.style?.[0]?.tag === "static").props.onLayout());
+    expect(paths()[1]).not.toBe(oldStaticPath);
     expect(tree.root.findAllByType("frame-view").at(-1).props.frameStyle().at(-1).opacity).toBe(0);
   } finally { if (tree) await act(() => tree.unmount()); }
   expect(frames.every(frame => !frame.active)).toBe(true);
