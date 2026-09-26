@@ -1,40 +1,28 @@
-import { usePresentationValue } from "@legend-apps/presentation";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { usePlayback } from "@legend-apps/presentation";
+import { type ReactNode } from "react";
 import { StyleSheet, View } from "react-native";
+import { useAnimatedReaction, useDerivedValue, useSharedValue, type SharedValue } from "react-native-reanimated";
+import { FrameView } from "../shared/FrameView";
 import { useMotion } from "./motion";
-
-/** A pausable clock, not a screenshot: drive Lottie progress, shader time or transforms with seconds. */
+/** Pausing accumulates shared-clock deltas entirely on UI. */
 export function FreezeFrame({ paused, children, annotation, previewTime = 1.5 }: {
-  paused: boolean; children: (seconds: number) => ReactNode; annotation?: ReactNode; previewTime?: number;
+  paused: boolean; children: (seconds: SharedValue<number>) => ReactNode; annotation?: ReactNode; previewTime?: number;
 }) {
-  const isActive = usePresentationValue("isActive");
-  const isPreview = usePresentationValue("isPreview");
-  const startedAt = usePresentationValue("startedAt");
-  const [clock, setClock] = useState({ epoch: startedAt, seconds: 0 });
-  const saved = useRef(clock);
-  const [opacity] = useMotion([paused ? 1 : 0], 250);
-  useEffect(() => {
-    if (saved.current.epoch !== startedAt) {
-      saved.current = { epoch: startedAt, seconds: 0 };
-      setClock(saved.current);
-    }
-    if (paused || !isActive || isPreview) return;
-    let previous = performance.now();
-    let frame = 0;
-    const tick = (now: number) => {
-      saved.current = { epoch: startedAt, seconds: saved.current.seconds + Math.max(0, now - previous) / 1000 };
-      previous = now;
-      setClock(saved.current);
-      frame = requestAnimationFrame(tick);
-    };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [paused, isActive, isPreview, startedAt]);
-  const seconds = isPreview ? previewTime : clock.epoch === startedAt ? clock.seconds : 0;
+  const playback = usePlayback();
+  const held = useSharedValue({ key: "", last: 0, seconds: 0, paused });
+  const opacity = useMotion([paused ? 1 : 0], 250);
+  useAnimatedReaction(() => playback.value, clock => {
+    if (clock.phase !== "playing") return;
+    const old = held.value;
+    const reset = old.key !== clock.slideKey;
+    held.value = { key: clock.slideKey, last: clock.slideTime, paused,
+      seconds: reset ? 0 : old.seconds + (paused || old.paused ? 0 : Math.max(0, clock.slideTime - old.last)) };
+  }, [paused]);
+  const seconds = useDerivedValue(() => playback.value.phase === "preview" ? previewTime : playback.value.phase === "preparing" ? 0 : held.value.seconds, [previewTime]);
   return <View style={styles.frame}>
     {children(seconds)}
-    <View pointerEvents={paused ? "auto" : "none"} accessibilityElementsHidden={!paused}
-      importantForAccessibility={paused ? "auto" : "no-hide-descendants"} style={[StyleSheet.absoluteFill, { opacity }]}>{annotation}</View>
+    <FrameView pointerEvents={paused ? "auto" : "none"} accessibilityElementsHidden={!paused}
+      importantForAccessibility={paused ? "auto" : "no-hide-descendants"} frameStyle={() => { "worklet"; return [StyleSheet.absoluteFill, { opacity: opacity.value[0] }]; }}>{annotation}</FrameView>
   </View>;
 }
 const styles = StyleSheet.create({ frame: { position: "relative" } });

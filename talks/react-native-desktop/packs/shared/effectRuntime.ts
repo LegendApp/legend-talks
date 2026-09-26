@@ -1,48 +1,10 @@
-import { usePresentationValue } from "@legend-apps/presentation";
-import { useObservable, useValue } from "@legendapp/state/react";
-import { useEffect } from "react";
-
-export function clamp01(value: number) {
-  return Math.max(0, Math.min(1, value));
-}
-
-export function smooth(value: number) {
-  const clamped = clamp01(value);
-  return clamped * clamped * (3 - 2 * clamped);
-}
-
-export function stage(time: number, start: number, duration: number) {
-  return smooth((time - start) / duration);
-}
-
-export function useEffectTime$(previewTime: number) {
-  const isActive = usePresentationValue("isActive");
-  const isPreview = usePresentationValue("isPreview");
-  const startedAt = usePresentationValue("startedAt");
-  const time$ = useObservable(isPreview ? previewTime : 0);
-  const setTime = time$.set;
-
-  useEffect(() => {
-    if (isPreview) {
-      setTime(previewTime);
-      return;
-    }
-    if (!isActive) return;
-    let frame = 0;
-    const epoch = startedAt ?? performance.now();
-    const update = (now: number) => {
-      setTime(Math.max(0, now - epoch) / 1000);
-      frame = requestAnimationFrame(update);
-    };
-    setTime(Math.max(0, performance.now() - epoch) / 1000);
-    frame = requestAnimationFrame(update);
-    return () => cancelAnimationFrame(frame);
-  }, [isActive, isPreview, previewTime, startedAt, setTime]);
-
-  return time$;
-}
-
-// Fully animated effects can read time directly; mixed figures pass time$ to animated leaves.
+import { samplePlayback, usePlayback } from "@legend-apps/presentation";
+import { useDerivedValue } from "react-native-reanimated";
+export function clamp01(value: number) { "worklet"; return Math.max(0, Math.min(1, value)); }
+export function smooth(value: number) { "worklet"; const clamped = clamp01(value); return clamped * clamped * (3 - 2 * clamped); }
+export function stage(time: number, start: number, duration: number) { "worklet"; return smooth((time - start) / duration); }
 export function useEffectTime(previewTime: number) {
-  return useValue(useEffectTime$(previewTime));
+  const playback = usePlayback();
+  return useDerivedValue(() => samplePlayback(playback.value, previewTime, "slide"), [previewTime]);
 }
+export const useEffectTime$ = useEffectTime;

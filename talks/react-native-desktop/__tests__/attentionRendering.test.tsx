@@ -1,86 +1,72 @@
-// @ts-nocheck Exercise compiled annotations with deterministic native measurements.
-import { expect, spyOn, test } from "bun:test";
+// @ts-nocheck The UI runtime and native measurements are driven deterministically.
+import { expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
-import { fileURLToPath } from "node:url";
 import { transformSync } from "@babel/core";
 import React from "react";
-import * as state from "@legendapp/state";
-import * as stateReact from "@legendapp/state/react";
 import { act, create } from "react-test-renderer";
 import * as geometry from "../packs/presenting/geometry";
 
-test("annotations subscribe to their target while resizing and target removal still update geometry", async () => {
+test("UI measurements move annotations without React renders and clear removed targets", async () => {
   globalThis.IS_REACT_ACT_ENVIRONMENT = true;
-  const filename = fileURLToPath(new URL("../packs/presenting/Attention.tsx", import.meta.url));
+  const filename = `${import.meta.dir}/../packs/presenting/Attention.tsx`;
   const require = createRequire(filename);
-  const source = 'import { recordRender } from "render-probe";\n' + readFileSync(filename, "utf8")
-    .replace('  const box = useValue(() => target ?', '  recordRender("spotlight", target);\n  const box = useValue(() => target ?')
-    .replace('  const box = useValue(() => measurements$', '  recordRender("callout", target);\n  const box = useValue(() => measurements$');
-  const { code } = transformSync(source, {
+  const { code } = transformSync(readFileSync(filename, "utf8"), {
     filename, babelrc: false, configFile: false,
     presets: [require.resolve("@react-native/babel-preset")],
     plugins: [[require.resolve("babel-plugin-react-compiler"), { panicThreshold: "all_errors", target: "19" }]],
   });
-  expect(code).toContain("react/compiler-runtime");
-  const renders = {};
-  const recordRender = (kind, target) => { const key = `${kind}:${target}`; renders[key] = (renders[key] ?? 0) + 1; };
-  const module = { exports: {} };
-  new Function("require", "module", "exports", code)((name) => ({
-    "render-probe": { recordRender },
-    "@legendapp/state": state, "@legendapp/state/react": stateReact,
-    "react-native": { View: "view", Text: "text", StyleSheet: { create: (styles) => styles, absoluteFill: {} } },
-    "@legend-apps/presentation": { usePresentationValue: (key) => key === "isActive" },
+  const frames = [];
+  let movingX = 10, styleRenders = 0;
+  const derived = read => ({ get value() { return read(); } });
+  const mocks = {
+    "react-native": { View: "view", Text: "text", StyleSheet: { create: value => value, absoluteFill: {} } },
+    "@legend-apps/presentation": { usePresentationValue: key => key === "isActive" },
+    "./geometry": geometry,
+    "../shared/FrameView": { FrameView: props => { styleRenders++; return <frame-view {...props} />; } },
     "@shopify/react-native-skia": { Canvas: "canvas", Path: "path", DiffRect: "diff-rect", RoundedRect: "rounded-rect", rect: (...args) => args, rrect: (...args) => args },
-    "./geometry": geometry, "./motion": { useMotion: (values) => values },
-  }[name] ?? require(name)), module, module.exports);
+    "react-native-reanimated": {
+      __esModule: true,
+      default: { View: "animated-view" },
+      useAnimatedRef: () => React.useRef(null),
+      useSharedValue: value => React.useRef({value}).current,
+      useAnimatedStyle: derived, useDerivedValue: derived,
+      runOnUI: fn => fn,
+      measure: ref => ref.current?.bounds(),
+      useFrameCallback: read => {
+        const latest = React.useRef(read); latest.current = read;
+        return React.useMemo(() => { const frame = {active: false, setActive(active) { this.active = active; }, tick() { if (this.active) latest.current(); }}; frames.push(frame); return frame; }, []);
+      },
+    },
+  };
+  const module = { exports: {} };
+  new Function("require", "module", "exports", code)(name => mocks[name] ?? require(name), module, module.exports);
   const { AttentionStage, AttentionTarget, Callout, Spotlight } = module.exports;
-  const originalFrame = globalThis.requestAnimationFrame;
-  const originalCancel = globalThis.cancelAnimationFrame;
-  const frames = new Map();
-  let nextFrame = 0, movingX = 10;
-  globalThis.requestAnimationFrame = (callback) => { frames.set(++nextFrame, callback); return nextFrame; };
-  globalThis.cancelAnimationFrame = (id) => frames.delete(id);
-  const log = spyOn(console, "error").mockImplementation(() => {});
-  const tick = async (now) => act(() => { const callbacks = [...frames.values()]; frames.clear(); callbacks.forEach((callback) => callback(now)); });
-  const content = (showMoving = true) => <AttentionStage>
-    {showMoving && <AttentionTarget id="moving" style={{ tag: "moving" }}>A</AttentionTarget>}
-    <AttentionTarget id="static" style={{ tag: "static" }}>B</AttentionTarget>
-    <Callout target="moving">Moving</Callout><Callout target="static">Static</Callout>
-    <Spotlight target="moving" />
+  const render = (moving = true) => <AttentionStage>
+    {moving && <AttentionTarget id="moving" style={{tag: "moving"}}>A</AttentionTarget>}
+    <AttentionTarget id="static" style={{tag: "static"}}>B</AttentionTarget>
+    <Callout target="moving">Moving</Callout><Callout target="static">Static</Callout><Spotlight target="moving" />
   </AttentionStage>;
   let tree;
-  const resize = async (width, height) => {
-    const stage = tree.root.findAllByType("view").find((node) => node.props.collapsable === false && node.props.onLayout);
-    await act(() => stage.props.onLayout({ nativeEvent: { layout: { width, height } } }));
-  };
+  const tick = () => frames.forEach(frame => frame.tick());
+  const resize = async (width, height) => act(() => tree.root.findAllByType("animated-view").find(node => node.props.onLayout).props.onLayout({nativeEvent: {layout: {width, height}}}));
   try {
-    await act(() => { tree = create(content(), { createNodeMock: (element) => ({ measureInWindow: (callback) => {
-      const tag = element.props.style?.tag;
-      callback(...(tag === "moving" ? [movingX, 80, 100, 50] : tag === "static" ? [600, 80, 100, 50] : [0, 0, 1000, 600]));
-    } }) }); });
-    await resize(1000, 600);
-    await tick(40);
-    Object.keys(renders).forEach((key) => delete renders[key]);
-    for (let i = 1; i <= 5; i++) { movingX += 10; await tick(40 + i * 40); }
-    expect(renders).toEqual({ "callout:moving": 5, "spotlight:moving": 5 });
-    const oldPath = tree.root.findAllByType("path")[1].props.path;
-    await resize(800, 500);
-    await tick(300);
-    expect(renders["callout:static"]).toBeGreaterThan(0);
-    expect(tree.root.findAllByType("path")[1].props.path).not.toBe(oldPath);
-    await act(() => tree.update(content(false)));
-    await tick(340);
-    expect(tree.root.findAllByType("path")).toHaveLength(1);
-    // An unchanged measurement must not wake the remaining annotations.
-    Object.keys(renders).forEach((key) => delete renders[key]);
-    await tick(380);
-    expect(renders).toEqual({});
-  } finally {
-    if (tree) await act(() => tree.unmount());
-    globalThis.requestAnimationFrame = originalFrame;
-    globalThis.cancelAnimationFrame = originalCancel;
-    log.mockRestore();
-  }
-  expect(frames.size).toBe(0);
+    await act(() => { tree = create(render(), {createNodeMock: element => ({bounds() {
+      const tag = element.props.style?.[0]?.tag;
+      return tag ? {pageX: tag === "moving" ? movingX : 600, pageY: 80, width: 100, height: 50} : {pageX: 0, pageY: 0, width: 1000, height: 600};
+    }})}); });
+    await resize(1000, 600); tick();
+    const paths = () => tree.root.findAllByType("path").map(node => node.props.path.value);
+    const before = paths(); const renders = styleRenders;
+    movingX += 80; tick();
+    expect(paths()[0]).not.toBe(before[0]);
+    expect(paths()[1]).toBe(before[1]);
+    expect(styleRenders).toBe(renders);
+    await resize(800, 500); tick();
+    expect(paths()[1]).not.toBe(before[1]);
+    await act(() => tree.update(render(false))); tick();
+    expect(paths()[0]).toBe("");
+    expect(tree.root.findAllByType("frame-view").at(-1).props.frameStyle().at(-1).opacity).toBe(0);
+  } finally { if (tree) await act(() => tree.unmount()); }
+  expect(frames.every(frame => !frame.active)).toBe(true);
 });

@@ -36,56 +36,43 @@ test("attention measurements remove viewport scale and keep labels inside the st
 
 test("freeze clock resumes without counting paused time and resets on slide re-entry", async () => {
   globalThis.IS_REACT_ACT_ENVIRONMENT = true;
-  const { FreezeFrame } = loadComponent("FreezeFrame", { "./motion": { useMotion: (target) => target } });
-  let now = 0;
-  let nextFrame = 0;
-  const frames = new Map();
-  const originalRequest = globalThis.requestAnimationFrame;
-  const originalCancel = globalThis.cancelAnimationFrame;
-  const time = spyOn(performance, "now").mockImplementation(() => now);
-  const log = spyOn(console, "error").mockImplementation(() => {});
-  globalThis.requestAnimationFrame = (callback) => { frames.set(++nextFrame, callback); return nextFrame; };
-  globalThis.cancelAnimationFrame = (id) => frames.delete(id);
-  const advance = async (ms) => {
-    now += ms;
-    await act(() => { const pending = [...frames.values()]; frames.clear(); pending.forEach((fn) => fn(now)); });
-  };
-  const runtime$ = observable({});
-  const content = (paused, epoch = 0, preview = false) => {
-    runtime$.set({ isActive: !preview, isPreview: preview, startedAt: epoch });
-    return <PresentationProvider value={runtime$}>
-    <FreezeFrame paused={paused}>{(seconds) => <clock seconds={seconds} />}</FreezeFrame>
-  </PresentationProvider>;
-  };
+  const { FreezeFrame } = loadComponent("FreezeFrame", { "./motion": { useMotion: (target) => ({value: target}) } });
+  const clock = { value: { phase: "playing", slideKey: "a", slideTime: 0 } };
+  let reaction;
+  const { FreezeFrame: ControlledFreezeFrame } = loadComponent("FreezeFrame", {
+    "./motion": { useMotion: target => ({value: target}) },
+    "@legend-apps/presentation": { usePlayback: () => clock },
+    "react-native-reanimated": {
+      useSharedValue: value => React.useRef({value}).current,
+      useDerivedValue: read => ({get value() { return read(); }}),
+      useAnimatedReaction: (read, react) => { reaction = () => react(read()); },
+    },
+    "../shared/FrameView": { FrameView: "frame-view" },
+  });
+  const render = paused => <ControlledFreezeFrame paused={paused}>{seconds => <clock seconds={seconds} />}</ControlledFreezeFrame>;
   let tree;
   try {
-    await act(() => { tree = create(content(false)); });
-    const seconds = () => tree.root.findByType("clock").props.seconds;
-    await advance(500);
+    await act(() => { tree = create(render(false)); });
+    const seconds = () => tree.root.findByType("clock").props.seconds.value;
+    reaction();
+    clock.value.slideTime = 0.5; reaction();
     expect(seconds()).toBe(0.5);
-    await act(() => tree.update(content(true)));
-    await advance(10000);
+    await act(() => tree.update(render(true))); reaction();
+    clock.value.slideTime = 10.5; reaction();
     expect(seconds()).toBe(0.5);
-    expect(frames.size).toBe(0);
-    await act(() => tree.update(content(false)));
-    await advance(250);
+    await act(() => tree.update(render(false))); reaction();
+    clock.value.slideTime = 10.75; reaction();
     expect(seconds()).toBe(0.75);
-    await act(() => tree.update(content(false, 10750)));
+    clock.value = {phase: "playing", slideKey: "b", slideTime: 0}; reaction();
     expect(seconds()).toBe(0);
-    await act(() => tree.update(content(true, 10750, true)));
+    clock.value.phase = "preview";
     expect(seconds()).toBe(1.5);
-    expect(frames.size).toBe(0);
-  } finally {
-    if (tree) await act(() => tree.unmount());
-    time.mockRestore(); log.mockRestore();
-    globalThis.requestAnimationFrame = originalRequest;
-    globalThis.cancelAnimationFrame = originalCancel;
-  }
+  } finally { if (tree) await act(() => tree.unmount()); }
 });
 
 test("content replacement keeps both branches mounted and transfers interaction", async () => {
   globalThis.IS_REACT_ACT_ENVIRONMENT = true;
-  const { ContentSwap } = loadComponent("Composition", { "./motion": { useMotion: (target) => target } });
+  const { ContentSwap } = loadComponent("Composition", { "./motion": { useMotion: (target) => ({value: target}) } });
   let mounts = 0;
   function Content({ name }) { React.useEffect(() => { mounts++; }, []); return <content name={name} />; }
   const content = (active) => <ContentSwap active={active} before={<Content name="chart" />} after={<Content name="takeaway" />} />;
@@ -96,7 +83,7 @@ test("content replacement keeps both branches mounted and transfers interaction"
     for (const active of [true, false, true]) {
       await act(() => tree.update(content(active)));
       expect(mounts).toBe(2);
-      const branches = tree.root.findAllByType("view").filter((node) => node.props.pointerEvents);
+      const branches = tree.root.findAllByType("animated-view").filter((node) => node.props.pointerEvents);
       expect(branches.map((node) => node.props.pointerEvents)).toEqual(active ? ["none", "auto"] : ["auto", "none"]);
     }
   } finally { if (tree) await act(() => tree.unmount()); log.mockRestore(); }
@@ -105,17 +92,17 @@ test("content replacement keeps both branches mounted and transfers interaction"
 
 test("progressive detail has zero layout width when collapsed", async () => {
   globalThis.IS_REACT_ACT_ENVIRONMENT = true;
-  const { ProgressiveDetail } = loadComponent("Composition", { "./motion": { useMotion: (target) => target } });
+  const { ProgressiveDetail } = loadComponent("Composition", { "./motion": { useMotion: (target) => ({value: target}) } });
   let tree;
   const log = spyOn(console, "error").mockImplementation(() => {});
   try {
     const content = (expanded) => <ProgressiveDetail expanded={expanded} summary={<summary />} detail={<detail />} />;
     await act(() => { tree = create(content(false)); });
-    const detail = () => tree.root.findAllByType("view").find((node) => node.props.importantForAccessibility);
-    expect(detail().props.style.width).toBe("0%");
+    const detail = () => tree.root.findAllByType("animated-view").find((node) => node.props.importantForAccessibility);
+    expect(detail().props.style[1].value.width).toBe("0%");
     expect(detail().props.pointerEvents).toBe("none");
     await act(() => tree.update(content(true)));
-    expect(detail().props.style.width).toBe("63%");
+    expect(detail().props.style[1].value.width).toBe("63%");
     expect(detail().props.pointerEvents).toBe("auto");
   } finally { if (tree) await act(() => tree.unmount()); log.mockRestore(); }
 });

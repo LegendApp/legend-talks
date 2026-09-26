@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
-import type { Observable } from "@legendapp/state";
-import { useValue } from "@legendapp/state/react";
+import type { SharedValue } from "react-native-reanimated";
+import { FrameView } from "../shared/FrameView";
+
 import { useEffectTime$ } from "../shared/effectRuntime";
 
 type FrameBudgetProps = {
@@ -25,7 +26,7 @@ function BudgetRow({
   budgetMs: number;
   color: string;
   label: string;
-  time$: Observable<number>;
+  time$: SharedValue<number>;
   cycleSeconds: number;
   workMs: number;
 }) {
@@ -81,36 +82,33 @@ export function FrameBudget({
   );
 }
 
-type BudgetClockProps = { time$: Observable<number>; cycleSeconds: number };
+type BudgetClockProps = { time$: SharedValue<number>; cycleSeconds: number };
 
 function BudgetPlayhead({ time$, cycleSeconds, color }: BudgetClockProps & { color: string }) {
-  const left = useValue(() => Math.min(timelineWidth - 3, time$.get() % cycleSeconds / cycleSeconds * timelineWidth));
-  return <View style={[styles.playhead, { backgroundColor: color, left, shadowColor: color }]} />;
+  return <FrameView frameStyle={() => { "worklet"; return [styles.playhead, { backgroundColor: color, left: 0, transform: [{ translateX: Math.min(timelineWidth - 3, time$.value % cycleSeconds / cycleSeconds * timelineWidth) }], shadowColor: color }]; }} />;
 }
-
 function BudgetCursor({ time$, cycleSeconds, stepped }: BudgetClockProps & { stepped?: boolean }) {
-  const left = useValue(() => {
-    const playhead = time$.get() % cycleSeconds / cycleSeconds;
-    return (stepped ? Math.floor(playhead * frames) / (frames - 1) : playhead) * 1050;
-  });
-  return <View style={[styles.cursor, stepped ? styles.jankCursor : styles.smoothCursor, { left }]} />;
+  return <FrameView frameStyle={() => { "worklet";
+    const playhead = time$.value % cycleSeconds / cycleSeconds;
+    return [styles.cursor, stepped ? styles.jankCursor : styles.smoothCursor, { left: 0, transform: [{ translateX: (stepped ? Math.floor(playhead * frames) / (frames - 1) : playhead) * 1050 }] }];
+  }} />;
 }
 
 function BudgetFrame({ index, time$, cycleSeconds, budgetMs, color, workMs }: BudgetClockProps & {
   index: number; budgetMs: number; color: string; workMs: number;
 }) {
-  const current = useValue(() => Math.floor(time$.get() % cycleSeconds / cycleSeconds * frames) === index);
+
   const missed = workMs > budgetMs;
   const workWidth = Math.min(frameWidth * 1.8, frameWidth * workMs / budgetMs);
   const hasWork = !missed || index % 2 === 0;
   const withinBudgetWidth = Math.min(frameWidth - 16, workWidth);
   const overrunWidth = Math.max(0, workWidth - withinBudgetWidth);
-  return <View style={[styles.frameCell, current && { backgroundColor: `${color}14` }]}>
+  return <FrameView frameStyle={() => { "worklet"; return [styles.frameCell, Math.floor(time$.value % cycleSeconds / cycleSeconds * frames) === index && { backgroundColor: `${color}14` }]; }}>
     <Text style={styles.frameNumber}>{index + 1}</Text>
     {hasWork && <View style={[styles.workBlock, { backgroundColor: color, width: withinBudgetWidth }]} />}
     {hasWork && missed && <View style={[styles.overrunBlock, { backgroundColor: color, width: overrunWidth }]} />}
     {missed && <View style={styles.budgetBoundary} />}
-  </View>;
+  </FrameView>;
 }
 
 const styles = StyleSheet.create({

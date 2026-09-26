@@ -1,8 +1,8 @@
+import Animated, { useAnimatedProps } from "react-native-reanimated";
 import LottieView, { type AnimationObject } from "lottie-react-native";
 import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from "react-native";
 import { useEffectTime } from "../shared/effectRuntime";
 import nativeOrbit from "./native-orbit.json";
-
 type LottiePlayerProps = {
   durationSeconds?: number;
   loop?: boolean;
@@ -10,52 +10,29 @@ type LottiePlayerProps = {
   source: AnimationObject;
   style?: StyleProp<ViewStyle>;
 };
-
+const AnimatedLottie = Animated.createAnimatedComponent(LottieView);
 function LottieProgress({
   durationSeconds,
   loop,
   previewProgress,
   source,
-  style,
-}: Required<Pick<LottiePlayerProps, "durationSeconds" | "loop" | "previewProgress">> &
-  Pick<LottiePlayerProps, "source" | "style">) {
+  style
+}: Required<Pick<LottiePlayerProps, "durationSeconds" | "loop" | "previewProgress">> & Pick<LottiePlayerProps, "source" | "style">) {
   const time = useEffectTime(durationSeconds * previewProgress);
-  const elapsed = loop ? time % durationSeconds : Math.min(time, durationSeconds);
-  const progress = elapsed / durationSeconds;
-
-  return (
-    <LottieView
-      autoPlay={false}
-      loop={false}
-      progress={progress}
-      resizeMode="contain"
-      source={source}
-      style={style}
-    />
-  );
+  const animatedProps = useAnimatedProps(() => ({ progress: (loop ? time.value % durationSeconds : Math.min(time.value, durationSeconds)) / durationSeconds }));
+  return <AnimatedLottie autoPlay={false} loop={false} animatedProps={animatedProps} resizeMode="contain" source={source} style={style} />;
 }
-
 export function LottiePlayer({
   durationSeconds = 5,
   loop = true,
   previewProgress = 0.72,
   source,
-  style,
+  style
 }: LottiePlayerProps) {
-  return (
-    <LottieProgress
-      durationSeconds={Math.max(0.1, durationSeconds)}
-      loop={loop}
-      previewProgress={Math.max(0, Math.min(1, previewProgress))}
-      source={source}
-      style={style}
-    />
-  );
+  return <LottieProgress durationSeconds={Math.max(0.1, durationSeconds)} loop={loop} previewProgress={Math.max(0, Math.min(1, previewProgress))} source={source} style={style} />;
 }
-
 export function NativeOrbitLottie() {
-  return (
-    <View style={styles.frame}>
+  return <View style={styles.frame}>
       <View style={styles.meta}>
         <Text style={styles.eyebrow}>DECK-LOCAL JSON</Text>
         <Text style={styles.title}>One asset. Native vector playback.</Text>
@@ -65,17 +42,57 @@ export function NativeOrbitLottie() {
         <LottiePlayer source={nativeOrbit as AnimationObject} style={styles.animation} />
       </View>
       <Text style={styles.caption}>Generated Lottie JSON rendered by the native macOS runtime.</Text>
-    </View>
-  );
+    </View>;
 }
-
 const styles = StyleSheet.create({
-  animation: { height: 500, width: 980 },
-  caption: { bottom: 4, color: "#94a3b8", fontSize: 24, left: 40, position: "absolute" },
-  detail: { color: "#94a3b8", fontSize: 24, lineHeight: 34, marginTop: 22, width: 440 },
-  eyebrow: { color: "#67e8f9", fontSize: 18, fontWeight: "700", letterSpacing: 4 },
-  frame: { flexDirection: "row", height: 580, paddingHorizontal: 40, position: "relative", width: 1680 },
-  meta: { justifyContent: "center", paddingBottom: 42, width: 500 },
-  stage: { alignItems: "center", height: 520, justifyContent: "center", width: 1100 },
-  title: { color: "#f8fafc", fontSize: 50, fontWeight: "700", lineHeight: 58, marginTop: 18, width: 470 },
+  animation: {
+    height: 500,
+    width: 980
+  },
+  caption: {
+    bottom: 4,
+    color: "#94a3b8",
+    fontSize: 24,
+    left: 40,
+    position: "absolute"
+  },
+  detail: {
+    color: "#94a3b8",
+    fontSize: 24,
+    lineHeight: 34,
+    marginTop: 22,
+    width: 440
+  },
+  eyebrow: {
+    color: "#67e8f9",
+    fontSize: 18,
+    fontWeight: "700",
+    letterSpacing: 4
+  },
+  frame: {
+    flexDirection: "row",
+    height: 580,
+    paddingHorizontal: 40,
+    position: "relative",
+    width: 1680
+  },
+  meta: {
+    justifyContent: "center",
+    paddingBottom: 42,
+    width: 500
+  },
+  stage: {
+    alignItems: "center",
+    height: 520,
+    justifyContent: "center",
+    width: 1100
+  },
+  title: {
+    color: "#f8fafc",
+    fontSize: 50,
+    fontWeight: "700",
+    lineHeight: 58,
+    marginTop: 18,
+    width: 470
+  }
 });
