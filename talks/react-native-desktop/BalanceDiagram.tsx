@@ -86,15 +86,15 @@ function Glass({ fail = false, children }: { fail?: boolean; children: ReactNode
 const categoryFont = matchFont({ fontFamily: "Helvetica Neue", fontSize: 36, fontWeight: "700" });
 
 function arc(x: number, y: number, radius: number, angle: number, span: number, reverse = false) {
-  const path = Skia.Path.Make();
+  const builder = Skia.PathBuilder.Make();
   const direction = reverse ? -1 : 1;
   for (let i = 0; i <= 100; i++) {
     const theta = angle + direction * span * (i / 100 - 0.5);
     const px = x + radius * Math.cos(theta), py = y + radius * Math.sin(theta);
-    if (i === 0) path.moveTo(px, py);
-    else path.lineTo(px, py);
+    if (i === 0) builder.moveTo(px, py);
+    else builder.lineTo(px, py);
   }
-  return path;
+  return builder.detach();
 }
 
 function makeBadge(label: string, x: number, y: number, radius: number, angle: number, phase: number, color: string, reverse = false) {
