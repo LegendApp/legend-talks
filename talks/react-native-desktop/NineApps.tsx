@@ -3,7 +3,7 @@ import { useNativeVideo, usePlaybackTween, FocusRegion, SceneMotionView, SharedE
 import { Canvas, Image as SkiaImage } from "@shopify/react-native-skia";
 import { ComposerGlassTakeover } from "./ComposerGlassTakeover";
 import { DeckBackground } from "./DeckBackground";
-import { detailCamera, tourStep } from "./NineAppsTour";
+import { detailCamera, shortTourSteps, tourStep, tourSteps } from "./NineAppsTour";
 import { MovingTitle } from "./MovingTitle";
 import { Image, Text, View } from "react-native";
 import { appOrder, appCardLayout, filmstripLeft, filmstripWidth, type AppId, type SceneMode } from "./NineAppsGeometry";
@@ -70,13 +70,13 @@ export default function NineAppsFrame({ children }: PresentationTemplateProps) {
   return <><DeckBackground /><View style={{ flex: 1 }}>{children}</View></>;
 }
 
-export function NineApps({ mode: requestedMode }: { mode?: SceneMode }) {
+export function NineApps({ mode: requestedMode, tour: requestedTour = "full" }: { mode?: SceneMode; tour?: "full" | "short" }) {
   const step = usePresentationValue("stepIndex");
   const mode = requestedMode ?? (step === 0 ? "hero" : step === 1 ? "grid" : "filmstrip");
   const tourIndex = requestedMode ? step : Math.max(0, step - 2);
   const phase = usePresentationValue("playbackPhase");
   const isPreview = usePresentationValue("isPreview");
-  const tour = tourStep(tourIndex);
+  const tour = tourStep(tourIndex, requestedTour === "short" ? shortTourSteps : tourSteps);
   const selected = mode === "filmstrip" ? appOrder.indexOf(tour.app) : 0;
   const gpuiVideo = useNativeVideo(isPreview ? null : gpuiPage.replace(/\.html$/, ".mp4"),
     mode === "filmstrip" && phase === "playing" && tour.app === "gpui");

@@ -2,6 +2,11 @@ import { appOrder, filmstripLeft, filmstripWidth, type AppId } from "./NineAppsG
 
 export type Detail = "app" | "sidebar" | "composer" | "takeover";
 export type TourStep = { app: AppId; detail: Detail };
+export const shortTourSteps: readonly TourStep[] = [
+  { app: "react-native", detail: "app" },
+  { app: "electron", detail: "app" },
+  { app: "gpui", detail: "app" },
+];
 export const tourSteps: readonly TourStep[] = [
   { app: "react-native", detail: "app" },
   { app: "react-native", detail: "sidebar" },
@@ -24,7 +29,9 @@ export const tourSteps: readonly TourStep[] = [
   { app: "gpui", detail: "composer" },
   { app: "gpui", detail: "takeover" },
 ];
-export function tourStep(step: number) { return tourSteps[Math.max(0, Math.min(tourSteps.length - 1, step))]; }
+export function tourStep(step: number, steps: readonly TourStep[] = tourSteps) {
+  return steps[Math.max(0, Math.min(steps.length - 1, step))];
+}
 export function renderingGroup(app: AppId) {
   const index = appOrder.indexOf(app);
   return index < 3 ? "Native views" : index < 6 ? "Browser-rendered" : "Canvas-rendered";

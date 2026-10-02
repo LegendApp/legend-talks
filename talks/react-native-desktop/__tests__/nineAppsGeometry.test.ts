@@ -24,7 +24,7 @@ test("filmstrip centers the selected card and never wraps later cards to the lef
   expect(appCardLayout(8, "filmstrip", 1000)).toEqual(appCardLayout(8, "filmstrip", 8));
 });
 
-import { detailCamera, tourSteps, tourStep } from "../NineAppsTour";
+import { detailCamera, shortTourSteps, tourSteps, tourStep } from "../NineAppsTour";
 import { readFileSync } from "node:fs";
 
 test("manual tour covers every app in rendering order, with close-ups on each group's first app", () => {
@@ -38,10 +38,31 @@ test("manual tour covers every app in rendering order, with close-ups on each gr
   ]);
   expect(tourStep(-1)).toEqual(tourSteps[0]);
   expect(tourStep(999)).toEqual(tourSteps.at(-1));
-  const deck = readFileSync(new URL("../rnconnection.mdx", import.meta.url), "utf8");
-  expect(deck).toContain(`template: ./NineApps.tsx\nsteps: ${tourSteps.length + 2}\n`);
-  expect(deck.indexOf('<Chart workload="hello" metric="memory"')).toBeLessThan(deck.indexOf('<NineApps />'));
-  expect(deck.indexOf('<NineApps />')).toBeLessThan(deck.indexOf('<Chart metric="content"'));
+});
+
+test("main talk uses the short tour and two chat comparisons before moving to foundations", () => {
+  expect(shortTourSteps).toEqual([
+    { app: "react-native", detail: "app" },
+    { app: "electron", detail: "app" },
+    { app: "gpui", detail: "app" },
+  ]);
+  expect(tourStep(-1, shortTourSteps)).toEqual(shortTourSteps[0]);
+  expect(tourStep(999, shortTourSteps)).toEqual(shortTourSteps.at(-1));
+  const deck = readFileSync(new URL("../reactcon.mdx", import.meta.url), "utf8");
+  expect(deck).not.toMatch(/appendix/i);
+  expect(deck).not.toContain('<NineApps />');
+  const main = deck;
+  expect(main).toContain(`template: ./NineApps.tsx\nsteps: ${shortTourSteps.length + 2}\n`);
+  expect(main.match(/<Chart metric="\w+" \/>/g)).toEqual([
+    '<Chart metric="content" />', '<Chart metric="switch" />',
+  ]);
+  const positions = [
+    '<DesktopObjectionsReactcon chapter="performance"', "title: Hello World · first content",
+    '<NineApps tour="short"', '<Chart metric="content"', '<Chart metric="switch"',
+    '<DesktopObjectionsReactcon chapter="foundations"', '<SparkAppEditing', '<DesktopObjectionsReactcon chapter="modules"',
+  ].map(marker => main.indexOf(marker));
+  expect(positions.every(position => position >= 0)).toBe(true);
+  expect(positions).toEqual([...positions].sort((a, b) => a - b));
 });
 
 test("detail cameras share the composer framing through the glass finale", () => {
