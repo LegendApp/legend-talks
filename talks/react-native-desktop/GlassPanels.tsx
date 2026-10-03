@@ -27,7 +27,7 @@ float4 glassPanel(float2 p,float2 size,float radius,float clock) {
   float sweepAxis=(uv.y+uv.x*0.42+0.35*sin(clock*0.23))/0.65;
   float sweep=exp(-sweepAxis*sweepAxis);
   float frost=0.085+0.035*top+0.018*sweep;
-  float3 body=float3(0.96,0.97,0.98)*frost;
+  float3 body=float3(0.96,0.97,0.98)*frost*0.75;
 
   // Opposing reflections and an inset caustic give the lip optical thickness.
   // One slow revolution every 48 seconds, driven entirely by the GPU clock.
