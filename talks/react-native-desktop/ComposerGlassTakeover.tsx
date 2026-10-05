@@ -25,14 +25,11 @@ half4 sampleBackdrop(float2 p) {
   return content + half4(0.025, 0.025, 0.025, 1.0) * (1.0 - content.a);
 }
 half4 main(float2 position) {
-  // Finish the realistic material at 0.8s, hold it for two full seconds,
-  // then distort it inside the composer before expanding across the slide.
   float reveal = smoothstep(0.0, 0.8, time);
-  float wild = smoothstep(2.8, 5.8, time);
-  float grow = smoothstep(6.0, 12.0, time);
-  float2 center = mix(composer.xy + composer.zw * 0.5, float2(960, 540), grow);
-  float2 halfSize = mix(composer.zw * 0.5, float2(1040, 620), grow);
-  float radius = mix(cornerRadius, 100.0, grow);
+  float wild = smoothstep(0.8, 2.0, time);
+  float2 center = composer.xy + composer.zw * 0.5;
+  float2 halfSize = composer.zw * 0.5;
+  float radius = cornerRadius;
   float2 p = position - center;
   float ripple = sin(p.x * 0.022 + time * 2.2) * sin(p.y * 0.018 - time * 1.7);
   float distance = boxDistance(p, halfSize, radius) + ripple * 5.0 * wild;
@@ -55,8 +52,7 @@ half4 main(float2 position) {
     + flow * (8.0 + 55.0 * lens) * wild;
   float blur = mix(0.65, 3.0, wild) * reveal;
   half4 color = half4(0);
-  // Nine weighted taps keep the center readable and the live full-screen
-  // phase cheaper than the former 25-tap frosting pass.
+  // Nine weighted taps keep the center readable.
   for (int y = -1; y <= 1; y++) {
     float wy = y == 0 ? 2.0 : 1.0;
     for (int x = -1; x <= 1; x++) {
