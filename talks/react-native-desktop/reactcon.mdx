@@ -158,102 +158,6 @@ So I tweeted about it.
 
 
 ---
-title: Native would be faster
-eyebrow: Story
-steps: 2
----
-
-<NativeReactions />
-
-<!--
-1. And everyone on Twitter got mad at me. They all wanted to compare them to fully native apps.
-
-2. If performance matters, why aren't you using Swift or Objective C? Native would be faster.
-
-I was excited about how much better these felt than Electron. But the comparison became binary, it should either be a slow web app or 100% fully native no compromises. People laughed at me for claiming I care about performance while using React Native.
--->
-
-
----
-title: React Native is a Compromise
-eyebrow: Story
-steps: 2
----
-
-<CompromiseQuestion />
-
-
-
-<!--
-1. Because everybody knows the meme that React Native is a compromise.
-
-You get React. You get to share code. You get fast refresh and OTA. But you're giving up performance.
-
-2. Except these were the fastest apps on my computer. They were faster than every native app, even every Apple app.
-
-So what exactly was I compromising?
--->
-
-
----
-title: So I measured it
-eyebrow: Story
----
-
-<Measured />
-
-<!--
-So I measured it.
-
-I wanted to know how much the framework actually costs, and what happens when you put a real app on top of it.
--->
-
-
-
-
----
-steps: 3
-eyebrow: Story
----
-
-# Three ways to draw a desktop app {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<RendererFamilies />
-
-<!--
-1. First, a quick desktop framework tour, because most of us spend our time on mobile. There’s basically three ways of doing it.
-
-First is real native UI. AppKit is effectively UIKit on mac. SwiftUI is Apple's newer native framework, same as on mobile. And of course React Native uses native views.
-
-2. Then there are the browser ones. Electron bundles Chromium and Nodejs with your app. Tauri uses the system WebView with a Rust backend.
-
-3. And then there are frameworks that render every pixel on a canvas. Flutter, Compose Multiplatform, and GPUI, which is the Rust framework behind Zed.
--->
-
-
----
-title: Monthly package downloads
-steps: 2
----
-
-# Monthly package downloads {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<PackageDownloadsChart />
-
-<!--
-1. Looking at package downloads is interesting. People often tell me that nobody builds desktop apps, mobile is where the market is.
-
-But Electron has almost as many users as Expo. And if you add Tauri to that, there’s more desktop developers than Expo developers.
-
-So it seems like the desktop app opportunity is at least as big as mobile.
-
-2. I’m going to pick on Electron a lot today, because it’s currently the market leader and is the main platform that React Native on desktop competes with.
-
-So to the benchmarks.
--->
-
-
----
 title: Legend Music · app size
 eyebrow: 'Legend Music / Apple Silicon release'
 ---
@@ -312,78 +216,99 @@ It even beats Apple Music in this capture. Obviously my app doesn't have as many
 
 
 ---
-title: Hello World · first content
+title: Native would be faster
+eyebrow: Story
 steps: 2
-eyebrow: 'Hello World / first content'
-footer: 'Median ms · 10 measured rounds · small differences near recording cadence are ties'
 ---
 
-<HelloWorldIntro />
+<NativeReactions />
 
 <!--
-1. I started with Hello World. This establishes a baseline for what the frameworks can do.
+1. And everyone on Twitter got mad at me. They all wanted to compare them to fully native apps.
 
-And a big caveat: I am not an expert in these frameworks. These numbers may be wrong. I did my best to optimize each one as much as possible. It’s open source so if I made a mistake please PR a fix for it.
+2. If performance matters, why aren't you using Swift or Objective C? Native would be faster.
 
-2. So here are the results. React Native matches GPUI and SwiftUI. AppKit is a bit faster. Other frameworks are slower.
-
-It’s interesting that React Native exactly matches SwiftUI, when that’s the one everyone tells me is faster…
+I was excited about how much better these felt than Electron. But the comparison became binary, it should either be a slow web app or 100% fully native no compromises. People laughed at me for claiming I care about performance while using React Native.
 -->
 
 
 ---
-eyebrow: 'Hello World / installed size'
-steps: 6
-footer: 'Greeting workload · newer installed-size snapshot · MB'
----
-
-# Hello World · installed size {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<HelloSizeJourney />
-
-<!--
-1. Now look at installed size. React Native is about 7 and a half MB.
-
-2. The interesting thing is what each app has to bring with it.
-
-3. AppKit and SwiftUI are tiny because they’re built in to the operating system
-
-4. Electron and Deno CEF build in a full Chromium browser, and a full Nodejs or Deno runtime.
-
-5. GPUI brings its own rendering system, and it’s impressively small. React Native brings Hermes and its own runtime, but it’s still a very small app.
-
-6. I think of these in buckets. React Native is well within the tiny app bucket. A few megabytes doesn’t matter that much in the baseline. But we definitely don't want to be pushing 300 megabytes for a Hello World app.
--->
-
-
----
-eyebrow: 'Hello World / memory'
+title: React Native is a Compromise
+eyebrow: Story
 steps: 2
-footer: 'Greeting workload · MB · settled physical footprint'
 ---
 
-# Hello World · memory {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+<CompromiseQuestion />
 
-<Chart workload="hello" metric="memory" />
+
 
 <!--
-1. They perform similarly on memory.
+1. Because everybody knows the meme that React Native is a compromise.
 
-Native platforms are the smallest, React Native is a bit bigger.
+You get React. You get to share code. You get fast refresh and OTA. But you're giving up performance.
 
-There's some overhead. Of course there is. But it’s just a few megabytes in the baseline.
+2. Except these were the fastest apps on my computer. They were faster than every native app, even every Apple app.
 
-2. Again I think about these in buckets. React Native is pretty close to native. Flutter is double. Electron is triple.
+So what exactly was I compromising?
 -->
 
 
 ---
-eyebrow: 'From baseline to real work'
+title: So I measured it
+eyebrow: Story
 ---
 
-# But hello world isn’t a real app {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+<Measured />
 
-<!-- But Hello World is only useful for establishing a baseline. What really matters is how real apps perform. -->
+<!--
+So I measured it.
+
+I wanted to know how much the framework actually costs, and what happens when you put a real app on top of it.
+-->
+
+
+
+
+---
+title: Monthly package downloads
+steps: 2
+---
+
+# Monthly package downloads {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<PackageDownloadsChart />
+
+<!--
+1. Looking at package downloads is interesting. People often tell me that nobody builds desktop apps, mobile is where the market is.
+
+But Electron has almost as many users as Expo. And if you add Tauri to that, there’s more desktop developers than Expo developers.
+
+So it seems like the desktop app opportunity is at least as big as mobile.
+
+2. I’m going to pick on Electron a lot today, because it’s currently the market leader and is the main platform that React Native on desktop competes with.
+
+So to the benchmarks.
+-->
+
+
+---
+steps: 3
+eyebrow: Story
+---
+
+# Three ways to draw a desktop app {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<RendererFamilies />
+
+<!--
+1. First, a quick desktop framework tour, because most of us spend our time on mobile. There’s basically three ways of doing it.
+
+First is real native UI. AppKit is effectively UIKit on mac. SwiftUI is Apple's newer native framework, same as on mobile. And of course React Native uses native views.
+
+2. Then there are the browser ones. Electron bundles Chromium and Nodejs with your app. Tauri uses the system WebView with a Rust backend.
+
+3. And then there are frameworks that render every pixel on a canvas. Flutter, Compose Multiplatform, and GPUI, which is the Rust framework behind Zed.
+-->
 
 
 ---
@@ -474,6 +399,81 @@ You can build an okay UI with the other approaches. But it's harder to go deep i
 
 So let's get back to the chat history app benchmarks.
 -->
+
+
+---
+title: Hello World · first content
+steps: 2
+eyebrow: 'Hello World / first content'
+footer: 'Median ms · 10 measured rounds · small differences near recording cadence are ties'
+---
+
+<HelloWorldIntro />
+
+<!--
+1. I started with Hello World. This establishes a baseline for what the frameworks can do.
+
+And a big caveat: I am not an expert in these frameworks. These numbers may be wrong. I did my best to optimize each one as much as possible. It’s open source so if I made a mistake please PR a fix for it.
+
+2. So here are the results. React Native matches GPUI and SwiftUI. AppKit is a bit faster. Other frameworks are slower.
+
+It’s interesting that React Native exactly matches SwiftUI, when that’s the one everyone tells me is faster…
+-->
+
+
+---
+eyebrow: 'Hello World / installed size'
+steps: 6
+footer: 'Greeting workload · newer installed-size snapshot · MB'
+---
+
+# Hello World · installed size {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<HelloSizeJourney />
+
+<!--
+1. Now look at installed size. React Native is about 7 and a half MB.
+
+2. The interesting thing is what each app has to bring with it.
+
+3. AppKit and SwiftUI are tiny because they’re built in to the operating system
+
+4. Electron and Deno CEF build in a full Chromium browser, and a full Nodejs or Deno runtime.
+
+5. GPUI brings its own rendering system, and it’s impressively small. React Native brings Hermes and its own runtime, but it’s still a very small app.
+
+6. I think of these in buckets. React Native is well within the tiny app bucket. A few megabytes doesn’t matter that much in the baseline. But we definitely don't want to be pushing 300 megabytes for a Hello World app.
+-->
+
+
+---
+eyebrow: 'Hello World / memory'
+steps: 2
+footer: 'Greeting workload · MB · settled physical footprint'
+---
+
+# Hello World · memory {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<Chart workload="hello" metric="memory" />
+
+<!--
+1. They perform similarly on memory.
+
+Native platforms are the smallest, React Native is a bit bigger.
+
+There's some overhead. Of course there is. But it’s just a few megabytes in the baseline.
+
+2. Again I think about these in buckets. React Native is pretty close to native. Flutter is double. Electron is triple.
+-->
+
+
+---
+eyebrow: 'From baseline to real work'
+---
+
+# But hello world isn’t a real app {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<!-- But Hello World is only useful for establishing a baseline. What really matters is how real apps perform. -->
 
 
 ---
