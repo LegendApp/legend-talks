@@ -254,6 +254,64 @@ So to the benchmarks.
 
 
 ---
+title: Legend Music · app size
+eyebrow: 'Legend Music / Apple Silicon release'
+---
+
+# Legend Music · app size {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<MusicPerformance metric="size" installedSize="15.4 MB" zippedSize="6.3 MB" />
+
+<!--
+Measured October 5, 2026 from a macOS arm64 Release build of the current Legend Music app using Spark. Sizes use decimal MB and exclude build intermediates and user data. The app bundle contains 15,418,941 bytes; the ZIP contains 6,325,020 bytes.
+
+The complete production app is 15.4 MB installed, down from the previous 35.3 MB measurement.
+
+Zipped, it's 6.3 MB, down from 11.4 MB.
+-->
+
+
+---
+title: Legend Music · CPU
+eyebrow: 'Legend Music / RNL 2025'
+---
+
+# Legend Music · CPU {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<MusicPerformance metric="cpu" capture={musicCpuCapture} />
+
+<!--
+These are the original RNL 2025 measurements while playing a local MP3. Spotify's usage includes the helper processes shown in the Activity Monitor capture; the table retains the rounded figures from that talk.
+
+Legend Music used about 2% CPU, compared with about 26% for Spotify in this capture. Apple Music was about 2% too.
+
+Just think about what's happened to us as a society that playing an MP3 file uses more processing power now than it did 25 years ago on my Pentium 2.
+-->
+
+
+---
+title: Legend Music · memory
+eyebrow: 'Legend Music / RNL 2025'
+---
+
+# Legend Music · memory {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<MusicPerformance metric="memory" capture={musicMemoryCapture} />
+
+<!--
+These are the original RNL 2025 measurements while playing a song. Spotify's usage includes its helper processes; the table retains the rounded figures from that talk. This is an Activity Monitor snapshot, not the physical-footprint methodology used by the later Chat History benchmarks.
+
+Running a full browser with several different processes takes about 800 megabytes of memory.
+
+800! This should not be acceptable.
+
+Legend Music uses over 90% less memory at just 72 MB.
+
+It even beats Apple Music in this capture. Obviously my app doesn't have as many features yet, but the memory usage is comparable to native.
+-->
+
+
+---
 title: Hello World · first content
 steps: 2
 eyebrow: 'Hello World / first content'
@@ -316,64 +374,6 @@ Native platforms are the smallest, React Native is a bit bigger.
 There's some overhead. Of course there is. But it’s just a few megabytes in the baseline.
 
 2. Again I think about these in buckets. React Native is pretty close to native. Flutter is double. Electron is triple.
--->
-
-
----
-title: Legend Music · app size
-eyebrow: 'Legend Music / Apple Silicon release'
----
-
-# Legend Music · app size {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<MusicPerformance metric="size" installedSize="15.4 MB" zippedSize="6.3 MB" />
-
-<!--
-Measured October 5, 2026 from a macOS arm64 Release build of the current Legend Music app using Spark. Sizes use decimal MB and exclude build intermediates and user data. The app bundle contains 15,418,941 bytes; the ZIP contains 6,325,020 bytes.
-
-The complete production app is 15.4 MB installed, down from the previous 35.3 MB measurement.
-
-Zipped, it's 6.3 MB, down from 11.4 MB.
--->
-
-
----
-title: Legend Music · CPU
-eyebrow: 'Legend Music / RNL 2025'
----
-
-# Legend Music · CPU {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<MusicPerformance metric="cpu" capture={musicCpuCapture} />
-
-<!--
-These are the original RNL 2025 measurements while playing a local MP3. Spotify's usage includes the helper processes shown in the Activity Monitor capture; the table retains the rounded figures from that talk.
-
-Legend Music used about 2% CPU, compared with about 26% for Spotify in this capture. Apple Music was about 2% too.
-
-Just think about what's happened to us as a society that playing an MP3 file uses more processing power now than it did 25 years ago on my Pentium 2.
--->
-
-
----
-title: Legend Music · memory
-eyebrow: 'Legend Music / RNL 2025'
----
-
-# Legend Music · memory {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<MusicPerformance metric="memory" capture={musicMemoryCapture} />
-
-<!--
-These are the original RNL 2025 measurements while playing a song. Spotify's usage includes its helper processes; the table retains the rounded figures from that talk. This is an Activity Monitor snapshot, not the physical-footprint methodology used by the later Chat History benchmarks.
-
-Running a full browser with several different processes takes about 800 megabytes of memory.
-
-800! This should not be acceptable.
-
-Legend Music uses over 90% less memory at just 72 MB.
-
-It even beats Apple Music in this capture. Obviously my app doesn't have as many features yet, but the memory usage is comparable to native.
 -->
 
 
