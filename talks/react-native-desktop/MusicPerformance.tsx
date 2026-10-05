@@ -20,18 +20,23 @@ const tablePanels = [{ x: 0, y: 0, width: 680, height: 420, radius: 32 }];
 const sizePanels = [{ x: 0, y: 0, width: 680, height: 290, radius: 32 },
   { x: 736, y: 0, width: 680, height: 290, radius: 32 }];
 
-export function MusicPerformance({ metric, capture }: { metric: "cpu" | "memory" | "size"; capture: string }) {
+export function MusicPerformance({ metric, capture, installedSize = "35 MB", zippedSize = "11 MB" }: {
+  metric: "cpu" | "memory" | "size";
+  capture?: string;
+  installedSize?: string;
+  zippedSize?: string;
+}) {
   if (metric === "size") return <View style={{ width: 1696, height: 670, alignSelf: "center", alignItems: "center", justifyContent: "center", gap: 64 }}>
     <View style={{ width: 1416, height: 290, flexDirection: "row", gap: 56 }}>
       <GlassPanels panels={sizePanels} width={1416} height={290} />
-      {[["Installed app", "35 MB"], ["Zipped download", "11 MB"]].map(([label, value]) =>
+      {[["Installed app", installedSize], ["Zipped download", zippedSize]].map(([label, value]) =>
         <View key={label} style={{ width: 680, height: 290, justifyContent: "center", alignItems: "center", gap: 24 }}>
           <Text className="text-3xl text-zinc-300">{label}</Text>
           <Text style={{ color: "white", fontSize: 100, fontWeight: "600", fontVariant: ["tabular-nums"] }}>{value}</Text>
         </View>)}
     </View>
-    <Image source={{ uri: capture }} style={{ width: 1122, height: 255, borderRadius: 24 }}
-      resizeMode="contain" accessibilityLabel="Original RNL 2025 Finder capture: Legend Music is 35.3 MB, and its zip is 11.4 MB" />
+    {capture && <Image source={{ uri: capture }} style={{ width: 1122, height: 255, borderRadius: 24 }}
+      resizeMode="contain" accessibilityLabel="Original RNL 2025 Finder capture: Legend Music is 35.3 MB, and its zip is 11.4 MB" />}
   </View>;
 
   const comparison = comparisons[metric];

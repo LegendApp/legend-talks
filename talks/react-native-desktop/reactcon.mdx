@@ -55,7 +55,6 @@ import { NativeReactions } from "./reactcon-scenes/NativeReactions"
 import { MusicPerformance } from "./MusicPerformance";
 import musicCpuCapture from "./rnconnection-assets/rnl-2025/musiccpu.png";
 import musicMemoryCapture from "./rnconnection-assets/rnl-2025/musicmemory.png";
-import musicSizeCapture from "./rnconnection-assets/rnl-2025/musicsize.png";
 import { AppShowcase } from "./AppCarousel"
 import { MovingTitle } from "./MovingTitle"
 import { CompromiseQuestion } from "./reactcon-scenes/CompromiseQuestion"
@@ -340,19 +339,19 @@ There's some overhead. Of course there is. But it’s just a few megabytes in th
 
 ---
 title: Legend Music · app size
-eyebrow: 'Legend Music / RNL 2025'
+eyebrow: 'Legend Music / Apple Silicon release'
 ---
 
 # Legend Music · app size {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
 
-<MusicPerformance metric="size" capture={musicSizeCapture} />
+<MusicPerformance metric="size" installedSize="15.42 MB" zippedSize="6.33 MB" />
 
 <!--
-These are the original measurements and screenshots from the RNL 2025 talk, not a new benchmark of the current app.
+Measured October 5, 2026 from a macOS arm64 Release build of the current Legend Music app using Spark. Sizes use decimal MB and exclude build intermediates and user data. The app bundle contains 15,418,941 bytes; the ZIP contains 6,325,020 bytes.
 
-This complete app using Nativewind, a bunch of libraries and Expo modules, and Skia comes out to 35 MB.
+The complete production app is 15.42 MB installed, down from the previous 35.3 MB measurement.
 
-Zipped, it's an 11 MB download.
+Zipped, it's 6.33 MB, down from 11.4 MB.
 -->
 
 
