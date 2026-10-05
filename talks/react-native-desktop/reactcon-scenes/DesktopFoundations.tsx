@@ -1,7 +1,7 @@
 import { Blur, Canvas, Fill, Group, ImageShader, Paint, RuntimeShader, Shader, Skia, matchFont } from "@shopify/react-native-skia";
 import { liquidGlassShader, useLiquidGlassPlayback, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { View } from "react-native";
-import { FrameTitle } from "./FramePitch";
+import { FrameTitle } from "../FramePitch";
 import { glassPanelMaterial } from "../GlassPanels";
 
 const capabilities = ["Windows", "Native menus", "Keyboard shortcuts", "Files & folders", "Open / save dialogs",

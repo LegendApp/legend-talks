@@ -27,24 +27,26 @@ import { MetricBuckets } from "./MetricBuckets"
 import { ChatArchitecture } from "./ChatArchitecture"
 import { AIMaintenance } from "./AIMaintenance"
 import { FrameworkComparison } from "./FrameworkComparison"
-import { CrossPlatformLanes } from "./CrossPlatformLanes"
+import { CrossPlatformLanes } from "./reactcon-scenes/CrossPlatformLanes"
 import { MeasurementTimeline } from "./MeasurementTimeline"
 import { HelloSizeJourney } from "./HelloSizeJourney"
-import { StoryMoment, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot } from "./StoryDiagrams"
+import { StoryMoment, RendererFamilies, CompatibilitySnapshot } from "./StoryDiagrams"
+import { ExpoDesktopLayers } from "./reactcon-scenes/ExpoDesktopScene";
+import { Measured, QuestionBlockers } from "./reactcon-scenes/StoryScenes";
 import { SlidesReveal } from "./SlidesReveal";
 import { SlidesFeatures, SlidesAuthoring } from "./SlidesFeatures";
 import { slidesFeatureParticles } from "./SlidesFeatureParticles";
 import { ExistingModulesTitle } from "./ModuleCompatibility";
 import { FramePitch, FrameFoundations } from "./FramePitch";
 import { EverywhereMorph } from "./EverywhereMorph";
-import { ReactNativeTitleDemo } from "./ReactNativeTitleDemo";
+import { ReactNativeTitleDemo } from "./reactcon-scenes/ReactNativeTitleDemo";
 import { NativeUIMatters } from "./NativeUIMatters";
 import { PlatformVersions } from "./PlatformVersions";
 import macosReleaseTracker from "./rnconnection-assets/macos-release-tracker.png";
 import { ExpoDesktopPortal } from "./ExpoDesktopPortal";
 import sparkIcon from "./rnconnection-assets/legend-spark.png";
 import { FrameRunnerDemo } from "./FrameRunnerDemo";
-import { DesktopFoundationsJourney } from "./DesktopFoundations"
+import { DesktopFoundationsJourney } from "./reactcon-scenes/DesktopFoundations"
 import { DesktopObjections as DesktopObjectionsReactcon } from "./ObjectionsReactcon"
 import { SharedRoots } from "./SharedRoots"
 import musicIcon from "./rnconnection-assets/music-icon.png";
@@ -53,14 +55,14 @@ import { NineApps } from "./NineApps"
 import { HelloWorldIntro } from "./HelloWorldIntro"
 import { FrameworkLanguages } from "./FrameworkLanguages"
 import { PackageDownloadsChart } from "./PackageDownloadsChart"
-import { NativeReactions } from "./NativeReactions"
+import { NativeReactions } from "./reactcon-scenes/NativeReactions"
 import { MusicPerformance } from "./MusicPerformance";
 import musicCpuCapture from "./rnconnection-assets/rnl-2025/musiccpu.png";
 import musicMemoryCapture from "./rnconnection-assets/rnl-2025/musicmemory.png";
 import musicSizeCapture from "./rnconnection-assets/rnl-2025/musicsize.png";
 import { AppShowcase } from "./AppCarousel"
 import { MovingTitle } from "./MovingTitle"
-import { CompromiseQuestion } from "./CompromiseQuestion"
+import { CompromiseQuestion } from "./reactcon-scenes/CompromiseQuestion"
 import { DirectoryTitle } from "./DirectoryTitle"
 import directoryScreenshot from "./rnconnection-assets/directory-legend-list.png";
 import chatIcon from "./rnconnection-assets/chat-history-icon.png";
@@ -239,7 +241,7 @@ steps: 2
 eyebrow: Story
 ---
 
-<MovingTitle><StoryMoment kind="question" /></MovingTitle>
+<Measured />
 
 <!--
 1. But it seemed to me like React Native is actually faster.
@@ -783,9 +785,10 @@ But if it's this good…
 
 ---
 title: "Why isn't everyone doing this?"
+steps: 2
 ---
 
-# Why isn't everyone doing this? {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-8xl mb-0"}
+<QuestionBlockers />
 
 <!-- Why isn't everyone doing this? -->
 
