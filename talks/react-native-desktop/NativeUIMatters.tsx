@@ -1,6 +1,6 @@
 import { NativeMusicRecording } from "./NativeMusicRecording";
 import { Canvas, Fill, Group, Path, Rect, RoundedRect, Shader, Skia, matchFont } from "@shopify/react-native-skia";
-import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
+import { useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 import { AppCarousel } from "./AppCarousel";
 import { GlassPanels } from "./GlassPanels";
@@ -155,6 +155,10 @@ function Example({ index, width, height }: { index: number; width: number; heigh
         {["macOS", "Windows"].map(label => <Text key={label} style={{ width: 530, textAlign: "center", color: "white", fontSize: 28 }}>{label}</Text>)}
       </View>}
     </> : <NativeMusicRecording />}
+    <View pointerEvents="none" style={{ position: "absolute", left: 0, top: 26, width: 1180, height: 62,
+      zIndex: 2100, justifyContent: "center" }}>
+      <Text style={{ color: "white", fontSize: 38, lineHeight: 48, fontWeight: "600", textAlign: "center" }}>{examples[index]}</Text>
+    </View>
   </View>;
 }
 
@@ -165,13 +169,5 @@ export function NativeUIMatters() {
       <Text style={{ color: "white", fontSize: 64, fontWeight: "700", textAlign: "center" }}>Native UI Matters</Text>
     </MovingTitle>
     <AppCarousel items={examples} position={step} renderCard={(name, card) => <Example index={examples.indexOf(name)} width={card.width} height={card.height} />} />
-    {/* Keep the active title above every card's GPU surface and blur/clipping layer. */}
-    <View pointerEvents="none" style={{ position: "absolute", left: 370, top: 212, width: 1180, height: 62, zIndex: 2100 }}>
-      {examples.map((title, index) => <SceneMotionView key={title} hidden={step !== index}
-        pose={{ opacity: step === index ? 1 : 0 }} duration={250}
-        style={{ position: "absolute", inset: 0, justifyContent: "center" }}>
-        <Text style={{ color: "white", fontSize: 38, lineHeight: 48, fontWeight: "600", textAlign: "center" }}>{title}</Text>
-      </SceneMotionView>)}
-    </View>
   </View>;
 }
