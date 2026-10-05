@@ -1,5 +1,5 @@
 import { usePresentationValue } from "@legend-apps/presentation";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { BenchmarkRow, chartLayout } from "./BenchmarkChart";
 import downloads from "./rnconnection-assets/package-downloads.json";
 
@@ -18,13 +18,5 @@ export function PackageDownloadsChart() {
       grouped={emphasizeElectron && row.package === "electron"} groupColor="#f28b91" tintText={row.package === "electron"}
       value={row.downloads} maximum={maximum} valueLabel={compactCount(row.downloads)}
       y={chartLayout.top + index * chartLayout.rowSpacing} />)}
-    {downloads.unavailable.map(({ name }, index) => <View key={name} style={{ position: "absolute",
-      top: chartLayout.top + (rows.length + index + 0.5) * chartLayout.rowSpacing,
-      width: chartLayout.width, height: chartLayout.rowHeight, flexDirection: "row", alignItems: "center" }}>
-      <Text style={{ width: chartLayout.barLeft, color: "#f1f5f9", fontSize: chartLayout.fontSize,
-        lineHeight: chartLayout.lineHeight }}>{name}</Text>
-      <Text style={{ color: "#a5b3c4", fontSize: chartLayout.fontSize,
-        lineHeight: chartLayout.lineHeight }}>Count unavailable</Text>
-    </View>)}
   </View>;
 }
