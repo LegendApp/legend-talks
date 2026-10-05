@@ -8,12 +8,8 @@ const ink = "#f8fafc", cyan = "#67e8f9";
 const titleStyle = { color: ink, fontSize: 80, lineHeight: 104, fontWeight: "600" as const, textAlign: "center" as const };
 
 export function Measured() {
-  const measured = usePresentationValue("stepIndex") > 0;
   return <View style={{ width: 1696, height: 520, justifyContent: "center" }}>
-    <SceneMotionView pose={{ y: measured ? -80 : 0, opacity: measured ? 0 : 1 }} duration={500} style={{ position: "absolute", top: 190, width: 1696 }}>
-      <Text style={titleStyle}>Was I just imagining it?</Text>
-    </SceneMotionView>
-    <SceneMotionView initialPose={{ y: 60, opacity: 0 }} pose={{ y: measured ? 0 : 60, opacity: measured ? 1 : 0 }} duration={650}>
+    <SceneMotionView initialPose={{ y: 60, opacity: 0 }} pose={{ y: 0, opacity: 1 }} duration={650}>
       <MovingTitle><Text style={titleStyle}>So I measured it</Text></MovingTitle>
       <View style={{ width: 1200, height: 90, alignSelf: "center", marginTop: 60, borderTopWidth: 3, borderColor: cyan }}>
         {Array.from({ length: 25 }, (_, i) => <Arrive key={i} delay={i * 25} clock="step" fromY={-30}
