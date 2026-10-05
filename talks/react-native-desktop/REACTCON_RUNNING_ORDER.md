@@ -1,108 +1,82 @@
-# ReactCon running order
+# ReactCon review deck
 
-The talk has 37 slides and ends at the closing. There is no appendix. Step
-counts include the initial state. Speaker-note comments follow this route, with
-short spoken paragraphs and numbered reveal cues.
+`reactcon.mdx` starts again from the original 48-slide `rnconnection.mdx`.
+All original slides, speaker comments, reveal counts, and relative ordering are
+retained. The current frosted glass and rotating edge lighting remain in the
+shared components. The three historical Music measurement slides are inserted
+after the Hello World charts, and the audience-facing Existing Modules labels
+are renamed Library support, including the animated roadmap callback.
 
-## Opening: why desktop, and what holds it back
+There are 51 slides. No suggested cut or ordering change has been applied.
+The original Expo Desktop portal, Spark foundation branches and WebView shatter,
+22-state app tour with GPUI glass takeover, three-state roadmap callbacks, and
+five-state Legend Slides reveal are present.
 
-| Slide | Content | States |
+The former 36-slide version is saved as
+[reactcon-backup-2026-10-03.mdx](reactcon-backup-2026-10-03.mdx), with its running
+order saved as `REACTCON_RUNNING_ORDER.backup-2026-10-03.md`. That deck still uses
+its former component paths and chapter behavior.
+
+## Suggested removals for review
+
+Each candidate displays a large red REMOVE overlay at the top on every reveal.
+It is a review marker, not a deletion. The overlay uses slide metadata
+`reviewRemove: true` and does not take space from the original layout.
+
+| Current slide | Candidate | Reason |
 | --- | --- | --- |
-| 1 | React Native is the best way to build desktop apps | 3 |
-| 2 | React Native Directory | 1 |
-| 3 | I wanted those checkmarks | 1 |
-| 4 | I came here to test LegendList | 2 |
-| 5 | Then I made apps I wanted — Photos and Music | 2 |
-| 6 | Native would be faster | 2 |
-| 7 | Why isn't everyone doing this? | 1 |
-| 8 | Three blockers → zoom into Performance concerns | 2 |
+| 12 | What you write | The language-by-language comparison extends the competitor detour. |
+| 13 | Monthly package downloads | Adds a market-size argument without advancing the performance or tooling story. |
+| 16 | Hello World · memory | Music provides a more concrete memory example. |
+| 24 | Chat History · memory | Keep the summary's memory result instead of another full chart explanation. |
+| 25 | Chat History · jump to top | Switching conversations can carry the interaction-performance example. |
+| 27 | Chat History · app size | The size story is already covered by Hello World, Music, and the summary. |
+| 29 | Performance metrics / balance | Repeats the conclusion immediately after the four-metric summary. |
+| 32 | Cross platform | The comparison table repeats React Native everywhere and reopens competitor detail. |
+| 33 | Writing versus maintaining with AI | A separate argument that interrupts the route toward desktop tooling. The animation is good; review the tradeoff. |
+| 34 | Full framework comparison | Another overall verdict after the benchmarks and React benefits. |
+| 39 | Desktop is behind | Version details interrupt the Expo-to-Spark reveal. |
+| 40 | macOS is catching up | A release-status update that dates quickly and prolongs the same interruption. |
+| 47 | Expo Modules snapshot | A second compatibility table after the library-support overview. |
 
-The three cards are Performance concerns, Library support, and Desktop
-foundations. Introduce them together before the benchmarks; use callbacks to
-focus the next chapter rather than restarting the argument.
+The animated compromise question, rendering primer, Expo portal, Spark
+foundations joke, full tour, roadmap shattering, and Slides reveal are deliberately
+unmarked. A shorter talk does not require removing these moments.
 
-## Performance: baseline, real app, heavier workload
+## Proposed order — not applied
 
-| Slide | Content | States |
+This proposal assumes the marked cuts are accepted; those decisions remain open.
+It uses the current review-deck slide numbers so each move can be checked.
+
+| Section | Proposed slides | Change to review |
 | --- | --- | --- |
-| 9 | Was I just imagining it? → So I measured it | 2 |
-| 10 | Hello World · first content | 2 |
-| 11 | Hello World · installed size | 3 |
-| 12 | Legend Music · app size | 1 |
-| 13 | Legend Music · CPU | 1 |
-| 14 | Legend Music · memory | 1 |
-| 15 | What about a heavier workload? | 1 |
-| 16 | Chat History: hero → grid → RN → Electron → GPUI | 5 |
-| 17 | Chat History · first content | 2 |
-| 18 | Chat History · switch conversation | 2 |
-| 19 | In the leading group on every metric | 1 |
+| Origin story and apps | 1–9 | Keep the original opening and app showcase together. |
+| Why desktop isn't the default | 35, then the initial state of 36 | Introduce the three unresolved blockers before the evidence. |
+| Performance | 10–11, 14–15, 20, 17–19, 21, 23, 26, 28 | Baseline → real-app bridge → Music → Chat History → one verdict. |
+| Resolve performance, focus foundations | Remaining states of 36 | Play the original performance strike/check and focus transition after the benchmarks. |
+| Expo Desktop | 37–38 | Keep the platform explanation immediately followed by the portal announcement. |
+| Legend Spark | 41–44 | Desktop needs → Spark reveal → APIs → animated foundations/WebView joke → Runner. |
+| What those foundations enable | 22, 30–31 | Native integration and React development benefits follow Spark, with their animations intact. |
+| Library support | 45–46, 48 | Play the original foundations shatter/check, zoom into Library support, then invite help. |
+| Slides reveal and close | 49–51 | One more thing → the complete Slides announcement → closing. |
 
-Keep the installed-size explanation to about 30 seconds: OS frameworks are
-already installed; RN bundles Hermes and native views; Electron bundles a
-browser runtime. All bars remain visible. Music is the first real-app example;
-Chat History demonstrates a heavier workload without touring every competitor.
-The overview concludes the benchmark section once.
+Moving slide 36 would require splitting its introduction from its later resolved
+states while preserving the strike, shatter, and zoom animations. No settled
+checks should replace those reveals. This is part of the proposal, not a current
+component change.
 
-Music captures and values are historical evidence from the RNL 2025 talk,
-stored locally in `rnconnection-assets/rnl-2025/`. They are separate from the
-dated Hello World and Chat History benchmark snapshots. The charts do not claim
-universal wins or identical architectures; their notes retain the qualifications.
+Moving the real-app bridge before Music would need only its final handoff line
+adjusted; the original comments currently remain verbatim. No broader voice pass
+is proposed.
 
-## Desktop foundations: from shared needs to Spark
-
-| Slide | Content | States |
-| --- | --- | --- |
-| 20 | Roadmap callback → Desktop foundations | 2 |
-| 21 | So I kept building — Code, Diff, Chat History | 3 |
-| 22 | So many apps — shared roots | 1 |
-| 23 | Desktop foundations → Legend Spark | 6 |
-| 24 | Built on Expo Desktop | 2 |
-| 25 | Legend Spark | 1 |
-| 26 | Spark Runner | 2 |
-| 27 | Edit the app: prompt → preview → apply | 3 |
-| 28 | Native UI Matters | 3 |
-| 29 | It's React Native | 1 |
-| 30 | React Native everywhere | 1 |
-
-The app-editing slide is an illustrated storyboard, not real screenshots. The
-app author decides the entry point; Settings → Customize app is the example.
-Its prompt asks for a compact player mode in Playback settings. The prompt stays
-above the before/preview views, then Apply reveals the after state. Choose a real
-demo app and replace the illustration with matching captures or a recording
-before presenting it as a completed feature demonstration. Rehearse the added
-control working in the running app.
-
-Native UI and developer experience follow Spark as the payoff of those
-foundations. They do not reopen the benchmark comparison.
-
-## Library support, Slides reveal, and close
-
-| Slide | Content | States |
-| --- | --- | --- |
-| 31 | Roadmap callback → Library support | 2 |
-| 32 | Library support snapshot | 1 |
-| 33 | Please help | 1 |
-| 34 | One more thing | 1 |
-| 35 | Legend Slides | 5 |
-| 36 | Let's edit this slide | 1 |
-| 37 | React Native is the best way to build desktop apps | 1 |
-
-The library overview is a local integration snapshot, not a complete audit.
-Refresh platform, library, public release, and destination-link status before
-presenting. Performance and foundations checks on the roadmap mean the concern
-has a demonstrated answer, not complete API parity or universal performance wins.
-
-For the Slides demo, change the heading to “That was React Native”, let the draft
-preview update, and exit once it has saved. Rehearse the audience update behavior;
-keep a recording available if live updates cannot be applied during the talk.
+Separately, the 22-state tour could be shortened to ten selected states while
+keeping the visual payoff: hero, grid, RN overview/sidebar/composer, Electron
+overview/composer, GPUI overview/composer/glass takeover. This is also unapplied;
+the review deck still contains the entire original tour.
 
 ## Validation
 
-- Real Legend Slides compiler: 37 slides, zero errors, zero warnings.
-- Repository TypeScript check passed.
-- Focused tour/navigation, composer geometry, and deck animation-clock audit passed.
-- Native visual and presentation navigation verification remains outstanding;
-  the installed release app did not finish loading the deck during inspection.
-
-All new motion uses the host presentation clock, native poses, or GPU shaders.
-Compilation and geometry checks do not establish native visual correctness.
+Compiler checks cover the review and backup decks. Original comment text and
+reveal counts are checked against the source deck. Focused tour/reveal-order
+checks and the repository TypeScript check cover the changed files. These checks
+do not establish native visual validation of the REMOVE overlay.

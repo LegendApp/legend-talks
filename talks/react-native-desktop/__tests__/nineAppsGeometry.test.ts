@@ -40,7 +40,7 @@ test("manual tour covers every app in rendering order, with close-ups on each gr
   expect(tourStep(999)).toEqual(tourSteps.at(-1));
 });
 
-test("main talk uses the short tour and two chat comparisons before moving to foundations", () => {
+test("saved shortened talk keeps its short tour available", () => {
   expect(shortTourSteps).toEqual([
     { app: "react-native", detail: "app" },
     { app: "electron", detail: "app" },
@@ -48,7 +48,7 @@ test("main talk uses the short tour and two chat comparisons before moving to fo
   ]);
   expect(tourStep(-1, shortTourSteps)).toEqual(shortTourSteps[0]);
   expect(tourStep(999, shortTourSteps)).toEqual(shortTourSteps.at(-1));
-  const deck = readFileSync(new URL("../reactcon.mdx", import.meta.url), "utf8");
+  const deck = readFileSync(new URL("../reactcon-backup-2026-10-03.mdx", import.meta.url), "utf8");
   expect(deck).not.toMatch(/appendix/i);
   expect(deck).not.toContain('<NineApps />');
   const main = deck;
@@ -61,6 +61,20 @@ test("main talk uses the short tour and two chat comparisons before moving to fo
     '<NineApps tour="short"', '<Chart metric="content"', '<Chart metric="switch"',
     '<DesktopObjectionsReactcon chapter="foundations"', '<SparkAppEditing', '<DesktopObjectionsReactcon chapter="modules"',
   ].map(marker => main.indexOf(marker));
+  expect(positions.every(position => position >= 0)).toBe(true);
+  expect(positions).toEqual([...positions].sort((a, b) => a - b));
+});
+
+test("review deck keeps the full tour and Expo, Spark, and Slides reveal order", () => {
+  const deck = readFileSync(new URL("../reactcon.mdx", import.meta.url), "utf8");
+  expect(deck).toContain(`reviewFullStage: true\nsteps: ${tourSteps.length + 2}\n`);
+  expect(deck).toContain('<NineApps />');
+  expect(deck).not.toContain('<NineApps tour="short" />');
+  const positions = [
+    '<ExpoDesktopLayers />', '<ExpoDesktopPortal />', '<DesktopFoundationsJourney',
+    '<FrameFoundations', '<FrameRunnerDemo />', '# One more thing...',
+    '<SlidesReveal', '<WaterTitle closing>',
+  ].map(marker => deck.indexOf(marker));
   expect(positions.every(position => position >= 0)).toBe(true);
   expect(positions).toEqual([...positions].sort((a, b) => a - b));
 });

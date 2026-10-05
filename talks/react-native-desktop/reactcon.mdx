@@ -4,7 +4,7 @@ width: 1920
 height: 1080
 transition:
   source: ./TitleTransition.ts
-template: ./RNConnection.tsx
+template: ./ReactconReviewFrame.tsx
 theme:
   backgroundColor: "#000000"
   color: "#ffffff"
@@ -14,7 +14,7 @@ presenter:
 ---
 
 ---
-template: ./RNConnection.tsx
+template: ./ReactconReviewFrame.tsx
 steps: 3
 ---
 
@@ -22,34 +22,45 @@ steps: 3
 import WaterTitle from "./WaterTitle"
 
 import { Chart } from "./RNConnection"
+import { BalanceDiagram, MediaSlot } from "./RNConnectionVisuals"
 import { MetricBuckets } from "./MetricBuckets"
-import { HelloSizeJourney as HelloSizeJourneyReactcon } from "./HelloSizeJourneyReactcon"
-import { StoryMoment, ExpoDesktopLayers, CompatibilitySnapshot } from "./StoryDiagrams"
+import { ChatArchitecture } from "./ChatArchitecture"
+import { AIMaintenance } from "./AIMaintenance"
+import { FrameworkComparison } from "./FrameworkComparison"
+import { CrossPlatformLanes } from "./CrossPlatformLanes"
+import { MeasurementTimeline } from "./MeasurementTimeline"
+import { HelloSizeJourney } from "./HelloSizeJourney"
+import { StoryMoment, RendererFamilies, ExpoDesktopLayers, CompatibilitySnapshot } from "./StoryDiagrams"
 import { SlidesReveal } from "./SlidesReveal";
 import { SlidesFeatures, SlidesAuthoring } from "./SlidesFeatures";
 import { slidesFeatureParticles } from "./SlidesFeatureParticles";
 import { ExistingModulesTitle } from "./ModuleCompatibility";
-import { FramePitch } from "./FramePitch";
+import { FramePitch, FrameFoundations } from "./FramePitch";
 import { EverywhereMorph } from "./EverywhereMorph";
 import { ReactNativeTitleDemo } from "./ReactNativeTitleDemo";
 import { NativeUIMatters } from "./NativeUIMatters";
+import { PlatformVersions } from "./PlatformVersions";
+import macosReleaseTracker from "./rnconnection-assets/macos-release-tracker.png";
+import { ExpoDesktopPortal } from "./ExpoDesktopPortal";
 import sparkIcon from "./rnconnection-assets/legend-spark.png";
 import { FrameRunnerDemo } from "./FrameRunnerDemo";
 import { DesktopFoundationsJourney } from "./DesktopFoundations"
 import { DesktopObjections as DesktopObjectionsReactcon } from "./ObjectionsReactcon"
-import { SparkAppEditing } from "./SparkAppEditing";
 import { SharedRoots } from "./SharedRoots"
 import musicIcon from "./rnconnection-assets/music-icon.png";
 import markdownIcon from "./rnconnection-assets/markdown-icon.png";
 import { NineApps } from "./NineApps"
 import { HelloWorldIntro } from "./HelloWorldIntro"
+import { FrameworkLanguages } from "./FrameworkLanguages"
+import { PackageDownloadsChart } from "./PackageDownloadsChart"
 import { NativeReactions } from "./NativeReactions"
-import { MusicPerformance } from "./MusicPerformance"
+import { MusicPerformance } from "./MusicPerformance";
 import musicCpuCapture from "./rnconnection-assets/rnl-2025/musiccpu.png";
 import musicMemoryCapture from "./rnconnection-assets/rnl-2025/musicmemory.png";
 import musicSizeCapture from "./rnconnection-assets/rnl-2025/musicsize.png";
 import { AppShowcase } from "./AppCarousel"
 import { MovingTitle } from "./MovingTitle"
+import { CompromiseQuestion } from "./CompromiseQuestion"
 import { DirectoryTitle } from "./DirectoryTitle"
 import directoryScreenshot from "./rnconnection-assets/directory-legend-list.png";
 import chatIcon from "./rnconnection-assets/chat-history-icon.png";
@@ -64,16 +75,17 @@ import slidesIcon from "./rnconnection-assets/slides-icon.png";
 </WaterTitle>
 
 <!--
-1. Hi everyone! I'm Jay. You might know me from Legend List or Legend State. Recently I've been building a lot of desktop apps.
+1. Hi everyone! I'm Jay. You might know me from Legend List or Legend State. And I’ve been playing with building a lot of desktop apps recently.
 
-2. And I'm convinced React Native is the best way to build them.
+2. And I’m convinced that React Native is the best way to build desktop apps.
 
-That's a big claim. So I want to show you what I built, what I measured, and what we still need to make desktop a first choice.
+This is a pretty big claim. Best is a very absolute word and I do not use it lightly. So to back up that claim I gathered a lot of evidence and have been working on making React Native on desktop better.
 
-3. But this started with something much smaller.
+3. But before I get to that let’s start at the beginning
 
-[Transition is automatic.]
+[Transition is automatic]
 -->
+
 
 ---
 title: React Native Directory
@@ -83,8 +95,11 @@ eyebrow: Story
 <DirectoryTitle />
 
 <!--
-I was working on Legend List and checking its page in React Native Directory.
+This whole journey started with React Native Directory.
+
+I was working on Legend List, and checked its page in the directory.
 -->
+
 
 ---
 title: I wanted those checkmarks
@@ -94,12 +109,11 @@ eyebrow: Story
 <Image source={{ uri: directoryScreenshot }} style={{ width: 880 * 874 / 760, height: 880, alignSelf: "center", borderRadius: 24, overflow: "hidden" }} resizeMode="contain" accessibilityLabel="Legend List in React Native Directory, showing platform support checkmarks including macOS and Windows" />
 
 <!--
-I wanted those two checkmarks. macOS and Windows.
+I wanted those two checkmarks. macOS and Windows. Legend List is just javascript so it should work everywhere, so I just needed a quick test to prove it.
 
-Legend List is JavaScript, so I thought this would just be a quick test.
-
-That was the plan, anyway.
+But that sent me down a huge rabbit hole.
 -->
+
 
 ---
 title: "I came here to test LegendList"
@@ -110,32 +124,38 @@ eyebrow: Story
 <MovingTitle><StoryMoment kind="discovery" /></MovingTitle>
 
 <!--
-1. I'd seen Microsoft's talks about React Native on desktop, but I hadn't really tried it. So I made a test app on macOS.
+1. I'd seen the conference talks by Microsoft about React Native on desktop, but I hadn't really tried it. So I started playing with it on macOS.
 
-2. And it was seriously good. Small, fast, real native UI.
+2. But then I made some test apps, and it was seriously really good.
 
-I came here to test a list. I found a platform I wanted to build with.
+It made tiny apps that were really fast with real native UI. These apps felt better than every other app on my computer.
 -->
+
+
 
 
 ---
 title: Then I made apps I wanted
 eyebrow: Story
 steps: 2
-template: ./NineApps.tsx
+template: ./ReactconReviewFrame.tsx
+reviewFullStage: true
 ---
 
 <AppShowcase title="Then I made apps I wanted" apps={["Legend Photos", "Legend Music"]} />
 
 <!--
-1. First I made Legend Photos to try a big image grid. It opened quickly and scrolling felt great.
+1. I started with Legend Photos because I wanted to see how a list in a grid would perform with lots of images. It was incredible. It opened super fast, animations were very smooth, the app just flew.
 
-2. Then Legend Music, because I wanted the Winamp experience in a modern Mac app.
+2. And then I made Legend Music, to try to recreate the winamp experience in a modern mac app.
 
-I kept opening these apps just because I liked using them. They felt like they belonged on my computer.
+These apps both felt so much better than the Electron apps I was using. Small, instant, native UI.
 
-So I started sharing what I was building.
+I felt a connection to my computer that I hadn’t felt in years. No delays, no load times, the apps just felt natural to use.
+
+So I tweeted about it.
 -->
+
 
 ---
 title: Native would be faster
@@ -146,40 +166,72 @@ steps: 2
 <NativeReactions />
 
 <!--
-1. I said these apps felt faster than the Electron apps I was using.
+1. And everyone on Twitter got mad at me. They all wanted to compare them to fully native apps.
 
-2. And the response was: "Native would be faster."
+2. If performance matters, why aren't you using Swift or Objective C? Native would be faster.
 
-Fair question. How much was React Native actually costing me?
--->
-
----
-title: "Why isn't everyone doing this?"
----
-
-# Why isn't everyone doing this? {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-8xl mb-0"}
-
-<!--
-But there was a bigger question too. If this is so good, why aren't more of us using it for desktop?
+I was excited about how much better these felt than Electron. But the comparison became binary, it should either be a slow web app or 100% fully native no compromises. People laughed at me for claiming I care about performance while using React Native.
 -->
 
 
 ---
-title: What’s holding RN desktop back
+title: React Native is a Compromise
+eyebrow: Story
 steps: 2
 ---
 
-# What’s holding RN desktop back {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+<CompromiseQuestion />
 
-<DesktopObjectionsReactcon chapter="performance" />
+
 
 <!--
-1. I think there are three things holding it back.
+1. Because everybody knows the meme that React Native is a compromise.
 
-Performance concerns. Library support. And all the desktop foundations you need before you can build and ship an app.
+You get React. You get to share code. You get fast refresh and OTA. But you're giving up performance.
 
-2. Let's start with performance. How much are we giving up to use React?
+2. Except these were the fastest apps on my computer. They were faster than every native app, even every Apple app.
+
+So what exactly was I compromising?
 -->
+
+
+---
+title: So I kept building
+eyebrow: Story
+steps: 3
+template: ./ReactconReviewFrame.tsx
+reviewFullStage: true
+---
+
+<AppShowcase title="So I kept building" apps={["Code", "Diff", "Chat History"]} />
+
+<!--
+1. I just kept building apps because it was awesome. Next I built⁠ Legend Code, to see if Legend List could power a code editor. It turns out that it can. It’s the fastest text editor I’ve found.
+
+2. Then Legend Diff, and somehow this React Native app is faster than every native diffing app I tried.
+
+3. Then Chat History, because AI apps are all built as webview apps and are just so unbelievably slow. It turned out much faster than every other chat app.
+-->
+
+
+---
+eyebrow: Story
+---
+
+# So many apps {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<SharedRoots icons={[musicIcon, chatIcon, codeIcon, diffIcon, markdownIcon]} />
+
+<!--
+These apps all do pretty different things, but they all need a lot of the same desktop stuff.
+
+So I ended up building a big toolset, where I can pump out new apps very fast with all of this shared code. And every one of these apps is the fastest in its class, often by a wide margin.
+
+But every time I released one, people would tell me I should rewrite it natively. Or that I must not really care about performance. Because React Native isn’t good enough.
+
+Even my React Native expert friends tell me I’m wrong and that native is faster.
+-->
+
 
 ---
 title: "Was I just imagining it?"
@@ -190,9 +242,81 @@ eyebrow: Story
 <MovingTitle><StoryMoment kind="question" /></MovingTitle>
 
 <!--
-1. My apps felt fast, but that isn't a benchmark. Maybe they were too simple. Maybe I just really wanted React Native to win.
+1. But it seemed to me like React Native is actually faster.
 
-2. So I measured it. First the cost of the framework, then what happens when it does real work.
+Maybe my apps were too simple. Maybe I was comparing them to poorly built apps. Maybe I just really wanted React Native to win.
+
+2. So I measured it.
+
+I wanted to know how much the framework actually costs, and what happens when you put a real app on top of it.
+-->
+
+
+
+
+---
+steps: 3
+eyebrow: Story
+---
+
+# Three ways to draw a desktop app {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<RendererFamilies />
+
+<!--
+1. First, a quick desktop framework tour, because most of us spend our time on mobile.
+
+AppKit is basically UIKit on mac. SwiftUI is Apple's newer framework, same as on mobile. And of course React Native uses native views.
+
+2. Then there are the browser ones. Electron bundles Chromium and Nodejs with your app. Tauri uses the system WebView with a Rust backend.
+
+3. And then there are frameworks that render every pixel on a canvas. Flutter, Compose Multiplatform, and GPUI, which is the Rust framework behind Zed.
+-->
+
+
+---
+reviewRemove: true
+title: What you write
+steps: 2
+---
+
+# What you write {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<FrameworkLanguages />
+
+<!--
+1. These are all different languages and ecosystems.
+
+With React Native, I'm writing TypeScript and React. AppKit can be Swift or Objective-C, and SwiftUI is obviously Swift.
+
+The browser ones let you build the UI with web technologies.
+
+Then Rust for GPUI, Dart for Flutter, Kotlin for Compose.
+
+2. Tauri is a weird one. It’s javascript on the web side and Rust on the native side. So you need to know both.
+-->
+
+
+---
+reviewRemove: true
+title: Monthly package downloads
+steps: 2
+---
+
+# Monthly package downloads {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<PackageDownloadsChart />
+
+<!--
+1. Looking at package downloads is interesting. People often tell me that nobody builds desktop apps, mobile is where the market is.
+
+But Electron has almost as many users as Expo. And if you add Tauri to that, there’s more desktop developers than Expo developers.
+
+So it seems like the desktop app opportunity is at least as big as mobile.
+
+2. I’m going to pick on Electron a lot today, because it’s currently the market leader and is the main platform that React Native on desktop competes with.
+
+So to the benchmarks.
 -->
 
 
@@ -206,34 +330,62 @@ footer: 'Median ms · 10 measured rounds · small differences near recording cad
 <HelloWorldIntro />
 
 <!--
-1. I started with Hello World. Almost no app code, so we're mostly measuring the framework.
+1. I started with Hello World. This establishes a baseline for what the frameworks can do.
 
-I optimized each implementation, but I'm not an expert in every stack. The code is open source, and I'd love help making the comparison better.
+And a big caveat: I am not an expert in these frameworks. These numbers may be wrong. I did my best to optimize each one as much as possible. It’s open source so if I made a mistake please PR a fix for it.
 
-2. React Native, SwiftUI, and GPUI are very close here. AppKit is a little ahead.
+2. So here are the results. React Native matches GPUI and SwiftUI. AppKit is a bit faster. Other frameworks are slower.
 
-So there is some overhead, but this doesn't look like a big performance compromise.
+It’s interesting that React Native exactly matches SwiftUI, when that’s the one everyone tells me is faster…
 -->
+
 
 ---
 eyebrow: 'Hello World / installed size'
-steps: 3
+steps: 6
 footer: 'Greeting workload · newer installed-size snapshot · MB'
 ---
 
 # Hello World · installed size {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
 
-<HelloSizeJourneyReactcon />
+<HelloSizeJourney />
 
 <!--
-1. Size has one important detail: AppKit and SwiftUI use frameworks already installed with macOS.
+1. Now look at installed size. React Native is about 7 and a half MB.
 
-2. React Native includes Hermes and its runtime, then uses the system's native views. Still only a few megabytes.
+2. The interesting thing is what each app has to bring with it.
 
-3. Electron includes Chromium and Node. That's why even the blank app is much bigger.
+3. AppKit and SwiftUI are tiny because they’re built in to the operating system
 
-That's enough Hello World. What happens when we add an actual app?
+4. Electron and Deno CEF build in a full Chromium browser, and a full Nodejs or Deno runtime.
+
+5. GPUI brings its own rendering system, and it’s impressively small. React Native brings Hermes and its own runtime, but it’s still a very small app.
+
+6. I think of these in buckets. React Native is well within the tiny app bucket. A few megabytes doesn’t matter that much in the baseline. But we definitely don't want to be pushing 300 megabytes for a Hello World app.
 -->
+
+
+---
+reviewRemove: true
+eyebrow: 'Hello World / memory'
+steps: 2
+footer: 'Greeting workload · MB · settled physical footprint'
+---
+
+# Hello World · memory {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<Chart workload="hello" metric="memory" />
+
+<!--
+1. They perform similarly on memory.
+
+AppKit is the smallest, React Native is a bit bigger.
+
+There's some overhead. Of course there is. But it’s just a few megabytes in the baseline.
+
+2. Again I think about these in buckets. React Native is close to native. Flutter, GPUI, Deno, and Electron are in the next bucket. Deno CEF and Compose are huge for some reason.
+-->
+
 
 ---
 title: Legend Music · app size
@@ -245,12 +397,13 @@ eyebrow: 'Legend Music / RNL 2025'
 <MusicPerformance metric="size" capture={musicSizeCapture} />
 
 <!--
-This is Legend Music from my RNL 2025 talk. These are the measurements from that version.
+These are the original measurements and screenshots from the RNL 2025 talk, not a new benchmark of the current app.
 
-NativeWind, Expo modules, other libraries, Skia, and the app itself: 35 megabytes installed.
+This complete app using Nativewind, a bunch of libraries and Expo modules, and Skia comes out to 35 MB.
 
-Eleven megabytes zipped. That's a whole music app.
+Zipped, it's an 11 MB download.
 -->
+
 
 ---
 title: Legend Music · CPU
@@ -262,12 +415,13 @@ eyebrow: 'Legend Music / RNL 2025'
 <MusicPerformance metric="cpu" capture={musicCpuCapture} />
 
 <!--
-In that test I played a local MP3 and looked at Activity Monitor, including Spotify's helper processes.
+These are the original RNL 2025 measurements while playing a local MP3. Spotify's usage includes the helper processes shown in the Activity Monitor capture; the table retains the rounded figures from that talk.
 
-Music used about 2% CPU. Apple Music was about 2% too. Spotify was about 26%.
+Legend Music used about 2% CPU, compared with about 26% for Spotify in this capture. Apple Music was about 2% too.
 
-I used to play MP3s on a Pentium 2. It feels like we should have made this easier by now.
+Just think about what's happened to us as a society that playing an MP3 file uses more processing power now than it did 25 years ago on my Pentium 2.
 -->
+
 
 ---
 title: Legend Music · memory
@@ -279,45 +433,120 @@ eyebrow: 'Legend Music / RNL 2025'
 <MusicPerformance metric="memory" capture={musicMemoryCapture} />
 
 <!--
-And memory in the same test: about 806 megabytes for Spotify, including its helpers. Music was 72.
+These are the original RNL 2025 measurements while playing a song. Spotify's usage includes its helper processes; the table retains the rounded figures from that talk. This is an Activity Monitor snapshot, not the physical-footprint methodology used by the later Chat History benchmarks.
 
-Over 90% less.
+Running a full browser with several different processes takes about 800 megabytes of memory.
 
-My app doesn't do everything Spotify or Apple Music does. But playing a song doesn't have to mean hundreds of megabytes of overhead.
+800! This should not be acceptable.
+
+Legend Music uses over 90% less memory at just 72 MB.
+
+It even beats Apple Music in this capture. Obviously my app doesn't have as many features yet, but the memory usage is comparable to native.
 -->
+
 
 ---
 eyebrow: 'From baseline to real work'
 ---
 
-# What about a heavier workload? {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+# But hello world isn’t a real app {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
 
 <!--
-Music is a real app. But let's give the framework a heavier job: big files, lots of Markdown, and long conversations.
+But Hello World is only useful for establishing a baseline. What really matters is how real apps perform.
+
+So I took Chat History.
 -->
 
+
 ---
-title: I built it nine times
-template: ./NineApps.tsx
-steps: 5
+template: ./ReactconReviewFrame.tsx
+reviewFullStage: true
+steps: 22
 transition: none
 ---
 
-<NineApps tour="short" />
+<NineApps />
 
 <!--
-1. This is Chat History. It reads and parses conversation files, then renders and virtualizes the messages.
+1. This is AI Chat History, the React Native version. I was not trying to build a full AI chat app so it’s just tackling the heavy load time.
 
-2. I built the same workload nine times. Different stacks and implementations, doing the same job.
+It does a lot of work reading and parsing files, and virtualizing big chats with markdown.
 
-I'll show you three examples so you can see what we're comparing.
+But to compare the frameworks, I needed more than one version.
 
-3. React Native uses native views. The sidebar and composer get the system's materials.
+2. So I built it nine times.
 
-4. Electron renders the content in a browser.
+But before we get into the numbers, I want to focus on native UI.
 
-5. GPUI draws the content itself. Three approaches to the same app. Now let's measure loading it and switching conversations.
+3. This is the React Native version. It uses real liquid glass for the titlebar, composer, and splitview.
+
+4. Look at that real Liquid Glass in the sidebar.
+
+Whether we all like liquid glass is a different question. But users expect their apps to look a certain way and we want to match that.
+
+5. And look at the composer. It’s liquid glass and does the cool glassy effects on content below it.
+
+6. This is a real native Mac app
+
+7. Here's AppKit. It’s the same native material, looks the same.
+
+8. And SwiftUI is obviously native too.
+
+9. Now Electron. Electron hosts a web app inside a native window. So you don’t get native UI elements.
+
+10. Look at the sidebar. It’s just gray because it’s not a native sidebar.
+
+11. And look at the composer. The web platform has a blur so that’s the best we can do.
+
+12. The app does the job, but it feels different than Mac apps
+
+13. Tauri is rendered by a browser too so it looks the same as Electron. But it uses Safari on mac, which is not great, and Edge on Windows. So good luck having your app handle all the browser differences.
+
+14. And Deno. It’s also a web app so it’s just a regular blur too.
+
+15. Now Flutter. I know we all love Flutter here. Flutter can make desktop apps too. Flutter renders every pixel itself, so the Flutter framework or someone has to implement their own version of liquid glass. It’s not currently built in so I just used the builtin blur.
+
+16. Its sidebar is also just a solid color because it doesn’t have a real liquid glass split view.
+
+17. And the composer is the framework's blur implementation, not the OS material.
+
+18. So it’s fine too, but it doesn’t look like a native app.
+
+19. Compose Multiplatform also renders every pixel.
+
+20. And finally GPUI. It's really fast. But it draws its own content too.
+
+21. Here's the composer. GPUI doesn’t have a way to blur individual views yet, so it’s just translucent.
+
+But we can draw whatever we want, right? So I made my own liquid glass and it looks okay.
+
+22. But every macOS update seems to tweak it slightly so we'll have to keep up. And fake liquid glass never looks quite right.
 -->
+
+
+---
+title: Native UI Matters
+template: ./ReactconReviewFrame.tsx
+reviewFullStage: true
+steps: 3
+---
+
+<NativeUIMatters />
+
+<!--
+1. This is why I care about native UI.
+
+I want my Mac app to feel like a Mac app. I want my Windows app to feel like a Windows app.
+
+2. One thing the webview apps like Electron don’t support well is a basic thing, having multiple windows. They have some crazy inter process communication situation. In React Native they’re just sharing React or global state so it’s easy. Change the data in one and the others update.
+
+3. This is the Music overlay I showed earlier. This hooks into the native media playback state in macOS. It supports media keys. It supports spatial audio.
+
+You can build an okay UI with the other approaches. But it's harder to go deep into system integration.
+
+So let's get back to the chat history app benchmarks.
+-->
+
 
 ---
 eyebrow: 'Chat History / first content'
@@ -330,12 +559,63 @@ footer: 'Video-derived ms · September 24 reference'
 <Chart metric="content" />
 
 <!--
-1. This is time to first content. AppKit leads, with GPUI and React Native close behind.
+1. I did a ton of work on each app to make it as fast as it can be to make this a fair comparison, and each iteration shifted the results wildly. So it’s possible that a single optimization could make a big difference in any of them. And it also proves that code quality still matters a ton.
 
-2. React Native is in the fastest group. The browser-based implementations take longer in this workload.
+AppKit is of course the fastest. GPUI and React Native are a bit behind.
 
-I spent a lot of time optimizing these. A single change could move the results, so this is evidence from these apps, not a universal ranking of frameworks.
+2. These group pretty cleanly into buckets again. SwiftUI surprised me. It’s fully native but it’s not very fast. I’m not a SwiftUI expert so it’s possible this could be faster. But this is as far as I could get optimizing with Codex.
+
+Electron takes about three times as long as React Native in this app.
+
+So React Native isn't the absolute fastest, but it’s very close, and this is doing real app work now.
 -->
+
+
+---
+reviewRemove: true
+eyebrow: 'Chat History / initial memory'
+steps: 2
+footer: 'Settled physical footprint · MB · includes attributed helper processes'
+---
+
+# Chat History · memory {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<Chart metric="memory" />
+
+<!--
+1. Now let’s look at memory.
+
+Of course AppKit is the lowest. React Native is a bit more, but surprisingly less than SwiftUI.
+
+2. Now let’s make some buckets.
+
+Tauri is pretty close, but it’s 2 and a half times more than React Native.
+
+The bundled-browser apps are huge because they run full instances of Chromium.
+-->
+
+
+---
+reviewRemove: true
+eyebrow: 'Chat History / jump to top'
+steps: 2
+footer: 'Video-derived action-to-visible-result ms · September 24 reference · lower is better'
+---
+
+# Chat History · jump to top {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<Chart metric="jump" />
+
+<!--
+1. And now we measure actually using the app with a jump scroll to the top of a conversation.
+
+React Native does this very fast with a Legend List. GPUI is just 3 milliseconds faster.
+
+2. And let’s bucket it.
+
+So React Native and GPUI do it in under 4 frames. Native frameworks and webviews are worse, taking an extra frame or two. Surprisingly AppKit is worse here.
+-->
+
 
 ---
 eyebrow: 'Chat History / switch'
@@ -348,12 +628,29 @@ footer: 'Video-derived action-to-visible-result ms · September 24 reference · 
 <Chart metric="switch" />
 
 <!--
-1. Startup isn't the whole experience. What happens when I switch conversations?
+1. And then let’s try switching conversations. AppKit does really well at this one. React Native is slower, but that’s largely a LegendList problem that I can improve.
 
-AppKit is quickest here. React Native takes longer; I still have work to do in Legend List.
-
-2. But it stays in the fast group. I can use React and native views without making every interaction slow.
+2. SwiftUI is a native framework but it really struggles here. And of course Electron is very slow. That’s about 3 times slower than React Native.
 -->
+
+
+---
+reviewRemove: true
+eyebrow: 'Chat History / app size'
+steps: 2
+footer: 'Measured September 18 · app bundles only · external grammars excluded · MB'
+---
+
+# Chat History · app size {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<Chart metric="size" />
+
+<!--
+1. And then let’s look at build size. The native apps are still tiny.
+
+2. Electron is about 16 times larger than the React Native app.
+-->
+
 
 ---
 eyebrow: 'Chat History / four metrics'
@@ -364,160 +661,33 @@ eyebrow: 'Chat History / four metrics'
 <MetricBuckets />
 
 <!--
-Here's the whole picture: loading, memory, app size, and switching.
+So let’s put it all together.
 
-React Native is in the leading group across all four. It doesn't win everything. AppKit has clear wins, and GPUI is competitive too.
+React Native is always in the top performance group. Compared to the best in each category it’s marginally bigger, marginally slower, marginally more memory. The only platform that’s consistently better is AppKit. SwiftUI is generally slower.
 
-For me, that's enough performance, with the native UI and React development experience I want.
+So to me this basically means that for performance, SwiftUI is not a viable option and React Native is better.
+
+GPUI is generally either slightly better or slightly worse than React Native. But it’s not native UI so I much prefer React Native.
 -->
 
+
 ---
-title: What’s holding RN desktop back
+reviewRemove: true
+eyebrow: 'Evidence → engineering judgment'
 steps: 2
+footer: 'Measured on macOS · current visuals require refreshed captures after native overlay removal'
 ---
 
-# What’s holding RN desktop back {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+# Performance metrics {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
 
-<DesktopObjectionsReactcon chapter="foundations" />
+<BalanceDiagram />
 
 <!--
-1. So performance isn't what stops me from choosing React Native for these apps.
+1. So my conclusion is that for performance and native UI, I should choose either React Native or raw AppKit.
 
-2. The next problem is getting from a React Native project to a desktop app I can actually ship.
+2. And with that constraint, the others are not real options
 -->
 
----
-title: So I kept building
-eyebrow: Story
-steps: 3
-template: ./NineApps.tsx
----
-
-<AppShowcase title="So I kept building" apps={["Code", "Diff", "Chat History"]} />
-
-<!--
-1. As I kept building, Code needed files, an editor, and keyboard shortcuts.
-
-2. Diff needed its own interactions, but many of the same desktop APIs.
-
-3. And Chat History needed them too. Different products, a lot of the same plumbing.
--->
-
----
-eyebrow: Story
----
-
-# So many apps {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<SharedRoots icons={[musicIcon, chatIcon, codeIcon, diffIcon, markdownIcon]} />
-
-<!--
-All these apps grew out of the same foundation.
-
-I didn't want to set up windows, menus, files, and builds again for every new idea. I wanted to spend that time on the app.
--->
-
----
-title: Desktop foundations → Legend Spark
-steps: 6
----
-
-<DesktopFoundationsJourney icon={sparkIcon} />
-
-<!--
-1. On mobile, we're used to having a lot of this ready for us. Desktop has a different set of needs.
-
-2. Windows. Menus. Keyboard shortcuts. Files and open dialogs.
-
-3. Drag and drop. Clipboard. Notifications. Media controls.
-
-4. Deep links. Lifecycle. Preferences. Permissions.
-
-5. And then you have to ship it. Native linking, signing, notarization, packaging, updates.
-
-6. I was building these pieces for my own apps anyway. So I pulled them into a shared foundation: Legend Spark.
--->
-
----
-title: 'Built on Expo Desktop'
-steps: 2
-eyebrow: 'Desktop foundations / Expo Desktop'
----
-
-<ExpoDesktopLayers />
-
-<!--
-1. I wanted to keep the Expo workflow too.
-
-2. Jamie Birch's Expo Desktop adds out-of-tree desktop platforms to that foundation. Spark builds on that work, so desktop can live alongside the other platforms in the same project.
--->
-
----
-title: Legend Spark
----
-
-<FramePitch icon={sparkIcon} />
-
-<!--
-Spark brings the desktop APIs, project setup, and tooling together.
-
-The goal is to make getting started and shipping easy, while keeping the React Native development experience and native UI.
--->
-
----
-title: Spark Runner
-steps: 2
----
-
-# Spark Runner {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<FrameRunnerDemo />
-
-<!--
-1. Spark Runner comes with the native modules and libraries like Reanimated and Skia built in. Think Expo Go for desktop.
-
-2. Write JavaScript, press d, and the app opens. You can start trying ideas without doing a native build first.
-
-Production and additional native modules still need a real build. But getting to that first app is much easier.
--->
-
-
----
-title: Edit the app
-steps: 3
----
-
-# Edit the app {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<SparkAppEditing />
-
-<!--
-1. And once the app is running, we can let people customize it.
-
-The app author chooses where to expose this. In this example it's a section in Settings. I ask: "Add a compact player mode in Playback settings."
-
-2. Preview it first. Keep the prompt above the before and after views so I can see what changed and decide if I want it.
-
-3. Then Apply. The point is letting the person using the app decide how it should work for them.
-
-[Illustrated example; use real captures or a recording for the finished demo.]
--->
-
----
-title: Native UI Matters
-template: ./NineApps.tsx
-steps: 3
----
-
-<NativeUIMatters />
-
-<!--
-1. These APIs also let the app work like a desktop app.
-
-2. Multiple windows can share state. Change something in one window and the other updates.
-
-3. Music has native playback, media keys, and its overlay window. These are the details that make it feel at home on the computer.
--->
 
 ---
 eyebrow: 'And then / developer experience'
@@ -529,12 +699,13 @@ footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 <ReactNativeTitleDemo />
 
 <!--
-And I'm still using React Native.
+And of course React Native has all the other benefits we all know about.
 
-Components, hooks, the state libraries I already know, Fast Refresh. I can change the UI and see it immediately.
+I get to use the tools I already know. Components, hooks, state libraries, Fast Refresh.
 
-That makes building these apps fun.
+I can change some UI and see it immediately. That's a really nice way to build desktop apps.
 -->
+
 
 ---
 eyebrow: 'The broader vision'
@@ -546,25 +717,261 @@ footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 <EverywhereMorph />
 
 <!--
-And I don't have to start over for every platform.
+And this is the development experience I actually want.
 
-React Native on desktop and mobile, React on the web. Share the data, state, logic, and components where it makes sense. Give each platform the UI it needs.
+React Native on mobile. React Native on tablets or foldables. React Native on desktop. React on the web.
+
+Share the state, the data, the logic, and the components.
+
+I don't want three separate codebases for the same product.
 -->
 
+
 ---
-title: What’s holding RN desktop back
+reviewRemove: true
+eyebrow: 'Cross-platform'
+---
+
+# Cross platform {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<CrossPlatformLanes />
+
+<!--
+So let’s compare all of the frameworks’ cross platformness. We want a platform that can run everywhere easily.
+
+React Native is the only one that truly covers all five platforms.
+
+Flutter and Compose render on web as a canvas so I don’t think that counts.
+
+Tauri supports mobile rendering in a webview. But we know that mobile webviews are terrible, so I don’t think that counts.
+-->
+
+
+---
+reviewRemove: true
 steps: 2
+eyebrow: 'Writing versus maintaining'
+---
+
+<AIMaintenance />
+
+<!--
+1. These days a lot of people are saying couldn't AI just build a separate native app for every platform?
+
+Sure. You can write five different apps in four different languages for every platform. AI can do that pretty easily.
+
+But then you have five totally different implementations of the same product, and every feature you build. I guess you can just throw a lot of tokens at validating they’re all totally exactly the same.
+
+2. But then you have to maintain them five times. If a user finds a bug you have to fix it everywhere. And check and validate and PR every fix to every app. That’s just not sustainable.
+
+So we need to share the implementation. Putting it all together,
+-->
+
+
+---
+reviewRemove: true
+eyebrow: 'The technical case'
+footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
+---
+
+<FrameworkComparison />
+
+<!--
+This is why I think React Native is the best choice.
+
+It's the best combination of speed, memory, and real native UI among all of the frameworks I tested.
+
+So I'm not choosing React Native because it’s a compromise. It’s because it’s the best.
+
+But if it's this good…
+-->
+
+
+---
+title: "Why isn't everyone doing this?"
+---
+
+# Why isn't everyone doing this? {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-8xl mb-0"}
+
+<!-- Why isn't everyone doing this? -->
+
+
+
+---
+title: "What’s holding RN desktop back"
+steps: 3
+eyebrow: Story
 ---
 
 # What’s holding RN desktop back {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
 
-<DesktopObjectionsReactcon chapter="modules" />
+<DesktopObjectionsReactcon />
 
 <!--
-1. We've seen the performance, and Spark is bringing the desktop foundations together. It's early, but it's already useful.
+1. When I talk to people about React Native desktop, the pushback really comes down to these three things. First is performance.
 
-2. That leaves library support. This is the part I can't solve on my own.
+2. But we just proved that’s solved. It has great performance.
+
+Modules don’t all work on desktop.
+
+And then there's the desktop foundation. Getting a project started, getting it built, and all the native desktop APIs the app needs.
+
+3. Let’s focus on that
 -->
+
+
+---
+title: 'Built on Expo Desktop'
+steps: 2
+eyebrow: 'Desktop foundations / Expo Desktop'
+---
+
+<ExpoDesktopLayers />
+
+<!--
+1. Of course we want to use Expo. But Expo doesn’t support desktop. So I need to have separate projects for mac and windows apps. But Jamie Birch has solved that
+
+2. with Expo Desktop. It adds support for out of tree platforms to Expo, letting you have one monorepo for all of your React Native apps on every platform
+-->
+
+
+---
+title: Expo Desktop
+---
+
+<ExpoDesktopPortal />
+
+<!--
+1. Expo doesn’t yet fully support desktop platforms, but Jamie has gotten it a long way towards working well. There are still gaps and rough edges. But it gives us a shared starting point instead of setting everything up ourselves.
+
+It’s a really cool project.
+-->
+
+
+---
+reviewRemove: true
+title: Desktop is behind
+---
+
+# Desktop is behind {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<PlatformVersions />
+
+<!--
+There's another gap here. We're not all on the same React Native version.
+
+As of now, mobile is on 87. But Windows is on 84 and mac is on 81.
+-->
+
+
+---
+reviewRemove: true
+title: macOS is catching up
+---
+
+# macOS is catching up {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<Image source={{ uri: macosReleaseTracker }} style={{ width: 1500, height: 1500 * 254 / 706, alignSelf: "center", borderRadius: 24, overflow: "hidden" }} resizeMode="contain" accessibilityLabel="Open React Native macOS issue 3098: React Native macOS 0.83–0.87 PR stack and release tracker, opened September 21" />
+
+<!-- Luckily macOS is catching up. There’s a PR to get it to 87 which will hopefully be merged soon! -->
+
+
+---
+title: Desktop foundations → Legend Spark
+steps: 6
+---
+
+<DesktopFoundationsJourney icon={sparkIcon} />
+
+<!--
+1. That brings us to the modules problem. There are a lot of desktop features that don’t have libraries yet.
+
+2. But I need windows. Menus. Keyboard shortcuts. Files. Open and save dialogs.
+
+3. Then drag and drop. Notifications. A tray icon. Media controls.
+
+4. Deep links. App lifecycle. Preferences. Permissions.
+
+These work differently than mobile or just don’t exist yet. As I was making apps I needed to build all of these features for my app to use.
+
+5. And that's just to get the app working. Then you have to ship it, and do all the work for that.
+
+This was a lot to figure out and get working.
+
+What we really need is something that gives me all of these modules and sets everything up correctly. So today I’m releasing Legend Spark.
+-->
+
+
+---
+title: Legend Spark
+---
+
+<FramePitch icon={sparkIcon} />
+
+<!--
+Spark gives you desktop APIs, configuration, and tooling you need to build desktop apps.
+
+The goal is to make it as easy as Electron, but with the performance and native UI of a React Native and Expo development experience.
+-->
+
+
+---
+title: Legend Spark foundations
+steps: 2
+---
+
+<FrameFoundations icon={sparkIcon} />
+
+<!--
+1. So how does it work? It runs on top of Expo Desktop which gives us desktop platform support on top of Expo.
+
+And under that a webview for cross platform support.
+
+2. I’m just kidding, it’s definitely not a webview.
+
+It's React Native. Spark adds desktop APIs and tooling to that foundation.
+
+And here's what it's like to use.
+-->
+
+
+---
+title: Spark Runner
+steps: 2
+---
+
+# Spark Runner {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<FrameRunnerDemo />
+
+<!--
+1. It also includes a Spark Runner app with those modules and common libraries like Reanimated and Skia already built in. It’s similar to something like Expo Go for desktop.
+
+2. Spark augments the Expo CLI to give you desktop features. You just write JavaScript, press d, and your app opens. You don’t need a native build. You don't even need Xcode.
+
+You do still need a real build for production or using other native modules. But this is a really easy way to get started.
+-->
+
+
+
+---
+title: "What’s holding RN desktop back"
+steps: 3
+eyebrow: Story
+---
+
+# What’s holding RN desktop back {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<DesktopObjectionsReactcon returning />
+
+<!--
+1. So let's go back to what’s holding desktop back. We already know performance is solved
+
+2. And Spark gets us pretty far along on desktop foundations.
+
+3. Which leaves existing modules, and this is where we need help
+-->
+
 
 ---
 title: Library support
@@ -576,12 +983,24 @@ eyebrow: Story
 <CompatibilitySnapshot />
 
 <!--
-Some of the libraries we already use on mobile work on desktop. Some need changes. Some haven't been tested yet.
+React Native already has a huge ecosystem on mobile, and it’s doing pretty well on macOS already since it’s pretty close to iOS. But this is the table of popular ***supported*** libraries. There’s a ton that aren’t supported.
 
-This is the current integration snapshot, not a claim that the whole ecosystem works.
-
-macOS can often share code with iOS. Windows usually needs its own implementation. Both need people testing and maintaining them.
+And Windows needs a lot work, Windows modules are an entirely different platform so most libraries just haven’t added it yet. But an LLM should be able to knock those out fairly quickly.
 -->
+
+
+---
+reviewRemove: true
+title: Expo Modules
+eyebrow: Story
+---
+
+<ExistingModulesTitle title="Expo Modules" />
+
+<CompatibilitySnapshot expo />
+
+<!-- A lot of Expo Modules work on Mac already. But Windows is still lacking there too. -->
+
 
 ---
 title: "Please help"
@@ -593,10 +1012,16 @@ eyebrow: Story
 <!--
 So please help.
 
-If you maintain a library, try it on macOS and Windows. Or pick a library you need and help add support.
+This platform is incredible and has so much potential. But it’s not perfect yet.
 
-Come talk to me. I'd love to help you get started.
+Please add macOS and Windows support to your libraries, or find libraries you want to support desktop and PR it.
+
+On mac it's often just a platform check or a small change. Windows is harder.
+
+If you want to help with this, please talk to me and I’ll try to help you.
 -->
+
+
 
 
 ---
@@ -606,12 +1031,13 @@ title: One more thing
 # One more thing... {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-8xl mb-0"}
 
 <!--
-There's one more app I haven't shown you.
+And there's one more app I haven't shown you.
 
 Well, I have. You've been looking at it this whole time.
 
 [Pause.]
 -->
+
 
 ---
 title: Legend Slides
@@ -625,35 +1051,26 @@ steps: 5
 </SlidesReveal>
 
 <!--
-1. This is Legend Slides. A React Native macOS app.
+1. This is Legend Slides. It's React Native macOS app.
 
-2. The presenter and audience views are separate native windows. Slides are React Native components, so I can make all these ridiculous effects.
+2. The presenter and audience views are separate native windows. The slides use React Native components, so it can make crazy effects and shaders to do ridiculous stuff.
 
-3. The deck is Markdown. For more interesting things I can write a component right in it, or import one from another file.
+3. And the deck is just Markdown. Write a heading. Write some text. When I need more, I can put React Native components right in the Markdown or import from separate files,
 
-4. Reanimated handles motion, Skia does the glass and drawing, and TypeGPU does the particles.
+4. It uses Reanimated for the animations. Skia does the drawing, glass, and ripples.
 
-5. It's open source and still early. I'm polishing it as I use it for these talks. You can find it and the other projects at legend dot so.
+It’s using TypeGPU for the particle effects.
 
-And I can edit the deck right here.
+5. It's open source. It's still early and I barely got it working in time for this talk. But I’m really happy with it so I’ll keep polishing it and use it for all of my future talks.
+
+And I got a cool new domain, all of the open source stuff I'm doing is at legend dot so now.
+
+And this hopefully is also good proof about how great React Native on desktop is.
 -->
 
----
-title: Let's edit this slide
----
-
-# Let's edit this slide {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-8xl"}
-
-<!--
-Let me change the deck in the app we're using right now.
-
-[Open Edit Source. Change the heading to "That was React Native". Let the preview update, apply the audience update if needed, and exit editing once it has saved.]
-
-Markdown, React Native components, and the same desktop foundation. That's the whole talk running as an app.
--->
 
 ---
-template: ./RNConnection.tsx
+template: ./ReactconReviewFrame.tsx
 ---
 
 <WaterTitle closing>
@@ -663,13 +1080,13 @@ template: ./RNConnection.tsx
 </WaterTitle>
 
 <!--
-That's why I think React Native is the best way to build desktop apps.
+I really do think React Native is the best way to build desktop apps.
 
-Competitive performance. Real native UI. React tools we already know. And now a foundation to make getting started easier.
+There are still rough edges. We need more modules to support desktop. Legend Spark is still early.
 
-There are still gaps. Spark is early, and we need more libraries to support desktop. But look at what we can already build.
+But look at what we can already build. Small, really fast apps that feel like they belong on your computer. And we get to use React Native to do it.
 
-I'd love to see what you build with it.
+I'm really optimistic about where this can go. If we work on this together, we can make all of our apps really fast and really great.
 
 Thank you!
 -->

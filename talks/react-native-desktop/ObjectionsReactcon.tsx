@@ -189,9 +189,9 @@ export function DesktopObjections({ returning = false, chapter }: {
   const crossed = chapter ? [chapter !== "performance", false, chapter === "modules"]
     : [returning || step >= 1, false, returning && step >= 1];
   return <View style={{ width: 1696, height: 660, marginTop: 45, alignSelf: "center" }}>
-    {["Performance concerns", "Library support", "Desktop foundations"].map((label, index) =>
+    {(chapter ? ["Performance concerns", "Library support", "Desktop foundations"] : ["Performance", "Library support", "Desktop foundations"]).map((label, index) =>
       <ObjectionCard key={label} label={label} index={index} crossed={crossed[index]!}
         settled={chapter ? crossed[index]! : returning && index === 0} zoomTarget={zoomTarget} separateLabel={modules && index === 1} />)}
-    {modules && <ExistingModulesTitle title={chapter ? "Library support" : "Existing Modules"} inCard expanded={step >= (chapter ? 1 : 2)} />}
+    {modules && <ExistingModulesTitle title="Library support" inCard expanded={step >= (chapter ? 1 : 2)} />}
   </View>;
 }
