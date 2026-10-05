@@ -31,13 +31,15 @@ half4 main(float2 p) {
   float frame = box(p-float2(264,209),float2(244,177),22.0);
   float4 panel = glassPanel(p-float2(264,209),float2(244,177),22.0,time);
   float3 c = float3(0.0);
-  float a = panel.a;
+  float contentAlpha = 0.0;
   float clip = mask(frame);
   float chrome = exp(-abs(p.y-76.0))*step(24.0,p.x)*step(p.x,504.0);
   c += float3(0.3,0.5,0.65)*chrome*0.3;
+  contentAlpha = chrome;
   for(int i=0;i<3;i++) {
     float dotD=length(p-float2(44.0+17.0*float(i),54.0))-3.5;
     c += float3(0.5,0.67,0.78)*mask(dotD);
+    contentAlpha = max(contentAlpha,mask(dotD));
   }
   if(family<0.5) {
     float toggle=smoothstep(-0.45,0.45,sin(time*1.05));
@@ -49,6 +51,7 @@ half4 main(float2 p) {
     float button=box(p-float2(167,151+press*3.0),float2(62.0-press*3.0,27.0-press*3.0),15.0);
     c += glass(button,p.y,1.8-press*0.8);
     c += float3(0.28,0.65,0.8)*mask(button)*(1.0-press)*0.36;
+    contentAlpha = max(contentAlpha,max(max(mask(track),mask(knob)),mask(button)));
     float rail=box(p-float2(264,281),float2(159,5),5.0);
     c += glass(rail,p.y,0.8);
     float x=151.0+226.0*(0.5+0.5*sin(time*0.8-0.5));
@@ -56,9 +59,12 @@ half4 main(float2 p) {
     c += float3(0.22,0.75,0.9)*mask(fill);
     float thumb=length(p-float2(x,281))-18.0;
     c += glass(thumb,p.y,2.6);
+    contentAlpha = max(contentAlpha,max(mask(rail),mask(thumb)));
   } else if(family<1.5) {
     float page=box(p-float2(264,222),float2(197,115),14.0);
-    c += glassPanel(p-float2(264,222),float2(197,115),14.0,time).rgb;
+    float4 pagePanel = glassPanel(p-float2(264,222),float2(197,115),14.0,time);
+    c += pagePanel.rgb;
+    contentAlpha = max(contentAlpha,pagePanel.a);
     float sweep=107.0+230.0*(0.5+0.5*sin(time*0.7));
     float scanDistance=(p.y-sweep)/26.0;
     float light=exp(-scanDistance*scanDistance)*mask(page);
@@ -72,6 +78,7 @@ half4 main(float2 p) {
     chevron=min(chevron,min(segment(p,float2(301,184),float2(326,209)),segment(p,float2(326,209),float2(301,234))));
     chevron=min(chevron,segment(p,float2(275,173),float2(253,245)));
     c += float3(0.3,0.85,1.0)*(exp(-chevron*0.9)*1.1+exp(-chevron*0.12)*0.17);
+    contentAlpha = max(contentAlpha,mask(chevron-1.0));
   } else {
     float phase=mod(time,7.0);
     float progress=smoothstep(0.3,4.5,phase);
@@ -81,6 +88,7 @@ half4 main(float2 p) {
     float circle=abs(length(q)-57.0);
     float arc=step(angle,progress)*fade;
     c += float3(0.3,0.82,1.0)*(exp(-circle*1.1)+exp(-circle*0.17)*0.14)*arc;
+    contentAlpha = max(contentAlpha,mask(circle-1.0)*arc);
     float2 end=float2(sin(progress*6.2831853),-cos(progress*6.2831853))*57.0+float2(166,217);
     c += float3(0.5,0.9,1.0)*exp(-length(p-end)*0.16)*fade;
     float2 r=p-float2(354,217);
@@ -88,9 +96,12 @@ half4 main(float2 p) {
     float rectAngle=mod(atan(r.y,r.x)+1.5707963+6.2831853,6.2831853)/6.2831853;
     float trace=step(rectAngle,progress)*fade;
     c += float3(0.3,0.82,1.0)*(exp(-rect*1.1)+exp(-rect*0.17)*0.14)*trace;
+    contentAlpha = max(contentAlpha,mask(rect-1.0)*trace);
   }
-  c *= clip;
-  return half4(min(panel.rgb+c,float3(a)),a);
+  contentAlpha = clamp(max(contentAlpha,max(max(c.r,c.g),c.b))*clip,0.0,1.0);
+  c = clamp(c*clip,0.0,1.0);
+  float a = contentAlpha+panel.a*(1.0-contentAlpha);
+  return half4(c+panel.rgb*(1.0-contentAlpha),a);
 }`;
 const effect = Skia.RuntimeEffect.Make(rendererShader);
 if (!effect) throw new Error("Could not compile renderer windows");
