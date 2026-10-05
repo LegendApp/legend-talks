@@ -48,12 +48,8 @@ import sparkIcon from "./rnconnection-assets/legend-spark.png";
 import { FrameRunnerDemo } from "./FrameRunnerDemo";
 import { DesktopFoundationsJourney } from "./reactcon-scenes/DesktopFoundations"
 import { DesktopObjections as DesktopObjectionsReactcon } from "./ObjectionsReactcon"
-import { SharedRoots } from "./SharedRoots"
-import musicIcon from "./rnconnection-assets/music-icon.png";
-import markdownIcon from "./rnconnection-assets/markdown-icon.png";
 import { NineApps } from "./NineApps"
 import { HelloWorldIntro } from "./HelloWorldIntro"
-import { FrameworkLanguages } from "./FrameworkLanguages"
 import { PackageDownloadsChart } from "./PackageDownloadsChart"
 import { NativeReactions } from "./reactcon-scenes/NativeReactions"
 import { MusicPerformance } from "./MusicPerformance";
@@ -65,9 +61,6 @@ import { MovingTitle } from "./MovingTitle"
 import { CompromiseQuestion } from "./reactcon-scenes/CompromiseQuestion"
 import { DirectoryTitle } from "./DirectoryTitle"
 import directoryScreenshot from "./rnconnection-assets/directory-legend-list.png";
-import chatIcon from "./rnconnection-assets/chat-history-icon.png";
-import codeIcon from "./rnconnection-assets/code-icon.png";
-import diffIcon from "./rnconnection-assets/diff-icon.png";
 import slidesIcon from "./rnconnection-assets/slides-icon.png";
 
 <WaterTitle>
@@ -217,25 +210,6 @@ reviewFullStage: true
 
 
 ---
-eyebrow: Story
----
-
-# So many apps {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<SharedRoots icons={[musicIcon, chatIcon, codeIcon, diffIcon, markdownIcon]} />
-
-<!--
-These apps all do pretty different things, but they all need a lot of the same desktop stuff.
-
-So I ended up building a big toolset, where I can pump out new apps very fast with all of this shared code. And every one of these apps is the fastest in its class, often by a wide margin.
-
-But every time I released one, people would tell me I should rewrite it natively. Or that I must not really care about performance. Because React Native isn’t good enough.
-
-Even my React Native expert friends tell me I’m wrong and that native is faster.
--->
-
-
----
 title: "Was I just imagining it?"
 steps: 2
 eyebrow: Story
@@ -277,30 +251,6 @@ First is real native UI. AppKit is effectively UIKit on mac. SwiftUI is Apple's 
 
 
 ---
-reviewRemove: true
-title: What you write
-steps: 2
----
-
-# What you write {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<FrameworkLanguages />
-
-<!--
-1. These are all different languages and ecosystems.
-
-With React Native, I'm writing TypeScript and React. AppKit can be Swift or Objective-C, and SwiftUI is obviously Swift.
-
-The browser ones let you build the UI with web technologies.
-
-Then Rust for GPUI, Dart for Flutter, Kotlin for Compose.
-
-2. Tauri is a weird one. It’s javascript on the web side and Rust on the native side. So you need to know both.
--->
-
-
----
-reviewRemove: true
 title: Monthly package downloads
 steps: 2
 ---
@@ -368,7 +318,6 @@ footer: 'Greeting workload · newer installed-size snapshot · MB'
 
 
 ---
-reviewRemove: true
 eyebrow: 'Hello World / memory'
 steps: 2
 footer: 'Greeting workload · MB · settled physical footprint'
@@ -570,7 +519,6 @@ So React Native isn't the absolute fastest, but it’s very close, and this is d
 
 
 ---
-reviewRemove: true
 eyebrow: 'Chat History / initial memory'
 steps: 2
 footer: 'Settled physical footprint · MB · includes attributed helper processes'
@@ -592,7 +540,6 @@ The bundled-browser apps are huge because they run full instances of Chromium.
 
 
 ---
-reviewRemove: true
 eyebrow: 'Chat History / jump to top'
 steps: 2
 footer: 'Video-derived action-to-visible-result ms · September 24 reference · lower is better'
@@ -614,24 +561,6 @@ So React Native and GPUI do it in under 4 frames. Native frameworks and webviews
 
 
 ---
-eyebrow: 'Chat History / switch'
-steps: 2
-footer: 'Video-derived action-to-visible-result ms · September 24 reference · lower is better'
----
-
-# Chat History · switch conversation {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<Chart metric="switch" />
-
-<!--
-1. And then let’s try switching conversations. AppKit does really well at this one. React Native is slower, but that’s largely a LegendList problem that I can improve.
-
-2. SwiftUI is a native framework but it really struggles here. And of course Electron is very slow. That’s about 3 times slower than React Native.
--->
-
-
----
-reviewRemove: true
 eyebrow: 'Chat History / app size'
 steps: 2
 footer: 'Measured September 18 · app bundles only · external grammars excluded · MB'
@@ -668,7 +597,6 @@ GPUI is generally either slightly better or slightly worse than React Native. Bu
 
 
 ---
-reviewRemove: true
 eyebrow: 'Evidence → engineering judgment'
 steps: 2
 footer: 'Measured on macOS · current visuals require refreshed captures after native overlay removal'
@@ -724,7 +652,6 @@ I don't want three separate codebases for the same product.
 
 
 ---
-reviewRemove: true
 eyebrow: 'Cross-platform'
 ---
 
@@ -744,7 +671,6 @@ Tauri renders on mobile as a webview so I don’t think that counts.
 
 
 ---
-reviewRemove: true
 steps: 2
 eyebrow: 'Writing versus maintaining'
 ---
@@ -765,7 +691,6 @@ So we need to share the implementation. Putting it all together,
 
 
 ---
-reviewRemove: true
 eyebrow: 'The technical case'
 footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 ---
@@ -846,7 +771,6 @@ It’s a really cool project.
 
 
 ---
-reviewRemove: true
 title: Desktop is behind
 ---
 
@@ -862,7 +786,6 @@ As of now, mobile is on 87. But Windows is on 85 and mac is on 83.
 
 
 ---
-reviewRemove: true
 title: macOS is catching up
 ---
 
@@ -985,7 +908,6 @@ And Windows needs a lot work, Windows modules are an entirely different platform
 
 
 ---
-reviewRemove: true
 title: Expo Modules
 eyebrow: Story
 ---
