@@ -26,7 +26,7 @@ half4 sampleBackdrop(float2 p) {
 }
 half4 main(float2 position) {
   float reveal = smoothstep(0.0, 0.8, time);
-  float wild = smoothstep(0.8, 2.0, time);
+  float wild = smoothstep(0.8, 3.0, time);
   float2 center = composer.xy + composer.zw * 0.5;
   float2 halfSize = composer.zw * 0.5;
   float radius = cornerRadius;
