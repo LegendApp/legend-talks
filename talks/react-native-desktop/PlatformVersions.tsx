@@ -3,9 +3,9 @@ import { GlassPanels } from "./GlassPanels";
 
 // npm latest dist-tags, verified September 23, 2026. Preview/RC tags excluded.
 const platforms = [
-  { name: "iOS + Android", version: "0.87.1", color: "#67e8f9" },
-  { name: "Windows", version: "0.84.0", color: "#fbbf77" },
-  { name: "macOS", version: "0.81.9", color: "#fbbf77" },
+  { name: "iOS + Android", version: "0.87", color: "#67e8f9" },
+  { name: "Windows", version: "0.85", color: "#fbbf77" },
+  { name: "macOS", version: "0.83", color: "#fbbf77" },
 ];
 const panels = platforms.map((_, index) => ({ x: index * 574, y: 100, width: 548, height: 400, radius: 32 }));
 
