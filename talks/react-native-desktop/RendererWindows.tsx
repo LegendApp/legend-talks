@@ -1,11 +1,15 @@
 import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
+import { glassPanelMaterial } from "./GlassPanels";
 
 // Illustrative controls, not embedded OS widgets. All motion is evaluated in SkSL.
 export const rendererShader = `
 uniform float time;
 uniform float family;
+const float pulse = 0.0;
+const float edgeMotion = 0.0;
+${glassPanelMaterial}
 float box(float2 p, float2 halfSize, float r) {
   float2 q = abs(p) - halfSize + r;
   return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
@@ -25,8 +29,9 @@ float3 glass(float d, float y, float strength) {
 }
 half4 main(float2 p) {
   float frame = box(p-float2(264,209),float2(244,177),22.0);
-  float3 c = glass(frame,p.y,0.6);
-  float a = mask(frame)*0.86+exp(-abs(frame)*0.22)*0.12;
+  float4 panel = glassPanel(p-float2(264,209),float2(244,177),22.0,time);
+  float3 c = float3(0.0);
+  float a = panel.a;
   float clip = mask(frame);
   float chrome = exp(-abs(p.y-76.0))*step(24.0,p.x)*step(p.x,504.0);
   c += float3(0.3,0.5,0.65)*chrome*0.3;
@@ -53,7 +58,7 @@ half4 main(float2 p) {
     c += glass(thumb,p.y,2.6);
   } else if(family<1.5) {
     float page=box(p-float2(264,222),float2(197,115),14.0);
-    c += glass(page,p.y,0.8);
+    c += glassPanel(p-float2(264,222),float2(197,115),14.0,time).rgb;
     float sweep=107.0+230.0*(0.5+0.5*sin(time*0.7));
     float scanDistance=(p.y-sweep)/26.0;
     float light=exp(-scanDistance*scanDistance)*mask(page);
@@ -85,7 +90,7 @@ half4 main(float2 p) {
     c += float3(0.3,0.82,1.0)*(exp(-rect*1.1)+exp(-rect*0.17)*0.14)*trace;
   }
   c *= clip;
-  return half4(min(c,float3(1.0))*a,a);
+  return half4(min(panel.rgb+c,float3(a)),a);
 }`;
 const effect = Skia.RuntimeEffect.Make(rendererShader);
 if (!effect) throw new Error("Could not compile renderer windows");

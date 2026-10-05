@@ -1,3 +1,4 @@
+import { glassPanelMaterial } from "../GlassPanels";
 import { branchMaterialShader } from "../BranchMaterial";
 import { Canvas, Fill, ImageShader, Path, Shader, Skia, matchFont } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
@@ -7,6 +8,9 @@ import { Text, View } from "react-native";
 // particles; no per-frame captures, texture uploads, or JS geometry updates.
 export const expoDesktopShader = `
 ${branchMaterialShader}
+const float pulse = 0.0;
+const float edgeMotion = 0.0;
+${glassPanelMaterial}
 uniform shader bridgeLabel;
 uniform float time;
 uniform float stepTime;
@@ -19,26 +23,8 @@ float roundedBox(float2 p, float2 size, float radius) {
   return length(max(q,0.0))+min(max(q.x,q.y),0.0)-radius;
 }
 float4 over(float4 a,float4 b) { return a+b*(1.0-a.a); }
-float4 material(float2 p,float2 size,float radius,float3 tint) {
-  float d=roundedBox(p,size,radius);
-  float mask=1.0-smoothstep(-0.8,0.8,d);
-  float rim=exp(-abs(d+1.7)*0.7);
-  float bevel=exp(-abs(d+7.5)*0.24);
-  float innerRim=exp(-abs(d+15.0)*0.7);
-  float halo=exp(-max(d,0.0)*0.065)*(1.0-mask)*0.32;
-  float2 uv=p/size;
-  float reflectionAxis=(uv.y+0.68+uv.x*0.18)*7.0;
-  float reflection=exp(-reflectionAxis*reflectionAxis);
-  float sweep=uv.x*0.5+uv.y+0.12*sin(uv.x*4.0);
-  float ribbon=exp(-abs(sweep+0.52)*17.0);
-  float caustic=exp(-abs(sweep-0.55)*24.0);
-  float directional=0.35+0.65*pow(0.5+0.5*cos(atan(p.y,p.x)*2.0-0.65),2.0);
-  float3 color=tint*(0.65+reflection*0.85)
-    +float3(0.76,0.91,1.0)*rim*directional
-    +float3(0.28,0.57,0.80)*bevel*(0.4+reflection)
-    +float3(0.17,0.42,0.58)*innerRim
-    +float3(0.16,0.31,0.43)*ribbon+float3(0.07,0.20,0.31)*caustic;
-  return float4(color*mask+float3(0.25,0.63,0.95)*halo,clamp(mask*0.96+halo,0.0,1.0));
+float4 material(float2 p,float2 size,float radius) {
+  return glassPanel(p,size,radius,time);
 }
 // Impact at 0.85s, pipe recoil settles at 1.8s, power reaches devices at 2.6s.
 float latch() { return connection()*smoothstep(0.95,1.4,elapsed()); }
@@ -181,7 +167,7 @@ half4 main(float2 p) {
       float2 center=float2(endpoint,phone ? 563.0 : 580.0);
       float2 local=p-center;
       float radius=phone ? 17.0 : 9.0;
-      float4 frame=material(local,size,radius,float3(0.015,0.045,0.085));
+      float4 frame=material(local,size,radius);
       float2 screenSize=size-float2(6.0,7.0);
       float screen=1.0-smoothstep(-0.8,0.8,roundedBox(local,screenSize,radius-4.0));
       float3 screenColor=wallpaper(local,screenSize,i*0.6);
@@ -215,7 +201,7 @@ half4 main(float2 p) {
       outColor=over(frame,outColor);
       if(k>=3) {
         float2 base=p-float2(endpoint,672.0);
-        float4 laptop=material(base,float2(143.0,5.0),4.0,float3(0.16,0.24,0.32));
+        float4 laptop=material(base,float2(143.0,5.0),4.0);
         outColor=over(laptop,outColor);
       }
       float2 glowPoint=(p-float2(endpoint,677.0))/float2(phone ? 78.0 : 160.0,10.0);
@@ -226,7 +212,7 @@ half4 main(float2 p) {
   }
   if(desktop < 0.5) {
     // Glass project tile behind the Expo mark and native label.
-    outColor=over(material(p-float2(912,100),float2(190,88),23.0,float3(0.07,0.16,0.27)),outColor);
+    outColor=over(material(p-float2(912,100),float2(190,88),23.0),outColor);
   } else {
     float descent=clamp(elapsed()/0.85,0.0,1.0);
     // Begin above the canvas, including the stretched glass rim and glow.
@@ -264,7 +250,7 @@ half4 main(float2 p) {
     }
     float halo=exp(-abs(roundedBox(q,float2(221,41),31.0))*0.045)*0.42*appear;
     outColor=over(float4(float3(0.04,0.72,1.0)*halo,halo),outColor);
-    outColor=over(material(q,float2(221,41),29.0,float3(0.025,0.29,0.39))*appear,outColor);
+    outColor=over(material(q,float2(221,41),29.0)*appear,outColor);
     // The label uses exactly the same inverse transform, clock and opacity
     // as the glass, including stretch, impact shake and recoil.
     if(abs(q.x)<221.0 && abs(q.y)<21.0) {

@@ -1,6 +1,7 @@
 import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
 import { SceneMotionView, SharedElement, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { ExistingModulesTitle } from "./ModuleCompatibility";
+import { glassPanelMaterial } from "./GlassPanels";
 import { Text, View } from "react-native";
 
 // One bounded GPU surface per panel. Reflections, cracks, and
@@ -14,33 +15,23 @@ uniform float settled;
 uniform float phase;
 uniform float centerX;
 uniform float panelHalfHeight;
+const float pulse = 0.0;
+const float edgeMotion = 0.0;
+${glassPanelMaterial}
 float hash(float n) { return fract(sin(n * 127.1 + 311.7) * 43758.5453); }
 float2 rotatePoint(float2 p, float a) {
   float c = cos(a), s = sin(a);
   return float2(c*p.x-s*p.y, s*p.x+c*p.y);
 }
 float box(float2 p) {
-  float2 q = abs(p) - float2(211.0, panelHalfHeight);
-  return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - 40.0;
+  return glassBox(p, float2(251.0, panelHalfHeight + 40.0), 40.0);
 }
 float stroke(float2 p, float2 a, float2 b, float progress) {
   float2 v = (b-a) * max(progress, 0.001);
   return length(p-a-v*clamp(dot(p-a,v)/dot(v,v), 0.0, 1.0));
 }
 float4 glass(float2 p, float clock) {
-  float d = box(p);
-  float mask = 1.0-smoothstep(-0.7, 0.7, d);
-  float rim = exp(-abs(d+3.0)*0.35);
-  float inner = exp(-abs(d+14.0)*0.10);
-  float directional = 0.45 + 0.55*pow(0.5+0.5*sin(atan(p.y,p.x)*2.0-0.7), 3.0);
-  float reflectionAxis = (p.x*0.30+p.y+93.0+sin(clock*0.35+phase)*12.0)/27.0;
-  float reflection = exp(-reflectionAxis*reflectionAxis);
-  float3 color = float3(0.025,0.07,0.115)
-    + float3(0.50,0.81,1.0)*rim*directional
-    + float3(0.08,0.28,0.39)*inner
-    + float3(0.11,0.18,0.23)*reflection;
-  float alpha = mask*0.92;
-  return float4(color*alpha,alpha);
+  return glassPanel(p, float2(251.0, panelHalfHeight + 40.0), 40.0, clock);
 }
 half4 main(float2 position) {
   float2 p = position-float2(centerX,300.0);
@@ -146,8 +137,10 @@ half4 main(float2 position) {
 const glassEffect = Skia.RuntimeEffect.Make(objectionGlassShader);
 if (!glassEffect) throw new Error("Could not compile objection glass");
 
-function GlassPanel({ crossed, settled, index }: { crossed: boolean; settled: boolean; index: number }) {
-  const uniforms = useAnimatedShaderUniforms({ panelHalfHeight: 151, resolveToCheck: 1, broken: crossed ? 1 : 0, settled: settled ? 1 : 0, phase: index * 1.7, centerX: 396 + index * 564 }, crossed ? 6 : 2, { clock: crossed && !settled ? 1 : "slide" });
+function GlassPanel({ crossed, settled, index, resolvedAt, revealed }: {
+  crossed: boolean; settled: boolean; index: number; resolvedAt: number; revealed: boolean;
+}) {
+  const uniforms = useAnimatedShaderUniforms({ panelHalfHeight: 151, resolveToCheck: 1, broken: crossed ? 1 : 0, settled: settled ? 1 : 0, phase: index * 1.7, centerX: 396 + index * 564 }, crossed ? 6 : 2, { active: revealed, clock: crossed && !settled ? resolvedAt : "slide" });
   // Keep bounds and shader origin fixed before and after the strike. Changing
   // native layout alongside UI-thread uniforms can briefly displace the panel.
   return <Canvas pointerEvents="none" style={{ position: "absolute", left: -142 - index * 564, top: -108, width: 1920, height: 1080 }}>
@@ -156,19 +149,19 @@ function GlassPanel({ crossed, settled, index }: { crossed: boolean; settled: bo
 }
 
 /** Both resolved objections use the exact same glass, strike, sparks and check. */
-function ObjectionCard({ label, index, crossed, settled, zoomTarget, separateLabel }: {
+export function ObjectionCard({ label, index, crossed, settled, zoomTarget, separateLabel, revealed = true, delay = 0, resolvedAt = 1 }: {
   label: string; index: number; crossed: boolean; settled: boolean; zoomTarget: number | null; separateLabel: boolean;
+  revealed?: boolean; delay?: number; resolvedAt?: number;
 }) {
   const zoom = zoomTarget !== null;
   const center = index === zoomTarget;
-  return <SceneMotionView duration={850}
+  return <SceneMotionView duration={850} delay={delay} hidden={!revealed}
     pose={{ x: zoom ? center ? (1 - index) * 564 : (index < zoomTarget! ? -450 : 450) : 0,
-      y: zoom && center ? 35 : 0,
+      y: !revealed ? 110 : zoom && center ? 35 : 0,
       scaleX: zoom && center ? 1.65 : 1, scaleY: zoom && center ? 1.65 : 1,
-      opacity: zoom && !center ? 0 : 1 }}
+      opacity: !revealed || zoom && !center ? 0 : 1 }}
     style={{ position: "absolute", left: 30 + index * 564, top: 105, width: 508, height: 384 }}>
-    {/* The shared step-1 timeline survives the subsequent zoom step. */}
-    <GlassPanel crossed={crossed} settled={settled} index={index} />
+    <GlassPanel crossed={crossed} settled={settled} index={index} resolvedAt={resolvedAt} revealed={revealed} />
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 24 }}>
       {!separateLabel && <SharedElement id={index === 1 ? "existing-modules-title" : `objection-label-${index}`} resize="preserve">
         <Text style={{ color: "#ffffff", fontSize: 42, fontWeight: "600", textAlign: "center", lineHeight: 54,

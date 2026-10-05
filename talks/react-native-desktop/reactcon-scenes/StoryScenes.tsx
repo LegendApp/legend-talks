@@ -1,7 +1,8 @@
-import { SceneMotionView, SharedElement, usePresentationValue } from "@legend-apps/presentation";
+import { SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 import { MovingTitle } from "../MovingTitle";
 import { Arrive } from "./Motion";
+import { DesktopObjections } from "../ObjectionsReactcon";
 
 const ink = "#f8fafc", cyan = "#67e8f9";
 const titleStyle = { color: ink, fontSize: 80, lineHeight: 104, fontWeight: "600" as const, textAlign: "center" as const };
@@ -23,16 +24,23 @@ export function Measured() {
 }
 
 export function QuestionBlockers() {
-  const revealed = usePresentationValue("stepIndex") > 0;
-  return <View style={{ width: 1696, height: 650, justifyContent: "center" }}>
-    <SceneMotionView pose={{ y: revealed ? -220 : 0, scaleX: revealed ? 0.75 : 1, scaleY: revealed ? 0.75 : 1 }} duration={850}>
-      <MovingTitle><Text style={titleStyle}>Why isn’t everyone doing this?</Text></MovingTitle>
-    </SceneMotionView>
-    {revealed && <View style={{ position: "absolute", top: 290, flexDirection: "row", gap: 56 }}>
-      {["Performance", "Library support", "Desktop foundations"].map((label, i) => <SharedElement key={label} id={`objection-label-${i}`} resize="preserve">
-        <Arrive delay={i * 180} clock="step" fromY={110}><View style={{ width: 528, height: 270, borderRadius: 36, borderWidth: 2, borderColor: cyan,
-          backgroundColor: "#0b2536", justifyContent: "center", padding: 24 }}><Text style={{ ...titleStyle, fontSize: 42, lineHeight: 54 }}>{label}</Text></View></Arrive>
-      </SharedElement>)}
-    </View>}
+  const step = usePresentationValue("stepIndex");
+  const revealed = step >= 1;
+  const blockers = step >= 2;
+  return <View style={{ width: 1696, height: 850, alignSelf: "center" }}>
+    <MovingTitle style={{ position: "absolute", top: 20, width: 1696, height: 104 }}>
+      <SceneMotionView hidden={blockers}
+        pose={{ y: revealed ? 0 : 280, scaleX: revealed ? 0.9 : 1, scaleY: revealed ? 0.9 : 1, opacity: blockers ? 0 : 1 }}
+        duration={850} style={{ position: "absolute", width: 1696 }}>
+        <Text style={titleStyle}>Why isn’t everyone doing this?</Text>
+      </SceneMotionView>
+      <SceneMotionView hidden={!blockers} pose={{ opacity: blockers ? 1 : 0 }} duration={850}
+        style={{ position: "absolute", width: 1696 }}>
+        <Text style={{ ...titleStyle, fontSize: 72 }}>What’s holding RN desktop back</Text>
+      </SceneMotionView>
+    </MovingTitle>
+    <View style={{ position: "absolute", top: 140, width: 1696 }}>
+      <DesktopObjections introduction />
+    </View>
   </View>;
 }
