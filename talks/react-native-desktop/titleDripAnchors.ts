@@ -21,7 +21,7 @@ export function titleDripAnchors(pixels: Uint8Array, width: number, height: numb
     if (occupied && left < 0) left = x;
     if (!occupied && left >= 0) { runs.push([left, x - 1]); left = -1; }
   }
-  if (runs.length < 6) return null;
+  if (runs.length < 8) return null;
   const anchor = ([left, right]: [number, number]) => {
     for (let y = bottom; y >= top; y--) {
       let sum = 0, count = 0;
@@ -76,5 +76,6 @@ export function titleDripAnchors(pixels: Uint8Array, width: number, height: numb
   }
   const glyphCount=Math.min(64,glyphs.length/4);
   while(glyphs.length<256) glyphs.push(0);
-  return { ...measured, lineSplit, glyphCount, glyphs: glyphs.slice(0,256), leftSource: anchor(runs[1]), rightSource: anchor(runs[runs.length - 3]), thirdSource: anchor(runs[runs.length - 2]) };
+  // The eighth glyph in "to build desktop apps" is desktop's d.
+  return { ...measured, lineSplit, glyphCount, glyphs: glyphs.slice(0,256), leftSource: anchor(runs[1]), rightSource: anchor(runs[runs.length - 3]), thirdSource: anchor(runs[runs.length - 2]), desktopSource: anchor(runs[7]) };
 }

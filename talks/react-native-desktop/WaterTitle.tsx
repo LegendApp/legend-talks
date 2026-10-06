@@ -14,6 +14,7 @@ uniform float time;
 uniform float2 leftSource;
 uniform float2 rightSource;
 uniform float2 thirdSource;
+uniform float2 desktopSource;
 uniform float stepIndex;
 uniform float stepTime;
 float merge(float a,float b,float k) {
@@ -74,7 +75,7 @@ float material(float2 p,float2 source,float local) {
   return d;
 }
 float field(float2 p) {
-  return merge(merge(material(p,leftSource,time-0.6),material(p,rightSource,time-1.65),12.0),material(p,thirdSource,time-2.4),12.0);
+  return merge(merge(merge(material(p,leftSource,time-0.6),material(p,rightSource,time-1.65),12.0),material(p,thirdSource,time-2.4),12.0),material(p,desktopSource,time-1.15),12.0);
 }
 half4 main(float2 p) {
   float d=field(p);
@@ -283,7 +284,7 @@ if (!typeEffect) throw new Error("Could not compile liquid title typography");
 export default function WaterTitle({ children, closing = false, byline = false }: { children?: import("react").ReactNode; closing?: boolean; byline?: boolean }) {
   const step = usePresentationValue("stepIndex");
   useAdvanceAfterStep(closing ? -1 : 2, 4.45);
-  const [sources, setSources] = useState({ leftSource: [460, 650], rightSource: [1450, 650], thirdSource: [1520, 650], lineSplit: 540, bestInkRect: [1190,400,255,128], glyphCount: 0, glyphs: Array(256).fill(0) as number[], bestRect: [1190, 400, 255, 128], bylineEnabled: 0, bylineSources: [0,0,0,0] });
+  const [sources, setSources] = useState({ leftSource: [460, 650], rightSource: [1450, 650], thirdSource: [1520, 650], desktopSource: [800, 650], lineSplit: 540, bestInkRect: [1190,400,255,128], glyphCount: 0, glyphs: Array(256).fill(0) as number[], bestRect: [1190, 400, 255, 128], bylineEnabled: 0, bylineSources: [0,0,0,0] });
   const measureByline = useCallback((points: number[]) => {
     setSources(old => ({ ...old, bylineEnabled: 1, bylineSources: points }));
   }, []);
@@ -336,7 +337,7 @@ export default function WaterTitle({ children, closing = false, byline = false }
         const left = 112 + (1696 - last.width) / 2;
         const first = lines[0];
         const firstLeft = 112 + (1696 - first.width) / 2;
-        const next = { bestInkRect: [1190,400,255,128], glyphCount: 0, glyphs: Array(256).fill(0) as number[], lineSplit: top + last.y - 4, leftSource: [left + 78, baseline], rightSource: [left + last.width - 175, baseline + 22], thirdSource: [left + last.width - 100, baseline + 22],
+        const next = { bestInkRect: [1190,400,255,128], glyphCount: 0, glyphs: Array(256).fill(0) as number[], lineSplit: top + last.y - 4, leftSource: [left + 78, baseline], rightSource: [left + last.width - 175, baseline + 22], thirdSource: [left + last.width - 100, baseline + 22], desktopSource: [left + last.width * 0.43, baseline],
           bestRect: [firstLeft + first.width * 0.683, top + first.y, first.width * 0.151, 128] };
         setSources(old => {
           const measured = { ...old, ...next };
