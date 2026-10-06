@@ -19,7 +19,7 @@ float merge(float a,float b,float k) {
   return mix(b,a,h)-k*h*(1.0-h);
 }
 half4 main(float2 p) {
-  if(p.y<740.0 || p.y>850.0) return half4(0);
+  if(p.y<${bylineTop - 48}.0 || p.y>${bylineTop + bylineHeight + 8}.0) return half4(0);
   float visible=1.0-smoothstep(.18,.52,centerProgress);
   if(stepIndex>=2.0) visible*=1.0-smoothstep(0.0,.5,stepTime);
   if(visible<.001) return half4(0);
@@ -37,15 +37,15 @@ half4 main(float2 p) {
   if(bylineEnabled>.5) for(int i=0;i<2;i++) {
     float2 source=i==0 ? bylineSources.xy : bylineSources.zw;
     float4 drop=drops[16+i];
-    float dotRadius=3.2;
+    float dotRadius=5.5;
     float bubble=10000.0;
     if(stepIndex==1.0 && drop.w==6.0 && drop.z>.1) {
       float reach=clamp((source.y-drop.y-6.0)/26.0,0.0,1.0);
-      dotRadius+=sin(reach*3.14159)*1.0;
+      dotRadius+=sin(reach*3.14159)*1.4;
       float2 segment=drop.xy-source;
       float u=clamp(dot(p-source,segment)/max(1.0,dot(segment,segment)),0.0,1.0);
       float pinch=smoothstep(.65,1.0,reach);
-      float width=mix(3.2,2.4,u)*(1.0-pinch*.94*sin(u*3.14159));
+      float width=mix(5.5,3.2,u)*(1.0-pinch*.94*sin(u*3.14159));
       float neck=length(p-mix(source,drop.xy,u))-width;
       bubble=merge(length(p-drop.xy)-drop.z,neck,3.0*(1.0-pinch));
     }
@@ -85,7 +85,9 @@ export function TitleByline({ uniforms, onMeasure }: {
   return <>
     <View ref={captureRef} collapsable={false} pointerEvents="none"
       style={{ position: "absolute", left: 0, top: bylineTop, width: 1920, height: bylineHeight, opacity: image ? 0 : 1, justifyContent: "center" }}>
-      <Text style={{ color: "#e2e8f0", fontSize: 40, lineHeight: 52, fontWeight: "500", textAlign: "center" }}>Jay · Legend · Margelo</Text>
+      <Text accessibilityLabel="Jay · Legend · Margelo" style={{ color: "#e2e8f0", fontSize: 56, lineHeight: 80, fontWeight: "500", textAlign: "center" }}>
+        Jay<Text style={{ fontSize: 76 }}>{"  ·  "}</Text>Legend<Text style={{ fontSize: 76 }}>{"  ·  "}</Text>Margelo
+      </Text>
     </View>
     {image && <Canvas pointerEvents="none" style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080 }}>
       <Fill><Shader source={bylineEffect!} uniforms={uniforms}>

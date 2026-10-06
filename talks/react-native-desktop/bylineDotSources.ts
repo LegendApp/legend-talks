@@ -1,5 +1,5 @@
-export const bylineTop = 780;
-export const bylineHeight = 64;
+export const bylineTop = 928;
+export const bylineHeight = 96;
 
 /** Locate the two short ink runs independently of font and capture scale. */
 export function bylineDotSources(pixels: Uint8Array, width: number, height: number) {
@@ -15,7 +15,7 @@ export function bylineDotSources(pixels: Uint8Array, width: number, height: numb
       run.right = x; run.top = Math.min(run.top, top); run.bottom = Math.max(run.bottom, bottom);
     } else if (run) { runs.push(run); run = undefined; }
   }
-  const dots = runs.filter(run => (run.bottom - run.top + 1) * bylineHeight / height < 12);
+  const dots = runs.filter(run => (run.bottom - run.top + 1) * bylineHeight / height < 20);
   if (dots.length !== 2) return null;
   return dots.flatMap(dot => [
     (dot.left + dot.right + 1) * 960 / width,
