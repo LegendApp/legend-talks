@@ -28,12 +28,15 @@ import photosPoster from "./rnconnection-assets/app-recordings/photos.png";
 import musicPage from "./rnconnection-assets/app-recordings/music.html";
 // @ts-ignore Local media resolved by the deck compiler.
 import musicPoster from "./rnconnection-assets/app-recordings/music.png";
-const appRecordings: Record<string, { page: string; poster: string }> = {
+// @ts-ignore Local media resolved by the deck compiler.
+import markdownPoster from "./rnconnection-assets/app-recordings/markdown.png";
+const appMedia: Record<string, { page?: string; poster: string }> = {
   "Legend Photos": { page: photosPage, poster: photosPoster },
   "Legend Music": { page: musicPage, poster: musicPoster },
   "Chat History": { page: chat_historyPage, poster: chat_historyPoster },
   "Code": { page: codePage, poster: codePoster },
   "Diff": { page: diffPage, poster: diffPoster },
+  "Markdown": { poster: markdownPoster },
 };
 
 type CardLayout = ReturnType<typeof appCardLayout> & { height: number; captionHeight: number };
@@ -64,21 +67,21 @@ export function AppShowcase({ apps, title }: { apps: string[]; title: string }) 
   const step = usePresentationValue("stepIndex");
   const phase = usePresentationValue("playbackPhase");
   const isPreview = usePresentationValue("isPreview");
-  const hasRecordings = apps.every(name => Boolean(appRecordings[name]));
+  const hasMedia = apps.every(name => Boolean(appMedia[name]));
   return <View style={{ width: 1920, height: 1080, overflow: "hidden" }}>
-    {!hasRecordings && <MovingTitle style={{ position: "absolute", left: 112, top: 65, width: 1696, zIndex: 2000 }}>
+    {!hasMedia && <MovingTitle style={{ position: "absolute", left: 112, top: 65, width: 1696, zIndex: 2000 }}>
       <Text style={{ color: "#f8fafc", fontSize: 64, fontWeight: "700", textAlign: "center" }}>{title}</Text>
     </MovingTitle>}
-    <AppCarousel cardWidth={hasRecordings ? 1600 : 1180} items={apps} position={step} renderCard={(name, card) => {
-      const recording = appRecordings[name];
-      if (!recording) return <MediaSlot label={name} height={card.height} />;
+    <AppCarousel cardWidth={hasMedia ? 1600 : 1180} items={apps} position={step} renderCard={(name, card) => {
+      const media = appMedia[name];
+      if (!media) return <MediaSlot label={name} height={card.height} />;
       return <View style={{ flex: 1 }}>
         <View style={{ height: card.captionHeight, alignItems: "center", justifyContent: "center" }}>
           <Text style={{ color: "#f8fafc", fontSize: card.width * 0.035, fontWeight: "600" }}>{name}</Text>
         </View>
         <View style={{ flex: 1, overflow: "hidden" }}>
-          {isPreview ? <Image source={{ uri: recording.poster }} resizeMode="contain" style={{ width: "100%", height: "100%" }} />
-            : <LocalRecording {...recording} extension="mov" transparent playing={phase === "playing" && apps[step] === name} />}
+          {isPreview || !media.page ? <Image source={{ uri: media.poster }} resizeMode="contain" style={{ width: "100%", height: "100%" }} />
+            : <LocalRecording page={media.page} poster={media.poster} extension="mov" transparent playing={phase === "playing" && apps[step] === name} />}
         </View>
       </View>;
     }} />
