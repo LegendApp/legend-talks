@@ -26,8 +26,8 @@ float4 screenshot(float2 p) {
 half4 main(float2 p) {
   // Enlarge both the intact screenshot and its shards with one camera transform.
   p=(p-float2(960,600))/1.18;
-  if(stepIndex<1.0 || stepIndex>2.0) return half4(0);
-  if(stepIndex<2.0) {
+  if(stepIndex<2.0 || stepIndex>3.0) return half4(0);
+  if(stepIndex<3.0) {
     float entrance=smoothstep(0.0,0.65,time);
     float2 source=(p-float2(0,48.0*(1.0-entrance)))/mix(0.9,1.0,entrance);
     return screenshot(source)*entrance;
@@ -83,17 +83,17 @@ export function SlidesReveal({ icon, children, authoring }: { icon: string; chil
         <ImageShader image={screenshotImage} fit="contain" rect={{ x: 0, y: 0, width: 1040, height: 710.638 }} tx="clamp" ty="clamp" />
       </Shader></Fill>
     </Canvas>}
-    {step === 2 && <View style={{ position: "absolute", top: 0, width: 1696 }}>
-      <PlaybackKeyframeView keyframes={linkReveal} delay={1600} previewTime={4}>
+    {step >= 4 && <View style={{ position: "absolute", top: 0, width: 1696 }}>
+      <PlaybackKeyframeView keyframes={linkReveal} previewTime={4}>
         {authoring}
       </PlaybackKeyframeView>
     </View>}
     {step === 3 && <View style={{ position: "absolute", top: 0, width: 1696 }}>
-      <PlaybackKeyframeView keyframes={linkReveal} previewTime={4}>
+      <PlaybackKeyframeView keyframes={linkReveal} delay={1600} previewTime={4}>
         {children}
       </PlaybackKeyframeView>
     </View>}
-    {step >= 4 && <View style={{ position: "absolute", top: 405, width: 1696 }}>
+    {step === 1 && <View style={{ position: "absolute", top: 405, width: 1696 }}>
       <PlaybackKeyframeView keyframes={linkReveal} previewTime={4}>
         <GitHubLink repository="LegendApp/legend-apps" label="Legend Slides on GitHub" />
         <Pressable accessibilityRole="link" accessibilityLabel="https://legend.so" onPress={() => Linking.openURL("https://legend.so")}
