@@ -53,6 +53,7 @@ import { HelloWorldIntro } from "./HelloWorldIntro"
 import { PackageDownloadsChart } from "./PackageDownloadsChart"
 import { NativeReactions } from "./reactcon-scenes/NativeReactions"
 import { MusicPerformance } from "./MusicPerformance";
+import { MusicSizeReveal } from "./MusicSizeReveal";
 import musicCpuCapture from "./rnconnection-assets/rnl-2025/musiccpu.png";
 import musicMemoryCapture from "./rnconnection-assets/rnl-2025/musicmemory.png";
 import { AppShowcase } from "./AppCarousel"
@@ -162,18 +163,19 @@ So I tweeted about it.
 ---
 title: Legend Music · app size
 eyebrow: 'Legend Music / Apple Silicon release'
+steps: 2
 ---
 
 # Legend Music · app size {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
 
-<MusicPerformance metric="size" installedSize="15.4 MB" zippedSize="6.3 MB" />
+<MusicSizeReveal />
 
 <!--
+1: These were the numbers I shared before: 35.3 MB installed and 11.4 MB zipped.
+
+2: I got the numbers wrong at first. I measured a fresh production build, and the complete app is actually 15.4 MB installed and 6.3 MB zipped.
+
 Measured October 5, 2026 from a macOS arm64 Release build of the current Legend Music app using Spark. Sizes use decimal MB and exclude build intermediates and user data. The app bundle contains 15,418,941 bytes; the ZIP contains 6,325,020 bytes.
-
-The complete production app is 15.4 MB installed, down from the previous 35.3 MB measurement.
-
-Zipped, it's 6.3 MB, down from 11.4 MB.
 -->
 
 

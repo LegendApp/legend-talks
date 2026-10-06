@@ -1,4 +1,5 @@
 import { Image, Text, View } from "react-native";
+import type { ReactNode } from "react";
 import { GlassPanels } from "./GlassPanels";
 
 // Historical measurements from the RNL 2025 deck, not the current Music build.
@@ -23,16 +24,16 @@ const sizePanels = [{ x: 0, y: 0, width: 680, height: 290, radius: 32 },
 export function MusicPerformance({ metric, capture, installedSize = "35 MB", zippedSize = "11 MB" }: {
   metric: "cpu" | "memory" | "size";
   capture?: string;
-  installedSize?: string;
-  zippedSize?: string;
+  installedSize?: ReactNode;
+  zippedSize?: ReactNode;
 }) {
   if (metric === "size") return <View style={{ width: 1696, height: 670, alignSelf: "center", alignItems: "center", justifyContent: "center", gap: 64 }}>
     <View style={{ width: 1416, height: 290, flexDirection: "row", gap: 56 }}>
       <GlassPanels panels={sizePanels} width={1416} height={290} />
-      {[["Installed app", installedSize], ["Zipped download", zippedSize]].map(([label, value]) =>
+      {([["Installed app", installedSize], ["Zipped download", zippedSize]] as [string, ReactNode][]).map(([label, value]) =>
         <View key={label} style={{ width: 680, height: 290, justifyContent: "center", alignItems: "center", gap: 24 }}>
           <Text className="text-3xl text-zinc-300">{label}</Text>
-          <Text style={{ color: "white", fontSize: 100, fontWeight: "600", fontVariant: ["tabular-nums"] }}>{value}</Text>
+          {typeof value === "string" ? <Text style={{ color: "white", fontSize: 100, fontWeight: "600", fontVariant: ["tabular-nums"] }}>{value}</Text> : value}
         </View>)}
     </View>
     {capture && <Image source={{ uri: capture }} style={{ width: 1122, height: 255, borderRadius: 24 }}
