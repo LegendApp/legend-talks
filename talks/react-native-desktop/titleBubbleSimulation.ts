@@ -13,10 +13,11 @@ function releaseNoise(seed: number) {
 }
 export type TitleDrop = { x: number; y: number; vx: number; vy: number; age: number; radius: number; phase: number; hitX: number; hitY: number; initialDistance: number; whiten: number; cycle: number };
 export type TitleBubbles = { time: number; volume: number; scale: number; velocity: number; exitMass?: number; exitCenter?: number[]; drops: TitleDrop[] };
-export function createTitleBubbles(): TitleBubbles {
+export function createTitleBubbles(hasByline = false): TitleBubbles {
   "worklet";
   const drops: TitleDrop[]=[];
   for(let i=0;i<18;i++) drops.push({x:0,y:0,vx:0,vy:0,age:-i*0.5625,radius:0,phase:0,hitX:0,hitY:0,initialDistance:0,whiten:0,cycle:0});
+  if(hasByline) { drops[16].age=-.35; drops[17].age=-1.35; }
   return {time:0,volume:0,scale:1,velocity:0,drops};
 }
 export function titleParent(i: number,t: number) {
@@ -25,7 +26,7 @@ export function titleParent(i: number,t: number) {
   const b=bodies[i];return [960+b[0]*1080,540+b[1]*1080,b[2]*1080];
 }
 /** Fixed substeps keep attraction stable across dropped frames. Only collisions add volume. */
-export function advanceTitleBubbles(previous: TitleBubbles, elapsed: number, backgroundTime: number, rect: number[], targets: number[][]): TitleBubbles {
+export function advanceTitleBubbles(previous: TitleBubbles, elapsed: number, backgroundTime: number, rect: number[], targets: number[][], bylineSources: number[] = [], hasByline = bylineSources.length===4): TitleBubbles {
   "worklet";
   const drops: TitleDrop[]=[];
   for(let i=0;i<previous.drops.length;i++) drops.push({...previous.drops[i]});
@@ -38,10 +39,23 @@ export function advanceTitleBubbles(previous: TitleBubbles, elapsed: number, bac
     state.time+=dt;
     for(let i=0;i<18;i++) {
       const d=state.drops[i];
+      if(hasByline && i>=16 && bylineSources.length!==4) continue;
       const ramp=1+Math.min(2,state.time/15);
       d.age+=dt*(d.phase===0?ramp*4/3:1);
       if(d.age<0) continue;
-      if(d.phase===0) {
+      if(d.phase===0 || d.phase===6) {
+        if(i>=16 && bylineSources.length===4) {
+          // Byline buds stay in the foreground instead of merging with the atmosphere.
+          d.phase=6;
+          if(titleCenterProgress(state.scale,rect)>=.52) { d.radius=0; continue; }
+          const source=(i-16)*2;
+          const reach=Math.min(1,d.age/1.4);
+          d.radius=12*Math.min(1,d.age/.65);
+          d.x=bylineSources[source];d.y=bylineSources[source+1]-6-reach*26;
+          d.whiten=1;
+          if(d.age>=1.4){d.phase=1;d.age=0;d.vx=0;d.vy=-95;}
+          continue;
+        }
         const parent=titleParent(i%6,(backgroundTime-(elapsed-tick*dt)*.288)*.6);
         // Pick a stable point for this bud, then choose a new one next cycle.
         // Favor the exposed hemisphere to avoid budding inside a neighbor.

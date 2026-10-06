@@ -3,24 +3,24 @@ import { usePlayback } from "@legend-apps/presentation";
 import { advanceTitleBubbles, createTitleBubbles, beginTitleRelease, advanceTitleRelease, titleCenterProgress } from "./titleBubbleSimulation";
 
 /** Title-specific simulation; all motion runs on the host UI thread. */
-export function useTitleBubbleSimulation(base: { readonly value: Record<string, number | number[]> }, targets: number[][], visual: { readonly value: Record<string, number | number[]> }) {
+export function useTitleBubbleSimulation(base: { readonly value: Record<string, number | number[]> }, targets: number[][], visual: { readonly value: Record<string, number | number[]> }, hasByline = false) {
   const playback=usePlayback();
-  const simulation=useSharedValue(createTitleBubbles());
+  const simulation=useSharedValue(createTitleBubbles(hasByline));
   const cursor=useSharedValue({key:"",time:0});
   useAnimatedReaction(()=>{ "worklet"; return {clock:playback.value,uniforms:base.value}; },({clock,uniforms})=>{
     "worklet";
     const key=clock.slideKey+":"+clock.stepKey;
     if(cursor.value.key!==key) {
-      if(clock.stepIndex<=1) simulation.value=createTitleBubbles();
+      if(clock.stepIndex<=1) simulation.value=createTitleBubbles(hasByline);
       if(clock.stepIndex===2) simulation.value=beginTitleRelease(simulation.value,uniforms.bestRect as number[]);
       cursor.value={key,time:0};
     }
     if(clock.phase!=="playing" || (clock.stepIndex!==1 && clock.stepIndex!==2)) return;
     const time=clock.stepTime*(clock.stepIndex===1?1.5:2);
     const elapsed=Math.max(0,time-cursor.value.time);
-    if(elapsed>0) simulation.value=clock.stepIndex===2 ? advanceTitleRelease(simulation.value,elapsed,uniforms.bestRect as number[],targets) : advanceTitleBubbles(simulation.value,elapsed,uniforms.time as number,uniforms.bestRect as number[],targets);
+    if(elapsed>0) simulation.value=clock.stepIndex===2 ? advanceTitleRelease(simulation.value,elapsed,uniforms.bestRect as number[],targets) : advanceTitleBubbles(simulation.value,elapsed,uniforms.time as number,uniforms.bestRect as number[],targets,uniforms.bylineEnabled===1 ? uniforms.bylineSources as number[] : [],hasByline);
     cursor.value={key,time};
-  },[targets]);
+  },[targets,hasByline]);
   return useDerivedValue(()=>{
     "worklet";
     const state=simulation.value;

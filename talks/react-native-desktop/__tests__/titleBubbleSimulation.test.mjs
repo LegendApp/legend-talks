@@ -73,3 +73,46 @@ test("title reaches center only at its size cap",()=>{
  expect(titleCenterProgress(2.5,rect)).toBeCloseTo(.5);
  expect(titleCenterProgress(titleMaxScale(rect),rect)).toBe(1);
 });
+
+test("byline bubbles bud at both dots, detach, and contribute only on absorption",()=>{
+ const sources=[840,810,1050,810];
+ let state=createTitleBubbles(true);
+ const seen=[new Set(),new Set()];
+ let absorbed=false;
+ for(let frame=0;frame<1200;frame++) {
+  const previous=state;
+  state=advanceTitleBubbles(state,1/120,frame/120*.288,rect,targets,sources);
+  for(let index=16;index<18;index++) {
+   const drop=state.drops[index];
+   seen[index-16].add(drop.phase);
+   if(drop.phase===6 && drop.radius>0) {
+    expect(drop.x).toBe(sources[(index-16)*2]);
+    expect(drop.y).toBeLessThan(sources[(index-16)*2+1]);
+   }
+   if(previous.drops[index].phase===1 && drop.phase===2) {
+    absorbed=true;
+    expect(state.volume).toBeGreaterThan(previous.volume);
+    expect(targets.some(([x,y])=>x===drop.hitX && y===drop.hitY)).toBe(true);
+   }
+  }
+ }
+ expect(seen.every(phases=>[6,1,2].every(phase=>phases.has(phase)))).toBe(true);
+ expect(absorbed).toBe(true);
+ expect(state.drops.every(drop=>Number.isFinite(drop.x)&&Number.isFinite(drop.y))).toBe(true);
+});
+
+test("byline stops emitting when the growing title hides it",()=>{
+ const state=createTitleBubbles(true);state.scale=titleMaxScale(rect);state.volume=state.scale**2-1;
+ state.drops[16].age=0;state.drops[17].age=0;
+ const next=advanceTitleBubbles(state,2,0,rect,targets,[840,810,1050,810]);
+ expect(next.drops.slice(16).every(drop=>drop.phase===6 && drop.radius===0)).toBe(true);
+});
+
+test("byline waits for capture without spawning from a background parent",()=>{
+ const initial=createTitleBubbles(true);
+ const waiting=advanceTitleBubbles(initial,3,0,rect,targets,[],true);
+ expect(waiting.drops.slice(16)).toEqual(initial.drops.slice(16));
+ const ready=advanceTitleBubbles(waiting,.5,0,rect,targets,[840,810,1050,810],true);
+ expect(ready.drops[16].phase).toBe(6);
+ expect(ready.drops[16].x).toBe(840);
+});

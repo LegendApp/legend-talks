@@ -3,10 +3,11 @@ import { dropletMaterial } from "./packs/backgrounds/dropletMaterial";
 import { titleDripAnchors } from "./titleDripAnchors";
 import { AlphaType, ColorType, Canvas, Fill, Shader, ImageShader, Skia, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
 import { Background, useBackgroundSize, useBackgroundIntensity, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
 import { AnimatedAtmosphere } from "./packs/backgrounds/AnimatedAtmosphere";
 import { dropletGeometry } from "./packs/backgrounds/dropletGeometry";
+import { TitleByline } from "./TitleByline";
 
 export const waterTitleShader = `
 uniform float time;
@@ -257,7 +258,7 @@ half4 main(float2 p) {
   // disappear into another parent after pinch-off.
   if(stepIndex==1.0) for(int i=0;i<18;i++) {
     float4 drop=drops[i];
-    if(drop.w<1.0 || drop.z<0.1) continue;
+    if(drop.w<1.0 || drop.w==6.0 || drop.z<0.1) continue;
     float distance=length(p-drop.xy);
     float fill=1.0-smoothstep(drop.z-1.0,drop.z+1.0,distance);
     float2 normal=(p-drop.xy)/max(distance,0.001);
@@ -279,10 +280,13 @@ if (!cosmicEffect) throw new Error("Could not compile cosmic title");
 const typeEffect = Skia.RuntimeEffect.Make(liquidTypeShader);
 if (!typeEffect) throw new Error("Could not compile liquid title typography");
 
-export default function WaterTitle({ children, closing = false }: { children?: import("react").ReactNode; closing?: boolean }) {
+export default function WaterTitle({ children, closing = false, byline = false }: { children?: import("react").ReactNode; closing?: boolean; byline?: boolean }) {
   const step = usePresentationValue("stepIndex");
   useAdvanceAfterStep(closing ? -1 : 2, 4.45);
-  const [sources, setSources] = useState({ leftSource: [460, 650], rightSource: [1450, 650], thirdSource: [1520, 650], lineSplit: 540, bestInkRect: [1190,400,255,128], glyphCount: 0, glyphs: Array(256).fill(0) as number[], bestRect: [1190, 400, 255, 128] });
+  const [sources, setSources] = useState({ leftSource: [460, 650], rightSource: [1450, 650], thirdSource: [1520, 650], lineSplit: 540, bestInkRect: [1190,400,255,128], glyphCount: 0, glyphs: Array(256).fill(0) as number[], bestRect: [1190, 400, 255, 128], bylineEnabled: 0, bylineSources: [0,0,0,0] });
+  const measureByline = useCallback((points: number[]) => {
+    setSources(old => ({ ...old, bylineEnabled: 1, bylineSources: points }));
+  }, []);
   const [targets,setTargets]=useState<number[][]>([]);
   const visualUniforms = useAnimatedShaderUniforms(sources, 14, { clocks: { feedTime: 1 } });
   const { width, height } = useBackgroundSize();
@@ -292,7 +296,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
   const backgroundUniforms = useAnimatedShaderUniforms({ ...sources,
     titleFeed: 1, resolution: [Math.max(1,width),Math.max(1,height)], brightness: 0.7*intensity,
   }, 8, { persistentBackground: "read" });
-  const uniforms = useTitleBubbleSimulation(backgroundUniforms,targets,visualUniforms);
+  const uniforms = useTitleBubbleSimulation(backgroundUniforms,targets,visualUniforms,byline && !closing);
   const titleRef = useRef<View>(null);
   const [titleImage, setTitleImage] = useState<SkImage>();
   const anchored = useRef(false);
@@ -334,7 +338,10 @@ export default function WaterTitle({ children, closing = false }: { children?: i
         const firstLeft = 112 + (1696 - first.width) / 2;
         const next = { bestInkRect: [1190,400,255,128], glyphCount: 0, glyphs: Array(256).fill(0) as number[], lineSplit: top + last.y - 4, leftSource: [left + 78, baseline], rightSource: [left + last.width - 175, baseline + 22], thirdSource: [left + last.width - 100, baseline + 22],
           bestRect: [firstLeft + first.width * 0.683, top + first.y, first.width * 0.151, 128] };
-        setSources(old => JSON.stringify(old) === JSON.stringify(next) ? old : next);
+        setSources(old => {
+          const measured = { ...old, ...next };
+          return JSON.stringify(old) === JSON.stringify(measured) ? old : measured;
+        });
       }} style={{ position: "absolute", left: 112, width: 1696, top: 0, opacity: 0, fontSize: 128, lineHeight: 128, fontWeight: "700", textAlign: "center" }}>
         {'React Native is the best way\nto build desktop apps'}
       </Text>
@@ -346,6 +353,7 @@ export default function WaterTitle({ children, closing = false }: { children?: i
         {closing && titleImage && <Fill><ImageShader image={titleImage} fit="fill" rect={{x:0,y:0,width:1920,height:1080}} /></Fill>}
         {closing && <Fill><Shader source={waterEffect!} uniforms={uniforms} /></Fill>}
       </Canvas>
+      {byline && !closing && <TitleByline uniforms={uniforms} onMeasure={measureByline} />}
     </View>
   </>;
 }
