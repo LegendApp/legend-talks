@@ -9,11 +9,13 @@ interface ClockAnimation extends Animation<ClockAnimation> {
 }
 
 export function numberFlowTiming(playback: SharedValue<PlaybackState>): typeof withTiming {
+  const createAnimation = defineAnimation;
+  const sampleClock = samplePlayback;
   return ((toValue: number, config, callback) => {
     "worklet";
     const duration = config?.duration ?? 900;
     const easing = config?.easing;
-    return defineAnimation<ClockAnimation>(toValue, () => {
+    return createAnimation<ClockAnimation>(toValue, () => {
       "worklet";
       return {
         current: toValue,
@@ -31,7 +33,7 @@ export function numberFlowTiming(playback: SharedValue<PlaybackState>): typeof w
           const clock = playback.value;
           if (clock.slideKey !== animation.slideKey || clock.stepKey !== animation.stepKey) return true;
           if (clock.phase === "outgoing" || clock.phase === "paused") return false;
-          const elapsed = samplePlayback(clock, duration / 1000, "step") * 1000;
+          const elapsed = sampleClock(clock, duration / 1000, "step") * 1000;
           const progress = duration <= 0 ? 1 : Math.min(1, Math.max(0, elapsed / duration));
           const eased = typeof easing === "function" ? easing(progress) : progress;
           animation.current = progress === 1 ? toValue : animation.startValue + (toValue - animation.startValue) * eased;
