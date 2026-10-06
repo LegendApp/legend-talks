@@ -15,7 +15,7 @@ export function bylineDotSources(pixels: Uint8Array, width: number, height: numb
       run.right = x; run.top = Math.min(run.top, top); run.bottom = Math.max(run.bottom, bottom);
     } else if (run) { runs.push(run); run = undefined; }
   }
-  const dots = runs.filter(run => (run.bottom - run.top + 1) * bylineHeight / height < 20);
+  const dots = runs.filter(run => (run.bottom - run.top + 1) * bylineHeight / height < 24);
   if (dots.length !== 2) return null;
   return dots.flatMap(dot => [
     (dot.left + dot.right + 1) * 960 / width,

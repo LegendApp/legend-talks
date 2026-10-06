@@ -11,12 +11,12 @@ test("byline anchors follow the separator ink at either capture scale", () => {
       }
     };
     ink(700, 24, 740, 68);
-    ink(840, 40, 852, 52);
+    ink(840, 37, 858, 55);
     ink(870, 24, 980, 68);
-    ink(1050, 40, 1062, 52);
+    ink(1050, 37, 1068, 55);
     ink(1080, 24, 1200, 68);
-    expect(bylineDotSources(pixels, width, height)).toEqual([846, bylineTop + 46, 1056, bylineTop + 46]);
-    ink(1280, 40, 1292, 52);
+    expect(bylineDotSources(pixels, width, height)).toEqual([849, bylineTop + 46, 1059, bylineTop + 46]);
+    ink(1280, 37, 1298, 55);
     expect(bylineDotSources(pixels, width, height)).toBeNull();
   }
 });
