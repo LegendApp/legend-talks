@@ -1,4 +1,5 @@
 import { PlaybackKeyframeView, SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
+import { useRef, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { MovingTitle } from "../MovingTitle";
 // @ts-ignore Deck-local asset URL.
@@ -15,10 +16,10 @@ import appkit from "../rnconnection-assets/native-reactions/appkit.png";
 // @ts-ignore Deck-local asset URL.
 import bareMetal from "../rnconnection-assets/native-reactions/bare-metal.png";
 
-const letters = Array.from("“Native would be faster”");
-const widths = letters.map(letter => /[ ilft“”]/.test(letter) ? 23 : /[mw]/.test(letter) ? 57 : 40);
-const textLeft = (1696 - widths.reduce((sum, width) => sum + width, 0)) / 2;
-const letterX = (index: number) => textLeft + widths.slice(0, index).reduce((sum, width) => sum + width, 0) + widths[index] / 2;
+const title = "“Native would be faster”";
+const letters = Array.from(title.replaceAll(" ", "\u00a0"));
+const titleTextStyle = { fontSize: 72, lineHeight: 92, fontWeight: "600", color: "#fff" } as const;
+type TitleMetrics = { widths: number[]; ends: number[] };
 const titleY = 386;
 const reactions = [
   { uri: nativeCocoa, x: 390, y: 125, rotation: "-4deg", anchor: 2, height: 242 },
@@ -33,8 +34,30 @@ const cardFade = [{ time: 0, x: 0, y: 0, opacity: 0 }, { time: 100, x: 0, y: 0, 
 
 export function NativeReactions() {
   const revealed = usePresentationValue("stepIndex") > 0;
+  const pendingMetrics = useRef<TitleMetrics>({ widths: letters.map(() => NaN), ends: letters.map(() => NaN) });
+  const [metrics, setMetrics] = useState<TitleMetrics | null>(null);
+  const measure = (kind: keyof TitleMetrics, index: number, width: number) => {
+    const pending = pendingMetrics.current;
+    if (pending[kind][index] === width) return;
+    pending[kind][index] = width;
+    if (pending.widths.every(Number.isFinite) && pending.ends.every(Number.isFinite)) {
+      setMetrics({ widths: [...pending.widths], ends: [...pending.ends] });
+    }
+  };
+  const textLeft = metrics ? (1696 - metrics.ends[letters.length - 1]) / 2 : 0;
+  const letterX = (index: number) => textLeft + metrics!.ends[index] - metrics!.widths[index] / 2;
   return <View style={{ width: 1696, height: 850, alignSelf: "center" }}>
-    {reactions.map((reaction, reactionIndex) => <SceneMotionView key={reaction.uri}
+    <View pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants"
+      style={{ position: "absolute", width: 1696, height: 92, opacity: 0 }}>
+      {letters.map((letter, index) => <View key={index}>
+        <Text style={[titleTextStyle, { position: "absolute", width: 1696 }]}
+          onTextLayout={event => measure("widths", index, event.nativeEvent.lines[0].width)}>{letter}</Text>
+        <Text style={[titleTextStyle, { position: "absolute", width: 1696 }]}
+          onTextLayout={event => measure("ends", index, event.nativeEvent.lines[0].width)}>{letters.slice(0, index + 1).join("")}</Text>
+      </View>)}
+    </View>
+    {metrics && reactions.map((reaction, reactionIndex) => <SceneMotionView key={reaction.uri}
+      initialPose={{ x: 0, y: 0, scaleX: 0.025, scaleY: 0.025, opacity: 0 }}
       pose={{ x: revealed ? reaction.x - letterX(reaction.anchor) : 0, y: revealed ? reaction.y - titleY : 0,
         scaleX: revealed ? 1 : 0.025, scaleY: revealed ? 1 : 0.025, opacity: revealed ? 1 : 0 }}
       duration={1100} delay={reactionIndex * 85}
@@ -49,15 +72,17 @@ export function NativeReactions() {
       </PlaybackKeyframeView>}
     </SceneMotionView>)}
     <MovingTitle style={{ position: "absolute", top: 340, left: 0, width: 1696, height: 92 }}>
-      {letters.map((letter, index) => {
+      <Text style={[titleTextStyle, { textAlign: "center", opacity: revealed && metrics ? 0 : 1 }]}>{title}</Text>
+      {metrics && letters.map((letter, index) => {
         const target = reactions.reduce((nearest, reaction) => Math.abs(reaction.anchor - index) < Math.abs(nearest.anchor - index) ? reaction : nearest);
-        const text = <Text style={{ fontSize: 72, lineHeight: 92, fontWeight: "600", color: "#fff", textAlign: "center" }}>{letter === " " ? "\u00a0" : letter}</Text>;
+        const text = <Text style={[titleTextStyle, { textAlign: "center" }]}>{letter}</Text>;
         return <SceneMotionView key={index}
+          initialPose={{ x: 0, y: 0, scaleX: 1, scaleY: 1 }}
           pose={{ x: revealed ? target.x - letterX(index) : 0, y: revealed ? target.y - titleY : 0,
             scaleX: revealed ? 3.8 : 1, scaleY: revealed ? 3.8 : 1 }}
           duration={1100} delay={reactions.indexOf(target) * 85}
-          style={{ position: "absolute", left: letterX(index) - widths[index] / 2, width: widths[index], height: 92 }}>
-          {revealed ? <PlaybackKeyframeView keyframes={letterFade}>{text}</PlaybackKeyframeView> : text}
+          style={{ position: "absolute", left: letterX(index) - metrics.widths[index] / 2 - 1, width: metrics.widths[index] + 2, height: 92 }}>
+          {revealed && <PlaybackKeyframeView keyframes={letterFade}>{text}</PlaybackKeyframeView>}
         </SceneMotionView>;
       })}
     </MovingTitle>
