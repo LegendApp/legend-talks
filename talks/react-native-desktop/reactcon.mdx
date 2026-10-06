@@ -107,9 +107,19 @@ eyebrow: Story
 <Image source={{ uri: directoryScreenshot }} style={{ width: 880 * 874 / 760, height: 880, alignSelf: "center", borderRadius: 24, overflow: "hidden" }} resizeMode="contain" accessibilityLabel="Legend List in React Native Directory, showing platform support checkmarks including macOS and Windows" />
 
 <!--
-I wanted those two checkmarks. macOS and Windows. I did a quick test to prove it.
+I wanted those two checkmarks. macOS and Windows. So I did a quick test to prove it.
 
 But that sent me down a huge rabbit hole.
+-->
+
+---
+title: "Legend"
+steps: 1
+eyebrow: Story
+---
+
+<!--
+TODO: My app Legend, that I started 12 years ago, is an Electron app. I've optimized it a lot, but I got constrained by Electron and running in a webview. So I've been frustrated with Electron and desktop apps in general for a decade.
 -->
 
 
@@ -159,7 +169,7 @@ These apps felt so much better than the Electron apps I was using. Small, instan
 
 I felt a connection to my computer that I hadn’t felt in years. No delays, no load times, the apps just felt natural to use.
 
-So I tweeted about it.
+So I tweeted about Legend Music.
 -->
 
 
@@ -174,9 +184,8 @@ steps: 2
 <MusicSizeReveal />
 
 <!--
-1: These were the numbers I shared before: 35.3 MB installed and 11.4 MB zipped.
-
-2: I got the numbers wrong at first. I measured a fresh production build, and the complete app is actually 15.4 MB installed and 6.3 MB zipped.
+1. I was very impressed by how small this app was, especially compared to the app I was using at the time, Spotify. The whole app was only 35 megabytes, while Spotify is 400 megabytes. That's because it uses Electron, and a blank Electron app is almost 300 megabytes because it includes a full copy of a chrome browser.
+2. I've since realized that was a universal build and it wasn't optimized correctly. So it's actually only 15 megabytes.
 
 Measured October 5, 2026 from a macOS arm64 Release build of the current Legend Music app using Spark. Sizes use decimal MB and exclude build intermediates and user data. The app bundle contains 15,418,941 bytes; the ZIP contains 6,325,020 bytes.
 -->
@@ -192,9 +201,7 @@ eyebrow: 'Legend Music / RNL 2025'
 <MusicPerformance metric="cpu" capture={musicCpuCapture} />
 
 <!--
-These are the original RNL 2025 measurements while playing a local MP3. Spotify's usage includes the helper processes shown in the Activity Monitor capture; the table retains the rounded figures from that talk.
-
-Legend Music used about 2% CPU, compared with about 26% for Spotify in this capture. Apple Music was about 2% too.
+Legend Music uses about 2% of one CPU to play a song. Apple Music is about the same. Spotify takes 26%.
 
 Just think about what's happened to us as a society that playing an MP3 file uses more processing power now than it did 25 years ago on my Pentium 2.
 -->
@@ -210,15 +217,13 @@ eyebrow: 'Legend Music / RNL 2025'
 <MusicPerformance metric="memory" capture={musicMemoryCapture} />
 
 <!--
-These are the original RNL 2025 measurements while playing a song. Spotify's usage includes its helper processes; the table retains the rounded figures from that talk. This is an Activity Monitor snapshot, not the physical-footprint methodology used by the later Chat History benchmarks.
-
 Running a full browser with several different processes takes about 800 megabytes of memory.
 
 800! This should not be acceptable.
 
 Legend Music uses over 90% less memory at just 72 MB.
 
-It even beats Apple Music in this capture. Obviously my app doesn't have as many features yet, but the memory usage is comparable to native.
+It even beats Apple Music in memory usage.
 -->
 
 
@@ -231,11 +236,11 @@ steps: 2
 <NativeReactions />
 
 <!--
-1. And everyone on Twitter got mad at me. They all wanted to compare them to fully native apps.
+1. And everyone on Twitter got mad at me. They told me that native would be faster.
 
-2. If performance matters, why aren't you using Swift or Objective C? Native would be faster.
+2. 2% CPU usage is too much, even though it's less than every other app. There's no way that React Native is fast, you should rewrite it natively. If performance matters, why aren't you using Swift or Objective C? Native would be faster.
 
-I was excited about how much better these felt than Electron. But the comparison became binary, it should either be a slow web app or 100% fully native no compromises. People laughed at me for claiming I care about performance while using React Native.
+I was excited about how much better these felt than Electron. I wass excited that my React Native app had better performance than literally every other music app I could find. But the comparison became binary, it should either be a slow web app or 100% fully native no compromises.
 -->
 
 
@@ -256,7 +261,7 @@ You get React. You get to share code. You get fast refresh and OTA. But you're g
 
 2. Except these were the fastest apps on my computer. They were faster than every native app, even every Apple app.
 
-So what exactly was I compromising?
+So how exactly is React Native a compromise?
 -->
 
 
@@ -271,30 +276,6 @@ eyebrow: Story
 So I measured it.
 
 I wanted to know how much the framework actually costs, and what happens when you put a real app on top of it.
--->
-
-
-
-
----
-title: Monthly package downloads
-steps: 2
----
-
-# Monthly package downloads {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
-
-<PackageDownloadsChart />
-
-<!--
-1. Looking at package downloads is interesting. People often tell me that nobody builds desktop apps, mobile is where the market is.
-
-But Electron has almost as many users as Expo. And if you add Tauri to that, there’s more desktop developers than Expo developers.
-
-So it seems like the desktop app opportunity is at least as big as mobile.
-
-2. I’m going to pick on Electron a lot today, because it’s currently the market leader and is the main platform that React Native on desktop competes with.
-
-So to the benchmarks.
 -->
 
 
@@ -318,6 +299,28 @@ First is real native UI. AppKit is effectively UIKit on mac. SwiftUI is Apple's 
 -->
 
 
+
+---
+title: Monthly package downloads
+steps: 2
+---
+
+# Monthly package downloads {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+
+<PackageDownloadsChart />
+
+<!--
+1. Looking at package downloads is interesting. People often tell me that nobody builds desktop apps, mobile is where the market is.
+
+But Electron has almost as many users as Expo. And if you add Tauri, the other most popular framework, to that, there’s more desktop developers than Expo developers.
+
+So it seems like the desktop app opportunity is at least as big as mobile.
+
+2. I’m going to pick on Electron a lot today, because it’s currently the market leader and is the main platform that React Native on desktop competes with. And it's the one I used and was frustrated with for a decade, so I have a lot of emotion about it.
+-->
+
+
+
 ---
 template: ./ReactconReviewFrame.tsx
 reviewFullStage: true
@@ -328,15 +331,13 @@ transition: none
 <NineApps />
 
 <!--
-1. This is AI Chat History, the React Native version. It’s just a performance test of loading heavy AI chat threads.
+1. This is my AI Chat History app. It’s a performance test of loading heavy AI chat threads, not a full chat app.
 
 It does a lot of work reading and parsing files, and virtualizing big chats with markdown.
 
 But to compare the frameworks, I needed more than one version.
 
 2. So I built it nine times.
-
-But before we get into the numbers, I want to focus on native UI.
 
 3. This is the React Native version. It uses real liquid glass for the titlebar, composer, and splitview.
 
@@ -398,13 +399,13 @@ steps: 3
 
 I want my Mac app to feel like a Mac app. I want my Windows app to feel like a Windows app.
 
-2. You might have noticed a lot of apps these days have settings inside the main window. That’s because ⁠webview apps like Electron don’t really support sharing state between multiple windows. They have some crazy inter process communication situation. In React Native we can just share React or global state so it’s easy.
+2. You might have noticed a lot of apps these days have settings inside the main window. That’s because webview apps like Electron don’t really support sharing state between multiple windows. They have some crazy inter process communication situation where you post messages between different processes. In React Native we can just share React or global state so it’s easy.
 
 3. This is the Music overlay I showed earlier. It was easy to make some native modules for hooks into the native media playback state in macOS. It supports media keys. It supports spatial audio.
 
 You can build an okay UI with the other approaches. But it's harder to go deep into system integration.
 
-So let's get back to the chat history app benchmarks.
+So next let's look at performance.
 -->
 
 
@@ -418,11 +419,9 @@ footer: 'Median ms · 10 measured rounds · small differences near recording cad
 <HelloWorldIntro />
 
 <!--
-1. I started with Hello World. This establishes a baseline for what the frameworks can do.
+1. I started with making a Hello World app in every framework. This establishes a baseline for what the frameworks can do.
 
-And a big caveat: I am not an expert in these frameworks. These numbers may be wrong. I did my best to optimize each one as much as possible. It’s open source so if I made a mistake please PR a fix for it.
-
-2. So here are the results. React Native matches GPUI and SwiftUI. AppKit is a bit faster. Other frameworks are slower.
+2. So here are the results for app opening time. React Native matches GPUI and SwiftUI. AppKit is a bit faster. Other frameworks are slower.
 
 It’s interesting that React Native exactly matches SwiftUI, when that’s the one everyone tells me is faster…
 -->
@@ -439,7 +438,7 @@ footer: 'Greeting workload · newer installed-size snapshot · MB'
 <HelloSizeJourney />
 
 <!--
-1. Now look at installed size. React Native is about 7 and a half MB.
+1. Now look at installed size. React Native is about 7 and a half megabytes.
 
 2. The interesting thing is what each app has to bring with it.
 
@@ -470,7 +469,7 @@ Native platforms are the smallest, React Native is a bit bigger.
 
 There's some overhead. Of course there is. But it’s just a few megabytes in the baseline.
 
-2. Again I think about these in buckets. React Native is pretty close to native. Flutter is double. Electron is triple.
+2. Again I think about these in buckets. React Native is very close to native. Flutter is double. Electron is triple.
 -->
 
 
@@ -494,11 +493,11 @@ footer: 'Video-derived ms · September 24 reference'
 <Chart metric="content" />
 
 <!--
-1. I did a ton of work on each app to make it as fast as it can be to make this a fair comparison, and each iteration shifted the results wildly. So it’s possible that a single optimization could make a big difference in any of them.
+1. So next I built chat history in every framework. LLMs and I did a ton of work on each app to make it as fast as it can be to make this a fair comparison, and each iteration shifted the results wildly. So it’s possible that a single optimization could make a big difference in any of them.
 
-AppKit is of course the fastest. GPUI and React Native are a bit behind.
+AppKit of course opens the fastest. GPUI and React Native are a bit behind.
 
-2. These group pretty cleanly into buckets again. SwiftUI surprised me. It’s fully native but it’s not very fast. I’m not a SwiftUI expert so it’s possible this could be faster. But this is as far as I could get optimizing with Codex.
+2. These group pretty cleanly into buckets again. SwiftUI surprised me. It’s fully native but it’s not that fast.
 
 Electron takes about three times as long as React Native in this app.
 
@@ -576,9 +575,9 @@ eyebrow: 'Chat History / four metrics'
 <!--
 So let’s put it all together.
 
-React Native is always in the top performance group. Compared to AppKit it’s a tiny bit bigger, a tiny bit slower, a little bit more memory. The only platform that’s consistently better is AppKit. SwiftUI is generally slower.
+React Native is always in the top performance group. Compared to AppKit it’s a tiny bit bigger, a bit slower, a little more memory. The only platform that’s consistently better is AppKit. SwiftUI is generally slower.
 
-So to me this basically means that for performance, SwiftUI is not a viable option and React Native is better.
+So to me this basically means that for top performance, SwiftUI is not a viable option and React Native is better.
 
 GPUI is generally either slightly better or slightly worse than React Native. But it’s not native UI so I much prefer React Native.
 -->
