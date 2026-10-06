@@ -59,6 +59,8 @@ half4 main(float2 p) {
 }`;
 const bylineEffect = Skia.RuntimeEffect.Make(titleBylineShader);
 if (!bylineEffect) throw new Error("Could not compile title byline");
+const bylineTextStyle = { color: "#e2e8f0", fontSize: 56, lineHeight: 80, fontWeight: "500" } as const;
+const separatorStyle = { width: 18, height: 18, borderRadius: 9, backgroundColor: "#e2e8f0", marginHorizontal: 56 };
 
 export function TitleByline({ uniforms, onMeasure }: {
   uniforms: { readonly value: Record<string, number | number[]> };
@@ -66,6 +68,7 @@ export function TitleByline({ uniforms, onMeasure }: {
 }) {
   const captureRef = useRef<View>(null);
   const [image, setImage] = useState<SkImage>();
+  const [separatorOffset, setSeparatorOffset] = useState<number | null>(null);
   useEffect(() => {
     let cancelled = false;
     let captured: SkImage | undefined;
@@ -74,20 +77,27 @@ export function TitleByline({ uniforms, onMeasure }: {
       if (cancelled) { next?.dispose(); return; }
       if (!next) return;
       const pixels = next.readPixels(0, 0, { width: next.width(), height: next.height(), colorType: ColorType.RGBA_8888, alphaType: AlphaType.Unpremul });
-      const points = pixels instanceof Uint8Array ? bylineDotSources(pixels, next.width(), next.height()) : null;
-      if (!points) { next.dispose(); return; }
+      const layout = pixels instanceof Uint8Array ? bylineDotSources(pixels, next.width(), next.height()) : null;
+      if (!layout) { next.dispose(); return; }
+      if (separatorOffset === null) {
+        next.dispose();
+        setSeparatorOffset(layout.offsetY);
+        return;
+      }
       captured = next;
-      onMeasure(points);
+      onMeasure(layout.sources);
       setImage(next);
     });
     return () => { cancelled = true; cancel(); captured?.dispose(); };
-  }, [onMeasure]);
+  }, [onMeasure, separatorOffset]);
   return <>
-    <View ref={captureRef} collapsable={false} pointerEvents="none"
-      style={{ position: "absolute", left: 0, top: bylineTop, width: 1920, height: bylineHeight, opacity: image ? 0 : 1, justifyContent: "center" }}>
-      <Text accessibilityLabel="Jay · Legend · Margelo" style={{ color: "#e2e8f0", fontSize: 56, lineHeight: 80, fontWeight: "500", textAlign: "center" }}>
-        Jay<Text style={{ fontSize: 112 }}>{"  ·  "}</Text>Legend<Text style={{ fontSize: 112 }}>{"  ·  "}</Text>Margelo
-      </Text>
+    <View ref={captureRef} collapsable={false} pointerEvents="none" accessible accessibilityLabel="Jay · Legend · Margelo"
+      style={{ position: "absolute", left: 0, top: bylineTop, width: 1920, height: bylineHeight, opacity: image ? 0 : 1, flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+      <Text style={bylineTextStyle}>Jay</Text>
+      <View style={[separatorStyle, { top: separatorOffset ?? 0 }]} />
+      <Text style={bylineTextStyle}>Legend</Text>
+      <View style={[separatorStyle, { top: separatorOffset ?? 0 }]} />
+      <Text style={bylineTextStyle}>Margelo</Text>
     </View>
     {image && <Canvas pointerEvents="none" style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080 }}>
       <Fill><Shader source={bylineEffect!} uniforms={uniforms}>
