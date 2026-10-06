@@ -20,18 +20,25 @@ const comparisons = {
 const tablePanels = [{ x: 0, y: 0, width: 680, height: 420, radius: 32 }];
 const sizePanels = [{ x: 0, y: 0, width: 680, height: 290, radius: 32 },
   { x: 736, y: 0, width: 680, height: 290, radius: 32 }];
+const sizeComparisonPanels = [0, 568, 1136].map(x => ({ x, y: 0, width: 528, height: 290, radius: 32 }));
 
-export function MusicPerformance({ metric, capture, installedSize = "35 MB", zippedSize = "11 MB" }: {
+export function MusicPerformance({ metric, capture, installedSize = "35 MB", zippedSize = "11 MB", spotifyInstalledSize }: {
   metric: "cpu" | "memory" | "size";
   capture?: string;
   installedSize?: ReactNode;
   zippedSize?: ReactNode;
+  spotifyInstalledSize?: string;
 }) {
+  const sizeRows: [string, ReactNode][] = spotifyInstalledSize
+    ? [["Spotify installed", spotifyInstalledSize], ["Legend Music installed", installedSize], ["Legend Music zipped", zippedSize]]
+    : [["Installed app", installedSize], ["Zipped download", zippedSize]];
+  const panelWidth = spotifyInstalledSize ? 528 : 680;
+  const panelsWidth = spotifyInstalledSize ? 1664 : 1416;
   if (metric === "size") return <View style={{ width: 1696, height: 670, alignSelf: "center", alignItems: "center", justifyContent: "center", gap: 64 }}>
-    <View style={{ width: 1416, height: 290, flexDirection: "row", gap: 56 }}>
-      <GlassPanels panels={sizePanels} width={1416} height={290} />
-      {([["Installed app", installedSize], ["Zipped download", zippedSize]] as [string, ReactNode][]).map(([label, value]) =>
-        <View key={label} style={{ width: 680, height: 290, justifyContent: "center", alignItems: "center", gap: 24 }}>
+    <View style={{ width: panelsWidth, height: 290, flexDirection: "row", gap: spotifyInstalledSize ? 40 : 56 }}>
+      <GlassPanels panels={spotifyInstalledSize ? sizeComparisonPanels : sizePanels} width={panelsWidth} height={290} />
+      {sizeRows.map(([label, value]) =>
+        <View key={label} style={{ width: panelWidth, height: 290, justifyContent: "center", alignItems: "center", gap: 24 }}>
           <Text className="text-3xl text-zinc-300">{label}</Text>
           {typeof value === "string" ? <Text style={{ color: "white", fontSize: 100, fontWeight: "600", fontVariant: ["tabular-nums"] }}>{value}</Text> : value}
         </View>)}

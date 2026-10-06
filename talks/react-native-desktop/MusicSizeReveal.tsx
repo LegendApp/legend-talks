@@ -18,11 +18,11 @@ export function MusicSizeReveal() {
   const installed = step === 0 ? 35.3 : 15.4;
   const zipped = step === 0 ? 11.4 : 6.3;
   const number = (value: number) => <View accessible accessibilityLabel={`${value.toFixed(1)} MB`}>
-    <Canvas style={{ width: 600, height: 130 }} accessible={false}>
+    <Canvas style={{ width: 500, height: 130 }} accessible={false}>
       <SkiaNumberFlow value={value} font={font} format={format} locales="en-US" color="white"
-        suffix=" MB" width={600} y={98} textAlign="center" tabularNums
+        suffix=" MB" width={500} y={98} textAlign="center" tabularNums
         spinTiming={timing} transformTiming={timing} opacityTiming={timing} />
     </Canvas>
   </View>;
-  return <MusicPerformance metric="size" installedSize={number(installed)} zippedSize={number(zipped)} />;
+  return <MusicPerformance metric="size" installedSize={number(installed)} zippedSize={number(zipped)} spotifyInstalledSize="430.0 MB" />;
 }
