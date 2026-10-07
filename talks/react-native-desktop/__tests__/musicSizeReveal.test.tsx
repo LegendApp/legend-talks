@@ -2,13 +2,13 @@
 import "../../../src/__tests__/nativeMock";
 import { expect, mock, test } from "bun:test";
 import { observable } from "@legendapp/state";
-import { PresentationProvider, SceneMotionView } from "@legend-apps/presentation";
+import { PresentationProvider } from "@legend-apps/presentation";
 import React from "react";
 import { act, create } from "react-test-renderer";
 
 mock.module("number-flow-react-native/skia", () => ({ SkiaNumberFlow: "number-flow" }));
 mock.module("../ChartBar", () => ({ ChartBar: "chart-bar" }));
-const { BenchmarkRow } = await import("../BenchmarkChart");
+const { BenchmarkRow, chartLayout } = await import("../BenchmarkChart");
 const { MusicSizeReveal } = await import("../MusicSizeReveal");
 
 test("Music compares installed sizes on a fixed scale while advancing and reversing measurements", async () => {
@@ -28,8 +28,11 @@ test("Music compares installed sizes on a fixed scale while advancing and revers
       const rows = tree.root.findAllByType(BenchmarkRow);
       expect(rows.map(row => [row.props.name, row.props.value, row.props.maximum]))
         .toEqual([["Legend Music", installed, 430], ["Spotify", 430, 430]]);
-      const musicBar = rows[0].findAllByType(SceneMotionView).find(view => view.props.pose.scaleX !== undefined);
-      expect(musicBar.props.pose.scaleX).toBeCloseTo(installed / 430);
+      const musicBar = rows[0].findByType("chart-bar");
+      expect(musicBar.parent.parent.props.width).toBeCloseTo(installed / 430 * chartLayout.barWidth);
+      expect(musicBar.props.style.width).toBe("100%");
+      expect(musicBar.props.animateEntrance).toBe(false);
+      expect(musicBar.parent.props.style[1].value.transform).toBeUndefined();
       expect(rows[1].props.valueLabel).toBe("430.0 MB");
       expect(JSON.stringify(tree.toJSON())).not.toMatch(/zipped|zip size/i);
       for (const number of numbers) {

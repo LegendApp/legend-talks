@@ -1,5 +1,6 @@
 import { displayMetric } from "./benchmarkUnits";
-import { SceneMotionView, ScenePositionView, usePresentationValue, SharedElement, useSharedElementEntrance } from "@legend-apps/presentation";
+import { SceneMotionView, ScenePositionView, usePresentationValue, SharedElement, useSharedElementEntrance, usePlaybackTween } from "@legend-apps/presentation";
+import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { Text, View } from "react-native";
 import type { ReactNode } from "react";
 import { ChartBar } from "./ChartBar";
@@ -9,6 +10,17 @@ import benchmarks from "./rnconnection-assets/benchmarks.json";
 export const chartLayout = { width: 1696, height: 710, top: 55, rowSpacing: 57, rowHeight: 43, fontSize: 34, lineHeight: 42, barLeft: 285, barWidth: 1210, barHeight: 30, valueWidth: 190, marginTop: 24 };
 export type Metric = "content" | "memory" | "size" | "jump" | "switch";
 const units: Record<Metric, string> = { content: "ms", memory: "MB", size: "MB", jump: "ms", switch: "ms" };
+
+function AnimatedBenchmarkBar({ width, duration, animateEntrance, highlighted, groupColor, grouped }: {
+  width: number; duration: number; animateEntrance: boolean; highlighted: boolean; groupColor?: string; grouped: boolean;
+}) {
+  const motion = usePlaybackTween({ width }, duration, animateEntrance ? { width: 0 } : undefined);
+  const animatedStyle = useAnimatedStyle(() => ({ width: motion.value.width }));
+  return <Animated.View style={[{ height: chartLayout.barHeight }, animatedStyle]}>
+    <ChartBar highlighted={highlighted} groupColor={groupColor} grouped={grouped} animateEntrance={false}
+      style={{ width: "100%", height: chartLayout.barHeight }} />
+  </Animated.View>;
+}
 
 /** Separate sibling markers keep text rigid while only the bar changes width. */
 export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grouped = false, tintText = false, duration = 650, decimals = 0, valueLabel, valueContent, animateValue = false, highlighted = name === "React Native" }: {
@@ -26,10 +38,9 @@ export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grou
       </SceneMotionView>}
     </SharedElement>
     <SharedElement id={`${id}-bar`} style={{ position: "absolute", left: chartLayout.barLeft, top: (chartLayout.rowHeight - chartLayout.barHeight) / 2, width: animateValue ? chartLayout.barWidth : width, height: chartLayout.barHeight }}>
-      {animateValue ? <SceneMotionView pose={{ scaleX: width / chartLayout.barWidth }} duration={duration}
-        style={{ width: chartLayout.barWidth, height: chartLayout.barHeight, transformOrigin: "left center" }}>
-        <ChartBar highlighted={highlighted} groupColor={groupColor} grouped={grouped} animateEntrance={animateEntrance} style={{ width: chartLayout.barWidth, height: chartLayout.barHeight }} />
-      </SceneMotionView> : <ChartBar highlighted={highlighted} groupColor={groupColor} grouped={grouped} animateEntrance={animateEntrance} style={{ width, height: chartLayout.barHeight }} />}
+      {animateValue ? <AnimatedBenchmarkBar width={width} duration={duration} animateEntrance={animateEntrance}
+        highlighted={highlighted} groupColor={groupColor} grouped={grouped} />
+        : <ChartBar highlighted={highlighted} groupColor={groupColor} grouped={grouped} animateEntrance={animateEntrance} style={{ width, height: chartLayout.barHeight }} />}
     </SharedElement>
     <SharedElement id={`${id}-value`} resize="preserve" style={{ position: "absolute", right: 0, top: 0, width: chartLayout.valueWidth, height: chartLayout.rowHeight }}>
       {valueContent ?? <Text style={{ color: "#f1f5f9", textAlign: "right", fontSize: chartLayout.fontSize, lineHeight: chartLayout.lineHeight, fontVariant: ["tabular-nums"] }}>{valueLabel ?? (metric ? `${displayMetric(value, metric).toFixed(decimals)} ${units[metric]}` : value.toFixed(decimals))}</Text>}
