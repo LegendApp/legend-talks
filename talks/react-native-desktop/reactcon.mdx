@@ -968,10 +968,10 @@ Well, I have. You've been looking at it this whole time.
 
 ---
 title: Legend Slides
-steps: 5
+steps: 4
 ---
 
-<SlidesReveal icon={slidesIcon} titleEntrance="letter-wave" authoring={<SlidesAuthoring icon={slidesIcon} showHeader={false} />}>
+<SlidesReveal icon={slidesIcon} titleEntrance="letter-wave" showLinks={false} authoring={<SlidesAuthoring icon={slidesIcon} showHeader={false} />}>
   <SlidesFeatures icon={slidesIcon} showHeader={false}>
     <TypeGPUShader code={slidesFeatureParticles} width={520} height={580} particles particleCount={1536} previewTime={3} />
   </SlidesFeatures>
@@ -980,13 +980,23 @@ steps: 5
 <!--
 1. This is Legend Slides. It's React Native macOS app.
 
-2. It’s open source if you want to try it. It’s still early and I barely got it working in time for this talk. But I’m really happy with it so I’ll keep polishing it and use it for all of my future talks. And I’m making a dedicated domain for my open source stuff at legend dot so now.
+2. The presenter and audience views are separate native windows which share state, which is easy in React Native and hard in webview apps. The slides use React Native components, so it can make crazy effects and shaders to do ridiculous stuff.
 
-3. The presenter and audience views are separate native windows which share state, which is easy in React Native and hard in webview apps. The slides use React Native components, so it can make crazy effects and shaders to do ridiculous stuff.
+3. It uses Reanimated for the animations. Skia does the drawing, glass, and ripples. TypeGPU powers the particle effects.
 
-4. It uses Reanimated for the animations. Skia does the drawing, glass, and ripples. TypeGPU powers the particle effects.
+4. I can write Markdown for the basics and also include full React Native components. I want users to be able to write cross platform templates and effects, so this app can use them on both Mac or Windows. If I tried to build this app fully natively, I’d have to build it twice and build custom engines for templating and effects, and users would have to learn some new language. So React Native is just the best choice to make this app.
+-->
 
-5. I can write Markdown for the basics and also include full React Native components. I want users to be able to write cross platform templates and effects, so this app can use them on both Mac or Windows. If I tried to build this app fully natively, I’d have to build it twice and build custom engines for templating and effects, and users would have to learn some new language. So React Native is just the best choice to make this app.
+
+---
+
+<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 28 }}>
+  <Text style={{ fontSize: 72, lineHeight: 100 }}>🌐</Text>
+  <Text style={{ color: "#68ddff", fontSize: 80, lineHeight: 100, fontWeight: "600" }}>legend.so</Text>
+</View>
+
+<!--
+It’s open source if you want to try it. It’s still early and I barely got it working in time for this talk. But I’m really happy with it so I’ll keep polishing it and use it for all of my future talks. And I’m making a dedicated domain for my open source stuff at legend dot so now.
 -->
 
 

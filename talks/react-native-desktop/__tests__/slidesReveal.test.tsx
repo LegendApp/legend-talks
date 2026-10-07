@@ -19,7 +19,7 @@ function load(filename, mocks) {
   Function("require", "module", "exports", code)(name => mocks[name] ?? (name.endsWith(".png") ? name : require(name)), module, module.exports);
   return module.exports;
 }
-const drawing = { ...skia, Path: "path", ImageShader: "image-shader" };
+const drawing = { ...skia, Path: "path", ImageShader: "image-shader", useImage: () => ({}) };
 const links = { GitHubLink: "github-link" };
 const { SlidesHeader } = load(`${import.meta.dir}/../StoryDiagrams.tsx`, {
   "./GitHubLink": links, "./RendererWindows": {}, "./ExpoDesktopScene": {}, "./ModuleCompatibility": {},
@@ -28,26 +28,29 @@ const { SlidesReveal } = load(`${import.meta.dir}/../SlidesReveal.tsx`, {
   "@shopify/react-native-skia": drawing, "./StoryDiagrams": { SlidesHeader }, "./GitHubLink": links,
 });
 
-test("Slides title entrance stays mounted through the centered, header, features, and authoring steps", async () => {
+for (const showLinks of [true, false]) test(`Slides reveals stay aligned with the screenshot shader with links ${showLinks ? "included" : "removed"}`, async () => {
   globalThis.IS_REACT_ACT_ENVIRONMENT = true;
   const runtime$ = observable({ isActive: true, isPreview: false, isPreparing: false,
-    slideIndex: 0, stepIndex: 0, stepCount: 5, stepEpochs: {} });
+    slideIndex: 0, stepIndex: 0, stepCount: showLinks ? 5 : 4, stepEpochs: {} });
   const render = entrance => <PresentationProvider value={runtime$}><SlidesReveal icon="slides.png"
-    titleEntrance={entrance} authoring={<authoring />}><features /></SlidesReveal></PresentationProvider>;
+    titleEntrance={entrance} showLinks={showLinks} authoring={<authoring />}><features /></SlidesReveal></PresentationProvider>;
   let tree;
   try {
     await act(() => { tree = create(render("letter-wave")); });
     const title = tree.root.findByType(AnimatedTitle);
     expect(title.props).toMatchObject({ effect: "letter-wave", fontSize: 72, textStyle: { lineHeight: 100 } });
     expect(title.props.clock).toBeUndefined();
-    for (const step of [0, 1, 2, 3, 4, 2, 0]) {
+    const screenshotStep = showLinks ? 2 : 1;
+    for (const step of [0, ...(showLinks ? [1] : []), screenshotStep, screenshotStep + 1, screenshotStep + 2, screenshotStep, 0]) {
       await act(() => runtime$.stepIndex.set(step));
       expect(tree.root.findByType(AnimatedTitle)).toBe(title);
       expect(tree.root.findAllByType(MovingTitle)).toHaveLength(0);
       expect(tree.root.findByType(ScenePositionView).props.y).toBe(step === 0 ? 390 : 0);
       expect(tree.root.findAllByType("image")[0].props.source.uri).toBe("slides.png");
-      expect(tree.root.findAllByType("features")).toHaveLength(step === 3 ? 1 : 0);
-      expect(tree.root.findAllByType("authoring")).toHaveLength(step === 4 ? 1 : 0);
+      expect(tree.root.findAllByType("features")).toHaveLength(step === screenshotStep + 1 ? 1 : 0);
+      expect(tree.root.findAllByType("authoring")).toHaveLength(step === screenshotStep + 2 ? 1 : 0);
+      expect(tree.root.findAllByType("github-link")).toHaveLength(showLinks && step === 1 ? 1 : 0);
+      expect(tree.root.findByType("shader").props.uniforms.value.screenshotStep).toBe(screenshotStep);
     }
     await act(() => tree.update(render(undefined)));
     expect(tree.root.findAllByType(AnimatedTitle)).toHaveLength(0);
