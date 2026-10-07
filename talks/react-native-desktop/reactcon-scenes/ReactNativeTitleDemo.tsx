@@ -36,7 +36,7 @@ uniform float time;
 float box(float2 p,float2 c,float2 h,float r) { float2 q=abs(p-c)-h+r; return length(max(q,0.0))+min(max(q.x,q.y),0.0)-r; }
 half4 put(half4 c,float d,half3 color,float a) { a*=1.0-smoothstep(-0.7,0.7,d); return half4(color*a,a)+c*(1.0-a); }
 half4 main(float2 p) {
-  float t=min(time,5.8);
+  float t=mod(time,11.0);
   // Reuse the same atlas backwards to erase Hello RN and type Title again.
   float row=0.0;
   if(t>=1.5 && t<2.5) row=min(5.0,1.0+floor((t-1.5)/0.2));
@@ -68,8 +68,8 @@ half4 main(float2 p) {
     c=put(c,box(p,cursor+float2(0,-20),float2(5,1),0),half3(0.85,0.96,1),1.0);
     c=put(c,box(p,cursor+float2(0,20),float2(5,1),0),half3(0.85,0.96,1),1.0);
   }
-  float connection=smoothstep(1.5,1.8,time)*(1.0-smoothstep(4.8,5.1,time));
-  float travelX=mix(760.0,990.0,fract(max(0.0,time-1.5)*1.2));
+  float connection=smoothstep(1.5,1.8,t)*(1.0-smoothstep(4.8,5.1,t));
+  float travelX=mix(760.0,990.0,fract(max(0.0,t-1.5)*1.2));
   float pulse=exp(-length(p-float2(travelX,294.0))/9.0)*connection;
   c=half4(half3(0.35,0.85,1.0)*pulse,pulse)+c*(1.0-pulse);
   // Subdued abstract app content keeps attention on the live native title.
