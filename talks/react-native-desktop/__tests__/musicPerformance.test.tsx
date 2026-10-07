@@ -41,6 +41,8 @@ test("CPU and memory keep the same frame and title prefix through forward and re
       expect(frame.findByType("image").props.resizeMode).toBe("contain");
       const png = readFileSync(new URL(`../rnconnection-assets/rnl-2025/music${metric === "cpu" ? "cpu" : "memory"}.png`, import.meta.url));
       const sourceWidth = png.readUInt32BE(16), sourceHeight = png.readUInt32BE(20);
+      expect(frame.findByType("image").props.style.aspectRatio).toBeCloseTo(sourceWidth / sourceHeight);
+      expect(frame.findByType("image").props.style.borderRadius).toBe(24);
       const scale = Math.min(frame.props.style.width / sourceWidth, frame.props.style.height / sourceHeight);
       expect(sourceWidth * scale).toBeCloseTo(566);
       if (index === 0) {

@@ -8,10 +8,12 @@ import { MovingTitle } from "./MovingTitle";
 const comparisons = {
   cpu: {
     label: "CPU",
+    aspectRatio: 566 / 626,
     rows: [["Spotify", "26%"], ["Apple Music", "2%"], ["Legend Music", "2%"]],
   },
   memory: {
     label: "Memory",
+    aspectRatio: 668 / 558,
     rows: [["Spotify", "806 MB"], ["Apple Music", "149 MB"], ["Legend Music", "72 MB"]],
   },
 };
@@ -74,8 +76,8 @@ export function MusicPerformance({ metric, capture, installedSize = "35 MB", zip
         <Text style={{ color: "white", fontSize: 44, fontWeight: "600", fontVariant: ["tabular-nums"] }}>{value}</Text>
       </View>)}
     </View>
-    <SharedElement id="legend-music-capture" style={{ width: 566, height: 626 }}>
-      <Image source={{ uri: capture }} style={{ width: "100%", height: "100%", borderRadius: 24 }}
+    <SharedElement id="legend-music-capture" style={{ width: 566, height: 626, justifyContent: "center" }}>
+      <Image source={{ uri: capture }} style={{ width: "100%", aspectRatio: comparison.aspectRatio, borderRadius: 24 }}
         resizeMode="contain" accessibilityLabel={`Original RNL 2025 Activity Monitor capture of ${comparison.label.toLowerCase()} usage while playing a local MP3`} />
     </SharedElement>
   </View>;
