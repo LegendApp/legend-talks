@@ -1,5 +1,5 @@
 import { PlaybackKeyframeView, SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Text, View } from "react-native";
 import { MovingTitle } from "../MovingTitle";
 
@@ -7,14 +7,17 @@ const textStyle = { color: "#f8fafc", fontSize: 72, lineHeight: 96, fontWeight: 
 const gap = 20;
 
 /** Measure native glyph widths once; step changes only set UI-thread motion targets. */
-export function CompromiseQuestion() {
+export function CompromiseQuestion({ title }: { title?: ReactNode }) {
   const question = usePresentationValue("stepIndex") >= 1;
   const [nativeWidth, setNativeWidth] = useState(440);
   const [isWidth, setIsWidth] = useState(52);
-  return <MovingTitle style={{ alignSelf: "center" }}>
+  return <MovingTitle style={{ alignSelf: "center", ...(title ? { width: 1696 } : {}) }}>
+    {title && <View accessibilityElementsHidden={question} importantForAccessibility={question ? "no-hide-descendants" : "auto"}
+      style={{ position: "absolute", top: 0, width: 1696, opacity: question ? 0 : 1 }}>{title}</View>}
     <SceneMotionView pose={{ x: question ? -18 : 0 }} duration={800}>
       <View accessibilityRole="header" accessibilityLabel={question ? "Is React Native a Compromise?" : "React Native is a Compromise"}
-        style={{ flexDirection: "row", alignItems: "center", gap }}>
+        accessibilityElementsHidden={!!title && !question} importantForAccessibility={title && !question ? "no-hide-descendants" : "auto"}
+        style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap, opacity: title && !question ? 0 : 1 }}>
         <SceneMotionView pose={{ x: question ? isWidth + gap : 0 }} duration={800}>
           <Text style={textStyle} onLayout={event => setNativeWidth(event.nativeEvent.layout.width)}>React Native</Text>
         </SceneMotionView>
