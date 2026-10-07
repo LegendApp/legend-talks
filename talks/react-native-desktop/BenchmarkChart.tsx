@@ -23,10 +23,11 @@ function AnimatedBenchmarkBar({ width, duration, animateEntrance, highlighted, g
 }
 
 /** Separate sibling markers keep text rigid while only the bar changes width. */
-export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grouped = false, tintText = false, duration = 650, decimals = 0, valueLabel, valueContent, animateValue = false, highlighted = name === "React Native" }: {
+export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grouped = false, tintText = false, duration = 650, decimals = 0, valueLabel, valueContent, animateValue = false, highlighted: requestedHighlight }: {
   name: string; value: number; maximum: number; metric?: Metric; y: number;
   groupColor?: string; grouped?: boolean; tintText?: boolean; duration?: number; decimals?: number; valueLabel?: string; valueContent?: ReactNode; animateValue?: boolean; highlighted?: boolean;
 }) {
+  const highlighted = requestedHighlight === undefined ? name === "React Native" : requestedHighlight;
   const id = `benchmark-${name}`;
   const animateEntrance = useSharedElementEntrance(`${id}-bar`);
   const width = Math.max(2, value / maximum * chartLayout.barWidth);

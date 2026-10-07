@@ -78,6 +78,7 @@ test("compiled title worklets serialize and obey preparation, preview, steps, ex
     const module = { exports: {} as any };
     Function("require", "module", "exports", compiled.code)((name: string) => {
       if (name === "react") return React;
+      if (name === "react/compiler-runtime") return require("react/compiler-runtime");
       if (name === "react/jsx-runtime") return require("react/jsx-runtime");
       if (name === "react-native") return { View: "View", Text: "Text" };
       if (name === "react-native-reanimated") return reanimated;
