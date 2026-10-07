@@ -1,54 +1,74 @@
 import { snapshotCaptureQueue } from "@legend-apps/presentation";
 import { Blur, Canvas, Group, Image as SkiaImage, Paint, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useDeferredValue, useEffect, useRef, type ReactNode } from "react";
 import { StyleSheet, View } from "react-native";
-import Animated, { useAnimatedStyle, useDerivedValue, type SharedValue } from "react-native-reanimated";
+import Animated, { runOnUI, useAnimatedStyle, useDerivedValue, useSharedValue, type SharedValue } from "react-native-reanimated";
 
 /** Capture on layout changes only; blur and the live-content handoff run on the UI thread. */
 export function CarouselBlurView({ children, progress, index, enabled }: {
   children: ReactNode; progress: SharedValue<{ position: number }>; index: number; enabled: boolean;
 }) {
+  const snapshotEnabled = useDeferredValue(enabled, false);
   const source = useRef<View>(null);
-  const [size, setSize] = useState({ width: 0, height: 0 });
-  const [image, setImage] = useState<SkImage>();
+  const layout = useRef({ width: 0, height: 0 });
+  const size = useSharedValue({ width: 0, height: 0 });
+  const image = useSharedValue<SkImage | null>(null);
+  const recapture = useRef(() => {});
   useEffect(() => {
-    setImage(undefined);
-    if (!enabled || !size.width || !size.height) return;
-    let cancelled = false;
-    let captured: SkImage | undefined;
-    const cancelCapture = snapshotCaptureQueue.enqueue(async () => {
-      await makeImageFromView(source).then(snapshot => {
-        if (!snapshot) return;
-        if (cancelled) { snapshot.dispose(); return; }
-        captured = snapshot;
-        setImage(snapshot);
-      }).catch(() => { /* Keep live content if native capture is unavailable. */ });
-    });
-    return () => {
-      cancelled = true;
-      cancelCapture();
-      captured?.dispose();
+    let release = () => {};
+    const capture = () => {
+      const previousRelease = release;
+      release = () => {};
+      previousRelease();
+      image.set(null);
+      if (!enabled || !snapshotEnabled || !layout.current.width || !layout.current.height) return;
+      let cancelled = false;
+      let captured: SkImage | undefined;
+      const cancelCapture = snapshotCaptureQueue.enqueue(async () => {
+        try {
+          const snapshot = await makeImageFromView(source);
+          if (!snapshot) return;
+          if (cancelled) { snapshot.dispose(); return; }
+          captured = snapshot;
+          image.set(snapshot);
+        } catch { /* Keep live content if native capture is unavailable. */ }
+      });
+      release = () => {
+        cancelled = true;
+        cancelCapture();
+        const previous = captured;
+        captured = undefined;
+        runOnUI(() => { "worklet"; image.set(null); previous?.dispose(); })();
+      };
     };
-  }, [enabled, size.width, size.height]);
+    recapture.current = capture;
+    capture();
+    return () => { recapture.current = () => {}; release(); };
+  }, [enabled, snapshotEnabled, image]);
   const focus = useDerivedValue(() => {
     "worklet";
     const distance = enabled ? Math.min(1, Math.abs(index - progress.value.position)) : 0;
     return distance * distance * (3 - 2 * distance);
   }, [enabled, index]);
   const blur = useDerivedValue(() => { "worklet"; return 10 * focus.value; });
-  const liveStyle = useAnimatedStyle(() => { "worklet"; return { opacity: image ? 1 - focus.value : 1 }; }, [image]);
-  const snapshotStyle = useAnimatedStyle(() => { "worklet"; return { opacity: focus.value }; });
+  const width = useDerivedValue(() => { "worklet"; return size.value.width; });
+  const height = useDerivedValue(() => { "worklet"; return size.value.height; });
+  const liveStyle = useAnimatedStyle(() => { "worklet"; return { opacity: image.value ? 1 - focus.value : 1 }; });
+  const snapshotStyle = useAnimatedStyle(() => { "worklet"; return { opacity: image.value ? focus.value : 0 }; });
   return <View style={styles.fill} onLayout={event => {
     const { width, height } = event.nativeEvent.layout;
-    setSize(old => old.width === width && old.height === height ? old : { width, height });
+    if (layout.current.width === width && layout.current.height === height) return;
+    layout.current = { width, height };
+    size.set(layout.current);
+    recapture.current();
   }}>
     <Animated.View style={[styles.fill, liveStyle]}>
       <View ref={source} collapsable={false} style={styles.fill}>{children}</View>
     </Animated.View>
-    {image && <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, snapshotStyle]}>
+    {enabled && snapshotEnabled && <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, snapshotStyle]}>
       <Canvas style={StyleSheet.absoluteFill}>
         <Group layer={<Paint><Blur blur={blur} mode="clamp" /></Paint>}>
-          <SkiaImage image={image} x={0} y={0} width={size.width} height={size.height} fit="fill" />
+          <SkiaImage image={image} x={0} y={0} width={width} height={height} fit="fill" />
         </Group>
       </Canvas>
     </Animated.View>}

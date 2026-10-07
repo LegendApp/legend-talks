@@ -24,7 +24,8 @@ test("carousel blur captures once per layout, preserves live fallback, and cance
     "react-native": { View: "view", StyleSheet: { create: x => x, absoluteFill: {} } },
     "react-native-reanimated": {
       __esModule: true, default: { View: "animated" },
-      useAnimatedStyle: fn => fn(), useDerivedValue: fn => ({ get value() { return fn(); } }),
+      useSharedValue: value => React.useRef({ value, set(next) { this.value = next; } }).current, runOnUI: fn => fn,
+      useAnimatedStyle: fn => ({ get opacity() { return fn().opacity; } }), useDerivedValue: fn => ({ get value() { return fn(); } }),
     },
     "@shopify/react-native-skia": {
       Blur: "blur", Canvas: "canvas", Group: "group", Image: "image", Paint: "paint",
@@ -48,7 +49,7 @@ test("carousel blur captures once per layout, preserves live fallback, and cance
     await flush(); await flush();
     assert.equal(captures.length, 1);
     assert.ok(captures[0].ref.current);
-    assert.equal(renderer.root.findAllByType("image").length, 0);
+    assert.equal(renderer.root.findByType("image").props.image.value, null);
     await act(async () => { captures[0].resolve({ dispose() { disposed++; } }); });
     assert.equal(renderer.root.findAllByType("image").length, 1);
     progress.value.position = 1;
