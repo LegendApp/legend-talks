@@ -1,19 +1,18 @@
 import { Image, Text, View } from "react-native";
 import type { ReactNode } from "react";
+import { SharedElement } from "@legend-apps/presentation";
+import { AnimatedTitle } from "./AnimatedTitle";
 import { GlassPanels } from "./GlassPanels";
+import { MovingTitle } from "./MovingTitle";
 
 // Historical measurements from the RNL 2025 deck, not the current Music build.
 const comparisons = {
   cpu: {
     label: "CPU",
-    imageWidth: 566,
-    imageHeight: 626,
     rows: [["Spotify", "26%"], ["Apple Music", "2%"], ["Legend Music", "2%"]],
   },
   memory: {
     label: "Memory",
-    imageWidth: 668,
-    imageHeight: 558,
     rows: [["Spotify", "806 MB"], ["Apple Music", "149 MB"], ["Legend Music", "72 MB"]],
   },
 };
@@ -21,6 +20,17 @@ const tablePanels = [{ x: 0, y: 0, width: 680, height: 420, radius: 32 }];
 const sizePanels = [{ x: 0, y: 0, width: 680, height: 290, radius: 32 },
   { x: 736, y: 0, width: 680, height: 290, radius: 32 }];
 const sizeComparisonPanels = [0, 568, 1136].map(x => ({ x, y: 0, width: 528, height: 290, radius: 32 }));
+
+export function MusicPerformanceTitle({ metric }: { metric: "cpu" | "memory" }) {
+  return <View accessible accessibilityRole="header" accessibilityLabel={`Legend Music · ${metric === "cpu" ? "CPU" : "memory"}`}
+    style={{ width: 1696, height: 90, marginBottom: 36, alignSelf: "center", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+    <MovingTitle>
+      <Text style={{ color: "#f8fafc", fontSize: 72, lineHeight: 90, fontWeight: "600", letterSpacing: -1.8 }}>Legend Music · </Text>
+    </MovingTitle>
+    <AnimatedTitle effect="word-lift" fontSize={72} width={320}
+      textStyle={{ fontWeight: "600", letterSpacing: -1.8, lineHeight: 90 }}>{metric === "cpu" ? "CPU" : "memory"}</AnimatedTitle>
+  </View>;
+}
 
 export function MusicPerformance({ metric, capture, installedSize = "35 MB", zippedSize = "11 MB", spotifyInstalledSize }: {
   metric: "cpu" | "memory" | "size";
@@ -48,7 +58,6 @@ export function MusicPerformance({ metric, capture, installedSize = "35 MB", zip
   </View>;
 
   const comparison = comparisons[metric];
-  const imageHeight = Math.min(626, comparison.imageHeight * 1.1);
   return <View style={{ width: 1696, height: 670, alignSelf: "center", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 96 }}>
     <View style={{ width: 680, height: 420 }}>
       <GlassPanels panels={tablePanels} width={680} height={420} />
@@ -62,8 +71,9 @@ export function MusicPerformance({ metric, capture, installedSize = "35 MB", zip
         <Text style={{ color: "white", fontSize: 44, fontWeight: "600", fontVariant: ["tabular-nums"] }}>{value}</Text>
       </View>)}
     </View>
-    <Image source={{ uri: capture }}
-      style={{ width: imageHeight * comparison.imageWidth / comparison.imageHeight, height: imageHeight, borderRadius: 24 }}
-      resizeMode="contain" accessibilityLabel={`Original RNL 2025 Activity Monitor capture of ${comparison.label.toLowerCase()} usage while playing a local MP3`} />
+    <SharedElement id="legend-music-capture" style={{ width: 740, height: 626 }}>
+      <Image source={{ uri: capture }} style={{ width: "100%", height: "100%", borderRadius: 24 }}
+        resizeMode="contain" accessibilityLabel={`Original RNL 2025 Activity Monitor capture of ${comparison.label.toLowerCase()} usage while playing a local MP3`} />
+    </SharedElement>
   </View>;
 }

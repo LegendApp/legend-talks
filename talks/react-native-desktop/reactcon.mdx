@@ -55,7 +55,7 @@ import { NineApps } from "./NineApps"
 import { HelloWorldIntro } from "./HelloWorldIntro"
 import { PackageDownloadsChart } from "./PackageDownloadsChart"
 import { NativeReactions } from "./reactcon-scenes/NativeReactions"
-import { MusicPerformance } from "./MusicPerformance";
+import { MusicPerformance, MusicPerformanceTitle } from "./MusicPerformance";
 import { MusicSizeReveal } from "./MusicSizeReveal";
 import musicCpuCapture from "./rnconnection-assets/rnl-2025/musiccpu.png";
 import musicMemoryCapture from "./rnconnection-assets/rnl-2025/musicmemory.png";
@@ -203,7 +203,7 @@ title: Legend Music · CPU
 eyebrow: 'Legend Music / RNL 2025'
 ---
 
-# Legend Music · CPU {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+<MusicPerformanceTitle metric="cpu" />
 
 <MusicPerformance metric="cpu" capture={musicCpuCapture} />
 
@@ -219,7 +219,7 @@ title: Legend Music · memory
 eyebrow: 'Legend Music / RNL 2025'
 ---
 
-# Legend Music · memory {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+<MusicPerformanceTitle metric="memory" />
 
 <MusicPerformance metric="memory" capture={musicMemoryCapture} />
 
