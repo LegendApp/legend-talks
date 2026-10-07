@@ -30,6 +30,9 @@ const reactions = [
   { uri: rnFan, x: 1300, y: 755, rotation: "3deg", anchor: 21, height: 209 },
 ];
 const letterFade = [{ time: 0, x: 0, y: 0, opacity: 1 }, { time: 200, x: 0, y: 0, opacity: 1 }, { time: 800, x: 0, y: 0, opacity: 0 }];
+const letterFades = reactions.map((_, reactionIndex) => letterFade.map((frame, index) => ({
+  ...frame, time: index === 0 ? 0 : frame.time + reactionIndex * 85,
+})));
 const cardFade = [{ time: 0, x: 0, y: 0, opacity: 0 }, { time: 100, x: 0, y: 0, opacity: 0 }, { time: 650, x: 0, y: 0, opacity: 1 }];
 
 export function NativeReactions() {
@@ -60,14 +63,15 @@ export function NativeReactions() {
       <Text style={[titleTextStyle, { textAlign: "center", opacity: revealed && metrics ? 0 : 1 }]}>{title}</Text>
       {metrics && letters.map((letter, index) => {
         const target = reactions.reduce((nearest, reaction) => Math.abs(reaction.anchor - index) < Math.abs(nearest.anchor - index) ? reaction : nearest);
+        const reactionIndex = reactions.indexOf(target);
         const text = <Text style={[titleTextStyle, { textAlign: "center" }]}>{letter}</Text>;
         return <SceneMotionView key={index}
           initialPose={{ x: 0, y: 0, scaleX: 1, scaleY: 1 }}
           pose={{ x: revealed ? target.x - letterX(index) : 0, y: revealed ? target.y - titleY : 0,
             scaleX: revealed ? 3.8 : 1, scaleY: revealed ? 3.8 : 1 }}
-          duration={1100} delay={reactions.indexOf(target) * 85}
+          duration={1100} delay={reactionIndex * 85}
           style={{ position: "absolute", left: letterX(index) - metrics.widths[index] / 2 - 1, width: metrics.widths[index] + 2, height: 92 }}>
-          {revealed && <PlaybackKeyframeView keyframes={letterFade} delay={reactions.indexOf(target) * 85}>{text}</PlaybackKeyframeView>}
+          {revealed && <PlaybackKeyframeView keyframes={letterFades[reactionIndex]}>{text}</PlaybackKeyframeView>}
         </SceneMotionView>;
       })}
     </MovingTitle>

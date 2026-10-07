@@ -21,7 +21,7 @@ function load(filename, mocks) {
   return module.exports;
 }
 
-test("reaction images cover the title and letters fade before arriving, including replay", async () => {
+test("reaction letters remain visible through stagger delays and fade before arrival, including replay", async () => {
   globalThis.IS_REACT_ACT_ENVIRONMENT = true;
   const clock = { value: { phase: "playing", stepTime: 0 } };
   const { PlaybackKeyframeView } = load(`${import.meta.dir}/../../../../../packages/presentation/src/PlaybackKeyframeView.tsx`, {
@@ -57,7 +57,10 @@ test("reaction images cover the title and letters fade before arriving, includin
         expect(fades).toHaveLength(step === 0 ? 0 : 1);
         if (step === 0) continue;
         const fade = fades[0];
-        expect(fade.props.delay).toBe(letter.props.delay);
+        clock.value.stepTime = 0;
+        expect(fade.findByType("animated-view").props.style[1].value.opacity).toBe(1);
+        clock.value.stepTime = letter.props.delay / 1000;
+        expect(fade.findByType("animated-view").props.style[1].value.opacity).toBe(1);
         const opacity = time => {
           clock.value.stepTime = (letter.props.delay + time) / 1000;
           return fade.findByType("animated-view").props.style[1].value.opacity;
