@@ -3,7 +3,7 @@ import { Canvas, Circle, Group, Path, Rect, RoundedRect, Text as SkiaText, match
 import { useMemo } from "react";
 import { Image, View } from "react-native";
 import Animated, { useAnimatedStyle, useDerivedValue } from "react-native-reanimated";
-import { sampleSparkEdit, sparkEditDuration } from "./sparkEditingTimeline";
+import { sampleSparkEdit, sparkEditDuration, sparkEditPrompt } from "./sparkEditingTimeline";
 
 const sampleClock = samplePlayback;
 const sampleFrame = sampleSparkEdit;
@@ -16,13 +16,12 @@ const focusedY = -(493 - 640) * scale * zoom;
 export function SparkAppEditingScreenshots({ before, after }: { before: string; after: string }) {
   const focused = usePresentationValue("stepIndex") >= 1;
   const playback = usePlayback();
-  const elapsed = useDerivedValue(() => focused ? Math.min(sparkEditDuration, sampleClock(playback.value, sparkEditDuration, "step")) : 0, [focused]);
+  const elapsed = useDerivedValue(() => focused ? sampleClock(playback.value, sparkEditDuration, "step") : 0, [focused]);
   const frame = useDerivedValue(() => sampleFrame(elapsed.value));
   const font = useMemo(() => matchFont({ fontFamily: "Helvetica Neue", fontSize: 28, fontWeight: "500" }), []);
   const buttonFont = useMemo(() => matchFont({ fontFamily: "Helvetica Neue", fontSize: 28, fontWeight: "600" }), []);
   const advances = useMemo(() => {
-    const final = sampleSparkEdit(sparkEditDuration).text;
-    return Array.from({ length: final.length + 1 }, (_, index) => font.measureText(final.slice(0, index)).width);
+    return Array.from({ length: sparkEditPrompt.length + 1 }, (_, index) => font.measureText(sparkEditPrompt.slice(0, index)).width);
   }, [font]);
   const resultStyle = useAnimatedStyle(() => ({ opacity: frame.value.result }));
   const typed = useDerivedValue(() => frame.value.text);

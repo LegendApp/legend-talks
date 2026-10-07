@@ -9,7 +9,7 @@ import { join } from "node:path";
 import { compileDeck } from "../../../../../packages/presentation/src/compiler";
 import { samplePlayback } from "../../../../../packages/presentation/src/playback";
 import { createPlaybackState, advancePlayback, transitionPlayback } from "../../../../../packages/presentation/src/playbackState";
-import { sampleSparkEdit, sparkEditDuration, sparkEditPrompt } from "../sparkEditingTimeline";
+import { sampleSparkEdit, sparkEditDuration, sparkEditLoopDuration, sparkEditPrompt } from "../sparkEditingTimeline";
 
 test("prompt finishes typing before three seconds of generation, then the real result fades in", () => {
   expect(sampleSparkEdit(0).input).toBe(0);
@@ -20,7 +20,12 @@ test("prompt finishes typing before three seconds of generation, then the real r
   expect(working.every(frame => frame.text === sparkEditPrompt && frame.result === 0)).toBe(true);
   expect(working.at(-1).spin).toBeGreaterThan(18);
   expect(frames.some(frame => frame.result > 0 && frame.result < 1)).toBe(true);
-  expect(sampleSparkEdit(sparkEditDuration)).toMatchObject({ text: sparkEditPrompt, generating: false, result: 1, caret: 0 });
+  expect(sampleSparkEdit(sparkEditDuration)).toMatchObject({ text: "", characters: 0, generating: false, result: 1, caret: 0 });
+  expect(sampleSparkEdit(9.25).result).toBeGreaterThan(0);
+  expect(sampleSparkEdit(9.25).result).toBeLessThan(1);
+  expect(sampleSparkEdit(9.75)).toMatchObject({ text: "", input: 0, generating: false, result: 0 });
+  expect(sampleSparkEdit(sparkEditLoopDuration)).toEqual(sampleSparkEdit(0));
+  expect(sampleSparkEdit(sparkEditLoopDuration * 2 + 1.5)).toEqual(sampleSparkEdit(1.5));
 });
 
 test("compiled screenshot overlays preserve images, serialize without fonts or module cycles, and freeze on exit", async () => {
@@ -78,6 +83,14 @@ test("compiled screenshot overlays preserve images, serialize without fonts or m
     clock.value = advancePlayback(clock.value, 5000);
     const labels = () => tree.root.findAllByType("skia-text").map(text => text.props.text.value);
     expect(labels()).toEqual([sparkEditPrompt, "Generating…"]);
+    clock.value = advancePlayback(clock.value, 8000);
+    expect(labels()).toEqual(["", "Generate & Preview"]);
+    expect(image.props.style[1].value.opacity).toBe(1);
+    clock.value = advancePlayback(clock.value, 11500);
+    expect(labels()[0]).toBe(sampleSparkEdit(1.5).text);
+    expect(image.props.style[1].value.opacity).toBe(0);
+    clock.value = advancePlayback(clock.value, 15000);
+    expect(labels()).toEqual([sparkEditPrompt, "Generating…"]);
     for (const phase of ["paused", "outgoing"]) {
       clock.value = transitionPlayback(clock.value, { ...input, phase });
       clock.value = advancePlayback(clock.value, 50000);
@@ -86,7 +99,7 @@ test("compiled screenshot overlays preserve images, serialize without fonts or m
     }
     clock.value = transitionPlayback(clock.value, { ...input, phase: "preview" });
     expect(image.props.style[1].value.opacity).toBe(1);
-    expect(labels()).toEqual([sparkEditPrompt, "Generate & Preview"]);
+    expect(labels()).toEqual(["", "Generate & Preview"]);
     clock.value = transitionPlayback(clock.value, { ...input, phase: "preparing" });
     expect(image.props.style[1].value.opacity).toBe(0);
     expect(labels()[0]).toBe("");
