@@ -5,14 +5,15 @@ import benchmarks from "./rnconnection-assets/benchmarks.json";
 
 // All chat comparisons share the latest reference measurements.
 const rows = benchmarks.chat;
+const displayedMetrics = metrics.filter(metric => metric.key !== "switch");
 
 
 export function MetricBuckets() {
   return <View style={{ width: 1696, height: 740, marginTop: 28 }}>
     <View style={{ flexDirection: "row", gap: 24 }}>
-      {metrics.map(metric => {
+      {displayedMetrics.map(metric => {
         const sorted = [...rows].sort((a, b) => a[metric.key] - b[metric.key]);
-        return <View key={metric.key} style={{ width: 406 }}>
+        return <View key={metric.key} style={{ flex: 1 }}>
           <Text style={{ color: "#b8c2ce", fontSize: 34, lineHeight: 42, fontWeight: "500", textAlign: "center", marginBottom: 20 }}>{metric.title}</Text>
           {metric.bands.map((label, index) => {
             const entries = sorted.filter(row => {
