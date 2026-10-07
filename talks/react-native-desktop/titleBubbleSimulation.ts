@@ -22,8 +22,15 @@ export function createTitleBubbles(hasByline = false): TitleBubbles {
 }
 export function titleParent(i: number,t: number) {
   "worklet";
-  const bodies=[[-.36+Math.sin(t*.85)*.21,.16+Math.cos(t*.67)*.09,.185],[.04+Math.cos(t*.92)*.23,.19+Math.sin(t*.73)*.10,.155],[.38+Math.sin(t*.79+1.4)*.19,-.19+Math.cos(t*.91)*.14,.14],[-.32+Math.cos(t*.76+.7)*.22,-.22+Math.sin(t*.88)*.12,.13],[.03+Math.sin(t*.69+2.1)*.26,-.12+Math.cos(t*.83)*.20,.105],[.42+Math.cos(t*.81+2.8)*.17,.21+Math.sin(t*.95)*.11,.115]];
-  const b=bodies[i];return [960+b[0]*1080,540+b[1]*1080,b[2]*1080];
+  switch(i) {
+    case 0: return [960+(-.36+Math.sin(t*.85)*.21)*1080,540+(.16+Math.cos(t*.67)*.09)*1080,.185*1080];
+    case 1: return [960+(.04+Math.cos(t*.92)*.23)*1080,540+(.19+Math.sin(t*.73)*.10)*1080,.155*1080];
+    case 2: return [960+(.38+Math.sin(t*.79+1.4)*.19)*1080,540+(-.19+Math.cos(t*.91)*.14)*1080,.14*1080];
+    case 3: return [960+(-.32+Math.cos(t*.76+.7)*.22)*1080,540+(-.22+Math.sin(t*.88)*.12)*1080,.13*1080];
+    case 4: return [960+(.03+Math.sin(t*.69+2.1)*.26)*1080,540+(-.12+Math.cos(t*.83)*.20)*1080,.105*1080];
+    case 5: return [960+(.42+Math.cos(t*.81+2.8)*.17)*1080,540+(.21+Math.sin(t*.95)*.11)*1080,.115*1080];
+    default: throw new RangeError("Title parent must be between 0 and 5");
+  }
 }
 /** Fixed substeps keep attraction stable across dropped frames. Only collisions add volume. */
 export function advanceTitleBubbles(previous: TitleBubbles, elapsed: number, backgroundTime: number, rect: number[], targets: number[][], bylineSources: number[] = [], hasByline = bylineSources.length===4): TitleBubbles {
