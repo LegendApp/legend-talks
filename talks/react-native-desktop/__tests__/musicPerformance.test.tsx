@@ -2,10 +2,10 @@
 import "../../../src/__tests__/nativeMock";
 import { expect, mock, test } from "bun:test";
 import { observable } from "@legendapp/state";
-import { PresentationProvider, SharedElement } from "@legend-apps/presentation";
+import { PresentationProvider, SceneMotionView, SharedElement } from "@legend-apps/presentation";
+import { readFileSync } from "node:fs";
 import React from "react";
 import { act, create } from "react-test-renderer";
-import { AnimatedTitle } from "../AnimatedTitle";
 import { MovingTitle } from "../MovingTitle";
 
 mock.module("../GlassPanels", () => ({ GlassPanels: () => null }));
@@ -31,11 +31,18 @@ test("CPU and memory keep the same frame and title prefix through forward and re
       const prefix = tree.root.findByType(MovingTitle).findByType("text");
       const title = tree.root.findByType(MusicPerformanceTitle).findByType("view");
       const body = tree.root.findByType(MusicPerformance).findByType("view");
-      const label = tree.root.findByType(AnimatedTitle);
-      expect(prefix.props.children).toBe("Legend Music · ");
-      expect(label.props.children).toBe(metric === "cpu" ? "CPU" : "memory");
-      expect(label.props.effect).toBe("word-lift");
+      const label = title.findByType(SceneMotionView);
+      expect(prefix.props.children).toBe("Legend Music ·");
+      expect(label.findByType("text").props.children).toBe(metric === "cpu" ? "CPU" : "memory");
+      expect(label.findByType("text").props.style[1].textAlign).toBe("left");
+      expect(label.props.initialPose).toEqual({ y: 90, opacity: 0 });
+      expect(label.props.pose).toEqual({ y: 0, opacity: 1 });
+      expect(label.parent.props.style).toMatchObject({ marginLeft: 16, overflow: "hidden" });
       expect(frame.findByType("image").props.resizeMode).toBe("contain");
+      const png = readFileSync(new URL(`../rnconnection-assets/rnl-2025/music${metric === "cpu" ? "cpu" : "memory"}.png`, import.meta.url));
+      const sourceWidth = png.readUInt32BE(16), sourceHeight = png.readUInt32BE(20);
+      const scale = Math.min(frame.props.style.width / sourceWidth, frame.props.style.height / sourceHeight);
+      expect(sourceWidth * scale).toBeCloseTo(566);
       if (index === 0) {
         frameStyle = frame.props.style;
         prefixStyle = prefix.props.style;

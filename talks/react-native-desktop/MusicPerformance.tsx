@@ -1,7 +1,6 @@
 import { Image, Text, View } from "react-native";
 import type { ReactNode } from "react";
-import { SharedElement } from "@legend-apps/presentation";
-import { AnimatedTitle } from "./AnimatedTitle";
+import { SceneMotionView, SharedElement } from "@legend-apps/presentation";
 import { GlassPanels } from "./GlassPanels";
 import { MovingTitle } from "./MovingTitle";
 
@@ -20,15 +19,19 @@ const tablePanels = [{ x: 0, y: 0, width: 680, height: 420, radius: 32 }];
 const sizePanels = [{ x: 0, y: 0, width: 680, height: 290, radius: 32 },
   { x: 736, y: 0, width: 680, height: 290, radius: 32 }];
 const sizeComparisonPanels = [0, 568, 1136].map(x => ({ x, y: 0, width: 528, height: 290, radius: 32 }));
+const titleTextStyle = { color: "#f8fafc", fontSize: 72, lineHeight: 90, fontWeight: "600", letterSpacing: -1.8 } as const;
 
 export function MusicPerformanceTitle({ metric }: { metric: "cpu" | "memory" }) {
   return <View accessible accessibilityRole="header" accessibilityLabel={`Legend Music · ${metric === "cpu" ? "CPU" : "memory"}`}
     style={{ width: 1696, height: 90, marginBottom: 36, alignSelf: "center", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
     <MovingTitle>
-      <Text style={{ color: "#f8fafc", fontSize: 72, lineHeight: 90, fontWeight: "600", letterSpacing: -1.8 }}>Legend Music · </Text>
+      <Text style={titleTextStyle}>Legend Music ·</Text>
     </MovingTitle>
-    <AnimatedTitle effect="word-lift" fontSize={72} width={320}
-      textStyle={{ fontWeight: "600", letterSpacing: -1.8, lineHeight: 90 }}>{metric === "cpu" ? "CPU" : "memory"}</AnimatedTitle>
+    <View style={{ width: 320, height: 90, marginLeft: 16, overflow: "hidden" }}>
+      <SceneMotionView initialPose={{ y: 90, opacity: 0 }} pose={{ y: 0, opacity: 1 }} duration={650}>
+        <Text style={[titleTextStyle, { textAlign: "left" }]}>{metric === "cpu" ? "CPU" : "memory"}</Text>
+      </SceneMotionView>
+    </View>
   </View>;
 }
 
@@ -71,7 +74,7 @@ export function MusicPerformance({ metric, capture, installedSize = "35 MB", zip
         <Text style={{ color: "white", fontSize: 44, fontWeight: "600", fontVariant: ["tabular-nums"] }}>{value}</Text>
       </View>)}
     </View>
-    <SharedElement id="legend-music-capture" style={{ width: 740, height: 626 }}>
+    <SharedElement id="legend-music-capture" style={{ width: 566, height: 626 }}>
       <Image source={{ uri: capture }} style={{ width: "100%", height: "100%", borderRadius: 24 }}
         resizeMode="contain" accessibilityLabel={`Original RNL 2025 Activity Monitor capture of ${comparison.label.toLowerCase()} usage while playing a local MP3`} />
     </SharedElement>
