@@ -1,8 +1,8 @@
 import { useTitleBubbleSimulation } from "./useTitleBubbleSimulation";
 import { dropletMaterial } from "./packs/backgrounds/dropletMaterial";
 import { titleDripAnchors } from "./titleDripAnchors";
-import { AlphaType, ColorType, Canvas, Fill, Shader, ImageShader, Skia, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
-import { Background, useBackgroundSize, useBackgroundIntensity, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
+import { AlphaType, ColorType, Fill, Shader, ImageShader, Skia, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
+import { PresentationCanvas, Background, useBackgroundSize, useBackgroundIntensity, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
 import { AnimatedAtmosphere } from "./packs/backgrounds/AnimatedAtmosphere";
@@ -346,14 +346,14 @@ export default function WaterTitle({ children, closing = false, byline = false }
       }} style={{ position: "absolute", left: 112, width: 1696, top: 0, opacity: 0, fontSize: 128, lineHeight: 128, fontWeight: "700", textAlign: "center" }}>
         {'React Native is the best way\nto build desktop apps'}
       </Text>
-      <Canvas pointerEvents="none" style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080 }}>
+      <PresentationCanvas width={1920} height={1080}>
         {!closing && <Fill><Shader source={cosmicEffect!} uniforms={uniforms} /></Fill>}
         {!closing && showLiquidType && titleImage && <Fill><Shader source={typeEffect!} uniforms={uniforms}>
           <ImageShader image={titleImage} fit="fill" rect={{ x: 0, y: 0, width: 1920, height: 1080 }} />
         </Shader></Fill>}
         {closing && titleImage && <Fill><ImageShader image={titleImage} fit="fill" rect={{x:0,y:0,width:1920,height:1080}} /></Fill>}
         {closing && <Fill><Shader source={waterEffect!} uniforms={uniforms} /></Fill>}
-      </Canvas>
+      </PresentationCanvas>
       {byline && !closing && <TitleByline uniforms={uniforms} onMeasure={measureByline} />}
     </View>
   </>;

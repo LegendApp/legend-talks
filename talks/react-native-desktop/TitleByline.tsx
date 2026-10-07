@@ -1,5 +1,5 @@
-import { snapshotCaptureQueue } from "@legend-apps/presentation";
-import { AlphaType, Canvas, ColorType, Fill, ImageShader, Shader, Skia, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
+import { snapshotCaptureQueue, PresentationCanvas } from "@legend-apps/presentation";
+import { AlphaType, ColorType, Fill, ImageShader, Shader, Skia, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
 import { useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
 import { bylineDotSources, bylineHeight, bylineTop } from "./bylineDotSources";
@@ -99,10 +99,10 @@ export function TitleByline({ uniforms, onMeasure }: {
       <View style={[separatorStyle, { top: separatorOffset ?? 0 }]} />
       <Text style={bylineTextStyle}>Margelo</Text>
     </View>
-    {image && <Canvas pointerEvents="none" style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080 }}>
+    {image && <PresentationCanvas width={1920} height={1080}>
       <Fill><Shader source={bylineEffect!} uniforms={uniforms}>
         <ImageShader image={image} fit="fill" rect={{ x: 0, y: bylineTop, width: 1920, height: bylineHeight }} />
       </Shader></Fill>
-    </Canvas>}
+    </PresentationCanvas>}
   </>;
 }
