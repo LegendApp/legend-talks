@@ -122,7 +122,7 @@ half4 main(float2 p) {
         // Stable size/brightness variation gives each light its own identity
         // while all particles continue down the same project-to-device path.
         for(int j=0;j<16;j++) {
-          float travel=fract(float(j)/16.0+elapsed()*0.18+i*0.071);
+          float travel=fract(float(j)/16.0+time*0.18+i*0.071);
           float2 dotPosition=float2(pathX(travel,i),188.0+travel*320.0);
           float seed=fract(sin(float(j)*127.1+i*71.7+19.3)*43758.5453);
           float brightness=fract(sin(float(j)*53.9+i*143.3+7.1)*17341.17);
@@ -130,7 +130,7 @@ half4 main(float2 p) {
           dotPosition+=normalize(float2(1.0,-particleSlope))*(seed-0.5)*19.0;
           float distance=length(p-dotPosition);
           float size=mix(1.6,5.7,seed);
-          float intensity=mix(0.38,1.45,brightness)*(0.88+0.12*sin(elapsed()*2.0+float(j)));
+          float intensity=mix(0.38,1.45,brightness)*(0.88+0.12*sin(time*2.0+float(j)));
           float spark=(exp(-distance*distance/(size*size))+exp(-distance/(size*2.6))*0.40)*intensity;
           float flowing=desktop<0.5 ? 1.0 : (1.0-step(0.35,travel))
             +step(0.35,travel)*connection()*smoothstep(1.5,2.6,elapsed());
@@ -146,11 +146,11 @@ half4 main(float2 p) {
           if(length(p-broken)<220.0) {
             float reached=smoothstep(t,t+0.08,smoothstep(0.12+i*0.045,1.5+i*0.045,time));
             float cap=exp(-pow((p.y-broken.y)/4.0,2.0))*exp(-pow((p.x-broken.x)/26.0,4.0))*outage*reached;
-            float flare=exp(-length(p-broken)/22.0)*outage*reached*(0.45+0.15*sin(elapsed()*13.0+i));
+            float flare=exp(-length(p-broken)/22.0)*outage*reached*(0.45+0.15*sin(time*13.0+i));
             float heat=clamp(cap+flare,0.0,0.95);
             outColor=over(float4(float3(1.0,0.18,0.08)*heat,heat),outColor);
             for(int j=0;j<18;j++) {
-              float age=fract(elapsed()*1.25+float(j)*0.618+i*0.37+float(end)*0.23);
+              float age=fract(time*1.25+float(j)*0.618+i*0.37+float(end)*0.23);
               float direction=sin(float(j)*17.3+i*4.0);
               float2 sparkPos=broken+float2(direction*age*155.0,(end==0 ? 55.0 : -125.0)*age+age*age*145.0);
               float size=2.0+mod(float(j),4.0);
