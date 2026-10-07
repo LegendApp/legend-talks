@@ -9,7 +9,7 @@ import React from "react";
 import { act, create } from "react-test-renderer";
 import { compileDeck } from "../../../../../packages/presentation/src/compiler";
 import { createPlaybackState, advancePlayback, transitionPlayback } from "../../../../../packages/presentation/src/playbackState";
-import { sampleTitleEntrance, titleEntranceEffects } from "../titleEntrancePresets";
+import { sampleTitleEntrance, titleEntranceDuration, titleEntranceEffects } from "../titleEntrancePresets";
 
 test("every entrance begins hidden and settles without residual distortion", () => {
   const final = { x: 0, y: 0, opacity: 1, scaleX: 1, scaleY: 1, rotate: 0, rotateX: 0, reveal: 1, ghost: 0 };
@@ -24,6 +24,19 @@ test("every entrance begins hidden and settles without residual distortion", () 
         assert.ok(frame.scaleX > 0 && frame.scaleY > 0, effect.id);
       }
     }
+  }
+});
+
+test("effect completion caps preserve the final frame for all slot and line positions", () => {
+  for (const { id } of titleEntranceEffects) {
+    const duration = titleEntranceDuration(id);
+    for (const count of [1, 2, 17, 100]) for (let index = 0; index < count; index++) {
+      for (const [lineIndex, lineCount] of [[index, count], [0, 1], [1, 2]]) {
+        assert.deepEqual(sampleTitleEntrance(id, duration, index, count, lineIndex, lineCount),
+          sampleTitleEntrance(id, 4, index, count, lineIndex, lineCount), id);
+      }
+    }
+    assert.ok(duration < 1.5, id);
   }
 });
 
@@ -43,12 +56,17 @@ test("compiled title worklets serialize and obey preparation, preview, steps, ex
     const playback = { value: createPlaybackState(input) };
     const callbacks: any[] = [];
     const reactions: any[] = [];
+    const sharedValues: any[] = [];
     let speed = 1;
     const presentation: any = { usePlayback: () => playback, usePresentationValue: () => speed,
       samplePlayback: (state: typeof playback.value, preview: number, clock: "slide" | "step") =>
         state.phase === "preparing" ? 0 : state.phase === "preview" ? preview : clock === "slide" ? state.slideTime : state.stepTime };
     const reanimated: any = { default: { View: "AnimatedView", Text: "AnimatedText" }, __esModule: true,
-      useSharedValue: (value: any) => React.useRef({ value }).current,
+      useSharedValue: (value: any) => {
+        const ref = React.useRef({ value });
+        if (!sharedValues.includes(ref.current)) sharedValues.push(ref.current);
+        return ref.current;
+      },
       useAnimatedReaction: (prepare: any, react: any) => { reactions.push({ prepare, react }); },
       useDerivedValue: (fn: any) => { callbacks.push(fn); return { get value() {
         for (const reaction of reactions) restore(reaction.react)(restore(reaction.prepare)());
@@ -86,6 +104,7 @@ test("compiled title worklets serialize and obey preparation, preview, steps, ex
     }
     for (const effect of titleEntranceEffects) {
       callbacks.length = reactions.length = 0;
+      sharedValues.length = 0;
       speed = 1;
       let renderer: ReturnType<typeof create>;
       const title = () => React.createElement(module.exports.AnimatedTitle, { effect: effect.id }, "React Native\non the desktop");
@@ -134,19 +153,27 @@ test("compiled title worklets serialize and obey preparation, preview, steps, ex
       assert.equal(sample()[0], 0.125, `${effect.id}: quarter speed scales shared slide time`);
       speed = 2;
       await act(async () => renderer!.update(steps.exports.resolveSteps(title()).content));
-      assert.equal(sample()[0], 1, `${effect.id}: settings update reaches a mounted title`);
+      assert.equal(sample()[0], Math.min(1, titleEntranceDuration(effect.id)), `${effect.id}: settings update reaches a mounted title`);
+      playback.value = advancePlayback(playback.value, 10000);
+      sample();
+      const settledState = sharedValues[0].value;
+      for (const timestamp of [11000, 12000, 13000]) {
+        playback.value = advancePlayback(playback.value, timestamp);
+        sample();
+        assert.equal(sharedValues[0].value, settledState, `${effect.id}: a settled entrance must stop publishing samples`);
+      }
       if (effect.id === "word-lift") {
         callbacks.length = reactions.length = 0;
         const stepTitle = React.createElement(module.exports.AnimatedTitle, { effect: effect.id, clock: "step" }, "Step title");
         await act(async () => renderer!.update(steps.exports.resolveSteps(stepTitle).content));
         const stepTime = restore(callbacks[0]);
         for (const reaction of reactions) restore(reaction.react)(restore(reaction.prepare)());
-        assert.equal(stepTime(), 1);
+        assert.equal(stepTime(), titleEntranceDuration(effect.id));
         playback.value = transitionPlayback(playback.value, { ...input, slideKey: "return-visit", stepKey: "new-step", stepIndex: 1 });
         assert.equal(stepTime(), 0, "new step cannot expose the preceding step's sampled time before the reaction runs");
         for (const reaction of reactions) restore(reaction.react)(restore(reaction.prepare)());
         assert.equal(stepTime(), 0);
-        playback.value = advancePlayback(advancePlayback(playback.value, 1000), 1250);
+        playback.value = advancePlayback(advancePlayback(playback.value, 14000), 14250);
         for (const reaction of reactions) restore(reaction.react)(restore(reaction.prepare)());
         assert.equal(stepTime(), 0.5, "step entrance uses the same speed setting");
       }

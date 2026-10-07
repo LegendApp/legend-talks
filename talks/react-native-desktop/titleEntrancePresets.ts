@@ -27,15 +27,28 @@ const settled: TitleEntranceFrame = {
   x: 0, y: 0, opacity: 1, scaleX: 1, scaleY: 1, rotate: 0, rotateX: 0, reveal: 1, ghost: 0,
 };
 
-export function sampleTitleEntrance(effect: TitleEntranceEffect, seconds: number, index = 0, count = 1,
-  lineIndex = index, lineCount = count): TitleEntranceFrame {
+function titleEntranceSpeed(effect: TitleEntranceEffect) {
   "worklet";
   switch (effect) {
     case "word-lift": case "letter-wave": case "center-out": case "split-arrival":
     case "zipper": case "elastic-drop": case "hinge": case "scatter": case "stretch-release":
-      seconds *= 1.75;
-      break;
+      return 1.75;
+    default: return 1;
   }
+}
+
+export function titleEntranceDuration(effect: TitleEntranceEffect) {
+  const stagger = effect === "typewriter" ? 1.15 : effect === "center-out" ? 0.5
+    : effect === "soft-rise" || effect === "tracking-collapse" || effect === "wipe" || effect === "curtain" || effect === "chromatic-glitch" ? 0 : 0.45;
+  const duration = effect === "typewriter" ? 0.045 : effect === "elastic-drop" ? 1.05 : 0.85;
+  // Clear the final progress boundary despite floating-point roundoff.
+  return (0.12 + stagger + duration) / titleEntranceSpeed(effect) + 0.000001;
+}
+
+export function sampleTitleEntrance(effect: TitleEntranceEffect, seconds: number, index = 0, count = 1,
+  lineIndex = index, lineCount = count): TitleEntranceFrame {
+  "worklet";
+  seconds *= titleEntranceSpeed(effect);
   const order = index / Math.max(1, count - 1);
   const distance = lineIndex - (lineCount - 1) / 2;
   const centerOrder = Math.abs(distance) / Math.max(1, (lineCount - 1) / 2);

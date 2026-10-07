@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Text, View, type TextStyle } from "react-native";
 import Animated, { useAnimatedReaction, useAnimatedStyle, useDerivedValue, useSharedValue, type SharedValue } from "react-native-reanimated";
 import { samplePlayback, usePlayback, usePresentationValue } from "@legend-apps/presentation";
-import { sampleTitleEntrance, titleEntranceEffects, type TitleEntranceEffect } from "./titleEntrancePresets";
+import { sampleTitleEntrance, titleEntranceDuration, titleEntranceEffects, type TitleEntranceEffect } from "./titleEntrancePresets";
 
 type Slot = { text: string; index: number; count: number; lineIndex: number; lineCount: number };
 type MotionProps = { effect: TitleEntranceEffect; time: SharedValue<number> };
@@ -78,15 +78,15 @@ export function AnimatedTitle({ children, effect = "soft-rise", fontSize = 104, 
   const playback = usePlayback();
   const speed = usePresentationValue("titleAnimationSpeed") ?? 1;
   const sampleClock = samplePlayback;
+  const duration = titleEntranceDuration(effect);
   const sampled = useSharedValue({ key: "", time: 0 });
   useAnimatedReaction(() => playback.value, state => {
     "worklet";
     if (state.phase === "outgoing" || state.phase === "paused") return;
-    sampled.value = {
-      key: clock === "step" ? `${state.slideKey}:${state.stepKey}` : state.slideKey,
-      time: Math.min(4, sampleClock(state, 4 / speed, clock) * speed),
-    };
-  }, [clock, speed]);
+    const key = clock === "step" ? `${state.slideKey}:${state.stepKey}` : state.slideKey;
+    const time = Math.min(duration, sampleClock(state, duration / speed, clock) * speed);
+    if (sampled.value.key !== key || sampled.value.time !== time) sampled.value = { key, time };
+  }, [clock, speed, duration]);
   const time = useDerivedValue(() => {
     "worklet";
     const state = playback.value;
