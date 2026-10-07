@@ -1,6 +1,8 @@
 import { GitHubLink } from "./GitHubLink";
 import { SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
 import { MovingTitle } from "./MovingTitle";
+import { AnimatedTitle } from "./AnimatedTitle";
+import type { TitleEntranceEffect } from "./titleEntrancePresets";
 import type { ReactNode } from "react";
 import { Image, Text, View } from "react-native";
 
@@ -45,13 +47,16 @@ export { ExpoDesktopLayers } from "./ExpoDesktopScene";
 
 export { CompatibilitySnapshot } from "./ModuleCompatibility";
 
-export function SlidesHeader({ icon }: { icon: string }) {
-  return <MovingTitle style={{ alignSelf: "center" }}>
+export function SlidesHeader({ icon, entrance }: { icon: string; entrance?: TitleEntranceEffect }) {
+  const Container = entrance ? View : MovingTitle;
+  return <Container style={{ alignSelf: "center" }}>
     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 24 }}>
       <Image source={{ uri: icon }} style={{ width: 100, height: 100 }} resizeMode="contain" />
-      <Text style={{ color: ink, fontSize: 72, lineHeight: 100, fontWeight: "600", textAlignVertical: "center" }}>Legend Slides</Text>
+      {entrance ? <AnimatedTitle effect={entrance} fontSize={72} width={500} color={ink}
+        textStyle={{ fontWeight: "600", lineHeight: 100 }}>Legend Slides</AnimatedTitle>
+        : <Text style={{ color: ink, fontSize: 72, lineHeight: 100, fontWeight: "600", textAlignVertical: "center" }}>Legend Slides</Text>}
     </View>
-  </MovingTitle>;
+  </Container>;
 }
 
 export function SlidesRelease({ icon }: { icon: string }) {

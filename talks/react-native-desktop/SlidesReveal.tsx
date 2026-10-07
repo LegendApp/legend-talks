@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { Linking, Pressable, Text, View } from "react-native";
 import { SlidesHeader } from "./StoryDiagrams";
 import { GitHubLink } from "./GitHubLink";
+import type { TitleEntranceEffect } from "./titleEntrancePresets";
 
 // @ts-ignore Local deck screenshot resolves to a file URL.
 import screenshotAsset from "./rnconnection-assets/legend-slides-screenshot.png";
@@ -67,7 +68,9 @@ const effect = Skia.RuntimeEffect.Make(slidesShatterShader);
 if (!effect) throw new Error("Could not compile Slides screenshot shatter");
 const linkReveal = [{ time: 0, x: 0, y: 0, opacity: 0 }, { time: 650, x: 0, y: 0, opacity: 1 }];
 
-export function SlidesReveal({ icon, children, authoring }: { icon: string; children: ReactNode; authoring: ReactNode }) {
+export function SlidesReveal({ icon, children, authoring, titleEntrance }: {
+  icon: string; children: ReactNode; authoring: ReactNode; titleEntrance?: TitleEntranceEffect;
+}) {
   const screenshotImage = useImage(screenshotAsset);
   const step = usePresentationValue("stepIndex");
   const uniforms = useAnimatedShaderUniforms({}, 4, { clock: "step" });
@@ -75,7 +78,7 @@ export function SlidesReveal({ icon, children, authoring }: { icon: string; chil
     {/* Report the step's destination to shared transitions as the header moves. */}
     <ScenePositionView style={{ width: 1696, zIndex: 2 }}
       y={step >= 1 ? 0 : (880 - 100) / 2} duration={650}>
-      <SlidesHeader icon={icon} />
+      <SlidesHeader icon={icon} entrance={titleEntrance} />
     </ScenePositionView>
     {screenshotImage && <Canvas pointerEvents="none" accessibilityLabel="Legend Slides presenter window screenshot"
       style={{ position: "absolute", left: -112, top: -100, width: 1920, height: 1180 }}>
