@@ -1,5 +1,5 @@
 import { FilmstripMotionView } from "./FilmstripMotionView";
-import { SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
+import { ProgressivePreparation, SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
 import type { ReactNode } from "react";
 import { Image, Text, View } from "react-native";
 import { appCardLayout, type SceneMode } from "./NineAppsGeometry";
@@ -49,7 +49,7 @@ export function AppCarousel<T extends string>({ items, position, mode = "filmstr
   cardWidth?: number;
   renderCard: (id: T, layout: CardLayout) => ReactNode;
 }) {
-  return <>{items.map((id, index) => {
+  return <ProgressivePreparation>{items.map((id, index) => {
     const card = appCardLayout(index, mode, 0, cardWidth);
     const height = cardWidth * 0.625;
     return <FilmstripMotionView key={id} index={index} count={items.length} enabled={mode === "filmstrip"} position={position}
@@ -60,7 +60,7 @@ export function AppCarousel<T extends string>({ items, position, mode = "filmstr
         {renderCard(id, { ...card, width: cardWidth, height, captionHeight: cardWidth * 0.0625 })}
       </SceneMotionView>
     </FilmstripMotionView>;
-  })}</>;
+  })}</ProgressivePreparation>;
 }
 
 export function AppShowcase({ apps, title }: { apps: string[]; title: string }) {

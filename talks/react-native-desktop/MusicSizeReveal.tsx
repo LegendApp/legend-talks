@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { View } from "react-native";
 import { Canvas, matchFont } from "@shopify/react-native-skia";
 import { SkiaNumberFlow } from "number-flow-react-native/skia";
-import { usePlayback, usePresentationValue } from "@legend-apps/presentation";
+import { ProgressivePreparation, usePlayback, usePresentationValue } from "@legend-apps/presentation";
 import { Easing } from "react-native-reanimated";
 import { BenchmarkRow, chartLayout } from "./BenchmarkChart";
 import { numberFlowTiming } from "./numberFlowTiming";
@@ -26,9 +26,11 @@ export function MusicSizeReveal() {
   return <View style={{ width: chartLayout.width,
     height: chartLayout.top * 2 + chartLayout.rowSpacing + chartLayout.rowHeight,
     marginTop: chartLayout.marginTop, alignSelf: "center" }}>
-    <BenchmarkRow name="Legend Music" value={installed} maximum={430} valueContent={number}
-      highlighted animateValue duration={1100} y={chartLayout.top} />
-    <BenchmarkRow name="Spotify" value={430} maximum={430} valueLabel="430.0 MB"
+    <ProgressivePreparation>{[
+    <BenchmarkRow key="music" name="Legend Music" value={installed} maximum={430} valueContent={number}
+      highlighted animateValue duration={1100} y={chartLayout.top} />,
+    <BenchmarkRow key="spotify" name="Spotify" value={430} maximum={430} valueLabel="430.0 MB"
       y={chartLayout.top + chartLayout.rowSpacing} />
+    ]}</ProgressivePreparation>
   </View>;
 }
