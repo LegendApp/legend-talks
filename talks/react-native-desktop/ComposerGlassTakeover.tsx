@@ -26,7 +26,7 @@ half4 sampleBackdrop(float2 p) {
 }
 half4 main(float2 position) {
   float reveal = smoothstep(0.0, 0.8, time);
-  float wild = smoothstep(0.8, 3.0, time);
+  float wild = smoothstep(0.8, 5.2, time);
   float2 center = composer.xy + composer.zw * 0.5;
   float2 halfSize = composer.zw * 0.5;
   float radius = cornerRadius;
@@ -93,7 +93,7 @@ const videoRect = { x: rect.x - 698 * videoScale, y: rect.y - 1208 * videoScale,
   width: 2560 * videoScale, height: 1440 * videoScale };
 
 export function ComposerGlassTakeover({ frame }: { frame: SharedValue<SkImage | null> }) {
-  const uniforms = useAnimatedShaderUniforms(initialUniforms, 3, { clock: "step" });
+  const uniforms = useAnimatedShaderUniforms(initialUniforms, 5.2, { clock: "step" });
   return <Canvas pointerEvents="none" style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080, zIndex: 3000 }}>
     <Fill><Shader source={effect!} uniforms={uniforms}>
       <ImageShader image={frame} fit="fill" rect={videoRect} tx="clamp" ty="clamp" />
