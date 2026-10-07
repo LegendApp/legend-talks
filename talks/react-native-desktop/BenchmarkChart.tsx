@@ -1,6 +1,7 @@
 import { displayMetric } from "./benchmarkUnits";
 import { SceneMotionView, ScenePositionView, usePresentationValue, SharedElement, useSharedElementEntrance } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
+import type { ReactNode } from "react";
 import { ChartBar } from "./ChartBar";
 import { bucketColors, bucketIndex, bucketLayout } from "./MetricBucketDefinitions";
 import benchmarks from "./rnconnection-assets/benchmarks.json";
@@ -10,9 +11,9 @@ export type Metric = "content" | "memory" | "size" | "jump" | "switch";
 const units: Record<Metric, string> = { content: "ms", memory: "MB", size: "MB", jump: "ms", switch: "ms" };
 
 /** Separate sibling markers keep text rigid while only the bar changes width. */
-export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grouped = false, tintText = false, duration = 650, decimals = 0, valueLabel, highlighted = name === "React Native" }: {
+export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grouped = false, tintText = false, duration = 650, decimals = 0, valueLabel, valueContent, animateValue = false, highlighted = name === "React Native" }: {
   name: string; value: number; maximum: number; metric?: Metric; y: number;
-  groupColor?: string; grouped?: boolean; tintText?: boolean; duration?: number; decimals?: number; valueLabel?: string; highlighted?: boolean;
+  groupColor?: string; grouped?: boolean; tintText?: boolean; duration?: number; decimals?: number; valueLabel?: string; valueContent?: ReactNode; animateValue?: boolean; highlighted?: boolean;
 }) {
   const id = `benchmark-${name}`;
   const animateEntrance = useSharedElementEntrance(`${id}-bar`);
@@ -24,11 +25,14 @@ export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grou
         <Text style={{ color: groupColor, fontWeight: highlighted ? "600" : "400", fontSize: chartLayout.fontSize, lineHeight: chartLayout.lineHeight }}>{name}</Text>
       </SceneMotionView>}
     </SharedElement>
-    <SharedElement id={`${id}-bar`} style={{ position: "absolute", left: chartLayout.barLeft, top: (chartLayout.rowHeight - chartLayout.barHeight) / 2, width, height: chartLayout.barHeight }}>
-      <ChartBar highlighted={highlighted} groupColor={groupColor} grouped={grouped} animateEntrance={animateEntrance} style={{ width, height: chartLayout.barHeight }} />
+    <SharedElement id={`${id}-bar`} style={{ position: "absolute", left: chartLayout.barLeft, top: (chartLayout.rowHeight - chartLayout.barHeight) / 2, width: animateValue ? chartLayout.barWidth : width, height: chartLayout.barHeight }}>
+      {animateValue ? <SceneMotionView pose={{ scaleX: width / chartLayout.barWidth }} duration={duration}
+        style={{ width: chartLayout.barWidth, height: chartLayout.barHeight, transformOrigin: "left center" }}>
+        <ChartBar highlighted={highlighted} groupColor={groupColor} grouped={grouped} animateEntrance={animateEntrance} style={{ width: chartLayout.barWidth, height: chartLayout.barHeight }} />
+      </SceneMotionView> : <ChartBar highlighted={highlighted} groupColor={groupColor} grouped={grouped} animateEntrance={animateEntrance} style={{ width, height: chartLayout.barHeight }} />}
     </SharedElement>
     <SharedElement id={`${id}-value`} resize="preserve" style={{ position: "absolute", right: 0, top: 0, width: chartLayout.valueWidth, height: chartLayout.rowHeight }}>
-      <Text style={{ color: "#f1f5f9", textAlign: "right", fontSize: chartLayout.fontSize, lineHeight: chartLayout.lineHeight, fontVariant: ["tabular-nums"] }}>{valueLabel ?? (metric ? `${displayMetric(value, metric).toFixed(decimals)} ${units[metric]}` : value.toFixed(decimals))}</Text>
+      {valueContent ?? <Text style={{ color: "#f1f5f9", textAlign: "right", fontSize: chartLayout.fontSize, lineHeight: chartLayout.lineHeight, fontVariant: ["tabular-nums"] }}>{valueLabel ?? (metric ? `${displayMetric(value, metric).toFixed(decimals)} ${units[metric]}` : value.toFixed(decimals))}</Text>}
       {tintText && <SceneMotionView pose={{ opacity: grouped ? 1 : 0 }} duration={duration} style={{ position: "absolute", inset: 0 }}>
         <Text style={{ color: groupColor, textAlign: "right", fontSize: chartLayout.fontSize, lineHeight: chartLayout.lineHeight, fontVariant: ["tabular-nums"] }}>{valueLabel ?? (metric ? `${displayMetric(value, metric).toFixed(decimals)} ${units[metric]}` : value.toFixed(decimals))}</Text>
       </SceneMotionView>}

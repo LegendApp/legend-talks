@@ -2,15 +2,16 @@
 import "../../../src/__tests__/nativeMock";
 import { expect, mock, test } from "bun:test";
 import { observable } from "@legendapp/state";
-import { PresentationProvider } from "@legend-apps/presentation";
+import { PresentationProvider, SceneMotionView } from "@legend-apps/presentation";
 import React from "react";
 import { act, create } from "react-test-renderer";
 
 mock.module("number-flow-react-native/skia", () => ({ SkiaNumberFlow: "number-flow" }));
-mock.module("../GlassPanels", () => ({ GlassPanels: () => null }));
+mock.module("../ChartBar", () => ({ ChartBar: "chart-bar" }));
+const { BenchmarkRow } = await import("../BenchmarkChart");
 const { MusicSizeReveal } = await import("../MusicSizeReveal");
 
-test("Music preserves both canvases while advancing and reversing the two measurements", async () => {
+test("Music compares installed sizes on a fixed scale while advancing and reversing measurements", async () => {
   globalThis.IS_REACT_ACT_ENVIRONMENT = true;
   const runtime$ = observable({ isActive: true, isPreview: false, isPreparing: false,
     slideIndex: 0, stepIndex: 0, stepCount: 2, stepEpochs: {} });
@@ -18,13 +19,21 @@ test("Music preserves both canvases while advancing and reversing the two measur
   try {
     await act(() => { tree = create(<PresentationProvider value={runtime$}><MusicSizeReveal /></PresentationProvider>); });
     const canvases = tree.root.findAllByType("canvas");
-    expect(canvases).toHaveLength(2);
+    expect(canvases).toHaveLength(1);
     for (const step of [0, 1, 0, 1]) {
       await act(() => runtime$.stepIndex.set(step));
       const numbers = tree.root.findAllByType("number-flow");
-      expect(numbers.map(number => number.props.value)).toEqual(step === 0 ? [35.3, 11.4] : [15.4, 6.3]);
+      const installed = step === 0 ? 35.3 : 15.4;
+      expect(numbers.map(number => number.props.value)).toEqual([installed]);
+      const rows = tree.root.findAllByType(BenchmarkRow);
+      expect(rows.map(row => [row.props.name, row.props.value, row.props.maximum]))
+        .toEqual([["Legend Music", installed, 430], ["Spotify", 430, 430]]);
+      const musicBar = rows[0].findAllByType(SceneMotionView).find(view => view.props.pose.scaleX !== undefined);
+      expect(musicBar.props.pose.scaleX).toBeCloseTo(installed / 430);
+      expect(rows[1].props.valueLabel).toBe("430.0 MB");
+      expect(JSON.stringify(tree.toJSON())).not.toMatch(/zipped|zip size/i);
       for (const number of numbers) {
-        expect(number.props.format).toEqual({ minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        expect(number.props.format).toEqual({ minimumFractionDigits: 1, maximumFractionDigits: 1 });
         expect(number.props.spinTiming.animation).toBeTypeOf("function");
         expect(number.props.transformTiming).toBe(number.props.spinTiming);
         expect(number.props.opacityTiming).toBe(number.props.spinTiming);
