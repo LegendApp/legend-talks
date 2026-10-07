@@ -1,16 +1,13 @@
 import type { ReactNode } from "react";
 import type { StyleProp, ViewStyle } from "react-native";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
-import { usePlaybackTween } from "@legend-apps/presentation";
+import Animated, { useAnimatedStyle, type SharedValue } from "react-native-reanimated";
 import { CarouselBlurView } from "./CarouselBlurView";
 import { NavigationExitView } from "@legend-apps/presentation";
 
 /** Carousel placement uses slide playback; exit uses the host's navigation progress. */
-export function FilmstripMotionView({ index, count, enabled, position = 0, children, style }: {
-  index: number; count: number; enabled: boolean; position?: number; children: ReactNode; style?: StyleProp<ViewStyle>;
+export function FilmstripMotionView({ index, enabled, progress, children, style }: {
+  index: number; enabled: boolean; progress: SharedValue<{ position: number }>; children: ReactNode; style?: StyleProp<ViewStyle>;
 }) {
-  const selected = Math.max(0, Math.min(count - 1, position));
-  const progress = usePlaybackTween({ position: selected }, 500);
   const motionStyle = useAnimatedStyle(() => {
     "worklet";
     // Keep native layout onstage: offscreen layout bounds can clip text and

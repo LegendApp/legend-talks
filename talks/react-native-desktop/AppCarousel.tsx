@@ -1,5 +1,5 @@
 import { FilmstripMotionView } from "./FilmstripMotionView";
-import { ProgressivePreparation, SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
+import { ProgressivePreparation, SceneMotionView, usePlaybackTween, usePresentationValue } from "@legend-apps/presentation";
 import type { ReactNode } from "react";
 import { Image, Text, View } from "react-native";
 import { appCardLayout, type SceneMode } from "./NineAppsGeometry";
@@ -49,10 +49,12 @@ export function AppCarousel<T extends string>({ items, position, mode = "filmstr
   cardWidth?: number;
   renderCard: (id: T, layout: CardLayout) => ReactNode;
 }) {
+  const selected = Math.max(0, Math.min(items.length - 1, position));
+  const progress = usePlaybackTween({ position: selected }, 500);
   return <ProgressivePreparation>{items.map((id, index) => {
     const card = appCardLayout(index, mode, 0, cardWidth);
     const height = cardWidth * 0.625;
-    return <FilmstripMotionView key={id} index={index} count={items.length} enabled={mode === "filmstrip"} position={position}
+    return <FilmstripMotionView key={id} index={index} enabled={mode === "filmstrip"} progress={progress}
       style={{ position: "absolute", left: 960 - cardWidth / 2, top: 555 - height / 2,
         width: cardWidth, height, zIndex: card.depth }}>
       <SceneMotionView duration={550} pose={{ x: card.x - (960 + index * 900), y: card.y - 555,
