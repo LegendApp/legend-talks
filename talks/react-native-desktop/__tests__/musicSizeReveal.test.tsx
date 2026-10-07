@@ -24,7 +24,7 @@ test("Music preserves both canvases while advancing and reversing the two measur
       const numbers = tree.root.findAllByType("number-flow");
       expect(numbers.map(number => number.props.value)).toEqual(step === 0 ? [35.3, 11.4] : [15.4, 6.3]);
       for (const number of numbers) {
-        expect(number.props.format).toEqual({ minimumFractionDigits: 1, maximumFractionDigits: 1 });
+        expect(number.props.format).toEqual({ minimumFractionDigits: 0, maximumFractionDigits: 0 });
         expect(number.props.spinTiming.animation).toBeTypeOf("function");
         expect(number.props.transformTiming).toBe(number.props.spinTiming);
         expect(number.props.opacityTiming).toBe(number.props.spinTiming);
