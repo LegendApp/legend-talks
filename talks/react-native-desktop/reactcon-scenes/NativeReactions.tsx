@@ -29,7 +29,7 @@ const reactions = [
   { uri: lowMemory, x: 390, y: 735, rotation: "-4deg", anchor: 18, height: 215 },
   { uri: rnFan, x: 1300, y: 755, rotation: "3deg", anchor: 21, height: 209 },
 ];
-const letterFade = [{ time: 0, x: 0, y: 0, opacity: 1 }, { time: 1100, x: 0, y: 0, opacity: 1 }, { time: 2100, x: 0, y: 0, opacity: 0 }];
+const letterFade = [{ time: 0, x: 0, y: 0, opacity: 1 }, { time: 200, x: 0, y: 0, opacity: 1 }, { time: 800, x: 0, y: 0, opacity: 0 }];
 const cardFade = [{ time: 0, x: 0, y: 0, opacity: 0 }, { time: 100, x: 0, y: 0, opacity: 0 }, { time: 650, x: 0, y: 0, opacity: 1 }];
 
 export function NativeReactions() {
@@ -56,6 +56,21 @@ export function NativeReactions() {
           onTextLayout={event => measure("ends", index, event.nativeEvent.lines[0].width)}>{letters.slice(0, index + 1).join("")}</Text>
       </View>)}
     </View>
+    <MovingTitle style={{ position: "absolute", top: 340, left: 0, width: 1696, height: 92 }}>
+      <Text style={[titleTextStyle, { textAlign: "center", opacity: revealed && metrics ? 0 : 1 }]}>{title}</Text>
+      {metrics && letters.map((letter, index) => {
+        const target = reactions.reduce((nearest, reaction) => Math.abs(reaction.anchor - index) < Math.abs(nearest.anchor - index) ? reaction : nearest);
+        const text = <Text style={[titleTextStyle, { textAlign: "center" }]}>{letter}</Text>;
+        return <SceneMotionView key={index}
+          initialPose={{ x: 0, y: 0, scaleX: 1, scaleY: 1 }}
+          pose={{ x: revealed ? target.x - letterX(index) : 0, y: revealed ? target.y - titleY : 0,
+            scaleX: revealed ? 3.8 : 1, scaleY: revealed ? 3.8 : 1 }}
+          duration={1100} delay={reactions.indexOf(target) * 85}
+          style={{ position: "absolute", left: letterX(index) - metrics.widths[index] / 2 - 1, width: metrics.widths[index] + 2, height: 92 }}>
+          {revealed && <PlaybackKeyframeView keyframes={letterFade} delay={reactions.indexOf(target) * 85}>{text}</PlaybackKeyframeView>}
+        </SceneMotionView>;
+      })}
+    </MovingTitle>
     {metrics && reactions.map((reaction, reactionIndex) => <SceneMotionView key={reaction.uri}
       initialPose={{ x: 0, y: 0, scaleX: 0.025, scaleY: 0.025, opacity: 0 }}
       pose={{ x: revealed ? reaction.x - letterX(reaction.anchor) : 0, y: revealed ? reaction.y - titleY : 0,
@@ -71,20 +86,5 @@ export function NativeReactions() {
         </View>
       </PlaybackKeyframeView>}
     </SceneMotionView>)}
-    <MovingTitle style={{ position: "absolute", top: 340, left: 0, width: 1696, height: 92 }}>
-      <Text style={[titleTextStyle, { textAlign: "center", opacity: revealed && metrics ? 0 : 1 }]}>{title}</Text>
-      {metrics && letters.map((letter, index) => {
-        const target = reactions.reduce((nearest, reaction) => Math.abs(reaction.anchor - index) < Math.abs(nearest.anchor - index) ? reaction : nearest);
-        const text = <Text style={[titleTextStyle, { textAlign: "center" }]}>{letter}</Text>;
-        return <SceneMotionView key={index}
-          initialPose={{ x: 0, y: 0, scaleX: 1, scaleY: 1 }}
-          pose={{ x: revealed ? target.x - letterX(index) : 0, y: revealed ? target.y - titleY : 0,
-            scaleX: revealed ? 3.8 : 1, scaleY: revealed ? 3.8 : 1 }}
-          duration={1100} delay={reactions.indexOf(target) * 85}
-          style={{ position: "absolute", left: letterX(index) - metrics.widths[index] / 2 - 1, width: metrics.widths[index] + 2, height: 92 }}>
-          {revealed && <PlaybackKeyframeView keyframes={letterFade}>{text}</PlaybackKeyframeView>}
-        </SceneMotionView>;
-      })}
-    </MovingTitle>
   </View>;
 }
