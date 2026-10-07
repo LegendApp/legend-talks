@@ -34,7 +34,7 @@ function CompatibilityTable({ rows, compact = false }: { rows: Row[]; compact?: 
       <Text style={{ flex: 1, color: "#aab8cc", fontSize: 32 }}>Library</Text>
       {["macOS", "Windows"].map(name => <Text key={name} numberOfLines={1} style={{ width: compact ? 150 : 280, flexShrink: 0, textAlign: "center", color: "#ffffff", fontSize: 32, fontWeight: "600" }}>{name}</Text>)}
     </View>
-    {rows.map(row => <View key={row.name} style={{ flexDirection: "row", alignItems: "center", height: compact ? (rows.length > 9 ? 44 : 68) : 52, borderTopWidth: 1, borderTopColor: "#ffffff55" }}>
+    {rows.map(row => <View key={row.name} style={{ flexDirection: "row", alignItems: "center", height: compact ? (rows.length > 9 ? 44 : 68) : 52, borderTopWidth: 1, borderTopColor: "#ffffff18" }}>
       <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={{ flex: 1, color: "#f8fafc", fontSize: compact ? 32 : 36 }}>{row.name}</Text>
       <StatusCell value={row.macos} compact={compact} /><StatusCell value={row.windows} compact={compact} />
     </View>)}
