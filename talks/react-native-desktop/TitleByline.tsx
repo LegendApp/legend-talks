@@ -91,9 +91,9 @@ export function TitleByline({ uniforms, onMeasure }: {
     return () => { cancelled = true; cancel(); captured?.dispose(); };
   }, [onMeasure, separatorOffset]);
   return <>
-    <View ref={captureRef} collapsable={false} pointerEvents="none" accessible accessibilityLabel="Jay · Legend · Margelo"
+    <View ref={captureRef} collapsable={false} pointerEvents="none" accessible accessibilityLabel="Jay Meistrich · Legend · Margelo"
       style={{ position: "absolute", left: 0, top: bylineTop, width: 1920, height: bylineHeight, opacity: image ? 0 : 1, flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-      <Text style={bylineTextStyle}>Jay</Text>
+      <Text style={bylineTextStyle}>Jay Meistrich</Text>
       <View style={[separatorStyle, { top: separatorOffset ?? 0 }]} />
       <Text style={bylineTextStyle}>Legend</Text>
       <View style={[separatorStyle, { top: separatorOffset ?? 0 }]} />
