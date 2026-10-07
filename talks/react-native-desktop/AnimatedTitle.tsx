@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Text, View, type TextStyle } from "react-native";
-import Animated, { useAnimatedStyle, useDerivedValue, type SharedValue } from "react-native-reanimated";
-import { samplePlayback, usePlayback } from "@legend-apps/presentation";
+import Animated, { useAnimatedReaction, useAnimatedStyle, useDerivedValue, useSharedValue, type SharedValue } from "react-native-reanimated";
+import { samplePlayback, usePlayback, usePresentationValue } from "@legend-apps/presentation";
 import { sampleTitleEntrance, titleEntranceEffects, type TitleEntranceEffect } from "./titleEntrancePresets";
 
 type Slot = { text: string; index: number; count: number; lineIndex: number; lineCount: number };
@@ -75,10 +75,24 @@ export function AnimatedTitle({ children, effect = "soft-rise", fontSize = 104, 
 }) {
   const title = typeof children === "string" ? children : children.join("");
   const playback = usePlayback();
+  const speed = usePresentationValue("titleAnimationSpeed") ?? 1;
   const sampleClock = samplePlayback;
+  const sampled = useSharedValue({ key: "", time: 0 });
+  useAnimatedReaction(() => playback.value, state => {
+    "worklet";
+    if (state.phase === "outgoing" || state.phase === "paused") return;
+    sampled.value = {
+      key: clock === "step" ? `${state.slideKey}:${state.stepKey}` : state.slideKey,
+      time: Math.min(4, sampleClock(state, 4 / speed, clock) * speed),
+    };
+  }, [clock, speed]);
   const time = useDerivedValue(() => {
     "worklet";
-    return Math.min(4, sampleClock(playback.value, 4, clock));
+    const state = playback.value;
+    if (state.phase === "preview") return 4;
+    if (state.phase === "preparing") return 0;
+    const key = clock === "step" ? `${state.slideKey}:${state.stepKey}` : state.slideKey;
+    return sampled.value.key === key ? sampled.value.time : 0;
   }, [clock]);
   const preset = titleEntranceEffects.find(preset => preset.id === effect)!;
   const textStyle: TextStyle = { fontFamily: "Helvetica Neue", fontSize, lineHeight: Math.ceil(fontSize * 1.24),

@@ -42,11 +42,18 @@ test("compiled title worklets serialize and obey preparation, preview, steps, ex
     const input = { phase: "playing" as const, slideKey: "sample", stepKey: "initial", stepIndex: 0 };
     const playback = { value: createPlaybackState(input) };
     const callbacks: any[] = [];
-    const presentation: any = { usePlayback: () => playback,
+    const reactions: any[] = [];
+    let speed = 1;
+    const presentation: any = { usePlayback: () => playback, usePresentationValue: () => speed,
       samplePlayback: (state: typeof playback.value, preview: number, clock: "slide" | "step") =>
         state.phase === "preparing" ? 0 : state.phase === "preview" ? preview : clock === "slide" ? state.slideTime : state.stepTime };
     const reanimated: any = { default: { View: "AnimatedView", Text: "AnimatedText" }, __esModule: true,
-      useDerivedValue: (fn: any) => { callbacks.push(fn); return { get value() { return restore(fn)(); } }; },
+      useSharedValue: (value: any) => React.useRef({ value }).current,
+      useAnimatedReaction: (prepare: any, react: any) => { reactions.push({ prepare, react }); },
+      useDerivedValue: (fn: any) => { callbacks.push(fn); return { get value() {
+        for (const reaction of reactions) restore(reaction.react)(restore(reaction.prepare)());
+        return restore(fn)();
+      } }; },
       useAnimatedStyle: (fn: any) => { callbacks.push(fn); return fn(); } };
     presentation.self = presentation;
     reanimated.self = reanimated;
@@ -78,40 +85,85 @@ test("compiled title worklets serialize and obey preparation, preview, steps, ex
       return Function(`return (${fn.__initData.code});`)().bind({ __closure: closure });
     }
     for (const effect of titleEntranceEffects) {
-      callbacks.length = 0;
+      callbacks.length = reactions.length = 0;
+      speed = 1;
       let renderer: ReturnType<typeof create>;
-      const title = React.createElement(module.exports.AnimatedTitle, { effect: effect.id }, "React Native\non the desktop");
-      await act(async () => { renderer = create(steps.exports.resolveSteps(title).content); });
+      const title = () => React.createElement(module.exports.AnimatedTitle, { effect: effect.id }, "React Native\non the desktop");
+      await act(async () => { renderer = create(steps.exports.resolveSteps(title()).content); });
       assert.equal(renderer!.root.findByProps({ accessibilityRole: "header" }).props.accessibilityLabel, "React Native\non the desktop");
+      for (const reaction of reactions) {
+        assert.equal(typeof reaction.prepare.__workletHash, "number");
+        assert.equal(typeof reaction.react.__workletHash, "number");
+        restore(reaction.prepare); restore(reaction.react);
+      }
       const worklets = callbacks.map(fn => {
         assert.equal(typeof fn.__workletHash, "number");
         return restore(fn);
       });
       assert.ok(worklets.length > 0, effect.id);
       playback.value = createPlaybackState(input);
-      const initial = worklets.map(fn => fn());
+      const sample = () => {
+        for (const reaction of reactions) restore(reaction.react)(restore(reaction.prepare)());
+        return worklets.map(fn => fn());
+      };
+      const initial = sample();
       playback.value = advancePlayback(advancePlayback(playback.value, 0), 550);
-      const moving = worklets.map(fn => fn());
+      const moving = sample();
       assert.notDeepEqual(moving, initial, effect.id);
       playback.value = transitionPlayback(playback.value, { ...input, stepKey: "next-step", stepIndex: 1 });
-      assert.deepEqual(worklets.map(fn => fn()), moving, `${effect.id}: slide entrance must not restart on a step`);
+      assert.deepEqual(sample(), moving, `${effect.id}: slide entrance must not restart on a step`);
       for (const phase of ["paused", "outgoing"] as const) {
         playback.value = transitionPlayback(playback.value, { ...input, phase });
         playback.value = advancePlayback(playback.value, 10000);
-        assert.deepEqual(worklets.map(fn => fn()), moving, `${effect.id}: ${phase} content freezes`);
+        speed = 3;
+        await act(async () => renderer!.update(steps.exports.resolveSteps(title()).content));
+        assert.deepEqual(sample(), moving, `${effect.id}: ${phase} content freezes even when speed changes`);
       }
+      speed = 0.25;
+      await act(async () => renderer!.update(steps.exports.resolveSteps(title()).content));
       playback.value = transitionPlayback(playback.value, { ...input, phase: "preview" });
-      const preview = worklets.map(fn => fn());
+      const preview = sample();
       playback.value = advancePlayback(playback.value, 20000);
-      assert.deepEqual(worklets.map(fn => fn()), preview, `${effect.id}: preview is static`);
+      assert.deepEqual(sample(), preview, `${effect.id}: preview is static`);
+      assert.equal(sample()[0], 4, `${effect.id}: slow preview still shows the settled pose`);
       playback.value = transitionPlayback(playback.value, { ...input, phase: "preparing" });
-      assert.deepEqual(worklets.map(fn => fn()), initial, effect.id);
+      assert.deepEqual(sample(), initial, effect.id);
       playback.value = transitionPlayback(playback.value, { ...input, slideKey: "return-visit" });
-      assert.deepEqual(worklets.map(fn => fn()), initial, `${effect.id}: returning starts fresh`);
+      assert.deepEqual(sample(), initial, `${effect.id}: returning starts fresh`);
+      playback.value = advancePlayback(advancePlayback(playback.value, 0), 500);
+      assert.equal(sample()[0], 0.125, `${effect.id}: quarter speed scales shared slide time`);
+      speed = 2;
+      await act(async () => renderer!.update(steps.exports.resolveSteps(title()).content));
+      assert.equal(sample()[0], 1, `${effect.id}: settings update reaches a mounted title`);
+      if (effect.id === "word-lift") {
+        callbacks.length = reactions.length = 0;
+        const stepTitle = React.createElement(module.exports.AnimatedTitle, { effect: effect.id, clock: "step" }, "Step title");
+        await act(async () => renderer!.update(steps.exports.resolveSteps(stepTitle).content));
+        const stepTime = restore(callbacks[0]);
+        for (const reaction of reactions) restore(reaction.react)(restore(reaction.prepare)());
+        assert.equal(stepTime(), 1);
+        playback.value = transitionPlayback(playback.value, { ...input, slideKey: "return-visit", stepKey: "new-step", stepIndex: 1 });
+        assert.equal(stepTime(), 0, "new step cannot expose the preceding step's sampled time before the reaction runs");
+        for (const reaction of reactions) restore(reaction.react)(restore(reaction.prepare)());
+        assert.equal(stepTime(), 0);
+        playback.value = advancePlayback(advancePlayback(playback.value, 1000), 1250);
+        for (const reaction of reactions) restore(reaction.react)(restore(reaction.prepare)());
+        assert.equal(stepTime(), 0.5, "step entrance uses the same speed setting");
+      }
       await act(async () => renderer!.unmount());
     }
   } finally {
     Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: previousActEnvironment });
     fs.rmSync(directory, { recursive: true, force: true });
   }
+});
+
+
+test("the nine requested entrances finish within one second including their stagger", () => {
+  const faster = ["word-lift", "letter-wave", "center-out", "split-arrival", "zipper", "elastic-drop", "hinge", "scatter", "stretch-release"] as const;
+  for (const effect of faster) {
+    assert.deepEqual(sampleTitleEntrance(effect, 1, 16, 17), sampleTitleEntrance(effect, 4, 16, 17), effect);
+  }
+  assert.notDeepEqual(sampleTitleEntrance("spin-in", 1, 16, 17), sampleTitleEntrance("spin-in", 4, 16, 17));
+  assert.equal(sampleTitleEntrance("typewriter", 1, 16, 17).opacity, 0);
 });

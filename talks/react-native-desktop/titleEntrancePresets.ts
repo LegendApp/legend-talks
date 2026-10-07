@@ -30,6 +30,12 @@ const settled: TitleEntranceFrame = {
 export function sampleTitleEntrance(effect: TitleEntranceEffect, seconds: number, index = 0, count = 1,
   lineIndex = index, lineCount = count): TitleEntranceFrame {
   "worklet";
+  switch (effect) {
+    case "word-lift": case "letter-wave": case "center-out": case "split-arrival":
+    case "zipper": case "elastic-drop": case "hinge": case "scatter": case "stretch-release":
+      seconds *= 1.75;
+      break;
+  }
   const order = index / Math.max(1, count - 1);
   const distance = lineIndex - (lineCount - 1) / 2;
   const centerOrder = Math.abs(distance) / Math.max(1, (lineCount - 1) / 2);
