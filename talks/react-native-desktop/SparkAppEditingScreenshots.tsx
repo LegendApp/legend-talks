@@ -32,10 +32,10 @@ export function SparkAppEditingScreenshots({ before, after }: { before: string; 
   const buttonX = useDerivedValue(() => frame.value.generating ? 532 : 500);
   const spinnerOpacity = useDerivedValue(() => frame.value.generating ? 1 : 0);
   const spinnerTransform = useDerivedValue(() => [{ translateX: 506 }, { translateY: 752 }, { rotate: frame.value.spin }]);
-  return <View style={{ width: 1696, height: 710, alignSelf: "center", marginTop: 24, overflow: "hidden" }}>
+  return <View style={{ width: 1696, height: 710, alignSelf: "center", marginTop: 24, borderRadius: 24, overflow: "hidden" }}>
     <SceneMotionView initialPose={{ x: 0, y: 0, scaleX: 1, scaleY: 1 }}
       pose={{ x: focused ? focusedX : 0, y: focused ? focusedY : 0, scaleX: focused ? zoom : 1, scaleY: focused ? zoom : 1 }}
-      duration={850} style={{ position: "absolute", left: (1696 - width) / 2, width, height: 710 }}>
+      duration={850} style={{ position: "absolute", left: (1696 - width) / 2, width, height: 710, borderRadius: 34, overflow: "hidden" }}>
       <Image source={{ uri: before }} style={{ width, height: 710 }} resizeMode="contain"
         accessibilityLabel="Legend Diff Customize App before editing, with gray appearance text and an empty prompt" />
       <Animated.Image source={{ uri: after }} style={[{ position: "absolute", width, height: 710 }, resultStyle]}
