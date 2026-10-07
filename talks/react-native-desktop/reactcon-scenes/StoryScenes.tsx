@@ -23,17 +23,18 @@ export function Measured() {
 export function QuestionBlockers({ title }: { title?: ReactNode }) {
   const step = usePresentationValue("stepIndex");
   const revealed = step >= 1;
-  const blockers = step >= 2;
   return <View style={{ width: 1696, height: 850, alignSelf: "center" }}>
     <MovingTitle style={{ position: "absolute", top: 20, width: 1696, height: 104 }}>
-      <SceneMotionView hidden={blockers}
-        pose={{ y: revealed ? 0 : 280, scaleX: revealed ? 0.9 : 1, scaleY: revealed ? 0.9 : 1, opacity: blockers ? 0 : 1 }}
+      <SceneMotionView
+        pose={{ y: revealed ? 0 : 280, scaleX: revealed ? 0.9 : 1, scaleY: revealed ? 0.9 : 1 }}
         duration={850} style={{ position: "absolute", width: 1696 }}>
-        {title ?? <Text style={titleStyle}>Why isn’t everyone doing this?</Text>}
-      </SceneMotionView>
-      <SceneMotionView hidden={!blockers} pose={{ opacity: blockers ? 1 : 0 }} duration={850}
-        style={{ position: "absolute", width: 1696 }}>
-        <Text style={{ ...titleStyle, fontSize: 72 }}>What’s holding RN desktop back</Text>
+        <SceneMotionView hidden={revealed} pose={{ opacity: revealed ? 0 : 1 }} duration={850}>
+          {title ?? <Text style={titleStyle}>Why isn’t everyone doing this?</Text>}
+        </SceneMotionView>
+        <SceneMotionView hidden={!revealed} pose={{ opacity: revealed ? 1 : 0 }} duration={850}
+          style={{ position: "absolute", width: 1696 }}>
+          <Text style={titleStyle}>What’s holding desktop back</Text>
+        </SceneMotionView>
       </SceneMotionView>
     </MovingTitle>
     <View style={{ position: "absolute", top: 140, width: 1696 }}>
