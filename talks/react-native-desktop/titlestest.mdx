@@ -1,0 +1,187 @@
+---
+title: Title entrance gallery
+width: 1920
+height: 1080
+transition: none
+template: ./TitleTestFrame.tsx
+theme:
+  backgroundColor: '#0b0d14'
+  color: '#f8fafc'
+presenter:
+  showNext: true
+  showNotes: true
+---
+
+import { AnimatedTitle } from "./AnimatedTitle";
+import { TitleTestIndex } from "./TitleTestFrame";
+
+<TitleTestIndex />
+
+<!--
+Click a preset in the index or advance to compare the sixteen entrances. Each starts automatically as the slide becomes active. Go back one slide, then forward, to replay. The next-slide preview shows the settled title.
+
+To use a preset on another slide, import AnimatedTitle from "./AnimatedTitle" and replace its heading with:
+<AnimatedTitle effect="word-lift">{"Your slide title"}</AnimatedTitle>
+
+The default font size is 104. These samples use 148. Use a newline for an intentional line break. Choose clock="step" only for a title deliberately revealed on a later step. Avoid wrapping a new title in a matching shared element if you want to see its entrance rather than move the previous title.
+-->
+
+---
+title: Soft rise
+effectLabel: Soft rise
+sampleNumber: 01 / 16
+---
+
+<AnimatedTitle effect="soft-rise" fontSize={148}>{"React Native\non the desktop"}</AnimatedTitle>
+
+<!-- A quiet whole-title rise and fade. Reuse with effect="soft-rise". -->
+
+---
+title: Word lift
+effectLabel: Word lift
+sampleNumber: 02 / 16
+---
+
+<AnimatedTitle effect="word-lift" fontSize={148}>{"React Native\non the desktop"}</AnimatedTitle>
+
+<!-- Words slide up through individual masks, with a short stagger. Reuse with effect="word-lift". -->
+
+---
+title: Letter wave
+effectLabel: Letter wave
+sampleNumber: 03 / 16
+---
+
+<AnimatedTitle effect="letter-wave" fontSize={148}>{"React Native\non the desktop"}</AnimatedTitle>
+
+<!-- A traveling letter wave that settles into a clean title. Reuse with effect="letter-wave". -->
+
+---
+title: Center out
+effectLabel: Center out
+sampleNumber: 04 / 16
+---
+
+<AnimatedTitle effect="center-out" fontSize={148}>{"React Native\non the desktop"}</AnimatedTitle>
+
+<!-- The center letters of each line arrive first; the outer letters follow. Reuse with effect="center-out". -->
+
+---
+title: Tracking collapse
+effectLabel: Tracking collapse
+sampleNumber: 05 / 16
+---
+
+<AnimatedTitle effect="tracking-collapse" fontSize={148}>{"React Native\non the desktop"}</AnimatedTitle>
+
+<!-- Widely spaced letters tighten into their final positions. Reuse with effect="tracking-collapse". -->
+
+---
+title: Split arrival
+effectLabel: Split arrival
+sampleNumber: 06 / 16
+---
+
+<AnimatedTitle effect="split-arrival" fontSize={148}>{"React Native\non the desktop"}</AnimatedTitle>
+
+<!-- Alternating words arrive from opposite sides. Reuse with effect="split-arrival". -->
+
+---
+title: Zipper
+effectLabel: Zipper
+sampleNumber: 07 / 16
+---
+
+<AnimatedTitle effect="zipper" fontSize={148}>{"React Native\non the desktop"}</AnimatedTitle>
+
+<!-- Alternating letters enter from above and below with a slight tilt. Reuse with effect="zipper". -->
+
+---
+title: Elastic drop
+effectLabel: Elastic drop
+sampleNumber: 08 / 16
+---
+
+<AnimatedTitle effect="elastic-drop" fontSize={148}>{"React Native\non the desktop"}</AnimatedTitle>
+
+<!-- Words drop from above, overshoot, and settle with a damped bounce. Reuse with effect="elastic-drop". -->
+
+---
+title: Hinge
+effectLabel: Hinge
+sampleNumber: 09 / 16
+---
+
+<AnimatedTitle effect="hinge" fontSize={148}>{"React Native\non the desktop"}</AnimatedTitle>
+
+<!-- Words rotate forward in perspective, like hinged panels. Reuse with effect="hinge". -->
+
+---
+title: Spin in
+effectLabel: Spin in
+sampleNumber: 10 / 16
+---
+
+<AnimatedTitle effect="spin-in" fontSize={148}>{"React Native\non the desktop"}</AnimatedTitle>
+
+<!-- Small tilted letters spin into their full-size resting positions. Reuse with effect="spin-in". -->
+
+---
+title: Scatter
+effectLabel: Scatter
+sampleNumber: 11 / 16
+---
+
+<AnimatedTitle effect="scatter" fontSize={148}>{"React Native\non the desktop"}</AnimatedTitle>
+
+<!-- Letters assemble from different directions and rotations. Reuse with effect="scatter". -->
+
+---
+title: Stretch release
+effectLabel: Stretch release
+sampleNumber: 12 / 16
+---
+
+<AnimatedTitle effect="stretch-release" fontSize={148}>{"React Native\non the desktop"}</AnimatedTitle>
+
+<!-- Tall, compressed words expand into normal proportions. Reuse with effect="stretch-release". -->
+
+---
+title: Typewriter
+effectLabel: Typewriter
+sampleNumber: 13 / 16
+---
+
+<AnimatedTitle effect="typewriter" fontSize={148}>{"React Native\non the desktop"}</AnimatedTitle>
+
+<!-- Letters appear discretely in reading order; the layout stays still. Reuse with effect="typewriter". -->
+
+---
+title: Left-to-right wipe
+effectLabel: Left-to-right wipe
+sampleNumber: 14 / 16
+---
+
+<AnimatedTitle effect="wipe" fontSize={148}>{"React Native\non the desktop"}</AnimatedTitle>
+
+<!-- A moving mask reveals the title without moving or reflowing its text. Reuse with effect="wipe". -->
+
+---
+title: Center curtain
+effectLabel: Center curtain
+sampleNumber: 15 / 16
+---
+
+<AnimatedTitle effect="curtain" fontSize={148}>{"React Native\non the desktop"}</AnimatedTitle>
+
+<!-- A mask opens from the center of the title towards both edges. Reuse with effect="curtain". -->
+
+---
+title: Chromatic glitch
+effectLabel: Chromatic glitch
+sampleNumber: 16 / 16
+---
+
+<AnimatedTitle effect="chromatic-glitch" fontSize={148}>{"React Native\non the desktop"}</AnimatedTitle>
+
+<!-- Cyan and coral text echoes flicker and converge into the white title. Reuse with effect="chromatic-glitch". -->
