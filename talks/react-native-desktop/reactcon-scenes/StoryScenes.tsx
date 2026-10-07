@@ -3,6 +3,7 @@ import { Text, View } from "react-native";
 import { MovingTitle } from "../MovingTitle";
 import { Arrive } from "./Motion";
 import { DesktopObjections } from "../ObjectionsReactcon";
+import type { ReactNode } from "react";
 
 const ink = "#f8fafc", cyan = "#67e8f9";
 const titleStyle = { color: ink, fontSize: 80, lineHeight: 104, fontWeight: "600" as const, textAlign: "center" as const };
@@ -19,7 +20,7 @@ export function Measured() {
   </View>;
 }
 
-export function QuestionBlockers() {
+export function QuestionBlockers({ title }: { title?: ReactNode }) {
   const step = usePresentationValue("stepIndex");
   const revealed = step >= 1;
   const blockers = step >= 2;
@@ -28,7 +29,7 @@ export function QuestionBlockers() {
       <SceneMotionView hidden={blockers}
         pose={{ y: revealed ? 0 : 280, scaleX: revealed ? 0.9 : 1, scaleY: revealed ? 0.9 : 1, opacity: blockers ? 0 : 1 }}
         duration={850} style={{ position: "absolute", width: 1696 }}>
-        <Text style={titleStyle}>Why isn’t everyone doing this?</Text>
+        {title ?? <Text style={titleStyle}>Why isn’t everyone doing this?</Text>}
       </SceneMotionView>
       <SceneMotionView hidden={!blockers} pose={{ opacity: blockers ? 1 : 0 }} duration={850}
         style={{ position: "absolute", width: 1696 }}>

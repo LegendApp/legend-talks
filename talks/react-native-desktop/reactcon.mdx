@@ -62,6 +62,7 @@ import musicMemoryCapture from "./rnconnection-assets/rnl-2025/musicmemory.png";
 import { AppShowcase } from "./AppCarousel"
 import { LegendAppVideo } from "./LegendAppVideo"
 import { MovingTitle } from "./MovingTitle"
+import { AnimatedTitle } from "./AnimatedTitle"
 import { CompromiseQuestion } from "./reactcon-scenes/CompromiseQuestion"
 import { DirectoryTitle } from "./DirectoryTitle"
 import directoryScreenshot from "./rnconnection-assets/directory-legend-list.png";
@@ -91,7 +92,7 @@ title: React Native Directory
 eyebrow: Story
 ---
 
-<DirectoryTitle />
+<DirectoryTitle title={<AnimatedTitle effect="letter-wave" fontSize={80} width={880} color="#61dafb" textStyle={{ letterSpacing: -2 }}>React Native Directory</AnimatedTitle>} />
 
 <!--
 This whole journey started with React Native Directory.
@@ -119,7 +120,7 @@ steps: 1
 eyebrow: Story
 ---
 
-# Legend {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+<MovingTitle><View style={{ marginBottom: 36 }}><AnimatedTitle effect="letter-wave" fontSize={72} textStyle={{ fontWeight: "600", letterSpacing: -1.8, lineHeight: 72 }}>Legend</AnimatedTitle></View></MovingTitle>
 
 <LegendAppVideo />
 
@@ -184,7 +185,7 @@ eyebrow: 'Legend Music / Apple Silicon release'
 steps: 2
 ---
 
-# Legend Music · app size {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+<MovingTitle><View style={{ marginBottom: 36 }}><AnimatedTitle effect="letter-wave" fontSize={72} textStyle={{ fontWeight: "600", letterSpacing: -1.8, lineHeight: 72 }}>Legend Music · app size</AnimatedTitle></View></MovingTitle>
 
 <MusicSizeReveal />
 
@@ -398,7 +399,7 @@ reviewFullStage: true
 steps: 3
 ---
 
-<NativeUIMatters />
+<NativeUIMatters title={<AnimatedTitle effect="letter-wave" fontSize={64} color="white">Native UI Matters</AnimatedTitle>} />
 
 <!--
 1. This is why I care about native UI.
@@ -706,7 +707,7 @@ title: "Why isn't everyone doing this?"
 steps: 5
 ---
 
-<QuestionBlockers />
+<QuestionBlockers title={<AnimatedTitle effect="letter-wave" fontSize={80} textStyle={{ fontWeight: "600", lineHeight: 104 }}>Why isn’t everyone doing this?</AnimatedTitle>} />
 
 <!--
 1. Why isn't everyone doing this?
@@ -742,7 +743,7 @@ eyebrow: 'Desktop foundations / Expo Desktop'
 title: Expo Desktop
 ---
 
-<ExpoDesktopPortal />
+<ExpoDesktopPortal title={<View style={{ marginTop: 12 }}><AnimatedTitle effect="letter-wave" fontSize={88} color="white" textStyle={{ fontWeight: "600" }}>Expo Desktop</AnimatedTitle></View>} />
 
 <!--
 1. Expo doesn’t yet fully support desktop platforms, but Jamie has gotten it a long way towards working well. There are still gaps and rough edges. But it gives us a shared starting point instead of setting everything up ourselves.
@@ -755,7 +756,7 @@ It’s a really cool project.
 title: Desktop is behind
 ---
 
-# Desktop is behind {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+<MovingTitle><View style={{ marginBottom: 36 }}><AnimatedTitle effect="letter-wave" fontSize={72} textStyle={{ fontWeight: "600", letterSpacing: -1.8, lineHeight: 72 }}>Desktop is behind</AnimatedTitle></View></MovingTitle>
 
 <PlatformVersions />
 

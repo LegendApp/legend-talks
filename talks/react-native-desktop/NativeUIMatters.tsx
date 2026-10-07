@@ -5,6 +5,7 @@ import { Text, View } from "react-native";
 import { AppCarousel } from "./AppCarousel";
 import { GlassPanels } from "./GlassPanels";
 import { MovingTitle } from "./MovingTitle";
+import type { ReactNode } from "react";
 
 const containerPanels = [{ x: 5, y: 5, width: 1170, height: 650, radius: 28 }];
 const examples = ["Platform Fit", "OS Integration", "Latest OS Features"] as const;
@@ -162,11 +163,11 @@ function Example({ index, width, height }: { index: number; width: number; heigh
   </View>;
 }
 
-export function NativeUIMatters() {
+export function NativeUIMatters({ title }: { title?: ReactNode }) {
   const step = Math.min(usePresentationValue("stepIndex"), 2);
   return <View style={{ width: 1920, height: 1080, overflow: "hidden" }}>
     <MovingTitle style={{ position: "absolute", left: 112, top: 65, width: 1696, zIndex: 2000 }}>
-      <Text style={{ color: "white", fontSize: 64, fontWeight: "700", textAlign: "center" }}>Native UI Matters</Text>
+      {title ?? <Text style={{ color: "white", fontSize: 64, fontWeight: "700", textAlign: "center" }}>Native UI Matters</Text>}
     </MovingTitle>
     <AppCarousel items={examples} position={step} renderCard={(name, card) => <Example index={examples.indexOf(name)} width={card.width} height={card.height} />} />
   </View>;

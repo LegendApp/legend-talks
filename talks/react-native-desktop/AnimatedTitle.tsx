@@ -70,8 +70,9 @@ function buildSlots(text: string, unit: "word" | "letter") {
   });
 }
 
-export function AnimatedTitle({ children, effect = "soft-rise", fontSize = 104, width = 1696, color = "#f8fafc", clock = "slide" }: {
+export function AnimatedTitle({ children, effect = "soft-rise", fontSize = 104, width = 1696, color = "#f8fafc", clock = "slide", textStyle: titleStyle }: {
   children: string | string[]; effect?: TitleEntranceEffect; fontSize?: number; width?: number; color?: string; clock?: "slide" | "step";
+  textStyle?: Pick<TextStyle, "fontFamily" | "fontWeight" | "lineHeight" | "letterSpacing">;
 }) {
   const title = typeof children === "string" ? children : children.join("");
   const playback = usePlayback();
@@ -96,7 +97,7 @@ export function AnimatedTitle({ children, effect = "soft-rise", fontSize = 104, 
   }, [clock]);
   const preset = titleEntranceEffects.find(preset => preset.id === effect)!;
   const textStyle: TextStyle = { fontFamily: "Helvetica Neue", fontSize, lineHeight: Math.ceil(fontSize * 1.24),
-    fontWeight: "700", color, textAlign: "center" };
+    fontWeight: "700", color, textAlign: "center", ...titleStyle };
   const lines = useMemo(() => preset.unit === "word" || preset.unit === "letter" ? buildSlots(title, preset.unit) : [], [title, preset.unit]);
   const motionProps = { effect, time };
   return <View accessible accessibilityRole="header" accessibilityLabel={title} style={{ width, alignSelf: "center" }}>
