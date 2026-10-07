@@ -96,9 +96,10 @@ export function NineApps({ mode: requestedMode, tour: requestedTour = "full" }: 
       const uri = recordings[id].poster;
       return (
         <SharedElement id={`nine-app-${id}`} style={{ flex: 1 }}>
-          <View style={{ height: captionHeight, minHeight: 24, justifyContent: "center", alignItems: "center", opacity: mode === "grid" ? 1 : 0 }}>
+          <SceneMotionView initialPose={{ opacity: 0 }} pose={{ opacity: mode === "grid" ? 1 : 0 }} duration={650}
+            style={{ height: captionHeight, minHeight: 24, justifyContent: "center", alignItems: "center" }}>
             {mode === "grid" && <Text style={{ fontSize: Math.max(17, card.width * 0.027), fontWeight: "700", color: "#f1f5f9" }}>{names[id]}</Text>}
-          </View>
+          </SceneMotionView>
           <View style={{ flex: 1, borderRadius: 12, overflow: "hidden" }}>
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#14253a" }}>
               {!isPreview && id === "gpui" ? <>
@@ -118,7 +119,7 @@ export function NineApps({ mode: requestedMode, tour: requestedTour = "full" }: 
       const card = appCardLayout(index, mode, selected);
       const scale = card.width / filmstripWidth;
       // Keep text laid out onstage and blur it with the same focus curve as the video.
-      return <SceneMotionView key={`title-${id}`} duration={500}
+      return <SceneMotionView key={`title-${id}`} initialPose={{ opacity: 0 }} duration={500}
         pose={{ x: card.x - 960, y: (filmstripWidth - card.width) * 0.28125,
           scaleX: scale, scaleY: scale, opacity: card.opacity }}
         style={{ position: "absolute", left: filmstripLeft, top: 67.5, width: filmstripWidth,
