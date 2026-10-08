@@ -19,7 +19,7 @@ Function("require", "module", "exports", code)(name => name === "@shopify/react-
   : name.endsWith(".png") ? name : deckRequire(name), module, module.exports);
 const { ElectronFire, electronFireShader } = module.exports;
 
-test("fire retains its flames while varied poop emojis fall and burst into smaller emojis", async () => {
+test("fire builds over five seconds while varied poop emojis fall, splash, and keep accumulating", async () => {
   const require = createRequire(new URL("../../../package.json", import.meta.url));
   const skiaRequire = createRequire(require.resolve("@shopify/react-native-skia"));
   const entry = skiaRequire.resolve("canvaskit-wasm");
@@ -55,18 +55,24 @@ test("fire retains its flames while varied poop emojis fall and burst into small
     const burning = render(2.4);
     expect(burning).not.toEqual(render(2.9));
     expect(burning).toEqual(render(2.4));
+    const early = render(1.0);
+    const fullyBurning = render(5.4);
+    let earlyFire = 0, fullFire = 0;
     let hotCore = 0, sparks = 0;
     for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
       const offset = (y * width + x) * 4;
-      const [r, g, , a] = burning.subarray(offset, offset + 4);
+      const [r, g, , a] = fullyBurning.subarray(offset, offset + 4);
       if (y > 160 && r > 240 && g > 190 && a > 150) hotCore++;
       if (y < 65 && r > 200 && g > 80 && a > 15) sparks++;
+      if (y < 235) { earlyFire += early[offset + 3]; fullFire += a; }
     }
     expect(hotCore).toBeGreaterThan(100);
     expect(sparks).toBeGreaterThan(5);
+    expect(earlyFire).toBeGreaterThan(0);
+    expect(fullFire).toBeGreaterThan(earlyFire * 5);
     const areas = [];
     let deepDrops = 0, splashes = 0, faces = 0;
-    for (const frame of [burning, render(2.0), render(3.1), render(5.4)]) {
+    for (const frame of [burning, render(2.0), render(3.1), fullyBurning]) {
       const lanes = [0, 0, 0, 0];
       for (let y = 270; y < height; y++) for (let x = 0; x < width; x++) {
         const offset = (y * width + x) * 4;
@@ -84,6 +90,19 @@ test("fire retains its flames while varied poop emojis fall and burst into small
     expect(splashes).toBeGreaterThan(30);
     expect(faces).toBeGreaterThan(20);
     expect(Math.max(...areas)).toBeGreaterThan(Math.min(...areas) * 2);
+    const accumulated = render(16.0);
+    let oldDeposit = 0, initialPile = 0, laterPile = 0;
+    for (let y = floorY - 140; y < height; y++) for (let x = 0; x < width; x++) {
+      const offset = (y * width + x) * 4 + 3;
+      if (fullyBurning[offset] > 80) initialPile++;
+      if (accumulated[offset] > 80) laterPile++;
+      if (y >= floorY - 1 && fullyBurning[offset] > 80) {
+        oldDeposit++;
+        expect(accumulated[offset]).toBeGreaterThanOrEqual(fullyBurning[offset] - 1);
+      }
+    }
+    expect(oldDeposit).toBeGreaterThan(10);
+    expect(laterPile).toBeGreaterThan(initialPile * 1.4);
   } finally {
     paint.delete();
     surface.delete();

@@ -37,27 +37,52 @@ float4 poop(float2 p,float2 center,float2 size,float angle) {
   if(abs(q.x)>0.5 || abs(q.y)>0.5) return float4(0);
   return poopImage.eval((q+0.5)*256.0);
 }
+float4 splash(float2 p,float id,float generation,float local,float period,float origin,float release,float sourceY,bool settled) {
+  float variation=hash(float2(id,generation+57.0));
+  float size=28.0+42.0*variation*variation;
+  float extension=2.0+hash(float2(id,83.0))*4.0;
+  float ground=floorY-generation*10.0;
+  float impact=release+sqrt(max(1.0,ground-size*0.72-sourceY-extension)/510.0);
+  float hit=local-generation*period-impact;
+  if(hit<0.0 || p.y<ground-110.0 || p.y>ground+14.0) return float4(0);
+  float4 result=float4(0);
+  for(int bead=0;bead<6;bead++) {
+    float seed=hash(float2(id+float(bead)*13.0,generation+91.0));
+    float smallSize=5.0+size*(0.10+seed*0.15);
+    float vx=(float(bead)-2.5)*46.0*(0.65+seed*0.6);
+    float vy=110.0+seed*155.0;
+    float landing=vy/420.0;
+    if(settled ? hit<landing : hit>=landing) continue;
+    float flying=min(hit,landing);
+    float2 position=float2(origin+vx*flying,ground-smallSize*0.4
+      -(settled ? 0.0 : vy*hit-420.0*hit*hit));
+    float4 drop=poop(p,position,float2(smallSize),flying*(seed-0.5)*7.0);
+    result=drop+result*(1.0-drop.a);
+  }
+  return result;
+}
 half4 main(float2 p) {
-  float ignition=smoothstep(0.0,0.55,time);
+  float ignition=smoothstep(0.0,5.0,time);
   if(ignition<=0.0) return half4(0);
   float x=p.x-112.0, h=190.0-p.y;
   float edge=smoothstep(-18.0,12.0,x)*(1.0-smoothstep(fireWidth-12.0,fireWidth+18.0,x));
   float3 color=float3(0);
   float alpha=0.0;
   if(p.y<184.0+barHeight+25.0) {
+    float spread=smoothstep(-18.0,24.0,(fireWidth+24.0)*ignition-x);
     float drift=sin(time*1.4+h*0.022)*12.0;
     float2 flow=float2((x+drift)*0.026,h*0.026-time*1.9);
     float warp=(turbulence(flow*0.53)-0.47)*42.0*clamp(h/100.0,0.0,1.0);
     float billow=turbulence(flow+float2(warp*0.025,0));
-    float height=75.0+100.0*turbulence(float2(x*0.022,time*0.75));
+    float height=(75.0+100.0*turbulence(float2(x*0.022,time*0.75)))*(0.3+0.7*ignition);
     float detail=noise(flow*3.1+float2(0,-time*1.3));
     float tongue=0.82-h/height+(billow-0.46)*0.92+(detail-0.5)*0.09;
-    float body=smoothstep(0.02,0.15,tongue)*edge*smoothstep(-35.0,-13.0,h);
+    float body=smoothstep(0.02,0.15,tongue)*edge*smoothstep(-35.0,-13.0,h)*ignition*spread;
     float heat=clamp(tongue*1.08+(detail-0.5)*0.13,0.0,1.0);
     float3 flame=mix(float3(0.85,0.055,0.005),float3(1.0,0.40,0.025),smoothstep(0.05,0.5,heat));
     flame=mix(flame,float3(1.0,0.86,0.27),smoothstep(0.38,0.8,heat));
     flame=mix(flame,float3(1.0,0.98,0.80),smoothstep(0.88,1.0,heat));
-    float glow=exp(-abs(h-8.0)*0.025)*edge*(0.7+0.3*billow)*0.32;
+    float glow=exp(-abs(h-8.0)*0.025)*edge*(0.7+0.3*billow)*0.32*ignition*spread;
     color=float3(1.0,0.16,0.015)*glow;
     alpha=glow;
     color=flame*body+color*(1.0-body);
@@ -79,7 +104,7 @@ half4 main(float2 p) {
       float spark=exp(-dot(delta/float2(radius,radius*2.1),delta/float2(radius,radius*2.1))*1.5);
       float halo=exp(-dot(delta,delta)*0.07)*0.18;
       float life=smoothstep(0.02,0.13,age)*(1.0-smoothstep(0.65,1.0,age));
-      float ember=(spark+halo)*life;
+      float ember=(spark+halo)*life*ignition*smoothstep(-18.0,24.0,(fireWidth+24.0)*ignition-origin);
       color+=float3(1.0,0.46+seed*0.32,0.08)*ember;
       alpha+=ember;
     }
@@ -103,7 +128,8 @@ half4 main(float2 p) {
     float extension=2.0+seed*4.0;
     float detached=max(age-release,0.0);
     float startY=sourceY+extension+size*0.32;
-    float impact=release+sqrt(max(1.0,floorY-size*0.4-startY)/510.0);
+    float ground=floorY-floor(cycle)*10.0;
+    float impact=release+sqrt(max(1.0,ground-size*0.4-startY)/510.0);
     if(age<impact) {
       float stretch=smoothstep(release*0.6,release,age)*(1.0-smoothstep(0.0,0.2,detached));
       float2 scale=size*max(0.15,growth)*float2(1.0-stretch*0.15,1.0+stretch*0.18);
@@ -112,33 +138,26 @@ half4 main(float2 p) {
       color=drop.rgb+color*(1.0-drop.a);
       alpha=drop.a+alpha*(1.0-drop.a);
     }
-    if(p.y<floorY-120.0) continue;
-    // Keep the preceding impact alive while the next large drop forms.
     for(int previous=0;previous<2;previous++) {
-      float oldVariation=hash(float2(id,floor(cycle)-float(previous)+57.0));
-      float oldSize=28.0+42.0*oldVariation*oldVariation;
-      float oldImpact=release+sqrt(max(1.0,floorY-oldSize*0.72-sourceY-extension)/510.0);
-      float hit=age+float(previous)*period-oldImpact;
-      if(hit<0.0 || hit>period || floor(cycle)<float(previous)) continue;
-      for(int bead=0;bead<6;bead++) {
-        float splashSeed=hash(float2(id+float(bead)*13.0,floor(cycle)-float(previous)+91.0));
-        float smallSize=5.0+oldSize*(0.10+splashSeed*0.15);
-        float vx=(float(bead)-2.5)*46.0*(0.65+splashSeed*0.6);
-        float vy=110.0+splashSeed*155.0;
-        float landing=vy/420.0;
-        float flying=min(hit,landing);
-        float2 position=float2(origin+vx*flying,
-          min(floorY-smallSize*0.4,floorY-smallSize*0.4-vy*hit+420.0*hit*hit));
-        float fade=1.0-smoothstep(period*0.65,period,hit);
-        float4 splash=poop(float2(x,p.y),position,float2(smallSize),flying*(splashSeed-0.5)*7.0)*fade;
-        color=splash.rgb+color*(1.0-splash.a);
-        alpha=splash.a+alpha*(1.0-splash.a);
-      }
+      float generation=floor(cycle)-float(previous);
+      if(generation<0.0) continue;
+      float4 flying=splash(float2(x,p.y),id,generation,local,period,origin,release,sourceY,false);
+      color=flying.rgb+color*(1.0-flying.a);
+      alpha=flying.a+alpha*(1.0-flying.a);
+    }
+    // Each impact deposits a permanent row; only nearby rows can cover this fragment.
+    float row=floor((floorY-p.y)/10.0);
+    for(int nearby=-2;nearby<=2;nearby++) {
+      float generation=row+float(nearby);
+      if(generation<0.0 || generation>floor(cycle)) continue;
+      float4 landed=splash(float2(x,p.y),id,generation,local,period,origin,release,sourceY,true);
+      color=landed.rgb+color*(1.0-landed.a);
+      alpha=landed.a+alpha*(1.0-landed.a);
     }
   }
   float bounds=smoothstep(0.0,14.0,p.y);
-  alpha=clamp(alpha,0.0,1.0)*ignition*bounds;
-  return half4(min(color*ignition*bounds,float3(alpha)),alpha);
+  alpha=clamp(alpha,0.0,1.0)*bounds;
+  return half4(min(color*bounds,float3(alpha)),alpha);
 }`;
 
 const effect = Skia.RuntimeEffect.Make(electronFireShader);
