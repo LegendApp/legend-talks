@@ -20,7 +20,7 @@ export function PackageDownloadsChart() {
       y={chartLayout.top + electronIndex * chartLayout.rowSpacing + (chartLayout.rowHeight - chartLayout.barHeight) / 2} />}
     <ProgressivePreparation>{rows.map((row, index) => <BenchmarkRow key={row.package}
       name={row.name} highlighted={false}
-      grouped={emphasizeElectron && row.package === "electron"} groupColor={row.package === "electron" ? "#f28b91" : undefined} tintText={row.package === "electron"}
+      grouped={emphasizeElectron && row.package === "electron"} groupColor={row.package === "electron" ? "#a07142" : undefined} tintText={row.package === "electron"}
       value={row.downloads} maximum={maximum} valueLabel={compactCount(row.downloads)}
       y={chartLayout.top + index * chartLayout.rowSpacing} />)}</ProgressivePreparation>
   </View>;
