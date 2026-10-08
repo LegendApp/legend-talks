@@ -47,25 +47,29 @@ export function FramePitch({ icon }: { icon: string }) {
 }
 export const foundationBranchesShader = `
 uniform float time;
+uniform float offsetX;
 ${rootRibbonShader}
 half4 main(float2 p) {
+  p.x+=offsetX;
   float3 light=float3(0);
   for(int branch=0;branch<3;branch++) {
     float growth=smoothstep(0.5+float(branch)*1.5,1.2+float(branch)*1.5,time);
-    float visible=step(0.001,growth);
+    if(growth<0.001) continue;
     float start=branch==0?125.0:351.0+float(branch-1)*300.0;
     float end=255.0+float(branch)*300.0;
+    if(p.y<start-84.0 || p.y>end+104.0) continue;
     float t=clamp((p.y-start)/(end-start),0.0,1.0);
     for(int strand=0;strand<4;strand++) {
       float lane=float(strand)-1.5;
       float x=848.0+sin(t*3.14159)*lane*12.0;
-      float d=abs(p.x-x);
-      float mask=step(start,p.y)*step(p.y,mix(start,end,growth))*visible;
-      light=max(light,ribbon(p.x-x,3.5+sin(t*3.14159)*3.0,p.y,float(strand),float3(0.025,0.4,1))*mask);
-      for(int spark=0;spark<3;spark++) {
-        float u=fract(time*0.5+float(spark)/3.0+float(strand)*0.11);
-        float2 pos=float2(848.0+sin(u*3.14159)*lane*12.0,mix(start,end,u));
-        light+=float3(0.4,0.85,1)*exp(-length(p-pos)/2.0)*mask;
+      float mask=step(start,p.y)*step(p.y,mix(start,end,growth));
+      if(mask>0.0) {
+        light=max(light,ribbon(p.x-x,3.5+sin(t*3.14159)*3.0,p.y,float(strand),float3(0.025,0.4,1)));
+        for(int spark=0;spark<3;spark++) {
+          float u=fract(time*0.5+float(spark)/3.0+float(strand)*0.11);
+          float2 pos=float2(848.0+sin(u*3.14159)*lane*12.0,mix(start,end,u));
+          light+=float3(0.4,0.85,1)*exp(-length(p-pos)/2.0);
+        }
       }
       // Glints shed from the ribbons and drift outward before disappearing.
       for(int particle=0;particle<8;particle++) {
@@ -77,7 +81,7 @@ half4 main(float2 p) {
         float2 point=origin+float2(direction*age*(35.0+float(particle)*8.0),age*18.0);
         float d=length(p-point);
         float size=0.7+mod(float(particle),4.0)*0.45;
-        float fade=sin(age*3.14159)*(1.0-age)*visible*step(source,growth);
+        float fade=sin(age*3.14159)*(1.0-age)*step(source,growth);
         light+=float3(0.45,0.85,1)*(exp(-d/size)+0.12*exp(-d/(size*4.0)))*fade;
       }
     }
@@ -95,11 +99,11 @@ function FoundationBox({ title }: { title: string }) {
 }
 export function FrameFoundations({ icon }: { icon: string }) {
   const step = usePresentationValue("stepIndex");
-  const branchUniforms = useAnimatedShaderUniforms({}, 5);
+  const branchUniforms = useAnimatedShaderUniforms({ offsetX: 656 }, 5);
   const uniforms = useAnimatedShaderUniforms({ panelHalfHeight: 8, resolveToCheck: 0, broken: 1, settled: 0, phase: 0, centerX: 848 }, 6, { clock: 1 });
   return <View style={{ width: 1696, height: 980, alignSelf: "center" }}>
     <FrameTitle icon={icon} />
-    <Canvas style={{ position: "absolute", inset: 0 }}><Fill><Shader source={branches!} uniforms={branchUniforms} /></Fill></Canvas>
+    <Canvas style={{ position: "absolute", left: 656, top: 0, width: 384, height: 980 }}><Fill><Shader source={branches!} uniforms={branchUniforms} /></Fill></Canvas>
     {["Expo Desktop", "Expo"].map((name, i) => <PlaybackKeyframeView key={name} keyframes={boxReveal} delay={1200 + i * 1500} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 250 + i * 300 }}>
       <FoundationBox title={name} />
     </PlaybackKeyframeView>)}
