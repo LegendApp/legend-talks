@@ -329,7 +329,7 @@ eyebrow: Story
 <!--
 And for some context about my anger at Electron, my app Legend that I started 12 years ago, is an Electron app.
 
-I optimized it a lot, but I hit the limits of Electron’s constraints and running in a webview. So I've been frustrated with Electron and desktop apps in general for a decade.
+I wanted to make it the fastest app anyone had ever seen, but I hit a performance ceiling with Electron. So I've been frustrated with Electron and desktop apps in general for a decade.
 -->
 
 
@@ -888,11 +888,11 @@ steps: 2
 <SparkAppEditingScreenshots before={settingsBefore} after={settingsAfter} />
 
 <!--
-1. It also supports a new feature which I think is pretty cool. We can use the same technology as the Runner to enable app users to customize their apps. 
+1. It also supports a new feature which I think is pretty cool. React Native on desktop supports an interesting thing where an app can compile and run an external bundle.
 
-2. They can prompt an AI to change the app, and it builds a new app bundle. 
+2. Users can prompt an AI to change the app, and it builds a new app bundle using Hermes. So then they can customize apps as they desire. This even persists across app updates and reapplies the same prompt after updating.
 
-I think this might be what users want in the age of AI. We’ve talked about a future where everybody builds their own apps. But I’m not sure that’s realistic. Maybe instead, real production software still exists, but users are empowered to customize as they wish.
+I think this might be what users want in the age of AI. I’ve heard a lot of talk about a future where everybody makes their own apps. But I’m not sure that’s realistic. Maybe instead, real production software still exists, but users are empowered to customize as they wish.
 
 It’s just a theory but I think it’s cool. And I’m going to build it into all of my apps and see what happens. But anyway
 -->
@@ -929,7 +929,7 @@ eyebrow: Story
 <!--
 React Native already has a huge ecosystem on mobile, and it’s doing pretty well on macOS already since it’s pretty close to iOS. But this is the table of popular ***supported*** libraries. There’s a ton that aren’t supported.
 
-And Windows needs a lot work, Windows modules are an entirely different platform so most libraries just haven’t added it yet. But an LLM should be able to knock those out fairly quickly.
+And Windows needs a lot of work, Windows modules are an entirely different platform so most libraries just haven’t added it yet. But an LLM should be able to knock those out fairly quickly.
 -->
 
 
@@ -996,7 +996,7 @@ steps: 4
 <!--
 1. This is Legend Slides. It's React Native macOS app.
 
-2. The presenter and audience views are separate native windows which share state, which is easy in React Native and hard in webview apps. The slides use React Native components, so it can make crazy effects and shaders to do ridiculous stuff.
+2. This is what I’m looking at right now. The presenter and audience views are separate native windows which share state, which is easy in React Native. The slides use React Native components, so it can make crazy effects and shaders to do ridiculous stuff.
 
 3. It uses Reanimated for the animations. Skia does the drawing, glass, and ripples. TypeGPU powers the particle effects.
 
@@ -1012,7 +1012,9 @@ steps: 4
 </View>
 
 <!--
-It’s open source if you want to try it. It’s still early and I barely got it working in time for this talk. But I’m really happy with it so I’ll keep polishing it and use it for all of my future talks. And I’m making a dedicated domain for my open source stuff at legend dot so now.
+It’s open source if you want to try it. It’s still early and I barely got everything working in time for this talk. But I’m really happy with it so I’ll keep polishing it and use it for all of my future talks. 
+
+And I now have a dedicated domain for my open source stuff at legend dot so.
 -->
 
 
