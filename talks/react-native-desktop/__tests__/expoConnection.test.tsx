@@ -12,6 +12,7 @@ let mounts = 0;
 mock.module("@legend-apps/presentation", () => ({
   usePresentationValue: (key) => runtime[key],
   SceneMotionView: "motion",
+  PresentationCanvas: () => { useEffect(() => { mounts++; }, []); return null; },
   useAnimatedShaderUniforms: (values) => {
     if (values.desktop) desktopUniforms = values;
     return { value: { ...values, time } };

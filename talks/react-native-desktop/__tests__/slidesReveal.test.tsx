@@ -10,6 +10,7 @@ import { createRequire } from "node:module";
 import * as skia from "@shopify/react-native-skia";
 import { AnimatedTitle } from "../AnimatedTitle";
 import { MovingTitle } from "../MovingTitle";
+import { GlassPanels } from "../GlassPanels";
 
 const { transformSync } = createRequire(new URL("../../../../../packages/presentation/package.json", import.meta.url))("esbuild");
 function load(filename, mocks) {
@@ -76,10 +77,10 @@ test("feature demos and moving tile contents occupy a foreground layer above the
         <SlidesFeatures icon="slides.png" showHeader={false}><particles /></SlidesFeatures>
       </PresentationProvider>);
     });
-    const glass = tree.root.findAllByType("canvas").find(node => node.props.style.width === 1696);
+    const glass = tree.root.findAllByType(GlassPanels).find(node => node.props.width === 1696);
     const foreground = tree.root.findAllByType("view").find(node => node.props.style?.inset === 0 && node.props.style.zIndex === 1);
     expect(foreground).toBeDefined();
-    expect(foreground.parent).toBe(glass.parent.parent);
+    expect(foreground.parent).toBe(glass.parent);
     expect(foreground.findAllByType("text").map(node => node.props.children)).toEqual(["Reanimated", "Skia", "TypeGPU"]);
     expect(foreground.findAllByType("canvas")).toHaveLength(4);
     expect(foreground.findAllByType("particles")).toHaveLength(1);
