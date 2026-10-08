@@ -49,7 +49,7 @@ function MotionDemo() {
       repeatDuration={6000} clock="slide" previewTime={1.5}
       style={{ position: "absolute", left: 200, top: 230, width: 120, height: 120 }}>
       <GlassPanels panels={tilePanel} width={120} height={120} />
-      <View style={{ position: "absolute", left: 39, top: 39, width: 42, height: 42,
+      <View style={{ position: "absolute", left: 39, top: 39, width: 42, height: 42, zIndex: 1,
         borderRadius: index === 1 ? 10 : 21, backgroundColor: ["#67e8f9", "#bba6ff", "#e6faff"][index] }} />
     </PlaybackKeyframeView>)}
   </View>;
@@ -59,13 +59,15 @@ export function SlidesFeatures({ icon, children, showHeader = true }: { icon: st
   return <View style={{ width: 1696, height: 880 }}>
     {showHeader && <SlidesHeader icon={icon} />}
     <GlassPanels panels={panels} width={1696} height={880} />
-    {["Reanimated", "Skia", "TypeGPU"].map((label, index) => <Text key={label}
-      style={{ position: "absolute", top: 160, left: index * 584, width: 528, textAlign: "center", color: "#f8fafc", fontSize: 48, fontWeight: "600" }}>{label}</Text>)}
-    <View style={{ position: "absolute", top: 250, left: 4 }}><MotionDemo /></View>
-    <Canvas style={{ position: "absolute", top: 250, left: 588, width: 520, height: 580 }}>
-      <Fill><Shader source={glassEffect!} uniforms={uniforms} /></Fill>
-    </Canvas>
-    <View style={{ position: "absolute", top: 250, left: 1172 }}>{children}</View>
+    <View collapsable={false} pointerEvents="box-none" style={{ position: "absolute", inset: 0, zIndex: 1 }}>
+      {["Reanimated", "Skia", "TypeGPU"].map((label, index) => <Text key={label}
+        style={{ position: "absolute", top: 160, left: index * 584, width: 528, textAlign: "center", color: "#f8fafc", fontSize: 48, fontWeight: "600" }}>{label}</Text>)}
+      <View style={{ position: "absolute", top: 250, left: 4 }}><MotionDemo /></View>
+      <Canvas style={{ position: "absolute", top: 250, left: 588, width: 520, height: 580 }}>
+        <Fill><Shader source={glassEffect!} uniforms={uniforms} /></Fill>
+      </Canvas>
+      <View style={{ position: "absolute", top: 250, left: 1172 }}>{children}</View>
+    </View>
   </View>;
 }
 

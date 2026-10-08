@@ -24,8 +24,9 @@ const links = { GitHubLink: "github-link" };
 const { SlidesHeader } = load(`${import.meta.dir}/../StoryDiagrams.tsx`, {
   "./GitHubLink": links, "./RendererWindows": {}, "./ExpoDesktopScene": {}, "./ModuleCompatibility": {},
 });
+const { WebsiteIcon } = load(`${import.meta.dir}/../WebsiteIcon.tsx`, { "@shopify/react-native-skia": drawing });
 const { SlidesReveal } = load(`${import.meta.dir}/../SlidesReveal.tsx`, {
-  "@shopify/react-native-skia": drawing, "./StoryDiagrams": { SlidesHeader }, "./GitHubLink": links,
+  "@shopify/react-native-skia": drawing, "./StoryDiagrams": { SlidesHeader }, "./GitHubLink": links, "./WebsiteIcon": { WebsiteIcon },
 });
 
 for (const showLinks of [true, false]) test(`Slides reveals stay aligned with the screenshot shader with links ${showLinks ? "included" : "removed"}`, async () => {
@@ -55,6 +56,36 @@ for (const showLinks of [true, false]) test(`Slides reveals stay aligned with th
     await act(() => tree.update(render(undefined)));
     expect(tree.root.findAllByType(AnimatedTitle)).toHaveLength(0);
     expect(tree.root.findAllByType(MovingTitle)).toHaveLength(1);
+  } finally {
+    if (tree) await act(() => tree.unmount());
+  }
+});
+
+const { SlidesFeatures } = load(`${import.meta.dir}/../SlidesFeatures.tsx`, {
+  "./StoryDiagrams": { SlidesHeader },
+});
+
+test("feature demos and moving tile contents occupy a foreground layer above their glass", async () => {
+  globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+  const runtime$ = observable({ isActive: false, isPreview: true, isPreparing: false,
+    slideIndex: 0, stepIndex: 2, stepCount: 4, stepEpochs: {} });
+  let tree;
+  try {
+    await act(() => {
+      tree = create(<PresentationProvider value={runtime$}>
+        <SlidesFeatures icon="slides.png" showHeader={false}><particles /></SlidesFeatures>
+      </PresentationProvider>);
+    });
+    const glass = tree.root.findAllByType("canvas").find(node => node.props.style.width === 1696);
+    const foreground = tree.root.findAllByType("view").find(node => node.props.style?.inset === 0 && node.props.style.zIndex === 1);
+    expect(foreground).toBeDefined();
+    expect(foreground.parent).toBe(glass.parent.parent);
+    expect(foreground.findAllByType("text").map(node => node.props.children)).toEqual(["Reanimated", "Skia", "TypeGPU"]);
+    expect(foreground.findAllByType("canvas")).toHaveLength(4);
+    expect(foreground.findAllByType("particles")).toHaveLength(1);
+    const shapes = foreground.findAllByType("view").filter(node => node.props.style?.backgroundColor);
+    expect(shapes).toHaveLength(3);
+    expect(shapes.every(node => node.props.style.zIndex === 1)).toBe(true);
   } finally {
     if (tree) await act(() => tree.unmount());
   }
