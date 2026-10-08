@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { Linking, Pressable, Text, View } from "react-native";
 import { SlidesHeader } from "./StoryDiagrams";
 import { GitHubLink } from "./GitHubLink";
+import { WebsiteIcon } from "./WebsiteIcon";
 import type { TitleEntranceEffect } from "./titleEntrancePresets";
 
 // @ts-ignore Local deck screenshot resolves to a file URL.
@@ -103,7 +104,7 @@ export function SlidesReveal({ icon, children, authoring, titleEntrance, showLin
         <GitHubLink repository="LegendApp/legend-apps" label="Legend Slides on GitHub" />
         <Pressable accessibilityRole="link" accessibilityLabel="https://legend.so" onPress={() => Linking.openURL("https://legend.so")}
           style={{ alignSelf: "center", padding: 16, marginTop: 24, flexDirection: "row", alignItems: "center", gap: 22 }}>
-          <Text style={{ fontSize: 48, lineHeight: 60 }}>🌐</Text>
+          <WebsiteIcon size={48} />
           <Text style={{ color: "#68ddff", fontSize: 54, fontWeight: "600" }}>https://legend.so</Text>
         </Pressable>
       </PlaybackKeyframeView>
