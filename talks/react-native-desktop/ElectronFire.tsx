@@ -11,6 +11,7 @@ uniform float time;
 uniform float fireWidth;
 uniform float barHeight;
 uniform float floorY;
+uniform float drops;
 uniform shader poopImage;
 
 float hash(float2 p) {
@@ -68,7 +69,7 @@ half4 main(float2 p) {
   float edge=smoothstep(-18.0,12.0,x)*(1.0-smoothstep(fireWidth-12.0,fireWidth+18.0,x));
   float3 color=float3(0);
   float alpha=0.0;
-  if(p.y<184.0+barHeight+25.0) {
+  if(drops<0.5 && p.y<184.0+barHeight+25.0) {
     float spread=smoothstep(-18.0,24.0,(fireWidth+24.0)*ignition-x);
     float drift=sin(time*1.4+h*0.022)*12.0;
     float2 flow=float2((x+drift)*0.026,h*0.026-time*1.9);
@@ -109,50 +110,52 @@ half4 main(float2 p) {
       alpha+=ember;
     }
   }
-  float sourceY=184.0+barHeight;
-  float dripLane=floor(x/92.0);
-  for(int neighbor=-2;neighbor<=2;neighbor++) {
-    float id=dripLane+float(neighbor);
-    float seed=hash(float2(id,83.0));
-    float release=0.55+seed*0.25;
-    float period=release+sqrt(max(1.0,floorY-sourceY-24.0)/510.0)+0.85;
-    float local=time-0.6-fract(id*0.381966)*period;
-    if(local<0.0) continue;
-    float cycle=local/period;
-    float age=mod(local,period);
-    float variation=hash(float2(id,floor(cycle)+57.0));
-    float origin=(id+0.25+seed*0.5)*92.0;
-    if(origin<8.0 || origin>fireWidth-8.0) continue;
-    float growth=smoothstep(0.0,release,age);
-    float size=42.0+63.0*variation*variation;
-    float extension=2.0+seed*4.0;
-    float detached=max(age-release,0.0);
-    float startY=sourceY+extension+size*0.32;
-    float ground=floorY-floor(cycle)*20.0;
-    float impact=release+sqrt(max(1.0,ground-size*0.4-startY)/510.0);
-    if(age<impact) {
-      float stretch=smoothstep(release*0.6,release,age)*(1.0-smoothstep(0.0,0.2,detached));
-      float2 scale=size*max(0.15,growth)*float2(1.0-stretch*0.15,1.0+stretch*0.18);
-      float2 center=float2(origin,startY+510.0*detached*detached);
-      float4 drop=poop(float2(x,p.y),center,scale,sin(detached*4.0+seed*8.0)*detached*0.22);
-      color=drop.rgb+color*(1.0-drop.a);
-      alpha=drop.a+alpha*(1.0-drop.a);
-    }
-    for(int previous=0;previous<2;previous++) {
-      float generation=floor(cycle)-float(previous);
-      if(generation<0.0) continue;
-      float4 flying=splash(float2(x,p.y),id,generation,local,period,origin,release,sourceY,false);
-      color=flying.rgb+color*(1.0-flying.a);
-      alpha=flying.a+alpha*(1.0-flying.a);
-    }
-    // Each impact deposits a permanent row; only nearby rows can cover this fragment.
-    float row=floor((floorY-p.y)/20.0);
-    for(int nearby=-2;nearby<=2;nearby++) {
-      float generation=row+float(nearby);
-      if(generation<0.0 || generation>floor(cycle)) continue;
-      float4 landed=splash(float2(x,p.y),id,generation,local,period,origin,release,sourceY,true);
-      color=landed.rgb+color*(1.0-landed.a);
-      alpha=landed.a+alpha*(1.0-landed.a);
+  if(drops>0.5) {
+    float sourceY=184.0+barHeight;
+    float dripLane=floor(x/92.0);
+    for(int neighbor=-2;neighbor<=2;neighbor++) {
+      float id=dripLane+float(neighbor);
+      float seed=hash(float2(id,83.0));
+      float release=0.55+seed*0.25;
+      float period=release+sqrt(max(1.0,floorY-sourceY-24.0)/510.0)+0.85;
+      float local=time-0.6-fract(id*0.381966)*period;
+      if(local<0.0) continue;
+      float cycle=local/period;
+      float age=mod(local,period);
+      float variation=hash(float2(id,floor(cycle)+57.0));
+      float origin=(id+0.25+seed*0.5)*92.0;
+      if(origin<8.0 || origin>fireWidth-8.0) continue;
+      float growth=smoothstep(0.0,release,age);
+      float size=42.0+63.0*variation*variation;
+      float extension=2.0+seed*4.0;
+      float detached=max(age-release,0.0);
+      float startY=sourceY+extension+size*0.32;
+      float ground=floorY-floor(cycle)*20.0;
+      float impact=release+sqrt(max(1.0,ground-size*0.4-startY)/510.0);
+      if(age<impact) {
+        float stretch=smoothstep(release*0.6,release,age)*(1.0-smoothstep(0.0,0.2,detached));
+        float2 scale=size*max(0.15,growth)*float2(1.0-stretch*0.15,1.0+stretch*0.18);
+        float2 center=float2(origin,startY+510.0*detached*detached);
+        float4 drop=poop(float2(x,p.y),center,scale,sin(detached*4.0+seed*8.0)*detached*0.22);
+        color=drop.rgb+color*(1.0-drop.a);
+        alpha=drop.a+alpha*(1.0-drop.a);
+      }
+      for(int previous=0;previous<2;previous++) {
+        float generation=floor(cycle)-float(previous);
+        if(generation<0.0) continue;
+        float4 flying=splash(float2(x,p.y),id,generation,local,period,origin,release,sourceY,false);
+        color=flying.rgb+color*(1.0-flying.a);
+        alpha=flying.a+alpha*(1.0-flying.a);
+      }
+      // Each impact deposits a permanent row; only nearby rows can cover this fragment.
+      float row=floor((floorY-p.y)/20.0);
+      for(int nearby=-2;nearby<=2;nearby++) {
+        float generation=row+float(nearby);
+        if(generation<0.0 || generation>floor(cycle)) continue;
+        float4 landed=splash(float2(x,p.y),id,generation,local,period,origin,release,sourceY,true);
+        color=landed.rgb+color*(1.0-landed.a);
+        alpha=landed.a+alpha*(1.0-landed.a);
+      }
     }
   }
   float bounds=smoothstep(0.0,14.0,p.y);
@@ -163,20 +166,20 @@ half4 main(float2 p) {
 const effect = Skia.RuntimeEffect.Make(electronFireShader);
 if (!effect) throw new Error("Could not compile Electron fire");
 
-export function ElectronFire({ width, barHeight, x, y }: { width: number; barHeight: number; x: number; y: number }) {
+export function ElectronFire({ width, barHeight, x, y, layer }: { width: number; barHeight: number; x: number; y: number; layer: "flames" | "drops" }) {
   const surface = useContext(FocusSurfaceContext)?.surface;
   const ref = useRef<View>(null);
   const poopImage = useImage(poopAsset);
   const [floorY, setFloorY] = useState(1056);
-  const uniforms = useAnimatedShaderUniforms({ fireWidth: width, barHeight, floorY }, 5.4, { clock: "step" });
+  const uniforms = useAnimatedShaderUniforms({ fireWidth: width, barHeight, floorY, drops: layer === "drops" ? 1 : 0 }, 5.4, { clock: "step" });
   const measureFloor = () => {
     if (surface?.root) ref.current?.measureLayout(surface.root, (_left, top) => {
       if (surface.height > 0) setFloorY(surface.height - top - 24);
     });
   };
   return <View ref={ref} collapsable={false} onLayout={measureFloor} pointerEvents="none"
-    style={{ position: "absolute", left: x - 128, top: y - 184, width: width + 256, height: 184 + barHeight }}>
-    {poopImage && <Canvas pointerEvents="none" accessibilityLabel="Flames above Electron, with poop emojis falling to the bottom and bursting into smaller poop emojis"
+    style={{ position: "absolute", zIndex: layer === "drops" ? 1 : 0, left: x - 128, top: y - 184, width: width + 256, height: 184 + barHeight }}>
+    {poopImage && <Canvas pointerEvents="none" accessibilityLabel={layer === "flames" ? "Flames above Electron" : "Poop emojis falling to the bottom and bursting into smaller poop emojis"}
       style={{ position: "absolute", left: 0, top: 0, width: width + 256, height: floorY + 24 }}>
       <Fill><Shader source={effect!} uniforms={uniforms}>
         <ImageShader image={poopImage} fit="contain" rect={{ x: 0, y: 0, width: 256, height: 256 }} tx="clamp" ty="clamp" />

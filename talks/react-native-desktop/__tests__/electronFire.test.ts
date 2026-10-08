@@ -36,9 +36,13 @@ test("fire builds over five seconds while varied poop emojis fall, splash, and k
   function render(time) {
     const canvas = surface.getCanvas();
     canvas.clear(kit.TRANSPARENT);
-    const shader = effect.makeShaderWithChildren([time, fireWidth, 30, floorY], [emojiShader]);
-    paint.setShader(shader);
-    canvas.drawRect(kit.XYWHRect(0, 0, width, height), paint);
+    for (const drops of [0, 1]) {
+      const shader = effect.makeShaderWithChildren([time, fireWidth, 30, floorY, drops], [emojiShader]);
+      paint.setShader(shader);
+      canvas.drawRect(kit.XYWHRect(0, 0, width, height), paint);
+      paint.setShader(null);
+      shader.delete();
+    }
     surface.flush();
     const image = surface.makeImageSnapshot();
     try {
@@ -46,8 +50,6 @@ test("fire builds over five seconds while varied poop emojis fall, splash, and k
         colorType: kit.ColorType.RGBA_8888, colorSpace: kit.ColorSpace.SRGB }));
     } finally {
       image.delete();
-      paint.setShader(null);
-      shader.delete();
     }
   }
   try {
@@ -127,7 +129,7 @@ test("the drop floor follows the logical slide bottom rather than chart bounds o
     await act(() => {
       tree = create(React.createElement(PresentationProvider, { value: runtime$ },
         React.createElement(FocusSurfaceContext.Provider, { value: { surface } },
-          React.createElement(ElectronFire, { width: 618, barHeight: 30, x: 285, y: 175.5 }))), {
+          React.createElement(ElectronFire, { width: 618, barHeight: 30, x: 285, y: 175.5, layer: "drops" }))), {
         createNodeMock: () => ({ measureLayout: (relativeTo, done) => {
           expect(relativeTo).toBe(root);
           done(173, top, 842, 214);
@@ -139,10 +141,12 @@ test("the drop floor follows the logical slide bottom rather than chart bounds o
       surface.scale = scale;
       surface.setLayout({ width: 1920, height });
       await act(() => tree.root.findByType("view").props.onLayout());
+      expect(tree.root.findByType("view").props.style.zIndex).toBe(1);
       const floor = tree.root.findByType("shader").props.uniforms.value;
       expect(floor.floorY + offset).toBe(height - 24);
       expect(tree.root.findByType("canvas").props.style.height + offset).toBe(height);
       expect(floor.time).toBe(5.4);
+      expect(floor.drops).toBe(1);
     }
   } finally {
     if (tree) await act(() => tree.unmount());

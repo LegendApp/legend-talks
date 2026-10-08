@@ -16,12 +16,14 @@ export function PackageDownloadsChart() {
   const emphasizeElectron = usePresentationValue("stepIndex") >= 1;
   return <View style={{ width: chartLayout.width, height: chartLayout.height,
     marginTop: chartLayout.marginTop, alignSelf: "center" }}>
-    {emphasizeElectron && <ElectronFire width={electronWidth} barHeight={chartLayout.barHeight} x={chartLayout.barLeft}
+    {emphasizeElectron && <ElectronFire layer="flames" width={electronWidth} barHeight={chartLayout.barHeight} x={chartLayout.barLeft}
       y={chartLayout.top + electronIndex * chartLayout.rowSpacing + (chartLayout.rowHeight - chartLayout.barHeight) / 2} />}
     <ProgressivePreparation>{rows.map((row, index) => <BenchmarkRow key={row.package}
       name={row.name} highlighted={false}
       grouped={emphasizeElectron && row.package === "electron"} groupColor={row.package === "electron" ? "#a07142" : undefined} tintText={row.package === "electron"}
       value={row.downloads} maximum={maximum} valueLabel={compactCount(row.downloads)}
       y={chartLayout.top + index * chartLayout.rowSpacing} />)}</ProgressivePreparation>
+    {emphasizeElectron && <ElectronFire layer="drops" width={electronWidth} barHeight={chartLayout.barHeight} x={chartLayout.barLeft}
+      y={chartLayout.top + electronIndex * chartLayout.rowSpacing + (chartLayout.rowHeight - chartLayout.barHeight) / 2} />}
   </View>;
 }
