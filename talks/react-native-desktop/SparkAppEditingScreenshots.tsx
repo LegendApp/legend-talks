@@ -9,6 +9,8 @@ const sampleClock = samplePlayback;
 const sampleFrame = sampleSparkEdit;
 const scale = 710 / 1280;
 const width = 1640 * scale;
+const clipInset = 1;
+const screenshotStyle = { position: "absolute" as const, left: -clipInset, top: -clipInset, width, height: 710 };
 const zoom = 2.1;
 const focusedX = -(1008 - 820) * scale * zoom;
 const focusedY = -(493 - 640) * scale * zoom;
@@ -35,12 +37,12 @@ export function SparkAppEditingScreenshots({ before, after }: { before: string; 
   return <View style={{ width: 1696, height: 710, alignSelf: "center", marginTop: 24, borderRadius: 24, overflow: "hidden" }}>
     <SceneMotionView initialPose={{ x: 0, y: 0, scaleX: 1, scaleY: 1 }}
       pose={{ x: focused ? focusedX : 0, y: focused ? focusedY : 0, scaleX: focused ? zoom : 1, scaleY: focused ? zoom : 1 }}
-      duration={850} style={{ position: "absolute", left: (1696 - width) / 2, width, height: 710, borderRadius: 34, overflow: "hidden" }}>
-      <Image source={{ uri: before }} style={{ width, height: 710 }} resizeMode="contain"
+      duration={850} style={{ position: "absolute", left: (1696 - width) / 2 + clipInset, top: clipInset, width: width - clipInset * 2, height: 710 - clipInset * 2, borderRadius: 48, overflow: "hidden" }}>
+      <Image source={{ uri: before }} style={screenshotStyle} resizeMode="contain"
         accessibilityLabel="Legend Diff Customize App before editing, with gray appearance text and an empty prompt" />
-      <Animated.Image source={{ uri: after }} style={[{ position: "absolute", width, height: 710 }, resultStyle]}
+      <Animated.Image source={{ uri: after }} style={[screenshotStyle, resultStyle]}
         resizeMode="contain" accessibilityLabel="Legend Diff Customize App after changing the appearance text to teal" />
-      <Canvas pointerEvents="none" accessible={false} style={{ position: "absolute", width, height: 710 }}>
+      <Canvas pointerEvents="none" accessible={false} style={screenshotStyle}>
         <Group transform={[{ scale }]} opacity={inputOpacity}>
           <RoundedRect x={478} y={508} width={1060} height={184} r={10} color="#232425" />
           <RoundedRect x={473} y={503} width={1071} height={195} r={12} color="#267aa5" style="stroke" strokeWidth={3} />
