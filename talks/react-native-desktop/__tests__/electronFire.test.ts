@@ -30,7 +30,7 @@ test("fire builds over five seconds while varied poop emojis fall, splash, and k
   expect(effect).not.toBeNull();
   const emoji = kit.MakeImageFromEncoded(readFileSync(new URL("../rnconnection-assets/poop.png", import.meta.url)));
   const emojiShader = emoji.makeShaderOptions(kit.TileMode.Clamp, kit.TileMode.Clamp, kit.FilterMode.Linear, kit.MipmapMode.None);
-  const fireWidth = 368, width = fireWidth + 224, height = 824, floorY = 800;
+  const fireWidth = 368, width = fireWidth + 256, height = 824, floorY = 800;
   const surface = kit.MakeSurface(width, height);
   const paint = new kit.Paint();
   function render(time) {
@@ -78,7 +78,7 @@ test("fire builds over five seconds while varied poop emojis fall, splash, and k
         const offset = (y * width + x) * 4;
         const [r, g, b, a] = frame.subarray(offset, offset + 4);
         if (r > 40 && r < 220 && g > 15 && r > g * 1.1 && g > b * 1.2 && a > 150) {
-          if (y < floorY - 120 && x >= 112 && x < 112 + fireWidth) lanes[Math.floor((x - 112) / 92)]++;
+          if (y < floorY - 120 && x >= 128 && x < 128 + fireWidth) lanes[Math.floor((x - 128) / 92)]++;
           if (y > 500 && y < floorY - 120) deepDrops++;
           if (y > floorY - 100) splashes++;
         }

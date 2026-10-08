@@ -39,16 +39,16 @@ float4 poop(float2 p,float2 center,float2 size,float angle) {
 }
 float4 splash(float2 p,float id,float generation,float local,float period,float origin,float release,float sourceY,bool settled) {
   float variation=hash(float2(id,generation+57.0));
-  float size=28.0+42.0*variation*variation;
+  float size=42.0+63.0*variation*variation;
   float extension=2.0+hash(float2(id,83.0))*4.0;
-  float ground=floorY-generation*10.0;
+  float ground=floorY-generation*20.0;
   float impact=release+sqrt(max(1.0,ground-size*0.72-sourceY-extension)/510.0);
   float hit=local-generation*period-impact;
   if(hit<0.0 || p.y<ground-110.0 || p.y>ground+14.0) return float4(0);
   float4 result=float4(0);
   for(int bead=0;bead<6;bead++) {
     float seed=hash(float2(id+float(bead)*13.0,generation+91.0));
-    float smallSize=5.0+size*(0.10+seed*0.15);
+    float smallSize=10.0+size*(0.133333+seed*0.20);
     float vx=(float(bead)-2.5)*46.0*(0.65+seed*0.6);
     float vy=110.0+seed*155.0;
     float landing=vy/420.0;
@@ -64,7 +64,7 @@ float4 splash(float2 p,float id,float generation,float local,float period,float 
 half4 main(float2 p) {
   float ignition=smoothstep(0.0,5.0,time);
   if(ignition<=0.0) return half4(0);
-  float x=p.x-112.0, h=190.0-p.y;
+  float x=p.x-128.0, h=190.0-p.y;
   float edge=smoothstep(-18.0,12.0,x)*(1.0-smoothstep(fireWidth-12.0,fireWidth+18.0,x));
   float3 color=float3(0);
   float alpha=0.0;
@@ -124,11 +124,11 @@ half4 main(float2 p) {
     float origin=(id+0.25+seed*0.5)*92.0;
     if(origin<8.0 || origin>fireWidth-8.0) continue;
     float growth=smoothstep(0.0,release,age);
-    float size=28.0+42.0*variation*variation;
+    float size=42.0+63.0*variation*variation;
     float extension=2.0+seed*4.0;
     float detached=max(age-release,0.0);
     float startY=sourceY+extension+size*0.32;
-    float ground=floorY-floor(cycle)*10.0;
+    float ground=floorY-floor(cycle)*20.0;
     float impact=release+sqrt(max(1.0,ground-size*0.4-startY)/510.0);
     if(age<impact) {
       float stretch=smoothstep(release*0.6,release,age)*(1.0-smoothstep(0.0,0.2,detached));
@@ -146,7 +146,7 @@ half4 main(float2 p) {
       alpha=flying.a+alpha*(1.0-flying.a);
     }
     // Each impact deposits a permanent row; only nearby rows can cover this fragment.
-    float row=floor((floorY-p.y)/10.0);
+    float row=floor((floorY-p.y)/20.0);
     for(int nearby=-2;nearby<=2;nearby++) {
       float generation=row+float(nearby);
       if(generation<0.0 || generation>floor(cycle)) continue;
@@ -175,9 +175,9 @@ export function ElectronFire({ width, barHeight, x, y }: { width: number; barHei
     });
   };
   return <View ref={ref} collapsable={false} onLayout={measureFloor} pointerEvents="none"
-    style={{ position: "absolute", left: x - 112, top: y - 184, width: width + 224, height: 184 + barHeight }}>
+    style={{ position: "absolute", left: x - 128, top: y - 184, width: width + 256, height: 184 + barHeight }}>
     {poopImage && <Canvas pointerEvents="none" accessibilityLabel="Flames above Electron, with poop emojis falling to the bottom and bursting into smaller poop emojis"
-      style={{ position: "absolute", left: 0, top: 0, width: width + 224, height: floorY + 24 }}>
+      style={{ position: "absolute", left: 0, top: 0, width: width + 256, height: floorY + 24 }}>
       <Fill><Shader source={effect!} uniforms={uniforms}>
         <ImageShader image={poopImage} fit="contain" rect={{ x: 0, y: 0, width: 256, height: 256 }} tx="clamp" ty="clamp" />
       </Shader></Fill>
