@@ -44,11 +44,12 @@ const appMedia: Record<string, { page?: string; poster: string }> = {
 type CardLayout = ReturnType<typeof appCardLayout> & { height: number; captionHeight: number };
 
 /** Shared step-controlled carousel; interpolation and exit motion run on the UI thread. */
-export function AppCarousel<T extends string>({ items, position, mode = "filmstrip", cardWidth = 1180, renderCard, renderOverlay, getBlurPoster, getBlurPosterCaption }: {
+export function AppCarousel<T extends string>({ items, position, mode = "filmstrip", cardWidth = 1180, animateExit = true, renderCard, renderOverlay, getBlurPoster, getBlurPosterCaption }: {
   items: readonly T[];
   position: number;
   mode?: SceneMode;
   cardWidth?: number;
+  animateExit?: boolean;
   renderCard: (id: T, layout: CardLayout) => ReactNode;
   getBlurPoster?: (id: T) => string | undefined;
   getBlurPosterCaption?: (id: T) => string;
@@ -84,7 +85,7 @@ export function AppCarousel<T extends string>({ items, position, mode = "filmstr
 
     const card = appCardLayout(index, mode, 0, cardWidth);
     const height = cardWidth * 0.625;
-    return <FilmstripMotionView key={id} index={index} enabled={mode === "filmstrip"} progress={progress}
+    return <FilmstripMotionView key={id} index={index} enabled={mode === "filmstrip"} animateExit={animateExit} progress={progress}
       style={{ position: "absolute", left: 960 - cardWidth / 2, top: 555 - height / 2,
         width: cardWidth, height, zIndex: card.depth }}>
       <SceneMotionView duration={550} pose={{ x: card.x - (960 + index * 900), y: card.y - 555,

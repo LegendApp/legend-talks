@@ -14,7 +14,7 @@ mock.module("react-native-reanimated", () => ({
 mock.module("@legend-apps/presentation", () => ({
   SnapshotCaptureBoundary: ({ children, suspended }) => <capture-boundary suspended={suspended}>{children}</capture-boundary>,
   ProgressivePreparation: ({ children }) => children, SceneMotionView: ({ children }) => children,
-  NavigationExitView: ({ children }) => children,
+  NavigationExitView: ({ children, enabled }) => <exit-view enabled={enabled}>{children}</exit-view>,
   usePlayback: () => playback,
   usePresentationValue: key => key === "playbackPhase" ? playback.value.phase : key === "isPreview" ? true : 0,
   usePlaybackTween(target, duration) { targets.push({ target, duration }); return progress; },
@@ -94,5 +94,22 @@ test("motion retains the traversed interval through interruptions, trims after s
     playback.value.stepTime = 0.7;
     await act(() => reaction());
     expect(tree.root.findAllByType("card")).toHaveLength(2);
+  } finally { await act(() => tree?.unmount()); }
+});
+
+test("slide fades can disable the shrinking card exit without changing carousel placement", async () => {
+  playback.value = { phase: "playing", stepTime: 0 }; progress.value.position = 2;
+  const render = animateExit => <AppCarousel items={items} position={2} animateExit={animateExit} renderCard={id => <Card id={id} />} />;
+  let tree;
+  try {
+    await act(() => { tree = create(render(false)); });
+    const selected = () => tree.root.findAllByType(FilmstripMotionView).find(card => card.props.index === 2);
+    const placement = selected().findAllByType("animated-view")[0].props.style[1].value;
+    playback.value.phase = "outgoing";
+    await act(() => tree.update(render(false)));
+    expect(tree.root.findAllByType("exit-view").every(node => node.props.enabled === false)).toBe(true);
+    expect(selected().findAllByType("animated-view")[0].props.style[1].value).toEqual(placement);
+    await act(() => tree.update(render(undefined)));
+    expect(tree.root.findAllByType("exit-view").every(node => node.props.enabled === true)).toBe(true);
   } finally { await act(() => tree?.unmount()); }
 });

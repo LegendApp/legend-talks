@@ -4,8 +4,8 @@ import Animated, { useAnimatedStyle, type SharedValue } from "react-native-reani
 import { NavigationExitView } from "@legend-apps/presentation";
 
 /** Carousel placement uses slide playback; exit uses the host's navigation progress. */
-export function FilmstripMotionView({ index, enabled, progress, children, style }: {
-  index: number; enabled: boolean; progress: SharedValue<{ position: number }>; children: ReactNode; style?: StyleProp<ViewStyle>;
+export function FilmstripMotionView({ index, enabled, animateExit = true, progress, children, style }: {
+  index: number; enabled: boolean; animateExit?: boolean; progress: SharedValue<{ position: number }>; children: ReactNode; style?: StyleProp<ViewStyle>;
 }) {
   const motionStyle = useAnimatedStyle(() => {
     "worklet";
@@ -20,7 +20,7 @@ export function FilmstripMotionView({ index, enabled, progress, children, style 
       transform: [{ translateX: (index - progress.value.position) * 900 }, { scale: scale / initialScale }], opacity };
   });
   return <Animated.View style={[style, motionStyle]}>
-    <NavigationExitView enabled={enabled} style={{ flex: 1 }}>
+    <NavigationExitView enabled={enabled && animateExit} style={{ flex: 1 }}>
       {children}
     </NavigationExitView>
   </Animated.View>;
