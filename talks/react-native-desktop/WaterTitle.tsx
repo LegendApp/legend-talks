@@ -348,10 +348,9 @@ export default function WaterTitle({ children, closing = false, byline = false }
       </Text>
       <PresentationCanvas width={1920} height={1080}>
         {!closing && <Fill><Shader source={cosmicEffect!} uniforms={uniforms} /></Fill>}
-        {!closing && showLiquidType && titleImage && <Fill><Shader source={typeEffect!} uniforms={uniforms}>
+        {showLiquidType && titleImage && <Fill><Shader source={typeEffect!} uniforms={uniforms}>
           <ImageShader image={titleImage} fit="fill" rect={{ x: 0, y: 0, width: 1920, height: 1080 }} />
         </Shader></Fill>}
-        {closing && titleImage && <Fill><ImageShader image={titleImage} fit="fill" rect={{x:0,y:0,width:1920,height:1080}} /></Fill>}
         {closing && <Fill><Shader source={waterEffect!} uniforms={uniforms} /></Fill>}
       </PresentationCanvas>
       {byline && !closing && <TitleByline uniforms={uniforms} onMeasure={measureByline} />}
