@@ -124,9 +124,15 @@ export function AppShowcase({ apps, title, launchDemo = false }: { apps: string[
           <Text style={{ color: "#f8fafc", fontSize: card.width * 0.035, fontWeight: "600" }}>{name}</Text>
         </View>
         <View style={{ flex: 1, overflow: "hidden" }}>
-          {isPreview || !media.page ? <Image source={{ uri: media.poster }} resizeMode="contain" style={{ width: "100%", height: "100%" }} />
-            : <LocalRecording key={launch ? "launch" : "normal"} page={launch ?? media.page} poster={media.poster} extension="mov" transparent
-                position={launch ? launchPosition : undefined} playing={phase === "playing" && apps[position] === name} />}
+          <SceneMotionView duration={500} style={{ flex: 1 }} pose={{
+            x: launch ? -card.width * 0.225 : 0,
+            y: launch ? -(card.height - card.captionHeight) * 0.25 : 0,
+            scaleX: launch ? 1.5 : 1, scaleY: launch ? 1.5 : 1,
+          }}>
+            {isPreview || !media.page ? <Image source={{ uri: media.poster }} resizeMode="contain" style={{ width: "100%", height: "100%" }} />
+              : <LocalRecording key={launch ? "launch" : "normal"} page={launch ?? media.page} poster={media.poster} extension="mov" transparent
+                  position={launch ? launchPosition : undefined} playing={phase === "playing" && apps[position] === name} />}
+          </SceneMotionView>
         </View>
       </View>;
     }} />
