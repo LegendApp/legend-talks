@@ -23,6 +23,8 @@ import diffPage from "./rnconnection-assets/app-recordings/diff.html";
 // @ts-ignore Local media resolved by the deck compiler.
 import diffPoster from "./rnconnection-assets/app-recordings/diff.png";
 // @ts-ignore Local media resolved by the deck compiler.
+import diffLaunch from "./rnconnection-assets/app-recordings/diff-launch.html";
+// @ts-ignore Local media resolved by the deck compiler.
 import photosPage from "./rnconnection-assets/app-recordings/photos.html";
 // @ts-ignore Local media resolved by the deck compiler.
 import photosPoster from "./rnconnection-assets/app-recordings/photos.png";
@@ -32,12 +34,12 @@ import musicPage from "./rnconnection-assets/app-recordings/music.html";
 import musicPoster from "./rnconnection-assets/app-recordings/music.png";
 // @ts-ignore Local media resolved by the deck compiler.
 import markdownPoster from "./rnconnection-assets/app-recordings/markdown.png";
-const appMedia: Record<string, { page?: string; poster: string }> = {
+const appMedia: Record<string, { page?: string; poster: string; launch?: string }> = {
   "Legend Photos": { page: photosPage, poster: photosPoster },
   "Legend Music": { page: musicPage, poster: musicPoster },
   "Chat History": { page: chat_historyPage, poster: chat_historyPoster },
   "Code": { page: codePage, poster: codePoster },
-  "Diff": { page: diffPage, poster: diffPoster },
+  "Diff": { page: diffPage, poster: diffPoster, launch: diffLaunch },
   "Markdown": { poster: markdownPoster },
 };
 
@@ -101,7 +103,7 @@ export function AppCarousel<T extends string>({ items, position, mode = "filmstr
   })}</ProgressivePreparation>{renderOverlay && visible.map(({ id, index }) => renderOverlay(id, index))}</SnapshotCaptureBoundary>;
 }
 
-export function AppShowcase({ apps, title }: { apps: string[]; title: string }) {
+export function AppShowcase({ apps, title, launchDemo = false }: { apps: string[]; title: string; launchDemo?: boolean }) {
   const step = usePresentationValue("stepIndex");
   const phase = usePresentationValue("playbackPhase");
   const isPreview = usePresentationValue("isPreview");
@@ -113,13 +115,14 @@ export function AppShowcase({ apps, title }: { apps: string[]; title: string }) 
     <AppCarousel cardWidth={hasMedia ? 1600 : 1180} items={apps} position={step} getBlurPoster={name => appMedia[name]?.poster} getBlurPosterCaption={name => name} renderCard={(name, card) => {
       const media = appMedia[name];
       if (!media) return <MediaSlot label={name} height={card.height} />;
+      const launch = launchDemo ? media.launch : undefined;
       return <View style={{ flex: 1 }}>
         <View style={{ height: card.captionHeight, alignItems: "center", justifyContent: "center" }}>
           <Text style={{ color: "#f8fafc", fontSize: card.width * 0.035, fontWeight: "600" }}>{name}</Text>
         </View>
         <View style={{ flex: 1, overflow: "hidden" }}>
           {isPreview || !media.page ? <Image source={{ uri: media.poster }} resizeMode="contain" style={{ width: "100%", height: "100%" }} />
-            : <LocalRecording page={media.page} poster={media.poster} extension="mov" transparent playing={phase === "playing" && apps[step] === name} />}
+            : <LocalRecording page={launch ?? media.page} poster={media.poster} extension="mov" transparent looping={!launch} playing={phase === "playing" && apps[step] === name} />}
         </View>
       </View>;
     }} />
