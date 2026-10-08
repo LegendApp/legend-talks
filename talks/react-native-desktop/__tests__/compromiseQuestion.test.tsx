@@ -16,14 +16,25 @@ test("statement entrance stays mounted while the next step rearranges into a que
   try {
     await act(() => {
       tree = create(<PresentationProvider value={runtime$}><CompromiseQuestion title={
-        <AnimatedTitle effect="letter-wave" fontSize={72}>React Native is a Compromise</AnimatedTitle>
+        <AnimatedTitle effect="letter-wave" fontSize={72} textStyle={{ fontFamily: "System", fontWeight: "600", lineHeight: 96 }}>React Native is a Compromise</AnimatedTitle>
       } /></PresentationProvider>);
     });
     const entrance = tree.root.findByType(AnimatedTitle);
     const row = () => tree.root.findByProps({ accessibilityRole: "header", accessibilityLabel: "Is React Native a Compromise?" });
     const statement = tree.root.findAllByProps({ accessibilityRole: "header", accessibilityLabel: "React Native is a Compromise" })
       .find(node => node.props.style?.flexDirection === "row");
-    await act(() => statement.findAllByType("text")[0].props.onLayout({ nativeEvent: { layout: { width: 450 } } }));
+    const nativePhrase = statement.findAllByType("view").find(node => node.props.onLayout
+      && node.findAllByType("text").map(text => text.props.children).join("") === "ReactNative");
+    await act(() => nativePhrase.props.onLayout({ nativeEvent: { layout: { width: 450 } } }));
+    const entranceGlyphs = entrance.findAllByType("text").map(node => ({ text: node.props.children, style: node.props.style }));
+    const reorderGlyphs = statement.findAllByType("text").filter(node => node.props.children !== "Is" && node.props.children !== "?")
+      .map(node => ({ text: node.props.children, style: node.props.style }));
+    expect(reorderGlyphs).toEqual(entranceGlyphs);
+    const entranceSpaces = entrance.findAllByType("view").filter(node => node.props.style?.width === 72 * 0.28)
+      .map(node => node.props.style.width);
+    const reorderSpaces = statement.findAllByType("view").filter(node => node.props.style?.gap)
+      .flatMap(node => Array(node.children.length - 1).fill(node.props.style.gap));
+    expect(reorderSpaces).toEqual(entranceSpaces);
     for (const step of [0, 1, 0, 1]) {
       await act(() => runtime$.stepIndex.set(step));
       expect(tree.root.findByType(AnimatedTitle)).toBe(entrance);
@@ -32,8 +43,8 @@ test("statement entrance stays mounted while the next step rearranges into a que
       const heading = step === 1 ? row() : statement;
       expect(heading.props.style.opacity).toBe(step === 1 ? 1 : 0);
       const moving = heading.findAllByType(SceneMotionView);
-      expect(moving[0].props.pose.x).toBe(step === 1 ? 72 : 0);
-      expect(moving[1].props.pose.x).toBe(step === 1 ? -470 : 0);
+      expect(moving[0].props.pose.x).toBe(step === 1 ? 72.16 : 0);
+      expect(moving[1].props.pose.x).toBe(step === 1 ? -470.16 : 0);
     }
   } finally {
     if (tree) await act(() => tree.unmount());
