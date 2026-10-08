@@ -100,7 +100,7 @@ function FoundationBox({ title }: { title: string }) {
 export function FrameFoundations({ icon }: { icon: string }) {
   const step = usePresentationValue("stepIndex");
   const branchUniforms = useAnimatedShaderUniforms({ offsetX: 656 }, 5);
-  const uniforms = useAnimatedShaderUniforms({ panelHalfHeight: 8, resolveToCheck: 0, broken: 1, settled: 0, phase: 0, centerX: 848 }, 6, { clock: 1 });
+  const uniforms = useAnimatedShaderUniforms({ panelHalfHeight: 8, resolveToCheck: 0, broken: 1, settled: 0, phase: 0, centerX: 848 }, 6, { clock: 1, maxTime: 4.5 });
   return <View style={{ width: 1696, height: 980, alignSelf: "center" }}>
     <FrameTitle icon={icon} />
     <View style={{ position: "absolute", left: 656, top: 0, width: 384, height: 980 }}><PresentationCanvas width={384} height={980}><Fill><Shader source={branches!} uniforms={branchUniforms} /></Fill></PresentationCanvas></View>
