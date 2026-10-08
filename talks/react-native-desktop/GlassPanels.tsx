@@ -1,5 +1,5 @@
-import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
-import { useAnimatedShaderUniforms } from "@legend-apps/presentation";
+import { Fill, Shader, Skia } from "@shopify/react-native-skia";
+import { PresentationCanvas, useAnimatedShaderUniforms } from "@legend-apps/presentation";
 import { useMemo } from "react";
 
 export type GlassPanelShape = { x: number; y: number; width: number; height: number; radius?: number };
@@ -83,7 +83,7 @@ export function GlassPanels({ panels, width, height, pulse = 0.003, edgeMotion =
 }) {
   const effect = useMemo(() => compilePanels(createGlassPanelsShader(panels)), [panels]);
   const uniforms = useAnimatedShaderUniforms({ pulse, edgeMotion }, 8, { active });
-  return <Canvas pointerEvents="none" style={{ position: "absolute", left: 0, top: 0, width, height }}>
+  return <PresentationCanvas width={width} height={height}>
     <Fill><Shader source={effect} uniforms={uniforms} /></Fill>
-  </Canvas>;
+  </PresentationCanvas>;
 }

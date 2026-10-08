@@ -1,5 +1,5 @@
-import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
-import { PlaybackKeyframeView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
+import { Fill, Shader, Skia } from "@shopify/react-native-skia";
+import { PlaybackKeyframeView, PresentationCanvas, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Image, Text, View } from "react-native";
 import { GlassPanels } from "./GlassPanels";
 import { rootRibbonShader } from "./SharedRoots";
@@ -103,7 +103,7 @@ export function FrameFoundations({ icon }: { icon: string }) {
   const uniforms = useAnimatedShaderUniforms({ panelHalfHeight: 8, resolveToCheck: 0, broken: 1, settled: 0, phase: 0, centerX: 848 }, 6, { clock: 1 });
   return <View style={{ width: 1696, height: 980, alignSelf: "center" }}>
     <FrameTitle icon={icon} />
-    <Canvas style={{ position: "absolute", left: 656, top: 0, width: 384, height: 980 }}><Fill><Shader source={branches!} uniforms={branchUniforms} /></Fill></Canvas>
+    <View style={{ position: "absolute", left: 656, top: 0, width: 384, height: 980 }}><PresentationCanvas width={384} height={980}><Fill><Shader source={branches!} uniforms={branchUniforms} /></Fill></PresentationCanvas></View>
     {["Expo Desktop", "Expo"].map((name, i) => <PlaybackKeyframeView key={name} keyframes={boxReveal} delay={1200 + i * 1500} previewTime={10} clock="slide" style={{ position: "absolute", left: 592, top: 250 + i * 300 }}>
       <FoundationBox title={name} />
     </PlaybackKeyframeView>)}
@@ -112,7 +112,7 @@ export function FrameFoundations({ icon }: { icon: string }) {
     </PlaybackKeyframeView>}
     {step > 0 && <>
     <PlaybackKeyframeView keyframes={[{ time: 0, x: 0, y: 0, opacity: 1 }]} delay={0} previewTime={6} clock="step" style={{ position: "absolute", left: 0, top: 603, width: 1696, height: 1080 }}>
-      <Canvas style={{ width: 1696, height: 1080 }}><Fill><Shader source={effect!} uniforms={uniforms} /></Fill></Canvas>
+      <PresentationCanvas width={1696} height={1080}><Fill><Shader source={effect!} uniforms={uniforms} /></Fill></PresentationCanvas>
     </PlaybackKeyframeView>
     <PlaybackKeyframeView keyframes={hide} delay={0} previewTime={6} clock="step" style={{ position: "absolute", left: 592, top: 875, width: 512 }}><Text style={{ textAlign: "center", fontSize: 40, fontWeight: "600", color: "white" }}>WebView</Text></PlaybackKeyframeView>
     <PlaybackKeyframeView keyframes={boxReveal} delay={1500} previewTime={6} clock="step" style={{ position: "absolute", left: 592, top: 850 }}>
