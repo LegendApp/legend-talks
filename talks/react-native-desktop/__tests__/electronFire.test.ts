@@ -33,10 +33,10 @@ test("fire builds over five seconds while varied poop emojis fall, splash, and k
   const fireWidth = 368, width = fireWidth + 256, height = 824, floorY = 800;
   const surface = kit.MakeSurface(width, height);
   const paint = new kit.Paint();
-  function render(time) {
+  function render(time, layers = [0, 1]) {
     const canvas = surface.getCanvas();
     canvas.clear(kit.TRANSPARENT);
-    for (const drops of [0, 1]) {
+    for (const drops of layers) {
       const shader = effect.makeShaderWithChildren([time, fireWidth, 30, floorY, drops], [emojiShader]);
       paint.setShader(shader);
       canvas.drawRect(kit.XYWHRect(0, 0, width, height), paint);
@@ -57,6 +57,22 @@ test("fire builds over five seconds while varied poop emojis fall, splash, and k
     const burning = render(2.4);
     expect(burning).not.toEqual(render(2.9));
     expect(burning).toEqual(render(2.4));
+    const ignition = render(1.0, [0]);
+    const rising = render(3.0, [0]);
+    const alphaIn = (frame, left, top, right, bottom) => {
+      let alpha = 0;
+      for (let y = top; y < bottom; y++) for (let x = left; x < right; x++) {
+        alpha += frame[(y * width + x) * 4 + 3];
+      }
+      return alpha;
+    };
+    const leftBase = alphaIn(ignition, 140, 175, 240, 190);
+    const rightBase = alphaIn(ignition, 384, 175, 484, 190);
+    expect(leftBase).toBeGreaterThan(1000);
+    expect(rightBase).toBeGreaterThan(leftBase * 0.5);
+    expect(leftBase).toBeGreaterThan(rightBase * 0.5);
+    expect(alphaIn(rising, 128, 60, 496, 130)).toBeGreaterThan(1000);
+    expect(alphaIn(ignition, 128, 60, 496, 130)).toBe(0);
     const early = render(1.0);
     let attachedDrops = 0;
     for (let y = 184; y < 214; y++) for (let x = 128; x < 128 + fireWidth; x++) {

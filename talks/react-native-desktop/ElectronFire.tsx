@@ -69,7 +69,7 @@ half4 main(float2 p) {
   float3 color=float3(0);
   float alpha=0.0;
   if(drops<0.5 && p.y<184.0+barHeight+25.0) {
-    float spread=smoothstep(-18.0,24.0,(fireWidth+24.0)*ignition-x);
+    float spread=smoothstep(-18.0,24.0,190.0*ignition-h);
     float drift=sin(time*1.4+h*0.022)*12.0;
     float2 flow=float2((x+drift)*0.026,h*0.026-time*1.9);
     float warp=(turbulence(flow*0.53)-0.47)*42.0*clamp(h/100.0,0.0,1.0);
@@ -104,7 +104,7 @@ half4 main(float2 p) {
       float spark=exp(-dot(delta/float2(radius,radius*2.1),delta/float2(radius,radius*2.1))*1.5);
       float halo=exp(-dot(delta,delta)*0.07)*0.18;
       float life=smoothstep(0.02,0.13,age)*(1.0-smoothstep(0.65,1.0,age));
-      float ember=(spark+halo)*life*ignition*smoothstep(-18.0,24.0,(fireWidth+24.0)*ignition-origin);
+      float ember=(spark+halo)*life*ignition*smoothstep(-18.0,24.0,190.0*ignition-lift);
       color+=float3(1.0,0.46+seed*0.32,0.08)*ember;
       alpha+=ember;
     }
