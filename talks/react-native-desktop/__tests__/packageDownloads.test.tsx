@@ -24,7 +24,7 @@ test("only Electron allocates the color crossfade and step changes keep every do
     expect(rows().map(row => row.props.value)).toEqual(values);
     expect(rows().filter(row => row.props.grouped).map(row => row.props.name)).toEqual(["Electron"]);
     expect(tree.root.findAllByType("fire")).toHaveLength(1);
-    expect(tree.root.findByType("fire").props).toMatchObject({ x: 285, y: 175.5 });
+    expect(tree.root.findByType("fire").props).toMatchObject({ x: 285, y: 175.5, barHeight: 30 });
     expect(tree.root.findByType("fire").props.width).toBeCloseTo(values[2] / values[0] * 1210);
     step = 0;
     await act(() => tree.update(<PackageDownloadsChart />));

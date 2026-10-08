@@ -4,6 +4,7 @@ import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
 export const electronFireShader = `
 uniform float time;
 uniform float fireWidth;
+uniform float barHeight;
 
 float hash(float2 p) {
   return fract(sin(dot(p,float2(127.1,311.7)))*43758.5453);
@@ -66,7 +67,41 @@ half4 main(float2 p) {
     color+=float3(1.0,0.46+seed*0.32,0.08)*ember;
     alpha+=ember;
   }
-  float bounds=smoothstep(0.0,14.0,p.y)*(1.0-smoothstep(257.0,280.0,p.y));
+  float melting=smoothstep(0.8,1.7,time);
+  float fall=p.y-(184.0+barHeight);
+  float lip=exp(-fall*fall*0.35)*edge*melting*0.65;
+  color+=float3(1.0,0.38,0.025)*lip;
+  alpha+=lip;
+  float dripLane=floor(x/92.0);
+  for(int neighbor=-1;neighbor<=1;neighbor++) {
+    float id=dripLane+float(neighbor);
+    float seed=hash(float2(id,83.0));
+    float cycle=max(time-0.9,0.0)*(0.28+seed*0.18)+seed*0.83;
+    float age=fract(cycle);
+    float variation=hash(float2(id,floor(cycle)+57.0));
+    float origin=(id+0.25+seed*0.5)*92.0;
+    if(origin<8.0 || origin>fireWidth-8.0) continue;
+    float growth=smoothstep(0.0,0.58,age);
+    float extension=8.0+(24.0+variation*20.0)*growth;
+    float detached=max((age-0.58)/0.42,0.0);
+    float tip=extension+130.0*detached*detached;
+    float dx=x-origin-sin(fall*0.035+seed*9.0)*2.5-detached*detached*(variation-0.5)*16.0;
+    float neckLength=extension*(1.0-smoothstep(0.56,0.63,age));
+    float neck=(1.0-smoothstep(1.3,3.4,abs(dx)))*smoothstep(-1.0,2.0,fall)
+      *(1.0-smoothstep(neckLength-2.0,neckLength+2.0,fall));
+    float radius=3.5+seed*2.0+growth*1.8;
+    float2 drop=float2(dx,fall-tip)/float2(radius,radius*1.35);
+    float distance=length(drop);
+    float bead=1.0-smoothstep(0.72,1.1,distance);
+    float life=melting*(1.0-smoothstep(0.91,1.0,age));
+    float liquid=max(neck,bead)*life;
+    float hot=exp(-dot(drop+float2(0.22,0.28),drop+float2(0.22,0.28))*3.0);
+    float3 lava=mix(float3(1.0,0.12,0.005),float3(1.0,0.88,0.38),max(hot,neck*0.55));
+    float halo=exp(-distance*distance*0.45)*life*0.24;
+    color=lava*liquid+color*(1.0-liquid)+float3(1.0,0.13,0.005)*halo;
+    alpha=liquid+alpha*(1.0-liquid)+halo;
+  }
+  float bounds=smoothstep(0.0,14.0,p.y)*(1.0-smoothstep(377.0,400.0,p.y));
   alpha=clamp(alpha,0.0,1.0)*ignition*bounds;
   return half4(min(color*ignition*bounds,float3(alpha)),alpha);
 }`;
@@ -74,10 +109,10 @@ half4 main(float2 p) {
 const effect = Skia.RuntimeEffect.Make(electronFireShader);
 if (!effect) throw new Error("Could not compile Electron fire");
 
-export function ElectronFire({ width, x, y }: { width: number; x: number; y: number }) {
-  const uniforms = useAnimatedShaderUniforms({ fireWidth: width }, 2.4, { clock: "step" });
-  return <Canvas pointerEvents="none" accessibilityLabel="Flames and rising embers around the Electron download bar"
-    style={{ position: "absolute", left: x - 56, top: y - 190, width: width + 112, height: 280 }}>
+export function ElectronFire({ width, barHeight, x, y }: { width: number; barHeight: number; x: number; y: number }) {
+  const uniforms = useAnimatedShaderUniforms({ fireWidth: width, barHeight }, 2.4, { clock: "step" });
+  return <Canvas pointerEvents="none" accessibilityLabel="Flames, rising embers, and molten drips around the Electron download bar"
+    style={{ position: "absolute", left: x - 56, top: y - 184, width: width + 112, height: 400 }}>
     <Fill><Shader source={effect!} uniforms={uniforms} /></Fill>
   </Canvas>;
 }

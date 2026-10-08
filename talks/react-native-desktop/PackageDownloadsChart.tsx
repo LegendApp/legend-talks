@@ -16,7 +16,7 @@ export function PackageDownloadsChart() {
   const emphasizeElectron = usePresentationValue("stepIndex") >= 1;
   return <View style={{ width: chartLayout.width, height: chartLayout.height,
     marginTop: chartLayout.marginTop, alignSelf: "center" }}>
-    {emphasizeElectron && <ElectronFire width={electronWidth} x={chartLayout.barLeft}
+    {emphasizeElectron && <ElectronFire width={electronWidth} barHeight={chartLayout.barHeight} x={chartLayout.barLeft}
       y={chartLayout.top + electronIndex * chartLayout.rowSpacing + (chartLayout.rowHeight - chartLayout.barHeight) / 2} />}
     <ProgressivePreparation>{rows.map((row, index) => <BenchmarkRow key={row.package}
       name={row.name} highlighted={false}
