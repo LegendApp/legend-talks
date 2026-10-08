@@ -81,7 +81,7 @@ import slidesIcon from "./rnconnection-assets/slides-icon.png";
 
 2. And I’m convinced that React Native is the best way to build desktop apps.
 
-This is a pretty big claim. Best is a very absolute word and I do not use it lightly. So to back up that claim I gathered a lot of evidence and have been working on making React Native on desktop better.
+This is a pretty big claim. Best is a very absolute word and I do not use it lightly. So to back up that claim I gathered a lot of evidence and I’ve been working on making React Native on desktop better.
 
 3. But before I get to that let’s start at the beginning
 
@@ -148,7 +148,7 @@ reviewFullStage: true
 <!--
 1. I started with Legend Photos because I wanted to see how a list in a grid would perform with lots of images. It was incredible. It opened super fast, animations were very smooth, the app just flew.
 
-2. And then I made Legend Music, to try to recreate the winamp experience in a modern mac app. It was so much faster that Spotify and YouTube Music that I’d been using.
+2. And then I made Legend Music, to try to recreate the winamp experience in a modern mac app. It was so much faster than Spotify and YouTube Music that I’d been using.
 
 3. Next I built⁠ Legend Code, to see if Legend List could power a code editor. It turns out that it can. It’s the fastest text editor I’ve found.
 
@@ -158,11 +158,11 @@ reviewFullStage: true
 
 6. Then Chat History, because AI apps are all built as webview apps and are just so unbelievably slow. It turned out much faster than every other chat app.
 
-7. And Legend Markdown, an extremely fast Markdown editor, which is faster than every other Markdown or text editor app I’ve tried.
+7. And Legend Markdown, an extremely fast Markdown editor using react-native-enriched-markdown, which is faster than every other Markdown or text editor app I’ve tried.
 
 These apps felt so much better than the Electron apps I was using. Small, instant, native UI.
 
-I felt a connection to my computer that I hadn’t felt in years. No delays, no load times, the apps just felt natural to use.
+I felt a connection to my computer that I hadn’t felt in years. No delays, no load times, responding instantly to my clicks. The apps just felt natural to use.
 -->
 
 
@@ -179,7 +179,7 @@ steps: 2
 <!--
 1. I was very impressed by how small this app was, especially compared to the app I was using at the time, Spotify. The whole app was only 35 megabytes, while Spotify is 430 megabytes. That's because it uses Electron, and a blank Electron app is almost 300 megabytes.
 
-2. Since then I've realized that was a universal build and it wasn't optimized correctly. It's actually only 15 megabytes.
+2. Since then I've realized that was a universal build and it wasn't optimized correctly. It's actually only 15. So it’s less than 4% the size of Spotify.
 -->
 
 
@@ -209,7 +209,7 @@ eyebrow: 'Legend Music / RNL 2025'
 <MusicPerformance metric="memory" capture={musicMemoryCapture} />
 
 <!--
-Spotify running a full browser with several different processes takes about 800 megabytes of memory.
+Spotify running a full browser with several different processes takes about 800 megabytes of memory. Not even after being open a while, that’s just at startup.
 
 800! This should not be acceptable.
 
@@ -289,7 +289,7 @@ First is real native UI. AppKit is effectively UIKit on mac. SwiftUI is Apple's 
 
 2. Then there are the browser ones. Electron bundles Chromium and Nodejs with your app. Tauri uses the system WebView with a Rust backend.
 
-3. And then there are frameworks that render every pixel on a canvas. Flutter, Compose Multiplatform, and GPUI, which is the Rust framework behind Zed.
+3. And then there are frameworks that render every pixel on a canvas. Flutter, Compose Multiplatform, and GPUI, which is the Rust framework behind the Zed editor which I love.
 -->
 
 
@@ -308,9 +308,11 @@ steps: 2
 
 But Electron has almost as many users as Expo. And if you add Tauri, the other most popular framework, to that, there’s more desktop developers than Expo developers.
 
-So it seems like the desktop app opportunity is at least as big as mobile. Or at least I think it could be, if the apps were actually great instead of hot garbage.
+So it seems like the desktop app opportunity is at least as big as mobile. Or at least I think it could be
 
-2. I’m going to pick on Electron a lot today, because it’s currently the market leader and is the main platform that React Native on desktop competes with. And it's the one I used and was frustrated with for a decade, so I have a lot of emotion about it.
+2. if the apps were actually great instead of hot garbage
+
+I’m going to pick on Electron a lot today, because it’s currently the market leader and is the main platform that React Native on desktop competes with.
 -->
 
 
@@ -325,7 +327,7 @@ eyebrow: Story
 <LegendAppVideo />
 
 <!--
-For some context about my anger, my app Legend that I started 12 years ago, is an Electron app.
+And for some context about my anger at Electron, my app Legend that I started 12 years ago, is an Electron app.
 
 I optimized it a lot, but I hit the limits of Electron’s constraints and running in a webview. So I've been frustrated with Electron and desktop apps in general for a decade.
 -->
@@ -378,7 +380,7 @@ Whether we all like liquid glass is a different question. But we should make app
 
 15. Flutter renders every pixel itself, so the Flutter framework or someone has to implement their own version of liquid glass.
 
-16. Its sidebar can only be a solid color.
+16. Its sidebar is a solid color.
 
 17. And the composer is just a blur too.
 
@@ -410,7 +412,7 @@ steps: 3
 
 I want my Mac app to feel like a Mac app. I want my Windows app to feel like a Windows app.
 
-2. You might have noticed a lot of apps these days have settings inside the main window. That’s because webview apps like Electron don’t really support sharing state between multiple windows. They have some crazy inter process communication situation where you post messages between different processes. In React Native we can just share React or global state so it’s easy.
+2. You might have noticed a lot of apps these days have settings inside the main window. That’s because webview apps like Electron don’t really support sharing state between multiple windows. They have some crazy inter process communication situation where you post messages between different processes. It’s so annoying to work with. In React Native we can just share React or global state so it’s easy.
 
 3. For my Music app it was easy to make some native modules for hooks into the native media playback state in macOS. It supports media keys. It supports spatial audio. Because I can just write Swift native modules to do whatever I want.
 
@@ -434,7 +436,7 @@ footer: 'Median ms · 10 measured rounds · small differences near recording cad
 
 2. So here are the results for app opening time, from click to content on screen. React Native matches GPUI and SwiftUI. AppKit is a bit faster. Other frameworks are slower.
 
-It’s interesting that React Native exactly matches SwiftUI, when that’s the one everyone tells me is faster…
+It’s interesting that React Native exactly matches SwiftUI, when that’s the one everyone keeps telling me is so much faster…
 -->
 
 
@@ -455,7 +457,7 @@ footer: 'Greeting workload · newer installed-size snapshot · MB'
 
 3. AppKit and SwiftUI are tiny because they’re built in to the operating system
 
-4. Electron and Deno CEF build in a full Chromium browser, and a full Nodejs or Deno runtime.
+4. Electron builds in a full Chromium browser, and a full Nodejs runtime.
 
 5. GPUI brings its own rendering system, and it’s impressively small. React Native brings Hermes and its own runtime, but it’s still a very small app.
 
@@ -508,13 +510,15 @@ footer: 'Video-derived ms · September 24 reference'
 <!--
 1. So that’s why I built chat history in every framework. LLMs and I did a ton of work on each app to make it as fast as it can be to make this a fair comparison, and each iteration shifted the results wildly. So it’s possible that a single optimization could make a big difference in any of them.
 
+I made the React Native version very fast using Nitro Modules for loading everything in C++ and virtualizing with LegendList.
+
 AppKit of course opens the fastest. GPUI and React Native are a bit behind.
 
 2. These group pretty cleanly into buckets again. SwiftUI surprised me. It’s fully native but it’s not very fast.
 
 Electron takes about three times as long as React Native to open.
 
-So React Native isn't the absolute fastest, but it’s very close. And it’s faster than the native SwiftUI app.
+So React Native isn't the absolute fastest, but it’s soo close. And it’s almost twice as fast as the native SwiftUI app.
 -->
 
 
@@ -630,7 +634,7 @@ And of course React Native has all the other benefits we all know about.
 
 I get to use the tools I already know. Components, hooks, state libraries, Fast Refresh.
 
-I can change some UI and see it immediately. That's a really nice way to build desktop apps.
+I can change some UI and see it immediately. Multiple agents can run at the same time and it just fast refreshes when each one is done. It’s a really nice way to build desktop apps.
 -->
 
 
@@ -646,7 +650,7 @@ footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 <!--
 And this is the development experience I actually want.
 
-React Native on mobile. React Native on tablets or foldables. React Native on desktop. React on the web.
+React Native on mobile. React Native on tablets or foldables. React Native on desktop. React Native on the web.
 
 Share the state, the data, the logic, and the components.
 
@@ -687,7 +691,7 @@ But sure. You can write five different apps in four different languages for ever
 
 But then you have five totally different implementations of the same product, and every feature you build. I guess you can just throw a lot of tokens at validating they’re all totally exactly the same.
 
-2. But then you have to maintain them five times. If a user finds a bug you have to check what platforms it affects, and fix it everywhere. And check and validate and PR every fix to every app. That’s just not sustainable. Some huge companies might think it is now, but it’s not. And especially not for normal size companies with budgets.
+2. But then you have to maintain them five times. If a user finds a bug you have to check what platforms it affects, and fix it everywhere. And check and validate and PR every fix to every app. That’s just not sustainable. Some big companies might think it is now, but it’s not. And especially not for normal size companies with budgets.
 
 So we need to share the implementation. Putting it all together,
 -->
@@ -701,7 +705,7 @@ footer: 'RN CONNECTION / REACT NATIVE DESKTOP'
 <FrameworkComparison />
 
 <!--
-This is why I think React Native is the best choice.
+This is why I think React Native is just strictly the best choice.
 
 It's the best combination of speed, memory, and real native UI among all of the frameworks I tested.
 -->
@@ -734,7 +738,7 @@ steps: 4
 
 3. But we just proved that’s solved. It has great performance.
 
-Current libraries don’t all support desktop.
+And then, current libraries don’t all support desktop.
 
 And then there's the desktop foundation. Getting a project started, getting it built, and all the native desktop APIs the app needs.
 
@@ -751,7 +755,7 @@ eyebrow: 'Desktop foundations / Expo Desktop'
 <ExpoDesktopLayers />
 
 <!--
-1. Of course we want to use Expo. But Expo doesn’t support desktop. So I need to have separate projects for mac and windows apps. But Jamie Birch has solved that
+1. Of course we want to use Expo. But Expo doesn’t fully support desktop. So I need to have separate projects for mac and windows apps. But Jamie Birch has solved that
 
 2. with Expo Desktop. It adds support for out of tree platforms to Expo, letting you have one monorepo for all of your React Native apps on every platform
 -->
@@ -764,7 +768,7 @@ title: Expo Desktop
 <ExpoDesktopPortal />
 
 <!--
-1. Expo doesn’t yet fully support desktop platforms, but Jamie has gotten it a long way towards working well. There are still gaps and rough edges. But it gives us a shared starting point instead of setting everything up ourselves.
+1. There are still gaps and rough edges. But Expo Desktop gives us a shared starting point instead of setting everything up ourselves.
 
 It’s a really cool project.
 -->
@@ -814,7 +818,7 @@ steps: 6
 
 4. Deep links. App lifecycle. Preferences. Permissions.
 
-These work differently than mobile or just don’t exist yet. As I was making apps I needed to build all of these features for my app to use.
+These work differently than mobile or just don’t exist yet. As I was making apps I needed to build all of these features for my apps to use.
 
 5. And that's just to get the app working. Then you have to ship it, and do all the work for that.
 
