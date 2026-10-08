@@ -8,7 +8,7 @@ The complete `rnconnection.mdx` talk, including alternate slides, uses host-owne
 | Expo connection, module waves | Shader `stepIndex` and `stepTime` | Current step |
 | Spark glass → publishing network → explosion → cursor typing | Shared LiquidGlass shader, `useLiquidGlassPlayback`, shader text atlas | Glass tween on step 4; reveal anchored to step 5; one persistent Canvas |
 | Shattered objections and subsequent zoom | Shader option `{ clock: 1 }` | Time since step 1; survives step 2 |
-| Native poses and interrupted moves | `SceneMotionView`, `usePlaybackTween` | Shared step clock |
+| Native poses and interrupted moves | `SceneMotionView`, `usePlaybackTween` | Step-triggered targets on the continuous slide clock; unchanged targets keep their deadline |
 | Chart row grouping | `ScenePositionView` | Shared tween; fixed native layout for measurement |
 | Chart entrance vs matched resize | `useSharedElementEntrance` | Host shared-element lifecycle |
 | Carousel position, scale, opacity, stacking | Deck-local `FilmstripMotionView` | Shared tween |
@@ -20,6 +20,8 @@ The complete `rnconnection.mdx` talk, including alternate slides, uses host-owne
 Mounting a shader after a step does not create a new clock. Choose its timeline explicitly. The objections use step 1 rather than remounting their Canvas to restart elapsed slide time.
 
 Preparation samples zero. Previews sample a deterministic still. Activation resets playback. Outgoing effects freeze while navigation animates their exit. Without an audience window, the presenter's current slide still plays.
+
+Step changes reset the current step clock, while already-running pose tweens continue unless their target changes. A shader switched from active to inactive retains its previous step identity and advances for one second before freezing its final frame. Set `inactivityDelay` in milliseconds (zero for immediate freezing) when its exit needs different timing. This grace period uses the shared UI clock and does not advance outgoing slides or previews.
 
 Title bubble simulation, filmstrip placement, and carousel blur live beside the deck. Their explicit `"worklet"` functions are compiled by the deck compiler; they still consume host playback and navigation clocks. Keep worklet directives on deck callbacks because bundling renames hook imports before worklet compilation.
 
