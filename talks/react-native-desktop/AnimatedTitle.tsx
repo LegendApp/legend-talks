@@ -70,8 +70,8 @@ function buildSlots(text: string, unit: "word" | "letter") {
   });
 }
 
-export function AnimatedTitle({ children, effect = "soft-rise", fontSize = 104, width = 1696, color = "#f8fafc", clock = "slide", textStyle: titleStyle }: {
-  children: string | string[]; effect?: TitleEntranceEffect; fontSize?: number; width?: number; color?: string; clock?: "slide" | "step";
+export function AnimatedTitle({ children, effect = "soft-rise", fontSize = 104, width = 1696, wrap = true, color = "#f8fafc", clock = "slide", textStyle: titleStyle }: {
+  children: string | string[]; effect?: TitleEntranceEffect; fontSize?: number; width?: number; wrap?: boolean; color?: string; clock?: "slide" | "step";
   textStyle?: Pick<TextStyle, "fontFamily" | "fontWeight" | "lineHeight" | "letterSpacing">;
 }) {
   const title = typeof children === "string" ? children : children.join("");
@@ -107,10 +107,11 @@ export function AnimatedTitle({ children, effect = "soft-rise", fontSize = 104, 
         {([-1, 1, 0] as const).map(layer => <GlitchLayer key={layer} layer={layer} {...motionProps} width={width} textStyle={textStyle}>{title}</GlitchLayer>)}
       </View>
       : preset.unit === "title" ? <TitleSlot {...motionProps} text={title} index={0} count={1} lineIndex={0} lineCount={1} textStyle={textStyle} />
-      : lines.map((words, line) => <View key={line} style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center", minHeight: textStyle.lineHeight }}>
+      : lines.map((words, line) => <View key={line} style={{ flexDirection: "row", flexWrap: wrap ? "wrap" : "nowrap", justifyContent: "center", minHeight: textStyle.lineHeight }}>
         {words.map(({ word, slots }, wordIndex) => slots.length ? <View key={wordIndex} style={{ flexDirection: "row" }}>
           {slots.map(slot => <TitleSlot key={slot.index} {...slot} {...motionProps} textStyle={textStyle} />)}
-        </View> : <View key={wordIndex} style={{ width: word.length * fontSize * 0.28, height: textStyle.lineHeight }} />)}
+        </View> : preset.unit === "word" ? <Text key={wordIndex} accessible={false} style={textStyle}>{word}</Text>
+          : <View key={wordIndex} style={{ width: word.length * fontSize * 0.28, height: textStyle.lineHeight }} />)}
       </View>)}
   </View>;
 }

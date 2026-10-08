@@ -18,10 +18,10 @@ export function BenchmarkTitle({ title, metric, animateEntrance = false }: {
       style={{ flexDirection: "row", alignItems: "center" }}>
       <MovingTitle>
         <View>
-          <Text accessible={false} onLayout={event => setTitleWidth(event.nativeEvent.layout.width)}
+          <Text accessible={false} numberOfLines={1} onLayout={event => setTitleWidth(event.nativeEvent.layout.width)}
             style={[titleTextStyle, { opacity: animateEntrance ? 0 : 1 }]}>{title}</Text>
           {animateEntrance && titleWidth > 0 && <View style={{ position: "absolute", top: 0, left: 0 }}>
-            <AnimatedTitle effect="stretch-release" fontSize={72} width={titleWidth}
+            <AnimatedTitle effect="stretch-release" fontSize={72} width={titleWidth} wrap={false}
               textStyle={titleTextStyle}>{title}</AnimatedTitle>
           </View>}
         </View>

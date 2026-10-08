@@ -33,6 +33,12 @@ test("Hello World keeps its layout and entrance mounted while moving into the ch
     expect((1696 - (400 + gap + metricWidth)) / 2 + 400 / 2 + row.props.pose.x).toBe(1696 / 2);
     expect(entrance.props.effect).toBe("stretch-release");
     expect(entrance.props.width).toBe(400);
+    expect(measurement.props.numberOfLines).toBe(1);
+    const wordRow = entrance.findAllByType("view").find(node => node.props.style?.flexDirection === "row");
+    expect(wordRow.props.style.flexWrap).toBe("nowrap");
+    const words = entrance.findAllByType("text");
+    expect(words.map(node => node.props.children)).toEqual(["Hello", " ", "World"]);
+    expect(words[1].props.style).toMatchObject({ fontFamily: "Helvetica Neue", fontSize: 72, fontWeight: "600", letterSpacing: -1.8 });
 
     for (const step of [1, 2, 0, 1]) {
       await act(() => runtime$.stepIndex.set(step));
