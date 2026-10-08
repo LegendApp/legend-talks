@@ -1,3 +1,4 @@
+import { blurImages, disposeBlurImage, resizeBlurImage, loadPosterBlurImage } from "./carouselBlurImages";
 import { snapshotCaptureQueue } from "@legend-apps/presentation";
 import { Blur, Canvas, Group, Image as SkiaImage, Paint, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
 import { useDeferredValue, useEffect, useRef, type ReactNode } from "react";
@@ -5,9 +6,10 @@ import { StyleSheet, View } from "react-native";
 import Animated, { runOnUI, useAnimatedStyle, useDerivedValue, useSharedValue, type SharedValue } from "react-native-reanimated";
 
 /** Capture on layout changes only; blur and the live-content handoff run on the UI thread. */
-export function CarouselBlurView({ children, progress, index, enabled }: {
-  children: ReactNode; progress: SharedValue<{ position: number }>; index: number; enabled: boolean;
+export function CarouselBlurView({ children, progress, index, enabled, cacheKey, poster, posterTop = 0, posterCaption }: {
+  children: ReactNode; progress: SharedValue<{ position: number }>; index: number; enabled: boolean; cacheKey?: string; poster?: string; posterTop?: number; posterCaption?: string;
 }) {
+  const identity = poster ? JSON.stringify(["poster", poster, posterTop, posterCaption]) : cacheKey;
   const snapshotEnabled = useDeferredValue(enabled, false);
   const source = useRef<View>(null);
   const layout = useRef({ width: 0, height: 0 });
@@ -23,28 +25,44 @@ export function CarouselBlurView({ children, progress, index, enabled }: {
       image.set(null);
       if (!enabled || !snapshotEnabled || !layout.current.width || !layout.current.height) return;
       let cancelled = false;
-      let captured: SkImage | undefined;
-      const cancelCapture = snapshotCaptureQueue.enqueue(async () => {
+      let held: { image: SkImage; release(): void } | undefined;
+      const key = identity ? JSON.stringify([identity, layout.current.width, layout.current.height]) : undefined;
+      const publish = (lease: NonNullable<typeof held>) => {
+        held = lease;
+        const next = lease.image;
+        runOnUI(() => { "worklet"; image.set(next); })();
+      };
+      const cached = key ? blurImages.acquire(key) : undefined;
+      if (cached) publish(cached);
+      const cancelCapture = cached ? () => {} : snapshotCaptureQueue.enqueue(async () => {
+        if (cancelled) return;
         try {
-          const snapshot = await makeImageFromView(source);
+          let available;
+          if (key) available = blurImages.acquire(key);
+          if (available) { publish(available); return; }
+          let snapshot: SkImage | null;
+          if (poster) snapshot = await loadPosterBlurImage(poster, layout.current.width, layout.current.height, posterTop, posterCaption);
+          else snapshot = await makeImageFromView(source);
           if (!snapshot) return;
-          if (cancelled) { snapshot.dispose(); return; }
-          captured = snapshot;
-          image.set(snapshot);
+          if (cancelled) { disposeBlurImage(snapshot); return; }
+          const small = resizeBlurImage(snapshot);
+          if (key) publish(blurImages.insert(key, small));
+          else publish({ image: small, release: () => disposeBlurImage(small) });
         } catch { /* Keep live content if native capture is unavailable. */ }
       });
       release = () => {
         cancelled = true;
         cancelCapture();
-        const previous = captured;
-        captured = undefined;
-        runOnUI(() => { "worklet"; image.set(null); previous?.dispose(); })();
+        const previous = held;
+        held = undefined;
+        runOnUI(() => { "worklet"; image.set(null); })();
+        previous?.release();
       };
     };
     recapture.current = capture;
     capture();
     return () => { recapture.current = () => {}; release(); };
-  }, [enabled, snapshotEnabled, image]);
+  }, [enabled, snapshotEnabled, image, identity, poster, posterTop, posterCaption]);
   const focus = useDerivedValue(() => {
     "worklet";
     const distance = enabled ? Math.min(1, Math.abs(index - progress.value.position)) : 0;

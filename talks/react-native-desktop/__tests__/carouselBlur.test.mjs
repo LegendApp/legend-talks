@@ -20,6 +20,7 @@ test("carousel blur captures once per layout, preserves live fallback, and cance
   globalThis.cancelAnimationFrame = id => frames.delete(id);
   const mocks = {
     react: React,
+    "./carouselBlurImages": { resizeBlurImage: image => image, disposeBlurImage: image => image.dispose(), blurImages: { acquire: () => undefined } },
     "@legend-apps/presentation": { snapshotCaptureQueue: createSnapshotCaptureQueue() },
     "react-native": { View: "view", StyleSheet: { create: x => x, absoluteFill: {} } },
     "react-native-reanimated": {

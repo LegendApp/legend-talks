@@ -109,6 +109,7 @@ function NineAppsContent({ mode: requestedMode, tour: requestedTour = "full" }: 
     <View style={{ width: 1920, height: 1080 }}>
     <SceneMotionView pose={camera} duration={650} style={{ width: 1920, height: 1080 }}>
     <AppCarousel cardWidth={filmstripWidth} items={appOrder} position={selected} mode={mode}
+      getBlurPoster={id => recordings[id].poster}
       renderOverlay={mode === "filmstrip" ? (id, index) => {
       const card = appCardLayout(index, mode, selected);
       const scale = card.width / filmstripWidth;
@@ -118,7 +119,7 @@ function NineAppsContent({ mode: requestedMode, tour: requestedTour = "full" }: 
           scaleX: scale, scaleY: scale, opacity: card.opacity }}
         style={{ position: "absolute", left: filmstripLeft, top: 67.5, width: filmstripWidth,
           height: 97.5, justifyContent: "center", alignItems: "center", zIndex: card.depth * 10 + 1 }}>
-        <CarouselBlurView progress={titleProgress} index={index} enabled>
+        <CarouselBlurView progress={titleProgress} index={index} enabled cacheKey={`nine-apps-title:${names[id]}`}>
         <View style={{ width: filmstripWidth, flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Text numberOfLines={1} style={{ color: "#f8fafc", fontSize: 64, lineHeight: 78,
           fontWeight: "700", textAlign: "center" }}>{names[id]}</Text>

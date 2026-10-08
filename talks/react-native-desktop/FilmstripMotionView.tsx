@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import type { StyleProp, ViewStyle } from "react-native";
 import Animated, { useAnimatedStyle, type SharedValue } from "react-native-reanimated";
-import { CarouselBlurView } from "./CarouselBlurView";
 import { NavigationExitView } from "@legend-apps/presentation";
 
 /** Carousel placement uses slide playback; exit uses the host's navigation progress. */
@@ -22,7 +21,7 @@ export function FilmstripMotionView({ index, enabled, progress, children, style 
   });
   return <Animated.View style={[style, motionStyle]}>
     <NavigationExitView enabled={enabled} style={{ flex: 1 }}>
-      <CarouselBlurView progress={progress} index={index} enabled={enabled}>{children}</CarouselBlurView>
+      {children}
     </NavigationExitView>
   </Animated.View>;
 }

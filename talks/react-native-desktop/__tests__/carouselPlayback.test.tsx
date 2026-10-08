@@ -12,6 +12,7 @@ mock.module("react-native-reanimated", () => ({
   useAnimatedStyle: read => ({ get value() { return read(); } }), useAnimatedReaction: (read, react) => { reaction = () => react(read()); },
 }));
 mock.module("@legend-apps/presentation", () => ({
+  SnapshotCaptureBoundary: ({ children, suspended }) => <capture-boundary suspended={suspended}>{children}</capture-boundary>,
   ProgressivePreparation: ({ children }) => children, SceneMotionView: ({ children }) => children,
   NavigationExitView: ({ children }) => children,
   usePlayback: () => playback,
@@ -64,6 +65,7 @@ test("motion retains the traversed interval through interruptions, trims after s
     firstPosition.value = 1234;
     await act(() => tree.update(content(5)));
     expect(tree.root.findAllByType("card").map(card => card.props.id)).toEqual(["0","1","2","3","4","5","6"]);
+    expect(tree.root.findByType("capture-boundary").props.suspended).toBe(true);
     await act(() => reaction());
     expect(tree.root.findAllByType("card")).toHaveLength(7);
     await act(() => tree.update(content(8)));
@@ -71,7 +73,13 @@ test("motion retains the traversed interval through interruptions, trims after s
     playback.value.stepTime = 0.7; progress.value.position = 8;
     await act(() => reaction());
     expect(tree.root.findAllByType("card").map(card => card.props.id)).toEqual(["7","8"]);
+    expect(tree.root.findByType("capture-boundary").props.suspended).toBe(false);
     playback.value.stepTime = 0;
+    await act(() => tree.update(content(0)));
+    playback.value.phase = "outgoing";
+    await act(() => tree.update(content(0)));
+    expect(tree.root.findByType("capture-boundary").props.suspended).toBe(false);
+    playback.value.phase = "playing";
     await act(() => tree.update(content(0)));
     expect(tree.root.findAllByType("card")[0].props.position).toBe(firstPosition);
     expect(firstPosition.value).toBe(1234);
