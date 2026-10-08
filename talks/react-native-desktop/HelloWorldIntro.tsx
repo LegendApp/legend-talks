@@ -9,8 +9,8 @@ export function HelloWorldIntro() {
     <SceneMotionView pose={{ y: showChart ? 0 : 320 }} duration={650}>
       <BenchmarkTitle title="Hello World" metric="first content" showMetric={showChart} animateEntrance />
     </SceneMotionView>
-    {showChart && <SceneMotionView initialPose={{ opacity: 0 }} pose={{ opacity: 1 }} duration={650}>
+    <SceneMotionView pose={{ opacity: showChart ? 1 : 0 }} duration={650} delay={showChart ? 500 : 0} hidden={!showChart}>
       <Chart workload="hello" metric="content" groupAtStep={2} />
-    </SceneMotionView>}
+    </SceneMotionView>
   </View>;
 }
