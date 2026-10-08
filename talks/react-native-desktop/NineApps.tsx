@@ -109,6 +109,23 @@ function NineAppsContent({ mode: requestedMode, tour: requestedTour = "full" }: 
     <View style={{ width: 1920, height: 1080 }}>
     <SceneMotionView pose={camera} duration={650} style={{ width: 1920, height: 1080 }}>
     <AppCarousel cardWidth={filmstripWidth} items={appOrder} position={selected} mode={mode}
+      renderOverlay={mode === "filmstrip" ? (id, index) => {
+      const card = appCardLayout(index, mode, selected);
+      const scale = card.width / filmstripWidth;
+      // Keep text laid out onstage and blur it with the same focus curve as the video.
+      return <SceneMotionView key={`title-${id}`} initialPose={{ opacity: 0 }} duration={500}
+        pose={{ x: card.x - 960, y: (filmstripWidth - card.width) * 0.28125,
+          scaleX: scale, scaleY: scale, opacity: card.opacity }}
+        style={{ position: "absolute", left: filmstripLeft, top: 67.5, width: filmstripWidth,
+          height: 97.5, justifyContent: "center", alignItems: "center", zIndex: card.depth * 10 + 1 }}>
+        <CarouselBlurView progress={titleProgress} index={index} enabled>
+        <View style={{ width: filmstripWidth, flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text numberOfLines={1} style={{ color: "#f8fafc", fontSize: 64, lineHeight: 78,
+          fontWeight: "700", textAlign: "center" }}>{names[id]}</Text>
+        </View>
+        </CarouselBlurView>
+      </SceneMotionView>;
+      } : undefined}
       renderCard={(id, card) => {
       const { captionHeight } = card;
       const uri = recordings[id].poster;
@@ -133,23 +150,7 @@ function NineAppsContent({ mode: requestedMode, tour: requestedTour = "full" }: 
         </SharedElement>
       );
     }} />
-    {mode === "filmstrip" && appOrder.map((id, index) => {
-      const card = appCardLayout(index, mode, selected);
-      const scale = card.width / filmstripWidth;
-      // Keep text laid out onstage and blur it with the same focus curve as the video.
-      return <SceneMotionView key={`title-${id}`} initialPose={{ opacity: 0 }} duration={500}
-        pose={{ x: card.x - 960, y: (filmstripWidth - card.width) * 0.28125,
-          scaleX: scale, scaleY: scale, opacity: card.opacity }}
-        style={{ position: "absolute", left: filmstripLeft, top: 67.5, width: filmstripWidth,
-          height: 97.5, justifyContent: "center", alignItems: "center", zIndex: card.depth * 10 + 1 }}>
-        <CarouselBlurView progress={titleProgress} index={index} enabled>
-        <View style={{ width: filmstripWidth, flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text numberOfLines={1} style={{ color: "#f8fafc", fontSize: 64, lineHeight: 78,
-          fontWeight: "700", textAlign: "center" }}>{names[id]}</Text>
-        </View>
-        </CarouselBlurView>
-      </SceneMotionView>;
-    })}
+
     </SceneMotionView>
     </View>
     {mode === "filmstrip" && tour.detail === "takeover" && <ComposerGlassTakeover frame={gpuiFrame} />}
