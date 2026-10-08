@@ -16,7 +16,7 @@ test("the narrow Spark ribbon canvas preserves its full-size pixels throughout t
   const entry = skiaRequire.resolve("canvaskit-wasm");
   const kit = await skiaRequire("canvaskit-wasm")({ locateFile: file => join(dirname(entry), file) });
   const source = readFileSync(new URL("../FramePitch.tsx", import.meta.url), "utf8");
-  const [, left, canvasWidth, canvasHeight] = source.match(/<View style=\{\{ position: "absolute", left: (\d+), top: 0, width: (\d+), height: (\d+) \}\}><PresentationCanvas width=\{\d+\} height=\{\d+\}><Fill><Shader source=\{branches/).map(Number);
+  const [, left, canvasWidth, canvasHeight] = source.match(/<View style=\{\{ position: "absolute", left: (\d+), top: 0, width: (\d+), height: (\d+) \}\}><PresentationCanvas width=\{\d+\} height=\{\d+\}[^>]*><Fill><Shader source=\{branches/).map(Number);
   const offset = Number(source.match(/branchUniforms = useAnimatedShaderUniforms\(\{ offsetX: (\d+)/)[1]);
   const errors = [];
   const effect = kit.RuntimeEffect.Make(shader("FramePitch.tsx", "foundationBranchesShader", {
