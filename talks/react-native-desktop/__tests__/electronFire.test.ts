@@ -58,6 +58,12 @@ test("fire builds over five seconds while varied poop emojis fall, splash, and k
     expect(burning).not.toEqual(render(2.9));
     expect(burning).toEqual(render(2.4));
     const early = render(1.0);
+    let attachedDrops = 0;
+    for (let y = 184; y < 214; y++) for (let x = 128; x < 128 + fireWidth; x++) {
+      const [r, g, b, a] = early.subarray((y * width + x) * 4, (y * width + x) * 4 + 4);
+      if (r > 40 && r < 220 && g > 15 && r > g * 1.1 && g > b * 1.2 && a > 150) attachedDrops++;
+    }
+    expect(attachedDrops).toBeGreaterThan(20);
     const fullyBurning = render(5.4);
     let earlyFire = 0, fullFire = 0;
     let hotCore = 0, sparks = 0;

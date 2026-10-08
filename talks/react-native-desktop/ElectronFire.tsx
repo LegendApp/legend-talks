@@ -41,9 +41,8 @@ float4 poop(float2 p,float2 center,float2 size,float angle) {
 float4 splash(float2 p,float id,float generation,float local,float period,float origin,float release,float sourceY,bool settled) {
   float variation=hash(float2(id,generation+57.0));
   float size=42.0+63.0*variation*variation;
-  float extension=2.0+hash(float2(id,83.0))*4.0;
   float ground=floorY-generation*20.0;
-  float impact=release+sqrt(max(1.0,ground-size*0.72-sourceY-extension)/510.0);
+  float impact=release+sqrt(max(1.0,ground-size*0.4-sourceY)/510.0);
   float hit=local-generation*period-impact;
   if(hit<0.0 || p.y<ground-110.0 || p.y>ground+14.0) return float4(0);
   float4 result=float4(0);
@@ -111,7 +110,7 @@ half4 main(float2 p) {
     }
   }
   if(drops>0.5) {
-    float sourceY=184.0+barHeight;
+    float sourceY=184.0+barHeight*0.5;
     float dripLane=floor(x/92.0);
     for(int neighbor=-2;neighbor<=2;neighbor++) {
       float id=dripLane+float(neighbor);
@@ -127,9 +126,8 @@ half4 main(float2 p) {
       if(origin<8.0 || origin>fireWidth-8.0) continue;
       float growth=smoothstep(0.0,release,age);
       float size=42.0+63.0*variation*variation;
-      float extension=2.0+seed*4.0;
       float detached=max(age-release,0.0);
-      float startY=sourceY+extension+size*0.32;
+      float startY=sourceY;
       float ground=floorY-floor(cycle)*20.0;
       float impact=release+sqrt(max(1.0,ground-size*0.4-startY)/510.0);
       if(age<impact) {
