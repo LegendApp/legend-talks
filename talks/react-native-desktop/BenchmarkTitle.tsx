@@ -8,21 +8,21 @@ const titleTextStyle = { color: "#f8fafc", fontFamily: "Helvetica Neue", fontSiz
 const metricWidth = 540;
 const metricGap = 16;
 
-export function HelloWorldTitle({ metric, animateEntrance = false }: {
-  metric?: "first content" | "installed size" | "memory"; animateEntrance?: boolean;
+export function BenchmarkTitle({ title, metric, animateEntrance = false }: {
+  title: string; metric?: string; animateEntrance?: boolean;
 }) {
   const [titleWidth, setTitleWidth] = useState(0);
-  return <View accessible accessibilityRole="header" accessibilityLabel={metric ? `Hello World · ${metric}` : "Hello World"}
+  return <View accessible accessibilityRole="header" accessibilityLabel={metric ? `${title} · ${metric}` : title}
     style={{ width: 1696, height: 90, marginBottom: 36, alignSelf: "center", alignItems: "center" }}>
     <SceneMotionView pose={{ x: metric ? 0 : (metricWidth + metricGap) / 2 }} duration={650}
       style={{ flexDirection: "row", alignItems: "center" }}>
       <MovingTitle>
         <View>
           <Text accessible={false} onLayout={event => setTitleWidth(event.nativeEvent.layout.width)}
-            style={[titleTextStyle, { opacity: animateEntrance ? 0 : 1 }]}>Hello World</Text>
+            style={[titleTextStyle, { opacity: animateEntrance ? 0 : 1 }]}>{title}</Text>
           {animateEntrance && titleWidth > 0 && <View style={{ position: "absolute", top: 0, left: 0 }}>
             <AnimatedTitle effect="stretch-release" fontSize={72} width={titleWidth}
-              textStyle={titleTextStyle}>Hello World</AnimatedTitle>
+              textStyle={titleTextStyle}>{title}</AnimatedTitle>
           </View>}
         </View>
       </MovingTitle>

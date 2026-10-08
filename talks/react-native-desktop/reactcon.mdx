@@ -53,7 +53,7 @@ import { DesktopFoundationsJourney } from "./reactcon-scenes/DesktopFoundations"
 import { DesktopObjections as DesktopObjectionsReactcon } from "./ObjectionsReactcon"
 import { NineApps } from "./NineApps"
 import { HelloWorldIntro } from "./HelloWorldIntro"
-import { HelloWorldTitle } from "./HelloWorldTitle"
+import { BenchmarkTitle } from "./BenchmarkTitle"
 import { PackageDownloadsChart } from "./PackageDownloadsChart"
 import { NativeReactions } from "./reactcon-scenes/NativeReactions"
 import { MusicPerformance, MusicPerformanceTitle } from "./MusicPerformance";
@@ -442,7 +442,7 @@ steps: 6
 footer: 'Greeting workload · newer installed-size snapshot · MB'
 ---
 
-<HelloWorldTitle metric="installed size" />
+<BenchmarkTitle title="Hello World" metric="installed size" />
 
 <HelloSizeJourney />
 
@@ -467,7 +467,7 @@ steps: 2
 footer: 'Greeting workload · MB · settled physical footprint'
 ---
 
-<HelloWorldTitle metric="memory" />
+<BenchmarkTitle title="Hello World" metric="memory" />
 
 <Chart workload="hello" metric="memory" />
 
@@ -493,12 +493,13 @@ eyebrow: 'From baseline to real work'
 
 
 ---
+title: Chat History · first content
 eyebrow: 'Chat History / first content'
 steps: 2
 footer: 'Video-derived ms · September 24 reference'
 ---
 
-# Chat History · first content {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+<BenchmarkTitle title="Chat History" metric="first content" />
 
 <Chart metric="content" />
 
@@ -516,12 +517,13 @@ So React Native isn't the absolute fastest, but it’s very close. And it’s fa
 
 
 ---
+title: Chat History · memory
 eyebrow: 'Chat History / initial memory'
 steps: 2
 footer: 'Settled physical footprint · MB · includes attributed helper processes'
 ---
 
-# Chat History · memory {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+<BenchmarkTitle title="Chat History" metric="memory" />
 
 <Chart metric="memory" />
 
@@ -537,12 +539,13 @@ The bundled-browser apps are huge because they run full instances of Chromium.
 
 
 ---
+title: Chat History · jump to top
 eyebrow: 'Chat History / jump to top'
 steps: 2
 footer: 'Video-derived action-to-visible-result ms · September 24 reference · lower is better'
 ---
 
-# Chat History · jump to top {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+<BenchmarkTitle title="Chat History" metric="jump to top" />
 
 <Chart metric="jump" />
 
@@ -558,12 +561,13 @@ So React Native and GPUI do it in under 4 frames. Native frameworks and webviews
 
 
 ---
+title: Chat History · app size
 eyebrow: 'Chat History / app size'
 steps: 2
 footer: 'Measured September 18 · app bundles only · external grammars excluded · MB'
 ---
 
-# Chat History · app size {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+<BenchmarkTitle title="Chat History" metric="app size" />
 
 <Chart metric="size" />
 
