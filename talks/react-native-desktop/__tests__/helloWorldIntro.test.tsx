@@ -21,6 +21,8 @@ test("Hello World keeps its layout and entrance mounted while moving into the ch
     await act(() => { tree = create(<PresentationProvider value={runtime$}><HelloWorldIntro /></PresentationProvider>); });
     const measurement = tree.root.findAllByType("text").find(node => node.props.onLayout);
     await act(() => measurement.props.onLayout({ nativeEvent: { layout: { width: 400 } } }));
+    const metricMeasurement = tree.root.findAllByType("text").find(node => node.props.onLayout && node.props.children === "· first content");
+    await act(() => metricMeasurement.props.onLayout({ nativeEvent: { layout: { width: 349.25 } } }));
     const prefix = tree.root.findByType(MovingTitle);
     const entrance = tree.root.findByType(AnimatedTitle);
     const row = tree.root.findByType(BenchmarkTitle).findAllByType(SceneMotionView)[0];
@@ -30,6 +32,7 @@ test("Hello World keeps its layout and entrance mounted while moving into the ch
     const frameStyle = titleFrame.props.style;
     const captionStyle = captionFrame.props.style;
     const { width: metricWidth, marginLeft: gap } = captionStyle;
+    expect(metricWidth).toBe(350);
     expect((1696 - (400 + gap + metricWidth)) / 2 + 400 / 2 + row.props.pose.x).toBe(1696 / 2);
     expect(entrance.props.effect).toBe("stretch-release");
     expect(entrance.props.width).toBe(400);
@@ -55,58 +58,75 @@ test("Hello World keeps its layout and entrance mounted while moving into the ch
       expect(row.props.duration).toBe(motions[0].props.duration);
       expect(row.props.duration).toBe(650);
       expect(caption.props.pose).toEqual({ y: showChart ? 0 : 90, opacity: showChart ? 1 : 0 });
-      expect(caption.findByType("text").props.children).toBe(showChart ? "· first content" : "");
+      expect(caption.findByType("text").props.children).toBe("· first content");
+      expect(caption.props.hidden).toBe(!showChart);
     }
   } finally {
     if (tree) await act(() => tree.unmount());
   }
 });
 
-test("Chat History shares a fixed prefix and caption frame across metrics in both directions", async () => {
+test("benchmark titles center their measured labels across metrics in both directions", async () => {
   globalThis.IS_REACT_ACT_ENVIRONMENT = true;
   const runtime$ = observable({ isActive: true, isPreview: false, isPreparing: false,
     slideIndex: 0, stepIndex: 0, stepCount: 2, stepEpochs: {} });
-  const render = metric => <PresentationProvider value={runtime$}>
-    <BenchmarkTitle title="Chat History" metric={metric} />
+  const render = (title, metric) => <PresentationProvider value={runtime$}>
+    <BenchmarkTitle title={title} metric={metric} />
   </PresentationProvider>;
-  let tree, prefix, prefixStyle, frameStyle, captionStyle;
+  let tree;
+  const sequences = [
+    ["Hello World", ["first content", "installed size", "memory", "installed size", "first content"]],
+    ["Chat History", ["first content", "memory", "jump to top", "app size", "jump to top", "memory", "first content"]],
+  ];
+  const widths = { "first content": 349.25, "installed size": 410.5, memory: 260.25, "jump to top": 370.75, "app size": 275.5 };
   try {
-    for (const [index, metric] of ["first content", "memory", "jump to top", "app size", "jump to top", "memory", "first content"].entries()) {
-      await act(() => {
-        runtime$.slideIndex.set(index);
-        runtime$.stepIndex.set(0);
-        if (tree) tree.update(render(metric));
-        else tree = create(render(metric));
-      });
-      const title = tree.root.findByType(BenchmarkTitle);
-      const shared = title.findByType(SharedElement);
-      const text = shared.findByType("text");
-      const frame = title.findByType("view");
-      const [row, caption] = title.findAllByType(SceneMotionView);
-      expect(shared.props.id).toBe("rnconnection-title");
-      expect(shared.props.resize).toBe("preserve");
-      expect(text.props.children).toBe("Chat History");
-      expect(frame.props.accessibilityLabel).toBe(`Chat History · ${metric}`);
-      expect(row.props.pose).toEqual({ x: 0 });
-      expect(caption.props.initialPose).toEqual({ y: 90, opacity: 0 });
-      expect(caption.props.pose).toEqual({ y: 0, opacity: 1 });
-      expect(caption.props.duration).toBe(650);
-      expect(caption.findByType("text").props.children).toBe(`· ${metric}`);
-      expect(caption.parent.props.style).toMatchObject({ width: 540, height: 90, overflow: "hidden" });
-      if (index === 0) {
-        prefix = text;
-        prefixStyle = text.props.style;
-        frameStyle = frame.props.style;
-        captionStyle = caption.parent.props.style;
-      } else {
-        expect(text).toBe(prefix);
-        expect(text.props.style).toEqual(prefixStyle);
-        expect(frame.props.style).toEqual(frameStyle);
-        expect(caption.parent.props.style).toEqual(captionStyle);
+    for (const [name, metrics] of sequences) {
+      let prefix, prefixStyle, frameStyle;
+      for (const [index, metric] of metrics.entries()) {
+        await act(() => {
+          runtime$.slideIndex.set(index);
+          runtime$.stepIndex.set(0);
+          if (tree) tree.update(render(name, metric));
+          else tree = create(render(name, metric));
+        });
+        const title = tree.root.findByType(BenchmarkTitle);
+        const shared = title.findByType(SharedElement);
+        const text = shared.findByType("text");
+        const labelMeasurement = title.findAllByType("text").find(node => node.props.onLayout && node.props.children === `· ${metric}`);
+        await act(() => {
+          text.props.onLayout({ nativeEvent: { layout: { width: 400 } } });
+          labelMeasurement.props.onLayout({ nativeEvent: { layout: { width: widths[metric] } } });
+        });
+        const frame = title.findByType("view");
+        const [row, caption] = title.findAllByType(SceneMotionView);
+        expect(shared.props.id).toBe("rnconnection-title");
+        expect(shared.props.resize).toBe("preserve");
+        expect(text.props.children).toBe(name);
+        expect(frame.props.accessibilityLabel).toBe(`${name} · ${metric}`);
+        expect(row.props.pose).toEqual({ x: 0 });
+        expect(caption.props.initialPose).toEqual({ y: 90, opacity: 0 });
+        expect(caption.props.pose).toEqual({ y: 0, opacity: 1 });
+        expect(caption.props.duration).toBe(650);
+        expect(caption.findByType("text").props.children).toBe(`· ${metric}`);
+        expect(caption.parent.props.style).toMatchObject({ width: Math.ceil(widths[metric]), height: 90, overflow: "hidden" });
+        const rowWidth = 400 + caption.parent.props.style.marginLeft + caption.parent.props.style.width;
+        const rowLeft = (frame.props.style.width - rowWidth) / 2;
+        expect(rowLeft + rowWidth / 2 + row.props.pose.x).toBe(1696 / 2);
+        expect(row.props.style).toMatchObject({ flexDirection: "row", alignItems: "center" });
+        expect(frame.props.style.alignItems).toBe("center");
+        if (index === 0) {
+          prefix = text;
+          prefixStyle = text.props.style;
+          frameStyle = frame.props.style;
+        } else {
+          expect(text).toBe(prefix);
+          expect(text.props.style).toEqual(prefixStyle);
+          expect(frame.props.style).toEqual(frameStyle);
+        }
+        await act(() => runtime$.stepIndex.set(1));
+        expect(shared.findByType("text")).toBe(prefix);
+        expect(title.findAllByType(SceneMotionView)[1]).toBe(caption);
       }
-      await act(() => runtime$.stepIndex.set(1));
-      expect(shared.findByType("text")).toBe(prefix);
-      expect(title.findAllByType(SceneMotionView)[1]).toBe(caption);
     }
   } finally {
     if (tree) await act(() => tree.unmount());
