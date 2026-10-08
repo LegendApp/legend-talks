@@ -41,32 +41,48 @@ half4 main(float2 position) {
   float impact = broken*step(0.38,elapsed);
   float flight = max(elapsed-0.38,0.0);
   float travel = 1.0-exp(-flight*3.8);
+  float extent = length(float2(251.0,panelHalfHeight+40.0))+1.0;
+  float reach = 175.0*travel+flight*35.0;
+  if (impact > 0.5) {
+    if (abs(p.x) > max(672.0,extent+reach)) return half4(0);
+    if (flight >= 4.0) {
+      if (resolveToCheck == 0.0) return half4(0);
+      // Keep the check's strokes, spark trajectories and their glow margins.
+      if (resolve >= 1.0 && (abs(p.x) > 360.0 || p.y < -192.0 || p.y > 512.0)) return half4(0);
+    }
+  }
   float4 result = float4(0.0);
   if (impact < 0.5) {
     result = glass(p,clock);
   } else if (flight < 4.0) {
-    // Cut the actual panel into 18 irregular radial shards. Inverse-transform
-    // each shard so its original glass reflection travels with the fragment.
-    for (int i=0; i<18; i++) {
-      float id = float(i);
-      float start = id + (i == 0 ? 0.0 : (hash(id+7.0)-0.5)*0.55);
-      float end = id+1.0 + (i == 17 ? 0.0 : (hash(id+8.0)-0.5)*0.55);
-      float a = (start/18.0)*6.283185-3.141593;
-      float width = (end-start)*6.283185/18.0;
-      float random = hash(id+phase);
-      float2 direction = float2(cos(a+width*0.5),sin(a+width*0.5));
-      float distance = (30.0+random*145.0)*travel;
-      float2 offset = direction*(distance+flight*35.0) + float2(0.0,flight*flight*(140.0+70.0*random));
-      float spin = (random-0.5)*(travel*1.1+flight*1.6);
-      float2 original = rotatePoint(p-offset,-spin);
-      float theta = atan(original.y,original.x);
-      float wedge = step(a,theta)*(1.0-step(a+width,theta));
-      if (wedge > 0.5 && box(original) < 1.0) {
-        float4 shard = glass(original,0.38+phase);
-        float edgeDistance = length(original)*min(theta-a,a+width-theta);
-        float edge = exp(-edgeDistance*0.85);
-        shard.rgb += float3(0.52,0.82,1.0)*edge*shard.a;
-        result = shard + result*(1.0-shard.a);
+    if (abs(p.x) <= extent+reach && p.y >= flight*flight*140.0-extent-reach
+        && p.y <= flight*flight*210.0+extent+reach) {
+      // Cut the actual panel into 18 irregular radial shards. Inverse-transform
+      // each shard so its original glass reflection travels with the fragment.
+      for (int i=0; i<18; i++) {
+        float id = float(i);
+        float start = id + (i == 0 ? 0.0 : (hash(id+7.0)-0.5)*0.55);
+        float end = id+1.0 + (i == 17 ? 0.0 : (hash(id+8.0)-0.5)*0.55);
+        float a = (start/18.0)*6.283185-3.141593;
+        float width = (end-start)*6.283185/18.0;
+        float random = hash(id+phase);
+        float2 direction = float2(cos(a+width*0.5),sin(a+width*0.5));
+        float distance = (30.0+random*145.0)*travel;
+        float2 offset = direction*(distance+flight*35.0) + float2(0.0,flight*flight*(140.0+70.0*random));
+        float spin = (random-0.5)*(travel*1.1+flight*1.6);
+        float2 delta = p-offset;
+        if (any(greaterThan(abs(delta),float2(extent)))) continue;
+        float2 original = rotatePoint(delta,-spin);
+        if (box(original) >= 1.0) continue;
+        float theta = atan(original.y,original.x);
+        float wedge = step(a,theta)*(1.0-step(a+width,theta));
+        if (wedge > 0.5) {
+          float4 shard = glass(original,0.38+phase);
+          float edgeDistance = length(original)*min(theta-a,a+width-theta);
+          float edge = exp(-edgeDistance*0.85);
+          shard.rgb += float3(0.52,0.82,1.0)*edge*shard.a;
+          result = shard + result*(1.0-shard.a);
+        }
       }
     }
     // Small angular chips burst out faster than the large pieces.
@@ -76,7 +92,9 @@ half4 main(float2 position) {
       float random = hash(id+41.0);
       float2 center = float2(cos(a),sin(a))*(180.0+travel*(80.0+random*140.0));
       center.y += flight*flight*(160.0+random*80.0);
-      float2 q = rotatePoint(p-center,a+flight*3.0);
+      float2 delta = p-center;
+      if (any(greaterThan(abs(delta),float2(24.0)))) continue;
+      float2 q = rotatePoint(delta,a+flight*3.0);
       float triangle = max(abs(q.x)*0.866+q.y*0.5,-q.y)-(4.0+random*7.0);
       float alpha = 1.0-smoothstep(-0.5,0.7,triangle);
       float4 chip = float4(float3(0.58,0.84,1.0)*alpha,alpha);
@@ -110,7 +128,8 @@ half4 main(float2 position) {
     result = slash+result*(1.0-slash.a);
     // Shape time settles, but the lifecycle-controlled GPU clock keeps the
     // success check shimmering and emitting green sparks while active.
-    if (elapsed > 0.38) {
+    float particleVisibility = 1.0-(1.0-resolveToCheck)*smoothstep(0.9,1.5,elapsed);
+    if (elapsed > 0.38 && particleVisibility > 0.0) {
       for (int k=0; k<24; k++) {
         float id = float(k);
         float seed = hash(id+71.0);
@@ -120,9 +139,11 @@ half4 main(float2 position) {
         float angle = hash(id+107.0)*6.283185;
         float2 velocity = float2(cos(angle),sin(angle))*(45.0+seed*100.0);
         float2 center = origin+velocity*age+float2(0.0,age*age*45.0);
-        float dist = length(p-center);
+        float2 delta = p-center;
+        if (any(greaterThan(abs(delta),float2(48.0)))) continue;
+        float dist = length(delta);
         float life = sin(age*3.141593)*(0.75+pulse*0.25);
-        life *= 1.0-(1.0-resolveToCheck)*smoothstep(0.9,1.5,elapsed);
+        life *= particleVisibility;
         float spark = (exp(-dist*dist/5.0)+0.25*exp(-dist*0.24))*life;
         float4 particle = float4(mix(tint,mix(float3(1.0,0.92,0.64),float3(0.65,1.0,0.78),resolve),0.45)*spark,spark);
         result = particle+result*(1.0-particle.a);
