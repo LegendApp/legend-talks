@@ -5,25 +5,30 @@ import { advanceTitleBubbles, createTitleBubbles, beginTitleRelease, advanceTitl
 /** Title-specific simulation; all motion runs on the host UI thread. */
 export function useTitleBubbleSimulation(base: { readonly value: Record<string, number | number[]> }, targets: number[][], visual: { readonly value: Record<string, number | number[]> }, hasByline = false) {
   const playback=usePlayback();
-  const simulation=useSharedValue(createTitleBubbles(hasByline));
+  const frame=useSharedValue({simulation:createTitleBubbles(hasByline),uniforms:null as Record<string,number|number[]>|null});
   const cursor=useSharedValue({key:"",time:0});
-  useAnimatedReaction(()=>{ "worklet"; return {clock:playback.value,uniforms:base.value}; },({clock,uniforms})=>{
+  useAnimatedReaction(()=>{ "worklet"; return {clock:playback.value,uniforms:base.value,visual:visual.value}; },({clock,uniforms,visual})=>{
     "worklet";
+    if(clock.phase==="outgoing" || clock.phase==="paused") return;
+    let simulation=frame.value.simulation;
     const key=clock.slideKey+":"+clock.stepKey;
     if(cursor.value.key!==key) {
-      if(clock.stepIndex<=1) simulation.value=createTitleBubbles(hasByline);
-      if(clock.stepIndex===2) simulation.value=beginTitleRelease(simulation.value,uniforms.bestRect as number[]);
+      if(clock.stepIndex<=1) simulation=createTitleBubbles(hasByline);
+      if(clock.stepIndex===2) simulation=beginTitleRelease(simulation,uniforms.bestRect as number[]);
       cursor.value={key,time:0};
     }
-    if(clock.phase!=="playing" || (clock.stepIndex!==1 && clock.stepIndex!==2)) return;
-    const time=clock.stepTime*(clock.stepIndex===1?1.5:2);
-    const elapsed=Math.max(0,time-cursor.value.time);
-    if(elapsed>0) simulation.value=clock.stepIndex===2 ? advanceTitleRelease(simulation.value,elapsed,uniforms.bestRect as number[],targets) : advanceTitleBubbles(simulation.value,elapsed,uniforms.time as number,uniforms.bestRect as number[],targets,uniforms.bylineEnabled===1 ? uniforms.bylineSources as number[] : [],hasByline);
-    cursor.value={key,time};
+    if(clock.phase==="playing" && (clock.stepIndex===1 || clock.stepIndex===2)) {
+      const time=clock.stepTime*(clock.stepIndex===1?1.5:2);
+      const elapsed=Math.max(0,time-cursor.value.time);
+      if(elapsed>0) simulation=clock.stepIndex===2 ? advanceTitleRelease(simulation,elapsed,uniforms.bestRect as number[],targets) : advanceTitleBubbles(simulation,elapsed,uniforms.time as number,uniforms.bestRect as number[],targets,uniforms.bylineEnabled===1 ? uniforms.bylineSources as number[] : [],hasByline);
+      cursor.value={key,time};
+    }
+    frame.value={simulation,uniforms:visual};
   },[targets,hasByline]);
   return useDerivedValue(()=>{
     "worklet";
-    const state=simulation.value;
+    const snapshot=frame.value;
+    const state=snapshot.simulation;
     const drops: number[]=[];
     const impacts: number[]=[];
     const whiten: number[]=[];
@@ -45,7 +50,7 @@ export function useTitleBubbleSimulation(base: { readonly value: Record<string, 
     while(drops.length<288)drops.push(0);
     while(necks.length<288)necks.push(0);
     while(releasePulls.length<288)releasePulls.push(0);
-    return { ...visual.value, resolution: [1920,1080], brightness:base.value.brightness,
+    return { ...(snapshot.uniforms ?? visual.value), resolution: [1920,1080], brightness:base.value.brightness,
       titleFeed:1, backgroundTime:base.value.time, absorbedScale:state.scale, centerProgress:titleCenterProgress(state.scale,base.value.bestRect as number[]), drops, impacts:impacts.slice(0,54), whiten:whiten.slice(0,18), necks, releasePulls, exitCenter:state.exitCenter ?? [960,540] };
   });
 }
