@@ -7,6 +7,7 @@ import { createContext } from "react";
 const progress = { value: { position: 0 } }, playback = { value: { phase: "preview", stepTime: 0 } };
 const targets = [];
 let reaction;
+let stepIndex = 0, isPreview = true;
 mock.module("react-native-reanimated", () => ({
   default: { View: "animated-view" }, makeMutable: value => ({ value }), runOnJS: fn => fn,
   useAnimatedStyle: read => ({ get value() { return read(); } }), useAnimatedReaction: (read, react) => { reaction = () => react(read()); },
@@ -16,15 +17,18 @@ mock.module("@legend-apps/presentation", () => ({
   ProgressivePreparation: ({ children }) => children, SceneMotionView: ({ children }) => children,
   NavigationExitView: ({ children, enabled }) => <exit-view enabled={enabled}>{children}</exit-view>,
   usePlayback: () => playback,
-  usePresentationValue: key => key === "playbackPhase" ? playback.value.phase : key === "isPreview" ? true : 0,
+  usePresentationValue: key => key === "playbackPhase" ? playback.value.phase : key === "isPreview" ? isPreview : stepIndex,
   usePlaybackTween(target, duration) { targets.push({ target, duration }); return progress; },
 }));
 mock.module("../CarouselBlurView", () => ({ CarouselBlurView: ({ children }) => children }));
 mock.module("../RNConnectionVisuals", () => ({ MediaSlot: "media" }));
 mock.module("../MovingTitle", () => ({ MovingTitle: ({ children }) => children }));
 const RecordingPositionContext = createContext(undefined);
-mock.module("../LocalRecording", () => ({ LocalRecording: "recording", RecordingPositionContext }));
-const { AppCarousel } = await import("../AppCarousel");
+mock.module("../LocalRecording", () => ({ LocalRecording: props => {
+  const position = React.useContext(RecordingPositionContext);
+  return <recording {...props} position={props.position ?? position} />;
+}, RecordingPositionContext }));
+const { AppCarousel, AppShowcase } = await import("../AppCarousel");
 const { FilmstripMotionView } = await import("../FilmstripMotionView");
 const items = Array.from({ length: 9 }, (_, index) => String(index));
 function Card({ id }) {
@@ -112,4 +116,73 @@ test("slide fades can disable the shrinking card exit without changing carousel 
     await act(() => tree.update(render(undefined)));
     expect(tree.root.findAllByType("exit-view").every(node => node.props.enabled === true)).toBe(true);
   } finally { await act(() => tree?.unmount()); }
+});
+
+test("Diff launch follows its normal video on the same card and keeps separate playback positions in both directions", async () => {
+  const apps = ["Legend Photos", "Legend Music", "Code", "Diff", "Chat History", "Markdown"];
+  const content = (launchDemo = true) => <AppShowcase apps={apps} title="My apps" launchDemo={launchDemo} />;
+  playback.value = { phase: "playing", stepTime: 0 };
+  stepIndex = 3; isPreview = false;
+  let tree;
+  try {
+    await act(() => { tree = create(content()); });
+    const selected = () => tree.root.findByType(AppCarousel).props.position;
+    const playing = () => tree.root.findAllByType("recording").filter(node => node.props.playing);
+    expect(selected()).toBe(3);
+    expect(playing()).toHaveLength(1);
+    const normal = playing()[0].props;
+    normal.position.value = 9000;
+    const chatPage = tree.root.findAllByType("recording").at(-1).props.page;
+
+    stepIndex = 4;
+    await act(() => tree.update(content()));
+    expect(selected()).toBe(3);
+    expect(playing()).toHaveLength(1);
+    const launch = playing()[0].props;
+    expect(launch.page).not.toBe(normal.page);
+    expect(launch.position).not.toBe(normal.position);
+    expect(launch.position.value).toBe(0);
+    launch.position.value = 2500;
+
+    stepIndex = 5;
+    await act(() => tree.update(content()));
+    expect(selected()).toBe(4);
+    expect(playing()).toHaveLength(1);
+    expect(playing()[0].props.page).toBe(chatPage);
+    stepIndex = 6;
+    await act(() => tree.update(content()));
+    expect(selected()).toBe(5);
+    expect(playing()).toHaveLength(0);
+
+    stepIndex = 4;
+    await act(() => tree.update(content()));
+    expect(playing()[0].props.position).toBe(launch.position);
+    expect(playing()[0].props.position.value).toBe(2500);
+    stepIndex = 3;
+    await act(() => tree.update(content()));
+    expect(playing()[0].props.page).toBe(normal.page);
+    expect(playing()[0].props.position).toBe(normal.position);
+    expect(playing()[0].props.position.value).toBe(9000);
+
+    await act(() => tree.update(content(false)));
+    expect(selected()).toBe(3);
+    expect(playing()[0].props.page).toBe(normal.page);
+    stepIndex = 4;
+    await act(() => tree.update(content(false)));
+    expect(selected()).toBe(4);
+    expect(playing()[0].props.page).toBe(chatPage);
+    stepIndex = 0;
+    await act(() => tree.update(<AppShowcase apps={["Diff"]} title="Diff" />));
+    expect(playing()[0].props.page).toBe(normal.page);
+
+    playback.value.phase = "preparing";
+    await act(() => tree.update(content()));
+    expect(playing()).toHaveLength(0);
+    isPreview = true;
+    await act(() => tree.update(content()));
+    expect(tree.root.findAllByType("recording")).toHaveLength(0);
+  } finally {
+    await act(() => tree?.unmount());
+    stepIndex = 0; isPreview = true;
+  }
 });

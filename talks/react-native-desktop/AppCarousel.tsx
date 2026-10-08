@@ -107,22 +107,26 @@ export function AppShowcase({ apps, title, launchDemo = false }: { apps: string[
   const step = usePresentationValue("stepIndex");
   const phase = usePresentationValue("playbackPhase");
   const isPreview = usePresentationValue("isPreview");
+  const launchIndex = launchDemo ? apps.findIndex(name => appMedia[name]?.launch) : -1;
+  const position = launchIndex >= 0 && step > launchIndex ? step - 1 : step;
+  const [launchPosition] = useState(() => makeMutable(0));
   const hasMedia = apps.every(name => Boolean(appMedia[name]));
   return <View style={{ width: 1920, height: 1080, overflow: "hidden" }}>
     {!hasMedia && <MovingTitle style={{ position: "absolute", left: 112, top: 65, width: 1696, zIndex: 2000 }}>
       <Text style={{ color: "#f8fafc", fontSize: 64, fontWeight: "700", textAlign: "center" }}>{title}</Text>
     </MovingTitle>}
-    <AppCarousel cardWidth={hasMedia ? 1600 : 1180} items={apps} position={step} getBlurPoster={name => appMedia[name]?.poster} getBlurPosterCaption={name => name} renderCard={(name, card) => {
+    <AppCarousel cardWidth={hasMedia ? 1600 : 1180} items={apps} position={position} getBlurPoster={name => appMedia[name]?.poster} getBlurPosterCaption={name => name} renderCard={(name, card) => {
       const media = appMedia[name];
       if (!media) return <MediaSlot label={name} height={card.height} />;
-      const launch = launchDemo ? media.launch : undefined;
+      const launch = launchIndex >= 0 && step === launchIndex + 1 ? media.launch : undefined;
       return <View style={{ flex: 1 }}>
         <View style={{ height: card.captionHeight, alignItems: "center", justifyContent: "center" }}>
           <Text style={{ color: "#f8fafc", fontSize: card.width * 0.035, fontWeight: "600" }}>{name}</Text>
         </View>
         <View style={{ flex: 1, overflow: "hidden" }}>
           {isPreview || !media.page ? <Image source={{ uri: media.poster }} resizeMode="contain" style={{ width: "100%", height: "100%" }} />
-            : <LocalRecording page={launch ?? media.page} poster={media.poster} extension="mov" transparent looping={!launch} playing={phase === "playing" && apps[step] === name} />}
+            : <LocalRecording key={launch ? "launch" : "normal"} page={launch ?? media.page} poster={media.poster} extension="mov" transparent
+                position={launch ? launchPosition : undefined} playing={phase === "playing" && apps[position] === name} />}
         </View>
       </View>;
     }} />
