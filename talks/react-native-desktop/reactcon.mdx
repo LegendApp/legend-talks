@@ -192,7 +192,7 @@ steps: 2
 <MusicSizeReveal />
 
 <!--
-1. I was very impressed by how small this app was, especially compared to the app I was using at the time, Spotify. The whole app was only 35 megabytes, while Spotify is 430 megabytes. That's because it uses Electron, and a blank Electron app is almost 300 megabytes because it includes a full copy of a chrome browser.
+1. I was very impressed by how small this app was, especially compared to the app I was using at the time, Spotify. The whole app was only 35 megabytes, while Spotify is 430 megabytes. That's because it uses Electron, and a blank Electron app is almost 300 megabytes.
 
 2. Since then I've realized that was a universal build and it wasn't optimized correctly. It's actually only 15 megabytes.
 -->
@@ -208,7 +208,7 @@ eyebrow: 'Legend Music / RNL 2025'
 <MusicPerformance metric="cpu" capture={musicCpuCapture} />
 
 <!--
-Legend Music uses about 2% of one CPU to play a song. Apple Music is about the same. Spotify takes 26%.
+Legend Music uses about 2% of one CPU core to play a song. Apple Music is about the same. Spotify takes 26%.
 
 Just think about what's happened to us as a society that playing an MP3 file uses more processing power now than it did 25 years ago on my Pentium 2.
 -->
@@ -224,7 +224,7 @@ eyebrow: 'Legend Music / RNL 2025'
 <MusicPerformance metric="memory" capture={musicMemoryCapture} />
 
 <!--
-Running a full browser with several different processes takes about 800 megabytes of memory.
+Spotify running a full browser with several different processes takes about 800 megabytes of memory.
 
 800! This should not be acceptable.
 
@@ -300,7 +300,7 @@ eyebrow: Story
 <!--
 1. First, a quick desktop framework tour, because most of us spend our time on mobile. There’s basically three ways of doing it.
 
-First is real native UI. AppKit is effectively UIKit on mac. SwiftUI is Apple's newer native framework, same as on mobile. And of course React Native uses native views.
+First is real native UI. AppKit is effectively UIKit on mac. SwiftUI is Apple's newer native framework, same as on mobile. And of course React Native renders native views.
 
 2. Then there are the browser ones. Electron bundles Chromium and Nodejs with your app. Tauri uses the system WebView with a Rust backend.
 
@@ -323,7 +323,7 @@ steps: 2
 
 But Electron has almost as many users as Expo. And if you add Tauri, the other most popular framework, to that, there’s more desktop developers than Expo developers.
 
-So it seems like the desktop app opportunity is at least as big as mobile.
+So it seems like the desktop app opportunity is at least as big as mobile. Or at least I think it could be, if the apps were actually great instead of hot garbage.
 
 2. I’m going to pick on Electron a lot today, because it’s currently the market leader and is the main platform that React Native on desktop competes with. And it's the one I used and was frustrated with for a decade, so I have a lot of emotion about it.
 -->
@@ -340,9 +340,9 @@ transition: none
 <NineApps />
 
 <!--
-1. This is my AI Chat History app. It’s a performance test of loading heavy AI chat threads, not a full chat app.
+1. This is my AI Chat History app. It’s a performance test of loading heavy AI chat threads.
 
-It does a lot of work reading and parsing files, and virtualizing big chats with markdown.
+It does a lot of work reading and parsing files, and virtualizing big chats with markdown and inline images.
 
 But to compare the frameworks, I needed more than one version.
 
@@ -366,7 +366,7 @@ Whether we all like liquid glass is a different question. But we should make app
 
 10. The sidebar is just gray.
 
-11. The web platform has a blur and that’s the best we can do for the composer.
+11. The web platform has a blur and that’s the best we can do for the composer. Blur looks nice but it’s not the way Mac apps are supposed to look. It feels off.
 
 12. The app does the job, but it feels different than Mac apps
 
@@ -374,19 +374,19 @@ Whether we all like liquid glass is a different question. But we should make app
 
 14. And Deno is just a web app too.
 
-15. Flutter renders every pixel itself, so the Flutter framework or someone has to implement their own version of liquid glass. So I just used the builtin blur.
+15. Flutter renders every pixel itself, so the Flutter framework or someone has to implement their own version of liquid glass.
 
 16. Its sidebar can only be a solid color.
 
-17. And the composer is just blurred too.
+17. And the composer is just a blur too.
 
-18. So it’s fine too, but it doesn’t look like a native app.
+18. So it’s fine, but it doesn’t look like a native app.
 
 19. Compose Multiplatform also renders every pixel.
 
-20. And finally GPUI. It's really fast. But it draws its own content too.
+20. And GPUI. It's really fast. But it draws its own content too.
 
-21. GPUI doesn’t have a way to blur individual views yet, so it’s just translucent.
+21. GPUI doesn’t have a way to blur individual views yet, so the composer is just translucent.
 
 But we can draw whatever we want, right? So I made my own liquid glass and it looks okay.
 
