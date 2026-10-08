@@ -53,6 +53,7 @@ import { DesktopFoundationsJourney } from "./reactcon-scenes/DesktopFoundations"
 import { DesktopObjections as DesktopObjectionsReactcon } from "./ObjectionsReactcon"
 import { NineApps } from "./NineApps"
 import { HelloWorldIntro } from "./HelloWorldIntro"
+import { HelloWorldTitle } from "./HelloWorldTitle"
 import { PackageDownloadsChart } from "./PackageDownloadsChart"
 import { NativeReactions } from "./reactcon-scenes/NativeReactions"
 import { MusicPerformance, MusicPerformanceTitle } from "./MusicPerformance";
@@ -440,7 +441,7 @@ steps: 6
 footer: 'Greeting workload · newer installed-size snapshot · MB'
 ---
 
-# Hello World · installed size {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+<HelloWorldTitle metric="installed size" />
 
 <HelloSizeJourney />
 
@@ -465,7 +466,7 @@ steps: 2
 footer: 'Greeting workload · MB · settled physical footprint'
 ---
 
-# Hello World · memory {shared=rnconnection-title shared-resize=preserve class="text-center font-semibold tracking-tight text-7xl"}
+<HelloWorldTitle metric="memory" />
 
 <Chart workload="hello" metric="memory" />
 
