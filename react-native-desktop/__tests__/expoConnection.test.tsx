@@ -11,7 +11,7 @@ let desktopUniforms;
 let mounts = 0;
 mock.module("@legend-apps/presentation", () => ({
   usePresentationValue: (key) => runtime[key],
-  SceneMotionView: "motion",
+  SceneMotionView: "motion", GPUShader: "gpu", useGPUShaderAvailable: () => false,
   PresentationCanvas: () => { useEffect(() => { mounts++; }, []); return null; },
   useAnimatedShaderUniforms: (values) => {
     if (values.desktop) desktopUniforms = values;
@@ -58,13 +58,13 @@ test("Expo connection delegates timing to the shared controller without remounti
   let tree;
   try {
     await act(() => { tree = create(<ExpoDesktopLayers />); });
-    expect(desktopUniforms).toEqual({ desktop: 1 });
+    expect(desktopUniforms).toEqual({ desktop: 1, gpuGeometry: 0 });
     expect(mounts).toBe(2);
     for (const stepIndex of [1, 0, 1]) {
       runtime = { ...runtime, stepIndex };
       await act(() => tree.update(<ExpoDesktopLayers />));
       // No JS timestamp snapshots or independently reset connection uniforms.
-      expect(desktopUniforms).toEqual({ desktop: 1 });
+      expect(desktopUniforms).toEqual({ desktop: 1, gpuGeometry: 0 });
       expect(mounts).toBe(2);
     }
   } finally {

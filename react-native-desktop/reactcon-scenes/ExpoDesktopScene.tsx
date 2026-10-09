@@ -1,7 +1,8 @@
+import { expoDesktopGeometry } from "./ExpoDesktopGeometryGPU";
 import { glassPanelMaterial } from "slides:materials/GlassPanels";
 import { branchMaterialShader } from "slides:materials/BranchMaterial";
 import { Canvas, Fill, ImageShader, Path, Shader, Skia, matchFont } from "@shopify/react-native-skia";
-import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
+import { GPUShader, useGPUShaderAvailable, SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 
 // Analytic glass pipes and devices. A shared UI-thread clock moves the light
@@ -17,6 +18,7 @@ uniform float stepTime;
 uniform float stepIndex;
 float elapsed() { return stepTime; }
 uniform float desktop;
+uniform float gpuGeometry;
 float connection() { return stepIndex>=1.0 ? 1.0 : 0.0; }
 float roundedBox(float2 p, float2 size, float radius) {
   float2 q=abs(p)-size+radius;
@@ -95,7 +97,7 @@ half4 main(float2 p) {
       float3 tint=mix(float3(0.08,0.58,1.0),float3(1.0,0.08,0.14),outage);
       float3 light=mix(float3(0.6,0.91,1.0),float3(1.0,0.65,0.65),outage);
       // The same tapered, paired ribbons as the AI maintenance tree.
-      if(p.y>=187.0 && p.y<=511.0 &&
+      if(gpuGeometry<0.5 && p.y>=187.0 && p.y<=511.0 &&
         p.x>=min(912.0+(i-2.0)*70.0,endpoint)-110.0 &&
         p.x<=max(912.0+(i-2.0)*70.0,endpoint)+110.0) {
         float t=clamp((p.y-188.0)/320.0,0.0,1.0);
@@ -150,6 +152,7 @@ half4 main(float2 p) {
             float heat=clamp(cap+flare,0.0,0.95);
             outColor=over(float4(float3(1.0,0.18,0.08)*heat,heat),outColor);
             for(int j=0;j<18;j++) {
+              if(gpuGeometry>0.5) break;
               float age=fract(time*1.25+float(j)*0.618+i*0.37+float(end)*0.23);
               float direction=sin(float(j)*17.3+i*4.0);
               float2 sparkPos=broken+float2(direction*age*155.0,(end==0 ? 55.0 : -125.0)*age+age*age*145.0);
@@ -235,7 +238,7 @@ half4 main(float2 p) {
     float energy=clamp(ring+flash,0.0,0.95);
     outColor=over(float4(float3(0.55,0.91,1.0)*energy,energy),outColor);
     // Glass fragments burst away from the broken connection and fall out.
-    if(hit>0.5 && impact<2.2) {
+    if(gpuGeometry<0.5 && hit>0.5 && impact<2.2) {
       for(int j=0;j<20;j++) {
         float angle=float(j)*2.39996;
         float speed=130.0+float(j)*13.0;
@@ -285,17 +288,24 @@ function makeBridgeLabel() {
   return image;
 }
 const bridgeLabelImage = makeBridgeLabel();
+const mobileGeometry = expoDesktopGeometry(false), desktopGeometry = expoDesktopGeometry(true);
 
 function GlassNetwork({ desktop, connected = false }: { desktop: boolean; connected?: boolean }) {
   // The connection and its clock are both sampled from the controller by the
   // shader. No JS timestamp reads, local reset effects or duplicated step state.
-  const uniforms = useAnimatedShaderUniforms({ desktop: desktop ? 1 : 0 }, 4);
-  return <Canvas pointerEvents="none" accessibilityLabel={desktop && connected ? "Expo Desktop connects macOS and Windows" : undefined} style={{ position: "absolute", left: 0, top: -240, width: 1824, height: 1080 }}>
+  const gpu = useGPUShaderAvailable();
+  const program = desktop ? desktopGeometry : mobileGeometry;
+  const uniforms = useAnimatedShaderUniforms({ desktop: desktop ? 1 : 0, gpuGeometry: gpu ? 1 : 0 }, 4);
+  return <>
+    {gpu && <View style={{ position:"absolute",left:0,top:-240,width:1824,height:1080 }}>
+      <GPUShader {...program} particles particleBlend="over" width={1824} height={1080} clock="slide" borderRadius={0} />
+    </View>}
+    <Canvas pointerEvents="none" accessibilityLabel={desktop && connected ? "Expo Desktop connects macOS and Windows" : undefined} style={{ position: "absolute", left: 0, top: -240, width: 1824, height: 1080 }}>
     <Fill><Shader source={effect!} uniforms={uniforms}>
       <ImageShader image={bridgeLabelImage} x={0} y={0} width={884} height={84} fit="fill" tx="decal" ty="decal" />
     </Shader></Fill>
     {!desktop && <Path path={expoLogo} color="#e6f7ff" transform={[{ translateX: 880 }, { translateY: 284 }, { scale: 64 / 24 }]} />}
-  </Canvas>;
+  </Canvas></>;
 }
 
 export function ExpoDesktopLayers() {

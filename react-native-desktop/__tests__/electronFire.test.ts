@@ -17,7 +17,7 @@ const fireFile = new URL("../../test-support/legend-apps/packages/slides-effects
 const fireCode = transformSync(readFileSync(fireFile, "utf8"), { loader: "tsx", format: "cjs", jsx: "automatic" }).code;
 const fire = { exports: {} };
 Function("require", "module", "exports", fireCode)(name => name === "@shopify/react-native-skia"
-  ? { ...skia, ImageShader: "image-shader", useImage: () => ({}) } : deckRequire(name), fire, fire.exports);
+  ? { ...skia, ImageShader: "image-shader", useImage: () => ({}) } : createRequire(fireFile)(name), fire, fire.exports);
 const code = transformSync(readFileSync(new URL("../ElectronFire.tsx", import.meta.url), "utf8"), { loader: "tsx", format: "cjs", jsx: "automatic" }).code;
 Function("require", "module", "exports", code)(name => name === "slides:materials/Fire" ? fire.exports
   : name.endsWith(".png") ? name : deckRequire(name), module, module.exports);

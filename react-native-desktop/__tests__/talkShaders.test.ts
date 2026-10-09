@@ -12,7 +12,15 @@ import { compileDeck } from "../../test-support/legend-apps/packages/presentatio
 
 
 
-const programs = { sidebarStorm, gpuConstellation, gpuInterfaceReveal };
+import { createImageShatterGPU } from "../../test-support/legend-apps/packages/slides-effects/packs/materials/ImageShatterGPU";
+import { createFallingSpritesGPU } from "../../test-support/legend-apps/packages/slides-effects/packs/materials/FallingSpritesGPU";
+import { portalProgram } from "../ExpoDesktopPortalGPU";
+import { titleBubblesProgram } from "../TitleBubblesGPU";
+import { expoDesktopGeometry } from "../reactcon-scenes/ExpoDesktopGeometryGPU";
+const programs = { sidebarStorm, gpuConstellation, gpuInterfaceReveal, portalProgram, titleBubblesProgram,
+  shatter: createImageShatterGPU({ imageWidth:1040,imageHeight:710.638,centerX:960,centerY:600 },1920,1180,1),
+  sprites: createFallingSpritesGPU(368,30,800).code,
+  mobilePipes: expoDesktopGeometry(false).code, desktopPipes: expoDesktopGeometry(true).code };
 test.skipIf(process.platform !== "darwin")("example programs compile with the app's native WebGPU shader compiler", () => {
   const require = createRequire(import.meta.url);
   const webgpu = path.dirname(require.resolve("react-native-webgpu/package.json"));

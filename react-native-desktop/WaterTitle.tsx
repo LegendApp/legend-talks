@@ -1,8 +1,10 @@
+import { titleBubblesProgram } from "./TitleBubblesGPU";
+import { useDerivedValue } from "react-native-reanimated";
 import { useTitleBubbleSimulation } from "./useTitleBubbleSimulation";
 import { dropletMaterial } from "slides:backgrounds/DropletMaterial";
 import { titleDripAnchors } from "./titleDripAnchors";
 import { AlphaType, ColorType, Fill, Shader, ImageShader, Skia, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
-import { PresentationCanvas, Background, useBackgroundSize, useBackgroundIntensity, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
+import { GPUShader, useGPUShaderAvailable, PresentationCanvas, Background, useBackgroundSize, useBackgroundIntensity, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
 import { Droplets } from "slides:backgrounds/Droplets";
@@ -94,6 +96,7 @@ const waterEffect = Skia.RuntimeEffect.Make(waterTitleShader);
 if (!waterEffect) throw new Error("Could not compile title water effect");
 
 export const liquidTypeShader = `
+uniform float gpuBubbles;
 uniform shader image;
 half4 sourceInk(float2 p) { return image.eval(p); }
 uniform float lineSplit;
@@ -172,7 +175,7 @@ half4 main(float2 p) {
     if(before.x<bestRect.x || before.x>bestRect.x+bestRect.z || p.y>lineSplit) result+=title(p)*(1.0-smoothstep(0.0,1.0,t))*(1.0-result.a);
     for(int i=0;i<72;i++) {
       float4 drop=drops[i],neck=necks[i];
-      if(drop.z<.1)continue;
+      if(drop.z<.1 || (gpuBubbles>0.5 && drop.w==4.0))continue;
       float2 size=float2(drop.z);
       if(drop.w==5.0) size=(drop.x<=10.0 || drop.x>=1910.0)?float2(drop.z*(1.0-.55*neck.w),drop.z*(1.0+2.3*neck.w)):float2(drop.z*(1.0+2.3*neck.w),drop.z*(1.0-.55*neck.w));
       float d=(length((p-drop.xy)/size)-1.0)*min(size.x,size.y);
@@ -228,6 +231,7 @@ half4 main(float2 p) {
   return half4(color,clamp(ink.a+glow,0.0,1.0))*fade;
 }`;
 export const cosmicShader = `
+uniform float gpuBubbles;
 ${dropletGeometry}
 uniform float2 resolution;
 uniform float4 drops[72];
@@ -257,7 +261,7 @@ half4 main(float2 p) {
   }
   // Detached drops render independently above the background; they cannot
   // disappear into another parent after pinch-off.
-  if(stepIndex==1.0) for(int i=0;i<18;i++) {
+  if(gpuBubbles<0.5 && stepIndex==1.0) for(int i=0;i<18;i++) {
     float4 drop=drops[i];
     if(drop.w<1.0 || drop.w==6.0 || drop.z<0.1) continue;
     float distance=length(p-drop.xy);
@@ -282,6 +286,7 @@ const typeEffect = Skia.RuntimeEffect.Make(liquidTypeShader);
 if (!typeEffect) throw new Error("Could not compile liquid title typography");
 
 export default function WaterTitle({ children, closing = false, byline = false }: { children?: import("react").ReactNode; closing?: boolean; byline?: boolean }) {
+  const gpu = useGPUShaderAvailable();
   const step = usePresentationValue("stepIndex");
   useAdvanceAfterStep(closing ? -1 : 2, 4.45);
   const [sources, setSources] = useState({ leftSource: [460, 650], rightSource: [1450, 650], thirdSource: [1520, 650], desktopSource: [800, 650], lineSplit: 540, bestInkRect: [1190,400,255,128], glyphCount: 0, glyphs: Array(256).fill(0) as number[], bestRect: [1190, 400, 255, 128], bylineEnabled: 0, bylineSources: [0,0,0,0] });
@@ -289,7 +294,7 @@ export default function WaterTitle({ children, closing = false, byline = false }
     setSources(old => ({ ...old, bylineEnabled: 1, bylineSources: points }));
   }, []);
   const [targets,setTargets]=useState<number[][]>([]);
-  const visualUniforms = useAnimatedShaderUniforms(sources, 14, { clocks: { feedTime: 1 } });
+  const visualUniforms = useAnimatedShaderUniforms({ ...sources, gpuBubbles: gpu ? 1 : 0 }, 14, { clocks: { feedTime: 1 } });
   const { width, height } = useBackgroundSize();
   const intensity = useBackgroundIntensity();
   const speed = step >= 1 ? 1.8 : 0.6;
@@ -298,6 +303,14 @@ export default function WaterTitle({ children, closing = false, byline = false }
     titleFeed: 1, resolution: [Math.max(1,width),Math.max(1,height)], brightness: 0.7*intensity,
   }, 8, { persistentBackground: "read" });
   const uniforms = useTitleBubbleSimulation(backgroundUniforms,targets,visualUniforms,byline && !closing);
+  const bubbleData = useDerivedValue(() => {
+    "worklet";
+    const u = uniforms.value, drops = u.drops as number[], whiten = u.whiten as number[];
+    const data: number[] = [];
+    for (let i=0; i<72; i++) data.push(drops[i*4],drops[i*4+1],drops[i*4+2],drops[i*4+3],whiten[i] ?? 0,0,0,0);
+    data.push(u.brightness as number,u.stepIndex as number,u.stepTime as number,u.time as number);
+    return data;
+  });
   const titleRef = useRef<View>(null);
   const [titleImage, setTitleImage] = useState<SkImage>();
   const anchored = useRef(false);
@@ -346,8 +359,14 @@ export default function WaterTitle({ children, closing = false, byline = false }
       }} style={{ position: "absolute", left: 112, width: 1696, top: 0, opacity: 0, fontSize: 128, lineHeight: 128, fontWeight: "700", textAlign: "center" }}>
         {'React Native is the best way\nto build desktop apps'}
       </Text>
+      {!closing && <PresentationCanvas width={1920} height={1080}>
+        <Fill><Shader source={cosmicEffect!} uniforms={uniforms} /></Fill>
+      </PresentationCanvas>}
+      {!closing && gpu && <View style={{position:"absolute",inset:0}}>
+        <GPUShader code={titleBubblesProgram} width={1920} height={1080} particles particleCount={72} particleBlend="over"
+          frameData={bubbleData} frameDataSize={580} borderRadius={0} previewTime={14} clock="slide" />
+      </View>}
       <PresentationCanvas width={1920} height={1080}>
-        {!closing && <Fill><Shader source={cosmicEffect!} uniforms={uniforms} /></Fill>}
         {showLiquidType && titleImage && <Fill><Shader source={typeEffect!} uniforms={uniforms}>
           <ImageShader image={titleImage} fit="fill" rect={{ x: 0, y: 0, width: 1920, height: 1080 }} />
         </Shader></Fill>}

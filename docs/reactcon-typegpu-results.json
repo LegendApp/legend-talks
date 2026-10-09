@@ -1,0 +1,1499 @@
+{
+  "measuredAt": "2026-10-09",
+  "appsBaseRef": "352a30389f4a7fd3184ca53f8d7d4b10bff0b5fb",
+  "talksBaseRef": "ca23c7c",
+  "method": "CanvasKit WebGL EXT_disjoint_timer_query_webgl2 vs WebGPU timestamp-query, fixed logical resolutions, 5 alternating repetitions at 3 fixed times. Repeated unchanged baseline/candidate. Pipes include retained Skia GPU draw cost. GPU timestamps quantized at about 0.065536 ms.",
+  "benchmarks": [
+    {
+      "environment": {
+        "adapter": {},
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) T3Code(Nightly)/0.0.46-nightly.20261003.2632 Chrome/152.0.7977.130 Electron/44.4.2 Safari/537.36",
+        "height": 1180,
+        "width": 1920
+      },
+      "name": "shatter",
+      "samples": [
+        {
+          "baseline": 8.079208,
+          "candidate": 0.196608,
+          "gpu": 0.196608,
+          "repetition": 0,
+          "residual": 0,
+          "time": 0.35
+        },
+        {
+          "baseline": 8.417499,
+          "candidate": 0.458752,
+          "gpu": 0.458752,
+          "repetition": 0,
+          "residual": 0,
+          "time": 0.65
+        },
+        {
+          "baseline": 8.703625,
+          "candidate": 0.131072,
+          "gpu": 0.131072,
+          "repetition": 0,
+          "residual": 0,
+          "time": 1
+        },
+        {
+          "baseline": 8.010541,
+          "candidate": 0.196608,
+          "gpu": 0.196608,
+          "repetition": 1,
+          "residual": 0,
+          "time": 0.35
+        },
+        {
+          "baseline": 8.373666,
+          "candidate": 0.131072,
+          "gpu": 0.131072,
+          "repetition": 1,
+          "residual": 0,
+          "time": 0.65
+        },
+        {
+          "baseline": 8.816124,
+          "candidate": 0.131072,
+          "gpu": 0.131072,
+          "repetition": 1,
+          "residual": 0,
+          "time": 1
+        },
+        {
+          "baseline": 8.634875,
+          "candidate": 0.131072,
+          "gpu": 0.131072,
+          "repetition": 2,
+          "residual": 0,
+          "time": 0.35
+        },
+        {
+          "baseline": 10.442666,
+          "candidate": 0.131072,
+          "gpu": 0.131072,
+          "repetition": 2,
+          "residual": 0,
+          "time": 0.65
+        },
+        {
+          "baseline": 8.332041,
+          "candidate": 0.131072,
+          "gpu": 0.131072,
+          "repetition": 2,
+          "residual": 0,
+          "time": 1
+        },
+        {
+          "baseline": 10.02175,
+          "candidate": 0.131072,
+          "gpu": 0.131072,
+          "repetition": 3,
+          "residual": 0,
+          "time": 0.35
+        },
+        {
+          "baseline": 7.961333,
+          "candidate": 0.196608,
+          "gpu": 0.196608,
+          "repetition": 3,
+          "residual": 0,
+          "time": 0.65
+        },
+        {
+          "baseline": 8.415625,
+          "candidate": 0.131072,
+          "gpu": 0.131072,
+          "repetition": 3,
+          "residual": 0,
+          "time": 1
+        },
+        {
+          "baseline": 8.342041,
+          "candidate": 0.131072,
+          "gpu": 0.131072,
+          "repetition": 4,
+          "residual": 0,
+          "time": 0.35
+        },
+        {
+          "baseline": 9.686999,
+          "candidate": 0.393216,
+          "gpu": 0.393216,
+          "repetition": 4,
+          "residual": 0,
+          "time": 0.65
+        },
+        {
+          "baseline": 8.880249,
+          "candidate": 0.720896,
+          "gpu": 0.720896,
+          "repetition": 4,
+          "residual": 0,
+          "time": 1
+        }
+      ]
+    },
+    {
+      "environment": {
+        "adapter": {},
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) T3Code(Nightly)/0.0.46-nightly.20261003.2632 Chrome/152.0.7977.130 Electron/44.4.2 Safari/537.36",
+        "height": 824,
+        "width": 624
+      },
+      "name": "sprites",
+      "samples": [
+        {
+          "baseline": 0.384333,
+          "candidate": 0.065536,
+          "gpu": 0.065536,
+          "repetition": 0,
+          "residual": 0,
+          "time": 3.1
+        },
+        {
+          "baseline": 1.140541,
+          "candidate": 0.065536,
+          "gpu": 0.065536,
+          "repetition": 0,
+          "residual": 0,
+          "time": 5.4
+        },
+        {
+          "baseline": 1.124583,
+          "candidate": 0.065536,
+          "gpu": 0.065536,
+          "repetition": 0,
+          "residual": 0,
+          "time": 16
+        },
+        {
+          "baseline": 0.2665,
+          "candidate": 0.065536,
+          "gpu": 0.065536,
+          "repetition": 1,
+          "residual": 0,
+          "time": 3.1
+        },
+        {
+          "baseline": 0.353458,
+          "candidate": 0.458752,
+          "gpu": 0.458752,
+          "repetition": 1,
+          "residual": 0,
+          "time": 5.4
+        },
+        {
+          "baseline": 0.526125,
+          "candidate": 0,
+          "gpu": 0,
+          "repetition": 1,
+          "residual": 0,
+          "time": 16
+        },
+        {
+          "baseline": 1.05625,
+          "candidate": 0.065536,
+          "gpu": 0.065536,
+          "repetition": 2,
+          "residual": 0,
+          "time": 3.1
+        },
+        {
+          "baseline": 0.358875,
+          "candidate": 0.065536,
+          "gpu": 0.065536,
+          "repetition": 2,
+          "residual": 0,
+          "time": 5.4
+        },
+        {
+          "baseline": 0.516125,
+          "candidate": 0.065536,
+          "gpu": 0.065536,
+          "repetition": 2,
+          "residual": 0,
+          "time": 16
+        },
+        {
+          "baseline": 0.260374,
+          "candidate": 0.196608,
+          "gpu": 0.196608,
+          "repetition": 3,
+          "residual": 0,
+          "time": 3.1
+        },
+        {
+          "baseline": 0.348499,
+          "candidate": 0,
+          "gpu": 0,
+          "repetition": 3,
+          "residual": 0,
+          "time": 5.4
+        },
+        {
+          "baseline": 0.533875,
+          "candidate": 0,
+          "gpu": 0,
+          "repetition": 3,
+          "residual": 0,
+          "time": 16
+        },
+        {
+          "baseline": 0.273958,
+          "candidate": 0,
+          "gpu": 0,
+          "repetition": 4,
+          "residual": 0,
+          "time": 3.1
+        },
+        {
+          "baseline": 0.44875,
+          "candidate": 0,
+          "gpu": 0,
+          "repetition": 4,
+          "residual": 0,
+          "time": 5.4
+        },
+        {
+          "baseline": 0.667666,
+          "candidate": 1.441792,
+          "gpu": 1.441792,
+          "repetition": 4,
+          "residual": 0,
+          "time": 16
+        }
+      ]
+    },
+    {
+      "environment": {
+        "adapter": {},
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) T3Code(Nightly)/0.0.46-nightly.20261003.2632 Chrome/152.0.7977.130 Electron/44.4.2 Safari/537.36",
+        "height": 650,
+        "width": 1696
+      },
+      "name": "portal",
+      "samples": [
+        {
+          "baseline": 2.562833,
+          "candidate": 0.851968,
+          "gpu": 0.851968,
+          "repetition": 0,
+          "residual": 0,
+          "time": 4
+        },
+        {
+          "baseline": 2.851666,
+          "candidate": 0.720896,
+          "gpu": 0.720896,
+          "repetition": 0,
+          "residual": 0,
+          "time": 8
+        },
+        {
+          "baseline": 6.100791,
+          "candidate": 0.851968,
+          "gpu": 0.851968,
+          "repetition": 0,
+          "residual": 0,
+          "time": 12
+        },
+        {
+          "baseline": 2.755333,
+          "candidate": 0.720896,
+          "gpu": 0.720896,
+          "repetition": 1,
+          "residual": 0,
+          "time": 4
+        },
+        {
+          "baseline": 2.536999,
+          "candidate": 0.917504,
+          "gpu": 0.917504,
+          "repetition": 1,
+          "residual": 0,
+          "time": 8
+        },
+        {
+          "baseline": 2.542583,
+          "candidate": 0.786432,
+          "gpu": 0.786432,
+          "repetition": 1,
+          "residual": 0,
+          "time": 12
+        },
+        {
+          "baseline": 4.426166,
+          "candidate": 0.786432,
+          "gpu": 0.786432,
+          "repetition": 2,
+          "residual": 0,
+          "time": 4
+        },
+        {
+          "baseline": 2.540458,
+          "candidate": 0.589824,
+          "gpu": 0.589824,
+          "repetition": 2,
+          "residual": 0,
+          "time": 8
+        },
+        {
+          "baseline": 2.537374,
+          "candidate": 0.65536,
+          "gpu": 0.65536,
+          "repetition": 2,
+          "residual": 0,
+          "time": 12
+        },
+        {
+          "baseline": 2.540499,
+          "candidate": 1.376256,
+          "gpu": 1.376256,
+          "repetition": 3,
+          "residual": 0,
+          "time": 4
+        },
+        {
+          "baseline": 2.529333,
+          "candidate": 0.786432,
+          "gpu": 0.786432,
+          "repetition": 3,
+          "residual": 0,
+          "time": 8
+        },
+        {
+          "baseline": 2.520916,
+          "candidate": 0.720896,
+          "gpu": 0.720896,
+          "repetition": 3,
+          "residual": 0,
+          "time": 12
+        },
+        {
+          "baseline": 3.4465,
+          "candidate": 0.65536,
+          "gpu": 0.65536,
+          "repetition": 4,
+          "residual": 0,
+          "time": 4
+        },
+        {
+          "baseline": 2.669124,
+          "candidate": 0.786432,
+          "gpu": 0.786432,
+          "repetition": 4,
+          "residual": 0,
+          "time": 8
+        },
+        {
+          "baseline": 2.674625,
+          "candidate": 0.65536,
+          "gpu": 0.65536,
+          "repetition": 4,
+          "residual": 0,
+          "time": 12
+        }
+      ]
+    },
+    {
+      "environment": {
+        "adapter": {},
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) T3Code(Nightly)/0.0.46-nightly.20261003.2632 Chrome/152.0.7977.130 Electron/44.4.2 Safari/537.36",
+        "height": 1080,
+        "width": 1824
+      },
+      "name": "mobile-pipes",
+      "samples": [
+        {
+          "baseline": 1.657166,
+          "candidate": 0.9204049999999999,
+          "gpu": 0.131072,
+          "repetition": 0,
+          "residual": 0.789333,
+          "time": 0.45
+        },
+        {
+          "baseline": 2.129083,
+          "candidate": 1.081447,
+          "gpu": 0.131072,
+          "repetition": 0,
+          "residual": 0.950375,
+          "time": 1.05
+        },
+        {
+          "baseline": 1.676666,
+          "candidate": 1.0335239999999999,
+          "gpu": 0.196608,
+          "repetition": 0,
+          "residual": 0.836916,
+          "time": 2.7
+        },
+        {
+          "baseline": 2.287791,
+          "candidate": 1.055322,
+          "gpu": 0.131072,
+          "repetition": 1,
+          "residual": 0.92425,
+          "time": 0.45
+        },
+        {
+          "baseline": 2.136541,
+          "candidate": 1.08753,
+          "gpu": 0.131072,
+          "repetition": 1,
+          "residual": 0.956458,
+          "time": 1.05
+        },
+        {
+          "baseline": 3.716,
+          "candidate": 1.2547739999999998,
+          "gpu": 0.196608,
+          "repetition": 1,
+          "residual": 1.058166,
+          "time": 2.7
+        },
+        {
+          "baseline": 2.61,
+          "candidate": 2.513986,
+          "gpu": 1.114112,
+          "repetition": 2,
+          "residual": 1.399874,
+          "time": 0.45
+        },
+        {
+          "baseline": 2.989749,
+          "candidate": 2.891066,
+          "gpu": 0.196608,
+          "repetition": 2,
+          "residual": 2.694458,
+          "time": 1.05
+        },
+        {
+          "baseline": 2.606374,
+          "candidate": 2.711594,
+          "gpu": 1.31072,
+          "repetition": 2,
+          "residual": 1.400874,
+          "time": 2.7
+        },
+        {
+          "baseline": 2.828833,
+          "candidate": 2.8045419999999996,
+          "gpu": 1.441792,
+          "repetition": 3,
+          "residual": 1.36275,
+          "time": 0.45
+        },
+        {
+          "baseline": 4.542041,
+          "candidate": 1.6624349999999999,
+          "gpu": 0.262144,
+          "repetition": 3,
+          "residual": 1.400291,
+          "time": 1.05
+        },
+        {
+          "baseline": 3.9995,
+          "candidate": 3.0596430000000003,
+          "gpu": 0.262144,
+          "repetition": 3,
+          "residual": 2.797499,
+          "time": 2.7
+        },
+        {
+          "baseline": 2.6475,
+          "candidate": 0.908316,
+          "gpu": 0.196608,
+          "repetition": 4,
+          "residual": 0.711708,
+          "time": 0.45
+        },
+        {
+          "baseline": 1.510291,
+          "candidate": 1.195697,
+          "gpu": 0.131072,
+          "repetition": 4,
+          "residual": 1.064625,
+          "time": 1.05
+        },
+        {
+          "baseline": 1.539,
+          "candidate": 0.866655,
+          "gpu": 0.131072,
+          "repetition": 4,
+          "residual": 0.735583,
+          "time": 2.7
+        }
+      ]
+    },
+    {
+      "environment": {
+        "adapter": {},
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) T3Code(Nightly)/0.0.46-nightly.20261003.2632 Chrome/152.0.7977.130 Electron/44.4.2 Safari/537.36",
+        "height": 1080,
+        "width": 1824
+      },
+      "name": "desktop-pipes",
+      "samples": [
+        {
+          "baseline": 2.688583,
+          "candidate": 0.8330299999999999,
+          "gpu": 0.131072,
+          "repetition": 0,
+          "residual": 0.701958,
+          "time": 0.45
+        },
+        {
+          "baseline": 3.506083,
+          "candidate": 1.0677159999999999,
+          "gpu": 0.393216,
+          "repetition": 0,
+          "residual": 0.6745,
+          "time": 1.05
+        },
+        {
+          "baseline": 5.186916,
+          "candidate": 0.70053,
+          "gpu": 0.131072,
+          "repetition": 0,
+          "residual": 0.569458,
+          "time": 2.7
+        },
+        {
+          "baseline": 2.025,
+          "candidate": 0.863024,
+          "gpu": 0.196608,
+          "repetition": 1,
+          "residual": 0.666416,
+          "time": 0.45
+        },
+        {
+          "baseline": 3.581333,
+          "candidate": 0.892357,
+          "gpu": 0.196608,
+          "repetition": 1,
+          "residual": 0.695749,
+          "time": 1.05
+        },
+        {
+          "baseline": 2.767666,
+          "candidate": 1.815142,
+          "gpu": 1.245184,
+          "repetition": 1,
+          "residual": 0.569958,
+          "time": 2.7
+        },
+        {
+          "baseline": 2.558958,
+          "candidate": 0.94228,
+          "gpu": 0.131072,
+          "repetition": 2,
+          "residual": 0.811208,
+          "time": 0.45
+        },
+        {
+          "baseline": 3.134999,
+          "candidate": 0.8190719999999999,
+          "gpu": 0.131072,
+          "repetition": 2,
+          "residual": 0.688,
+          "time": 1.05
+        },
+        {
+          "baseline": 5.649,
+          "candidate": 0.701696,
+          "gpu": 0.131072,
+          "repetition": 2,
+          "residual": 0.570624,
+          "time": 2.7
+        },
+        {
+          "baseline": 2.107499,
+          "candidate": 0.8679049999999999,
+          "gpu": 0.131072,
+          "repetition": 3,
+          "residual": 0.736833,
+          "time": 0.45
+        },
+        {
+          "baseline": 3.272249,
+          "candidate": 0.856946,
+          "gpu": 0.131072,
+          "repetition": 3,
+          "residual": 0.725874,
+          "time": 1.05
+        },
+        {
+          "baseline": 2.861749,
+          "candidate": 1.076238,
+          "gpu": 0.131072,
+          "repetition": 3,
+          "residual": 0.945166,
+          "time": 2.7
+        },
+        {
+          "baseline": 2.006124,
+          "candidate": 0.8188219999999999,
+          "gpu": 0.131072,
+          "repetition": 4,
+          "residual": 0.68775,
+          "time": 0.45
+        },
+        {
+          "baseline": 3.166708,
+          "candidate": 0.805322,
+          "gpu": 0.131072,
+          "repetition": 4,
+          "residual": 0.67425,
+          "time": 1.05
+        },
+        {
+          "baseline": 2.792249,
+          "candidate": 0.785822,
+          "gpu": 0.131072,
+          "repetition": 4,
+          "residual": 0.65475,
+          "time": 2.7
+        }
+      ]
+    },
+    {
+      "environment": {
+        "adapter": {},
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) T3Code(Nightly)/0.0.46-nightly.20261003.2632 Chrome/152.0.7977.130 Electron/44.4.2 Safari/537.36",
+        "height": 1180,
+        "width": 1920
+      },
+      "name": "shatter",
+      "samples": [
+        {
+          "baseline": 10.761708,
+          "candidate": 0.196608,
+          "gpu": 0.196608,
+          "repetition": 0,
+          "residual": 0,
+          "time": 0.35
+        },
+        {
+          "baseline": 7.942375,
+          "candidate": 0.131072,
+          "gpu": 0.131072,
+          "repetition": 0,
+          "residual": 0,
+          "time": 0.65
+        },
+        {
+          "baseline": 8.06925,
+          "candidate": 0.131072,
+          "gpu": 0.131072,
+          "repetition": 0,
+          "residual": 0,
+          "time": 1
+        },
+        {
+          "baseline": 8.502749,
+          "candidate": 0.196608,
+          "gpu": 0.196608,
+          "repetition": 1,
+          "residual": 0,
+          "time": 0.35
+        },
+        {
+          "baseline": 8.769166,
+          "candidate": 0.720896,
+          "gpu": 0.720896,
+          "repetition": 1,
+          "residual": 0,
+          "time": 0.65
+        },
+        {
+          "baseline": 7.937124,
+          "candidate": 0.131072,
+          "gpu": 0.131072,
+          "repetition": 1,
+          "residual": 0,
+          "time": 1
+        },
+        {
+          "baseline": 7.978249,
+          "candidate": 0.196608,
+          "gpu": 0.196608,
+          "repetition": 2,
+          "residual": 0,
+          "time": 0.35
+        },
+        {
+          "baseline": 8.788374,
+          "candidate": 0.196608,
+          "gpu": 0.196608,
+          "repetition": 2,
+          "residual": 0,
+          "time": 0.65
+        },
+        {
+          "baseline": 9.463333,
+          "candidate": 0.393216,
+          "gpu": 0.393216,
+          "repetition": 2,
+          "residual": 0,
+          "time": 1
+        },
+        {
+          "baseline": 8.001625,
+          "candidate": 0.131072,
+          "gpu": 0.131072,
+          "repetition": 3,
+          "residual": 0,
+          "time": 0.35
+        },
+        {
+          "baseline": 7.9175,
+          "candidate": 0.196608,
+          "gpu": 0.196608,
+          "repetition": 3,
+          "residual": 0,
+          "time": 0.65
+        },
+        {
+          "baseline": 8.754833,
+          "candidate": 0.196608,
+          "gpu": 0.196608,
+          "repetition": 3,
+          "residual": 0,
+          "time": 1
+        },
+        {
+          "baseline": 9.85675,
+          "candidate": 0.196608,
+          "gpu": 0.196608,
+          "repetition": 4,
+          "residual": 0,
+          "time": 0.35
+        },
+        {
+          "baseline": 7.954124,
+          "candidate": 0.196608,
+          "gpu": 0.196608,
+          "repetition": 4,
+          "residual": 0,
+          "time": 0.65
+        },
+        {
+          "baseline": 8.839874,
+          "candidate": 0.131072,
+          "gpu": 0.131072,
+          "repetition": 4,
+          "residual": 0,
+          "time": 1
+        }
+      ]
+    },
+    {
+      "environment": {
+        "adapter": {},
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) T3Code(Nightly)/0.0.46-nightly.20261003.2632 Chrome/152.0.7977.130 Electron/44.4.2 Safari/537.36",
+        "height": 824,
+        "width": 624
+      },
+      "name": "sprites",
+      "samples": [
+        {
+          "baseline": 0.298666,
+          "candidate": 0.065536,
+          "gpu": 0.065536,
+          "repetition": 0,
+          "residual": 0,
+          "time": 3.1
+        },
+        {
+          "baseline": 3.631416,
+          "candidate": 0.065536,
+          "gpu": 0.065536,
+          "repetition": 0,
+          "residual": 0,
+          "time": 5.4
+        },
+        {
+          "baseline": 0.535124,
+          "candidate": 0,
+          "gpu": 0,
+          "repetition": 0,
+          "residual": 0,
+          "time": 16
+        },
+        {
+          "baseline": 0.263124,
+          "candidate": 0,
+          "gpu": 0,
+          "repetition": 1,
+          "residual": 0,
+          "time": 3.1
+        },
+        {
+          "baseline": 0.376499,
+          "candidate": 0,
+          "gpu": 0,
+          "repetition": 1,
+          "residual": 0,
+          "time": 5.4
+        },
+        {
+          "baseline": 0.52875,
+          "candidate": 0.065536,
+          "gpu": 0.065536,
+          "repetition": 1,
+          "residual": 0,
+          "time": 16
+        },
+        {
+          "baseline": 0.688374,
+          "candidate": 0.065536,
+          "gpu": 0.065536,
+          "repetition": 2,
+          "residual": 0,
+          "time": 3.1
+        },
+        {
+          "baseline": 0.386958,
+          "candidate": 0.065536,
+          "gpu": 0.065536,
+          "repetition": 2,
+          "residual": 0,
+          "time": 5.4
+        },
+        {
+          "baseline": 0.532666,
+          "candidate": 0.065536,
+          "gpu": 0.065536,
+          "repetition": 2,
+          "residual": 0,
+          "time": 16
+        },
+        {
+          "baseline": 0.268541,
+          "candidate": 0.131072,
+          "gpu": 0.131072,
+          "repetition": 3,
+          "residual": 0,
+          "time": 3.1
+        },
+        {
+          "baseline": 0.367374,
+          "candidate": 0.065536,
+          "gpu": 0.065536,
+          "repetition": 3,
+          "residual": 0,
+          "time": 5.4
+        },
+        {
+          "baseline": 0.534291,
+          "candidate": 0.065536,
+          "gpu": 0.065536,
+          "repetition": 3,
+          "residual": 0,
+          "time": 16
+        },
+        {
+          "baseline": 0.280875,
+          "candidate": 0,
+          "gpu": 0,
+          "repetition": 4,
+          "residual": 0,
+          "time": 3.1
+        },
+        {
+          "baseline": 0.356708,
+          "candidate": 3.014656,
+          "gpu": 3.014656,
+          "repetition": 4,
+          "residual": 0,
+          "time": 5.4
+        },
+        {
+          "baseline": 0.558833,
+          "candidate": 0.196608,
+          "gpu": 0.196608,
+          "repetition": 4,
+          "residual": 0,
+          "time": 16
+        }
+      ]
+    },
+    {
+      "environment": {
+        "adapter": {},
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) T3Code(Nightly)/0.0.46-nightly.20261003.2632 Chrome/152.0.7977.130 Electron/44.4.2 Safari/537.36",
+        "height": 650,
+        "width": 1696
+      },
+      "name": "portal",
+      "samples": [
+        {
+          "baseline": 2.536541,
+          "candidate": 0.786432,
+          "gpu": 0.786432,
+          "repetition": 0,
+          "residual": 0,
+          "time": 4
+        },
+        {
+          "baseline": 5.43375,
+          "candidate": 0.720896,
+          "gpu": 0.720896,
+          "repetition": 0,
+          "residual": 0,
+          "time": 8
+        },
+        {
+          "baseline": 2.890999,
+          "candidate": 0.786432,
+          "gpu": 0.786432,
+          "repetition": 0,
+          "residual": 0,
+          "time": 12
+        },
+        {
+          "baseline": 2.638,
+          "candidate": 0.720896,
+          "gpu": 0.720896,
+          "repetition": 1,
+          "residual": 0,
+          "time": 4
+        },
+        {
+          "baseline": 2.51925,
+          "candidate": 0.65536,
+          "gpu": 0.65536,
+          "repetition": 1,
+          "residual": 0,
+          "time": 8
+        },
+        {
+          "baseline": 2.528791,
+          "candidate": 0.851968,
+          "gpu": 0.851968,
+          "repetition": 1,
+          "residual": 0,
+          "time": 12
+        },
+        {
+          "baseline": 2.523,
+          "candidate": 0.786432,
+          "gpu": 0.786432,
+          "repetition": 2,
+          "residual": 0,
+          "time": 4
+        },
+        {
+          "baseline": 5.362208,
+          "candidate": 0.720896,
+          "gpu": 0.720896,
+          "repetition": 2,
+          "residual": 0,
+          "time": 8
+        },
+        {
+          "baseline": 2.525124,
+          "candidate": 0.720896,
+          "gpu": 0.720896,
+          "repetition": 2,
+          "residual": 0,
+          "time": 12
+        },
+        {
+          "baseline": 2.777625,
+          "candidate": 2.29376,
+          "gpu": 2.29376,
+          "repetition": 3,
+          "residual": 0,
+          "time": 4
+        },
+        {
+          "baseline": 2.531958,
+          "candidate": 0.65536,
+          "gpu": 0.65536,
+          "repetition": 3,
+          "residual": 0,
+          "time": 8
+        },
+        {
+          "baseline": 2.536125,
+          "candidate": 0.65536,
+          "gpu": 0.65536,
+          "repetition": 3,
+          "residual": 0,
+          "time": 12
+        },
+        {
+          "baseline": 2.740249,
+          "candidate": 0.720896,
+          "gpu": 0.720896,
+          "repetition": 4,
+          "residual": 0,
+          "time": 4
+        },
+        {
+          "baseline": 2.532624,
+          "candidate": 1.441792,
+          "gpu": 1.441792,
+          "repetition": 4,
+          "residual": 0,
+          "time": 8
+        },
+        {
+          "baseline": 2.557249,
+          "candidate": 0.65536,
+          "gpu": 0.65536,
+          "repetition": 4,
+          "residual": 0,
+          "time": 12
+        }
+      ]
+    },
+    {
+      "environment": {
+        "adapter": {},
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) T3Code(Nightly)/0.0.46-nightly.20261003.2632 Chrome/152.0.7977.130 Electron/44.4.2 Safari/537.36",
+        "height": 1080,
+        "width": 1824
+      },
+      "name": "mobile-pipes",
+      "samples": [
+        {
+          "baseline": 1.515874,
+          "candidate": 0.842696,
+          "gpu": 0.131072,
+          "repetition": 0,
+          "residual": 0.711624,
+          "time": 0.45
+        },
+        {
+          "baseline": 1.581833,
+          "candidate": 0.871197,
+          "gpu": 0.131072,
+          "repetition": 0,
+          "residual": 0.740125,
+          "time": 1.05
+        },
+        {
+          "baseline": 1.907875,
+          "candidate": 1.302699,
+          "gpu": 0.589824,
+          "repetition": 0,
+          "residual": 0.712875,
+          "time": 2.7
+        },
+        {
+          "baseline": 1.514249,
+          "candidate": 0.843905,
+          "gpu": 0.131072,
+          "repetition": 1,
+          "residual": 0.712833,
+          "time": 0.45
+        },
+        {
+          "baseline": 1.608999,
+          "candidate": 0.78441,
+          "gpu": 0.065536,
+          "repetition": 1,
+          "residual": 0.718874,
+          "time": 1.05
+        },
+        {
+          "baseline": 1.54075,
+          "candidate": 0.84453,
+          "gpu": 0.131072,
+          "repetition": 1,
+          "residual": 0.713458,
+          "time": 2.7
+        },
+        {
+          "baseline": 1.517916,
+          "candidate": 0.844071,
+          "gpu": 0.131072,
+          "repetition": 2,
+          "residual": 0.712999,
+          "time": 0.45
+        },
+        {
+          "baseline": 1.51575,
+          "candidate": 0.844155,
+          "gpu": 0.131072,
+          "repetition": 2,
+          "residual": 0.713083,
+          "time": 1.05
+        },
+        {
+          "baseline": 1.515833,
+          "candidate": 0.89328,
+          "gpu": 0.131072,
+          "repetition": 2,
+          "residual": 0.762208,
+          "time": 2.7
+        },
+        {
+          "baseline": 1.663124,
+          "candidate": 0.895447,
+          "gpu": 0.131072,
+          "repetition": 3,
+          "residual": 0.764375,
+          "time": 0.45
+        },
+        {
+          "baseline": 2.087999,
+          "candidate": 0.923071,
+          "gpu": 0.131072,
+          "repetition": 3,
+          "residual": 0.791999,
+          "time": 1.05
+        },
+        {
+          "baseline": 1.859333,
+          "candidate": 1.5199470000000002,
+          "gpu": 0.131072,
+          "repetition": 3,
+          "residual": 1.388875,
+          "time": 2.7
+        },
+        {
+          "baseline": 2.039249,
+          "candidate": 1.1532740000000001,
+          "gpu": 0.196608,
+          "repetition": 4,
+          "residual": 0.956666,
+          "time": 0.45
+        },
+        {
+          "baseline": 2.634499,
+          "candidate": 2.006357,
+          "gpu": 0.196608,
+          "repetition": 4,
+          "residual": 1.809749,
+          "time": 1.05
+        },
+        {
+          "baseline": 2.271499,
+          "candidate": 2.315112,
+          "gpu": 1.114112,
+          "repetition": 4,
+          "residual": 1.201,
+          "time": 2.7
+        }
+      ]
+    },
+    {
+      "environment": {
+        "adapter": {},
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) T3Code(Nightly)/0.0.46-nightly.20261003.2632 Chrome/152.0.7977.130 Electron/44.4.2 Safari/537.36",
+        "height": 1080,
+        "width": 1824
+      },
+      "name": "desktop-pipes",
+      "samples": [
+        {
+          "baseline": 2.346874,
+          "candidate": 0.8181959999999999,
+          "gpu": 0.131072,
+          "repetition": 0,
+          "residual": 0.687124,
+          "time": 0.45
+        },
+        {
+          "baseline": 3.166833,
+          "candidate": 0.834863,
+          "gpu": 0.131072,
+          "repetition": 0,
+          "residual": 0.703791,
+          "time": 1.05
+        },
+        {
+          "baseline": 3.184875,
+          "candidate": 0.766733,
+          "gpu": 0.196608,
+          "repetition": 0,
+          "residual": 0.570125,
+          "time": 2.7
+        },
+        {
+          "baseline": 1.998874,
+          "candidate": 0.863233,
+          "gpu": 0.196608,
+          "repetition": 1,
+          "residual": 0.666625,
+          "time": 0.45
+        },
+        {
+          "baseline": 3.1455,
+          "candidate": 4.1077379999999994,
+          "gpu": 0.131072,
+          "repetition": 1,
+          "residual": 3.976666,
+          "time": 1.05
+        },
+        {
+          "baseline": 3.168624,
+          "candidate": 0.726946,
+          "gpu": 0.131072,
+          "repetition": 1,
+          "residual": 0.595874,
+          "time": 2.7
+        },
+        {
+          "baseline": 1.965833,
+          "candidate": 0.797863,
+          "gpu": 0.131072,
+          "repetition": 2,
+          "residual": 0.666791,
+          "time": 0.45
+        },
+        {
+          "baseline": 3.187083,
+          "candidate": 0.809905,
+          "gpu": 0.131072,
+          "repetition": 2,
+          "residual": 0.678833,
+          "time": 1.05
+        },
+        {
+          "baseline": 2.796083,
+          "candidate": 0.704988,
+          "gpu": 0.131072,
+          "repetition": 2,
+          "residual": 0.573916,
+          "time": 2.7
+        },
+        {
+          "baseline": 1.999875,
+          "candidate": 0.830905,
+          "gpu": 0.131072,
+          "repetition": 3,
+          "residual": 0.699833,
+          "time": 0.45
+        },
+        {
+          "baseline": 4.503125,
+          "candidate": 0.836322,
+          "gpu": 0.131072,
+          "repetition": 3,
+          "residual": 0.70525,
+          "time": 1.05
+        },
+        {
+          "baseline": 2.761499,
+          "candidate": 0.721447,
+          "gpu": 0.131072,
+          "repetition": 3,
+          "residual": 0.590375,
+          "time": 2.7
+        },
+        {
+          "baseline": 4.558,
+          "candidate": 0.863024,
+          "gpu": 0.196608,
+          "repetition": 4,
+          "residual": 0.666416,
+          "time": 0.45
+        },
+        {
+          "baseline": 3.138791,
+          "candidate": 2.146983,
+          "gpu": 0.196608,
+          "repetition": 4,
+          "residual": 1.950375,
+          "time": 1.05
+        },
+        {
+          "baseline": 2.769625,
+          "candidate": 0.701946,
+          "gpu": 0.131072,
+          "repetition": 4,
+          "residual": 0.570874,
+          "time": 2.7
+        }
+      ]
+    },
+    {
+      "environment": {
+        "adapter": {},
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) T3Code(Nightly)/0.0.46-nightly.20261003.2632 Chrome/152.0.7977.130 Electron/44.4.2 Safari/537.36",
+        "height": 1080,
+        "width": 1920
+      },
+      "name": "title",
+      "samples": [
+        {
+          "baseline": null,
+          "candidate": 0,
+          "gpu": 0,
+          "repetition": 0,
+          "residual": 0,
+          "time": 4
+        },
+        {
+          "baseline": null,
+          "candidate": 0,
+          "gpu": 0,
+          "repetition": 1,
+          "residual": 0,
+          "time": 4
+        },
+        {
+          "baseline": null,
+          "candidate": 0.065536,
+          "gpu": 0.065536,
+          "repetition": 2,
+          "residual": 0,
+          "time": 4
+        },
+        {
+          "baseline": null,
+          "candidate": 0.065536,
+          "gpu": 0.065536,
+          "repetition": 3,
+          "residual": 0,
+          "time": 4
+        },
+        {
+          "baseline": null,
+          "candidate": 0.065536,
+          "gpu": 0.065536,
+          "repetition": 4,
+          "residual": 0,
+          "time": 4
+        }
+      ]
+    }
+  ],
+  "playback": {
+    "cleanup": true,
+    "impactClockPreserved": true,
+    "resizePreserved": true,
+    "results": [
+      {
+        "canvases": 1,
+        "name": "shatter",
+        "samples": [
+          {
+            "frames": [
+              60
+            ],
+            "milliseconds": 1001.1000001430511
+          },
+          {
+            "frames": [
+              60
+            ],
+            "milliseconds": 1002.2000000476837
+          },
+          {
+            "frames": [
+              60
+            ],
+            "milliseconds": 1002.5
+          }
+        ]
+      },
+      {
+        "canvases": 1,
+        "name": "sprites",
+        "samples": [
+          {
+            "frames": [
+              61
+            ],
+            "milliseconds": 1000.8999998569489
+          },
+          {
+            "frames": [
+              60
+            ],
+            "milliseconds": 1000.1000001430511
+          },
+          {
+            "frames": [
+              60
+            ],
+            "milliseconds": 1000.5
+          }
+        ]
+      },
+      {
+        "canvases": 1,
+        "name": "portal",
+        "samples": [
+          {
+            "frames": [
+              60
+            ],
+            "milliseconds": 1000.3999998569489
+          },
+          {
+            "frames": [
+              60
+            ],
+            "milliseconds": 1000.5
+          },
+          {
+            "frames": [
+              60
+            ],
+            "milliseconds": 1001.6000001430511
+          }
+        ]
+      },
+      {
+        "canvases": 2,
+        "name": "pipes",
+        "samples": [
+          {
+            "frames": [
+              60,
+              60
+            ],
+            "milliseconds": 1002
+          },
+          {
+            "frames": [
+              60,
+              60
+            ],
+            "milliseconds": 1002.4000000953674
+          },
+          {
+            "frames": [
+              60,
+              60
+            ],
+            "milliseconds": 1002
+          }
+        ]
+      },
+      {
+        "canvases": 1,
+        "name": "title",
+        "samples": [
+          {
+            "frames": [
+              61
+            ],
+            "milliseconds": 1000.3000001907349
+          },
+          {
+            "frames": [
+              60
+            ],
+            "milliseconds": 1000.1999998092651
+          },
+          {
+            "frames": [
+              60
+            ],
+            "milliseconds": 1000.1000001430511
+          }
+        ]
+      }
+    ]
+  }
+}

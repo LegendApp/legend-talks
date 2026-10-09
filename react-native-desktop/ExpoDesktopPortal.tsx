@@ -1,6 +1,7 @@
+import { portalProgram, portalParticles } from "./ExpoDesktopPortalGPU";
 import { GitHubLink } from "./GitHubLink";
 import { Canvas, Fill, Path, Shader, Skia } from "@shopify/react-native-skia";
-import { useAnimatedShaderUniforms } from "@legend-apps/presentation";
+import { GPUShader, useAnimatedShaderUniforms } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 
 // The lens warps the particle field itself, so moving lights refract continuously
@@ -86,8 +87,12 @@ export function ExpoDesktopPortal() {
   const uniforms = useAnimatedShaderUniforms({}, 3.5);
   return <View style={{ width: 1696, height: 900, alignSelf: "center" }}>
     <Text style={{ color: "white", fontSize: 88, fontWeight: "600", textAlign: "center", marginTop: 12 }}>Expo Desktop</Text>
+    <View style={{ position:"absolute",top:105,left:0,width:1696,height:650 }}>
+      <GPUShader code={portalProgram} particles particleCount={portalParticles} composite width={1696} height={650} clock="slide" previewTime={3.5} borderRadius={0}
+        fallback={<Canvas style={{width:1696,height:650}}><Fill><Shader source={effect!} uniforms={uniforms}/></Fill></Canvas>} />
+    </View>
     <Canvas accessibilityLabel="A glowing glass portal refracts particles flowing from Expo to macOS and Windows" style={{ position: "absolute", top: 105, left: 0, width: 1696, height: 650 }}>
-      <Fill><Shader source={effect!} uniforms={uniforms} /></Fill>
+
       <Path path={expoLogo} color="white" transform={[{ translateX: 182 }, { translateY: 272 }, { scale: 5.5 }]} />
       <Path path="M0 0H40V40H0ZM48 0H88V40H48ZM0 48H40V88H0ZM48 48H88V88H48Z" color="white" transform={[{ translateX: 1390 }, { translateY: 285 }, { scale: 1.2 }]} />
     </Canvas>
