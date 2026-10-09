@@ -7,6 +7,9 @@ Use `bun run setup`, `bun run validate`, `bun run test`, and `bun run typecheck`
 Set `LEGEND_APPS_PATH` when the host checkout is not a sibling named `legend-apps`.
 Never commit `node_modules` or `test-support/legend-apps`; they are local links.
 Preserve local imports within each deck directory.
+Keep talk folders at the repository root and list each event presentation in the
+root README. Related versions share a talk folder; reserve `shared/` for future
+cross-talk reuse once the compiler supports imports from it.
 
 
 ## Animation policy

@@ -1,5 +1,5 @@
 // @ts-nocheck Native drawing is mocked; presentation subscriptions stay real.
-import "../../../test-support/legend-apps/apps/slides/src/__tests__/nativeMock";
+import "../../test-support/legend-apps/apps/slides/src/__tests__/nativeMock";
 import { expect, test } from "bun:test";
 import { observable } from "@legendapp/state";
 import { PresentationProvider, ScenePositionView } from "@legend-apps/presentation";
@@ -12,7 +12,7 @@ import { AnimatedTitle } from "slides:typography/AnimatedTitle";
 import { MovingTitle } from "../MovingTitle";
 import { GlassPanels } from "slides:materials/GlassPanels";
 
-const { transformSync } = createRequire(new URL("../../../test-support/legend-apps/packages/presentation/package.json", import.meta.url))("esbuild");
+const { transformSync } = createRequire(new URL("../../test-support/legend-apps/packages/presentation/package.json", import.meta.url))("esbuild");
 function load(filename, mocks) {
   const require = createRequire(filename);
   const module = { exports: {} };
@@ -26,7 +26,7 @@ const { SlidesHeader } = load(`${import.meta.dir}/../StoryDiagrams.tsx`, {
   "./GitHubLink": links, "./RendererWindows": {}, "./ExpoDesktopScene": {}, "./ModuleCompatibility": {},
 });
 const { WebsiteIcon } = load(`${import.meta.dir}/../WebsiteIcon.tsx`, { "@shopify/react-native-skia": drawing });
-const { ImageShatter } = load(`${import.meta.dir}/../../../test-support/legend-apps/packages/slides-effects/packs/materials/ImageShatter.tsx`, { "@shopify/react-native-skia": drawing });
+const { ImageShatter } = load(`${import.meta.dir}/../../test-support/legend-apps/packages/slides-effects/packs/materials/ImageShatter.tsx`, { "@shopify/react-native-skia": drawing });
 const { SlidesReveal } = load(`${import.meta.dir}/../SlidesReveal.tsx`, {
   "slides:materials/ImageShatter": { ImageShatter }, "@shopify/react-native-skia": drawing, "./StoryDiagrams": { SlidesHeader }, "./GitHubLink": links, "./WebsiteIcon": { WebsiteIcon },
 });

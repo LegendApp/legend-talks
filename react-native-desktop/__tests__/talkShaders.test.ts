@@ -8,7 +8,7 @@ import { spawnSync } from "node:child_process";
 import { sidebarStorm } from "slides:particles/WindowStorm";
 import { gpuConstellation } from "slides:particles/Constellation";
 import { gpuInterfaceReveal } from "slides:particles/InterfaceReveal";
-import { compileDeck } from "../../../test-support/legend-apps/packages/presentation/src/compiler";
+import { compileDeck } from "../../test-support/legend-apps/packages/presentation/src/compiler";
 
 
 
@@ -19,7 +19,7 @@ test.skipIf(process.platform !== "darwin")("example programs compile with the ap
   const temporary = fs.mkdtempSync(path.join(os.tmpdir(), "slides-shader-test-"));
   try {
     const executable = path.join(temporary, "validate");
-    const build = spawnSync("clang++", ["-std=c++17", path.join(import.meta.dir, "../../../test-support/legend-apps/apps/slides/src/__tests__/fixtures/validateShader.cpp"),
+    const build = spawnSync("clang++", ["-std=c++17", path.join(import.meta.dir, "../../test-support/legend-apps/apps/slides/src/__tests__/fixtures/validateShader.cpp"),
       "-I", path.join(webgpu, "cpp/webgpu"), path.join(webgpu, "libs/apple/libwebgpu_dawn.xcframework/macos-arm64_x86_64/libwebgpu_dawn.a"),
       "-framework", "Metal", "-framework", "Foundation", "-framework", "QuartzCore", "-framework", "IOSurface", "-framework", "IOKit", "-o", executable], { encoding: "utf8", timeout: 30_000 });
     expect(build.stderr).toBe("");

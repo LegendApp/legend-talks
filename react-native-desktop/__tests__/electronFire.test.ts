@@ -1,5 +1,5 @@
 // @ts-nocheck Native module loading is mocked; the shader renders in real Skia.
-import "../../../test-support/legend-apps/apps/slides/src/__tests__/nativeMock";
+import "../../test-support/legend-apps/apps/slides/src/__tests__/nativeMock";
 import { expect, test } from "bun:test";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
@@ -11,9 +11,9 @@ import { act, create } from "react-test-renderer";
 import * as skia from "@shopify/react-native-skia";
 
 const deckRequire = createRequire(new URL("../ElectronFire.tsx", import.meta.url));
-const { transformSync } = createRequire(new URL("../../../test-support/legend-apps/packages/presentation/package.json", import.meta.url))("esbuild");
+const { transformSync } = createRequire(new URL("../../test-support/legend-apps/packages/presentation/package.json", import.meta.url))("esbuild");
 const module = { exports: {} };
-const fireFile = new URL("../../../test-support/legend-apps/packages/slides-effects/packs/materials/Fire.tsx", import.meta.url);
+const fireFile = new URL("../../test-support/legend-apps/packages/slides-effects/packs/materials/Fire.tsx", import.meta.url);
 const fireCode = transformSync(readFileSync(fireFile, "utf8"), { loader: "tsx", format: "cjs", jsx: "automatic" }).code;
 const fire = { exports: {} };
 Function("require", "module", "exports", fireCode)(name => name === "@shopify/react-native-skia"
@@ -25,7 +25,7 @@ const { ElectronFire } = module.exports;
 const electronFireShader = fire.exports.spriteFireShader;
 
 test("fire builds over five seconds while varied poop emojis fall, splash, and keep accumulating", async () => {
-  const require = createRequire(new URL("../../../test-support/legend-apps/apps/slides/package.json", import.meta.url));
+  const require = createRequire(new URL("../../test-support/legend-apps/apps/slides/package.json", import.meta.url));
   const skiaRequire = createRequire(require.resolve("@shopify/react-native-skia"));
   const entry = skiaRequire.resolve("canvaskit-wasm");
   const kit = await skiaRequire("canvaskit-wasm")({ locateFile: file => join(dirname(entry), file) });

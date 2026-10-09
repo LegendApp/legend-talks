@@ -7,7 +7,7 @@ and architecture audit, not a new frame-rate benchmark or an implementation of
 downloads. The inventory below records that baseline; the extraction status
 records the subsequent approved implementation.
 
-Both talks live under [talks/react-native-desktop](../talks/react-native-desktop).
+Both talks live under [react-native-desktop](../react-native-desktop).
 The resolved local TS/TSX import graphs, including frontmatter templates and
 transitions, contained 82 modules for `reactcon.mdx`, 72 for `rnconnection.mdx`,
 and 88 unique modules across both at that revision. These counts include imported helpers that do not

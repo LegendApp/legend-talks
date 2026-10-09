@@ -21,10 +21,16 @@
     }
   },
   "include": [
-    "talks",
+    "*/**/*.ts",
+    "*/**/*.tsx",
+    "*/**/*.mjs",
     "uniwind-env.d.ts"
   ],
   "exclude": [
-    "talks/**/__tests__"
+    "**/__tests__",
+    "**/*.test.*",
+    "node_modules",
+    "test-support",
+    "scripts"
   ]
 }

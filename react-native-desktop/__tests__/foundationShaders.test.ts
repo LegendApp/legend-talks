@@ -7,13 +7,13 @@ import { glassStrikeShader } from "slides:materials/GlassStrike";
 
 function shader(file, name, dependencies = {}) {
   if (file === "DesktopObjections.tsx") return glassStrikeShader;
-  const source = readFileSync(new URL(file === "GlassPanels.tsx" ? "../../../test-support/legend-apps/packages/slides-effects/packs/materials/GlassPanels.tsx" : `../${file}`, import.meta.url), "utf8");
+  const source = readFileSync(new URL(file === "GlassPanels.tsx" ? "../../test-support/legend-apps/packages/slides-effects/packs/materials/GlassPanels.tsx" : `../${file}`, import.meta.url), "utf8");
   const expression = source.match(new RegExp("export const " + name + " = (`[\\s\\S]*?`);"))[1];
   return Function(...Object.keys(dependencies), `return ${expression}`)(...Object.values(dependencies));
 }
 
 test("the narrow Spark ribbon canvas preserves its full-size pixels throughout the reveal", async () => {
-  const require = createRequire(new URL("../../../test-support/legend-apps/apps/slides/package.json", import.meta.url));
+  const require = createRequire(new URL("../../test-support/legend-apps/apps/slides/package.json", import.meta.url));
   const skiaRequire = createRequire(require.resolve("@shopify/react-native-skia"));
   const entry = skiaRequire.resolve("canvaskit-wasm");
   const kit = await skiaRequire("canvaskit-wasm")({ locateFile: file => join(dirname(entry), file) });
@@ -63,7 +63,7 @@ test("the narrow Spark ribbon canvas preserves its full-size pixels throughout t
 }, 30000);
 
 test("glass strikes retain falling shards and live checks but finish transparent when crossed out", async () => {
-  const require = createRequire(new URL("../../../test-support/legend-apps/apps/slides/package.json", import.meta.url));
+  const require = createRequire(new URL("../../test-support/legend-apps/apps/slides/package.json", import.meta.url));
   const skiaRequire = createRequire(require.resolve("@shopify/react-native-skia"));
   const entry = skiaRequire.resolve("canvaskit-wasm");
   const kit = await skiaRequire("canvaskit-wasm")({ locateFile: file => join(dirname(entry), file) });

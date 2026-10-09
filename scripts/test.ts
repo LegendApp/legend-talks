@@ -1,16 +1,15 @@
 import { spawnSync } from "node:child_process";
-import fs from "node:fs";
 import path from "node:path";
 import { host, root } from "./setup";
+import { talkFiles } from "./files";
 
-const files = fs.readdirSync(path.join(root, "talks"), { recursive: true })
-  .map(String).filter(file => /\.test\.[cm]?[jt]sx?$/.test(file)).sort();
+const files = talkFiles().filter(file => /\.test\.[cm]?[jt]sx?$/.test(file));
 let failures = 0;
 // Native module mocks must be isolated between suites, matching the Slides runner.
 for (const file of files) {
   const child = spawnSync(process.execPath, ["test", "--timeout", "60000", "--preload",
     path.join(root, "scripts/effectPacks.ts"), "--preload",
-    path.join(host, "apps/slides/src/__tests__/nativeMock.ts"), path.join(root, "talks", file)], {
+    path.join(host, "apps/slides/src/__tests__/nativeMock.ts"), file], {
     cwd: root, stdio: "inherit",
   });
   if (child.error) throw child.error;

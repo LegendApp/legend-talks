@@ -5,12 +5,17 @@ The Slides application and presentation engine live in [Legend Apps](https://git
 
 ## Talks
 
-The [React Native desktop series](talks/react-native-desktop/) keeps related conference versions together:
+| Event | Talk | Deck |
+| --- | --- | --- |
+| React Conf | React Native is the best way to build desktop apps | [Open deck](react-native-desktop/reactcon.mdx) |
+| RNConnection | React Native is the best way to build desktop apps | [Open deck](react-native-desktop/rnconnection.mdx) |
 
-- [React Conf](talks/react-native-desktop/reactcon.mdx)
-- [RNConnection](talks/react-native-desktop/rnconnection.mdx)
-- [Original desktop talk](talks/react-native-desktop/talk.mdx)
-- [Effects gallery](talks/react-native-desktop/effects.mdx)
+Other versions and demos: [original desktop talk](react-native-desktop/talk.mdx)
+and [effects gallery](react-native-desktop/effects.mdx).
+
+Each talk has a folder at the repository root. Related conference versions stay
+together in [react-native-desktop/](react-native-desktop/), sharing components,
+assets, and tests. Add an entry above for each event presentation.
 
 Keep each deck's components and assets together under its directory. The compiler
 rejects local imports that escape that directory. Share components across versions
@@ -22,7 +27,7 @@ Open an `.mdx` file in Legend Slides. With a configured Legend Apps development
 checkout, run from that checkout:
 
 ```sh
-bun run slides run macos -- /absolute/path/to/legend-talks/talks/react-native-desktop/reactcon.mdx
+bun run slides run macos -- /absolute/path/to/legend-talks/react-native-desktop/reactcon.mdx
 ```
 
 The application supplies React Native, presentation APIs, and native dependencies.

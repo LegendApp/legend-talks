@@ -8,7 +8,7 @@ audience is React Native developers who mostly do not know about desktop support
 Open `talk.mdx` in Legend Slides. From the Legend Apps checkout:
 
 ```sh
-bun run slides run macos -- /absolute/path/to/legend-talks/talks/react-native-desktop/talk.mdx
+bun run slides run macos -- /absolute/path/to/legend-talks/react-native-desktop/talk.mdx
 ```
 
 [Running order](./RUNNING_ORDER.md) lists slide numbers and timing.
@@ -25,7 +25,7 @@ A plain background and cut transitions isolate each effect; the aurora demo
 explicitly enables its own background. `talk.mdx` remains unchanged.
 
 ```sh
-bun run slides run macos -- /absolute/path/to/legend-talks/talks/react-native-desktop/effects.mdx
+bun run slides run macos -- /absolute/path/to/legend-talks/react-native-desktop/effects.mdx
 ```
 
 ## Editing the draft
