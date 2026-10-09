@@ -5,9 +5,9 @@ import os from "node:os";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { spawnSync } from "node:child_process";
-import { sidebarStorm } from "../sidebarStorm";
-import { gpuConstellation } from "../packs/data/gpuConstellation";
-import { gpuInterfaceReveal } from "../packs/data/gpuInterfaceReveal";
+import { sidebarStorm } from "slides:particles/WindowStorm";
+import { gpuConstellation } from "slides:particles/Constellation";
+import { gpuInterfaceReveal } from "slides:particles/InterfaceReveal";
 import { compileDeck } from "../../../test-support/legend-apps/packages/presentation/src/compiler";
 
 

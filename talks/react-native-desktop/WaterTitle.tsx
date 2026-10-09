@@ -5,7 +5,7 @@ import { AlphaType, ColorType, Fill, Shader, ImageShader, Skia, makeImageFromVie
 import { PresentationCanvas, Background, useBackgroundSize, useBackgroundIntensity, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
-import { AnimatedAtmosphere } from "slides:backgrounds/AnimatedAtmosphere";
+import { Droplets } from "slides:backgrounds/Droplets";
 import { dropletGeometry } from "slides:backgrounds/DropletGeometry";
 import { TitleByline } from "./TitleByline";
 
@@ -320,7 +320,7 @@ export default function WaterTitle({ children, closing = false, byline = false }
   }, [sources]);
   const showLiquidType = Boolean(titleImage);
   return <>
-    <Background priority={1} intensityMultiplier={closing ? 1 : 3} maxIntensity={6}><AnimatedAtmosphere variant="droplets" brightness={0.7} speed={closing ? 0.6 : speed} sharedUniforms={uniforms} /></Background>
+    <Background priority={1} intensityMultiplier={closing ? 1 : 3} maxIntensity={6}><Droplets brightness={0.7} speed={closing ? 0.6 : speed} sharedUniforms={uniforms} /></Background>
     {/* This slide disables template padding and owns its full layout. */}
     <View style={{ width: 1920, height: 1080 }}>
       <View style={{ flex: 1, opacity: showLiquidType ? 0 : 1, zIndex: showLiquidType ? 0 : 1 }}>
