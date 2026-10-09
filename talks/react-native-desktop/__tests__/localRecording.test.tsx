@@ -12,7 +12,8 @@ mock.module("@legend-apps/presentation", () => ({
     return React.createElement("video", props);
   },
 }));
-const { LocalRecording, RecordingPositionContext } = await import("../LocalRecording");
+const { LocalRecording } = await import("../LocalRecording");
+const { RecordingPositionContext } = await import("slides:media/RecordingPosition");
 
 test("recordings start on selection, stay mounted when paused, and resume without recreation", async () => {
   const previous = (globalThis as any).IS_REACT_ACT_ENVIRONMENT;

@@ -1,4 +1,4 @@
-import { CarouselBlurView } from "./CarouselBlurView";
+import { CarouselBlurView } from "slides:media/CarouselBlurView";
 import { usePlaybackTween, FocusRegion, SceneMotionView, SharedElement, usePresentationValue, type PresentationTemplateProps } from "@legend-apps/presentation";
 import { Canvas, Image as SkiaImage } from "@shopify/react-native-skia";
 import { useMemo, type ReactNode } from "react";
@@ -48,7 +48,7 @@ import gpuiPage from "./rnconnection-assets/framework-recordings/gpui.html";
 // @ts-ignore Deck assets resolve to local file URLs in the deck compiler.
 import gpuiPoster from "./rnconnection-assets/framework-recordings/gpui.png";
 
-import { AppCarousel } from "./AppCarousel";
+import { AppCarousel } from "slides:media/AppCarousel";
 
 const recordings: Record<AppId, { page: string; poster: string }> = {
   "react-native": { page: react_nativePage, poster: react_nativePoster },

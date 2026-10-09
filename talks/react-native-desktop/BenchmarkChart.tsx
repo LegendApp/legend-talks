@@ -1,55 +1,21 @@
 import { displayMetric } from "./benchmarkUnits";
-import { SceneMotionView, ScenePositionView, usePresentationValue, SharedElement, useSharedElementEntrance, usePlaybackTween } from "@legend-apps/presentation";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import { SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 import type { ReactNode } from "react";
-import { ChartBar } from "./ChartBar";
+import { BarRow, defaultBarRowLayout } from "slides:charts/BarRow";
 import { bucketColors, bucketIndex, bucketLayout } from "./MetricBucketDefinitions";
 import benchmarks from "./rnconnection-assets/benchmarks.json";
 
-export const chartLayout = { width: 1696, height: 710, top: 55, rowSpacing: 57, rowHeight: 43, fontSize: 34, lineHeight: 42, barLeft: 285, barWidth: 1210, barHeight: 30, valueWidth: 190, marginTop: 24 };
+export const chartLayout = defaultBarRowLayout;
 export type Metric = "content" | "memory" | "size" | "jump" | "switch";
 const units: Record<Metric, string> = { content: "ms", memory: "MB", size: "MB", jump: "ms", switch: "ms" };
 
-function AnimatedBenchmarkBar({ width, duration, animateEntrance, highlighted, groupColor, grouped }: {
-  width: number; duration: number; animateEntrance: boolean; highlighted: boolean; groupColor?: string; grouped: boolean;
-}) {
-  const motion = usePlaybackTween({ width }, duration, animateEntrance ? { width: 0 } : undefined);
-  const animatedStyle = useAnimatedStyle(() => ({ width: motion.value.width }));
-  return <Animated.View style={[{ height: chartLayout.barHeight }, animatedStyle]}>
-    <ChartBar highlighted={highlighted} groupColor={groupColor} grouped={grouped} animateEntrance={false}
-      style={{ width: "100%", height: chartLayout.barHeight }} />
-  </Animated.View>;
-}
-
-/** Separate sibling markers keep text rigid while only the bar changes width. */
-export function BenchmarkRow({ name, value, maximum, metric, y, groupColor, grouped = false, tintText = false, duration = 650, decimals = 0, valueLabel, valueContent, animateValue = false, highlighted: requestedHighlight }: {
+export function BenchmarkRow({ metric, decimals = 0, highlighted, valueLabel, ...props }: {
   name: string; value: number; maximum: number; metric?: Metric; y: number;
   groupColor?: string; grouped?: boolean; tintText?: boolean; duration?: number; decimals?: number; valueLabel?: string; valueContent?: ReactNode; animateValue?: boolean; highlighted?: boolean;
 }) {
-  const highlighted = requestedHighlight === undefined ? name === "React Native" : requestedHighlight;
-  const id = `benchmark-${name}`;
-  const animateEntrance = useSharedElementEntrance(`${id}-bar`);
-  const width = Math.max(2, value / maximum * chartLayout.barWidth);
-  return <ScenePositionView y={y} duration={duration} style={{ left: 0, width: chartLayout.width, height: chartLayout.rowHeight }}>
-    <SharedElement id={`${id}-label`} resize="preserve" style={{ position: "absolute", left: 0, top: 0, width: 280, height: chartLayout.rowHeight }}>
-      <Text style={{ color: "#f1f5f9", fontWeight: highlighted ? "600" : "400", fontSize: chartLayout.fontSize, lineHeight: chartLayout.lineHeight }}>{name}</Text>
-      {tintText && <SceneMotionView pose={{ opacity: grouped ? 1 : 0 }} duration={duration} style={{ position: "absolute", inset: 0 }}>
-        <Text style={{ color: groupColor, fontWeight: highlighted ? "600" : "400", fontSize: chartLayout.fontSize, lineHeight: chartLayout.lineHeight }}>{name}</Text>
-      </SceneMotionView>}
-    </SharedElement>
-    <SharedElement id={`${id}-bar`} style={{ position: "absolute", left: chartLayout.barLeft, top: (chartLayout.rowHeight - chartLayout.barHeight) / 2, width: animateValue ? chartLayout.barWidth : width, height: chartLayout.barHeight }}>
-      {animateValue ? <AnimatedBenchmarkBar width={width} duration={duration} animateEntrance={animateEntrance}
-        highlighted={highlighted} groupColor={groupColor} grouped={grouped} />
-        : <ChartBar highlighted={highlighted} groupColor={groupColor} grouped={grouped} animateEntrance={animateEntrance} style={{ width, height: chartLayout.barHeight }} />}
-    </SharedElement>
-    <SharedElement id={`${id}-value`} resize="preserve" style={{ position: "absolute", right: 0, top: 0, width: chartLayout.valueWidth, height: chartLayout.rowHeight }}>
-      {valueContent ?? <Text style={{ color: "#f1f5f9", textAlign: "right", fontSize: chartLayout.fontSize, lineHeight: chartLayout.lineHeight, fontVariant: ["tabular-nums"] }}>{valueLabel ?? (metric ? `${displayMetric(value, metric).toFixed(decimals)} ${units[metric]}` : value.toFixed(decimals))}</Text>}
-      {tintText && <SceneMotionView pose={{ opacity: grouped ? 1 : 0 }} duration={duration} style={{ position: "absolute", inset: 0 }}>
-        <Text style={{ color: groupColor, textAlign: "right", fontSize: chartLayout.fontSize, lineHeight: chartLayout.lineHeight, fontVariant: ["tabular-nums"] }}>{valueLabel ?? (metric ? `${displayMetric(value, metric).toFixed(decimals)} ${units[metric]}` : value.toFixed(decimals))}</Text>
-      </SceneMotionView>}
-    </SharedElement>
-  </ScenePositionView>;
+  return <BarRow {...props} id={`benchmark-${props.name}`} highlighted={highlighted ?? props.name === "React Native"}
+    decimals={decimals} valueLabel={valueLabel ?? (metric ? `${displayMetric(props.value, metric).toFixed(decimals)} ${units[metric]}` : undefined)} />;
 }
 
 export function BucketHeaders({ rows, metric, visible, workload = "chat" }: { rows: { name: string; value: number }[]; metric: Metric; visible: boolean; workload?: "chat" | "hello" }) {

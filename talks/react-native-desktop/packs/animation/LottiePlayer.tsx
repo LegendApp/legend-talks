@@ -1,36 +1,7 @@
-import Animated, { useAnimatedProps } from "react-native-reanimated";
-import LottieView, { type AnimationObject } from "lottie-react-native";
-import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from "react-native";
-import { useEffectTime } from "../shared/effectRuntime";
+import { LottiePlayer } from "slides:animation/LottiePlayer";
+import type { AnimationObject } from "lottie-react-native";
+import { StyleSheet, Text, View } from "react-native";
 import nativeOrbit from "./native-orbit.json";
-type LottiePlayerProps = {
-  durationSeconds?: number;
-  loop?: boolean;
-  previewProgress?: number;
-  source: AnimationObject;
-  style?: StyleProp<ViewStyle>;
-};
-const AnimatedLottie = Animated.createAnimatedComponent(LottieView);
-function LottieProgress({
-  durationSeconds,
-  loop,
-  previewProgress,
-  source,
-  style
-}: Required<Pick<LottiePlayerProps, "durationSeconds" | "loop" | "previewProgress">> & Pick<LottiePlayerProps, "source" | "style">) {
-  const time = useEffectTime(durationSeconds * previewProgress);
-  const animatedProps = useAnimatedProps(() => ({ progress: (loop ? time.value % durationSeconds : Math.min(time.value, durationSeconds)) / durationSeconds }));
-  return <AnimatedLottie autoPlay={false} loop={false} animatedProps={animatedProps} resizeMode="contain" source={source} style={style} />;
-}
-export function LottiePlayer({
-  durationSeconds = 5,
-  loop = true,
-  previewProgress = 0.72,
-  source,
-  style
-}: LottiePlayerProps) {
-  return <LottieProgress durationSeconds={Math.max(0.1, durationSeconds)} loop={loop} previewProgress={Math.max(0, Math.min(1, previewProgress))} source={source} style={style} />;
-}
 export function NativeOrbitLottie() {
   return <View style={styles.frame}>
       <View style={styles.meta}>

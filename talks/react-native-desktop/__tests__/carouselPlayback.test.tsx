@@ -20,16 +20,18 @@ mock.module("@legend-apps/presentation", () => ({
   usePresentationValue: key => key === "playbackPhase" ? playback.value.phase : key === "isPreview" ? isPreview : stepIndex,
   usePlaybackTween(target, duration) { targets.push({ target, duration }); return progress; },
 }));
-mock.module("../CarouselBlurView", () => ({ CarouselBlurView: ({ children }) => children }));
+mock.module("slides:media/CarouselBlurView", () => ({ CarouselBlurView: ({ children }) => children }));
 mock.module("../RNConnectionVisuals", () => ({ MediaSlot: "media" }));
 mock.module("../MovingTitle", () => ({ MovingTitle: ({ children }) => children }));
 const RecordingPositionContext = createContext(undefined);
+mock.module("slides:media/RecordingPosition", () => ({ RecordingPositionContext }));
 mock.module("../LocalRecording", () => ({ LocalRecording: props => {
   const position = React.useContext(RecordingPositionContext);
   return <recording {...props} position={props.position ?? position} />;
 }, RecordingPositionContext }));
-const { AppCarousel, AppShowcase } = await import("../AppCarousel");
-const { FilmstripMotionView } = await import("../FilmstripMotionView");
+const { AppCarousel } = await import("slides:media/AppCarousel");
+const { AppShowcase } = await import("../AppShowcase");
+const { FilmstripMotionView } = await import("slides:media/FilmstripMotionView");
 const items = Array.from({ length: 9 }, (_, index) => String(index));
 function Card({ id }) {
   const [count, setCount] = useState(0), position = React.useContext(RecordingPositionContext);

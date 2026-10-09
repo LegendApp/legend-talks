@@ -2,7 +2,7 @@ import { NativeMusicRecording } from "./NativeMusicRecording";
 import { Canvas, Fill, Group, Path, Rect, RoundedRect, Shader, Skia, matchFont } from "@shopify/react-native-skia";
 import { useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
-import { AppCarousel } from "./AppCarousel";
+import { AppCarousel } from "slides:media/AppCarousel";
 import { GlassPanels } from "slides:materials/GlassPanels";
 
 const containerPanels = [{ x: 5, y: 5, width: 1170, height: 650, radius: 28 }];

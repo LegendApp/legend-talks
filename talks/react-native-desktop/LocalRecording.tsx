@@ -1,20 +1,8 @@
-import { NativeVideoView } from "@legend-apps/presentation";
-import { createContext, useContext, useState } from "react";
-import { Image } from "react-native";
+import { PosterVideo } from "slides:media/PosterVideo";
 import type { SharedValue } from "react-native-reanimated";
 
-export const RecordingPositionContext = createContext<SharedValue<number> | undefined>(undefined);
-
-// Existing recording pages and their MP4s share a basename. Keep the local
-// asset URL stable across steps so zooms do not recreate or restart the player.
-export function LocalRecording({ page, poster, playing, extension = "mp4", looping = true, position: playbackPosition }: {
-  page: string; poster: string; playing: boolean; transparent?: boolean; extension?: "mp4" | "mov"; looping?: boolean;
-  position?: SharedValue<number>;
+export function LocalRecording({ page, extension = "mp4", ...props }: {
+  page: string; poster: string; playing: boolean; transparent?: boolean; extension?: "mp4" | "mov"; looping?: boolean; position?: SharedValue<number>;
 }) {
-  const carouselPosition = useContext(RecordingPositionContext);
-  const position = playbackPosition ?? carouselPosition;
-  const [started, setStarted] = useState(playing);
-  if (playing && !started) setStarted(true);
-  if (!started) return <Image source={{ uri: poster }} resizeMode="contain" style={{ width: "100%", height: "100%" }} />;
-  return <NativeVideoView source={page.replace(/\.html$/, `.${extension}`)} poster={poster} playing={playing} position={position} looping={looping} />;
+  return <PosterVideo {...props} source={page.replace(/\.html$/, `.${extension}`)} />;
 }

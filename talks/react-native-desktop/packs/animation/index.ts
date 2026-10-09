@@ -1,1 +1,2 @@
-export { LottiePlayer, NativeOrbitLottie } from "./LottiePlayer";
+export { LottiePlayer } from "slides:animation/LottiePlayer";
+export { NativeOrbitLottie } from "./LottiePlayer";

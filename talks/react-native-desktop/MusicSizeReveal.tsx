@@ -5,7 +5,7 @@ import { SkiaNumberFlow } from "number-flow-react-native/skia";
 import { ProgressivePreparation, usePlayback, usePresentationValue } from "@legend-apps/presentation";
 import { Easing } from "react-native-reanimated";
 import { BenchmarkRow, chartLayout } from "./BenchmarkChart";
-import { numberFlowTiming } from "./numberFlowTiming";
+import { numberFlowTiming } from "slides:charts/NumberTiming";
 
 const format = { minimumFractionDigits: 1, maximumFractionDigits: 1 };
 const easing = Easing.out(Easing.cubic);

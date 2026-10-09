@@ -7,7 +7,7 @@ import React from "react";
 import { act, create } from "react-test-renderer";
 
 mock.module("number-flow-react-native/skia", () => ({ SkiaNumberFlow: "number-flow" }));
-mock.module("../ChartBar", () => ({ ChartBar: "chart-bar" }));
+mock.module("slides:charts/ChartBar", () => ({ ChartBar: "chart-bar" }));
 const { BenchmarkRow, chartLayout } = await import("../BenchmarkChart");
 const { MusicSizeReveal } = await import("../MusicSizeReveal");
 
