@@ -1,8 +1,9 @@
 import { Blur, Canvas, Fill, Group, ImageShader, Paint, RuntimeShader, Shader, Skia, matchFont } from "@shopify/react-native-skia";
-import { liquidGlassShader, useLiquidGlassPlayback, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
+import { GPUShader, useGPUShaderData, liquidGlassShader, useLiquidGlassPlayback, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { View } from "react-native";
 import { FrameTitle } from "../FramePitch";
 import { glassPanelMaterial } from "slides:materials/GlassPanels";
+import { createSparkCursorProgram, sparkDataFields } from "./SparkParticlesGPU";
 
 const capabilities = ["Windows", "Native menus", "Keyboard shortcuts", "Files & folders", "Open / save dialogs",
   "Drag & drop", "Clipboard", "Notifications", "Tray / menu bar", "Media controls",
@@ -189,6 +190,31 @@ if (!network || !ripple || !cursor) throw new Error("Could not compile the Spark
 const canvasPadding = 160;
 const canvasWidth = 1696 + canvasPadding * 2;
 const canvasHeight = 680 + canvasPadding * 2;
+const cursorProgram=createSparkCursorProgram(atlas.cell,command.length);
+const cursorTextShader=Skia.RuntimeEffect.Make(`
+uniform shader labels;
+uniform float time;
+uniform float stepIndex;
+half4 main(float2 p) {
+  if(stepIndex<5.0) return half4(0);
+  p.y+=280.0;
+  float typed=clamp(floor((time-3.6)*17.0),0.0,${command.length}.0);
+  float cell=${atlas.cell.toFixed(6)};
+  float left=848.0-cell*typed*0.5;
+  if(abs(p.y-330.0)<49.0 && p.x>=left && p.x<left+typed*cell) {
+    return labels.eval(float2(p.x-left+800.0-cell*${command.length}.0*0.5,p.y-330.0+2650.0));
+  }
+  return half4(0);
+}`);
+if(!cursorTextShader) throw new Error("Could not compile Spark command text");
+function CursorText() {
+  const uniforms=useAnimatedShaderUniforms({},10,{clock:5});
+  return <Canvas style={{position:"absolute",left:canvasPadding,top:canvasPadding+280,width:1696,height:100}}>
+    <Fill><Shader source={cursorTextShader!} uniforms={uniforms}>
+      <ImageShader image={atlas.image} x={0} y={0} width={atlasWidth} height={rows.length*rowHeight} fit="fill" tx="decal" ty="decal" />
+    </Shader></Fill>
+  </Canvas>;
+}
 
 export function DesktopFoundationsJourney({ icon }: { icon: string }) {
   const step = usePresentationValue("stepIndex");
@@ -196,6 +222,7 @@ export function DesktopFoundationsJourney({ icon }: { icon: string }) {
   const shippingUniforms = useAnimatedShaderUniforms({ kind: 1, padding: canvasPadding }, 10, { clock: 5 });
   const glass = useLiquidGlassPlayback({ active: step >= 4, width: canvasWidth, height: canvasHeight });
   const cursorUniforms = useAnimatedShaderUniforms({ padding: canvasPadding }, 10, { clock: 5 });
+  const cursorData=useGPUShaderData(cursorUniforms,sparkDataFields);
   const image = <ImageShader image={atlas.image} x={0} y={0} width={atlasWidth} height={rows.length * rowHeight} fit="fill" tx="decal" ty="decal" />;
   return <>
     <View style={{ width: 1696, height: 680, marginTop: 36, alignSelf: "center" }}>
@@ -208,8 +235,14 @@ export function DesktopFoundationsJourney({ icon }: { icon: string }) {
           </Group>
         </Group>
         <Fill><Shader source={network!} uniforms={shippingUniforms}>{image}</Shader></Fill>
-        <Fill><Shader source={cursor!} uniforms={cursorUniforms}>{image}</Shader></Fill>
       </Canvas>
+      <View style={{position:"absolute",left:-canvasPadding,top:-canvasPadding,width:canvasWidth,height:canvasHeight}}>
+        <GPUShader code={cursorProgram} width={canvasWidth} height={canvasHeight} borderRadius={0}
+          particles particleCount={96} composite active={step>=5} frameData={cursorData} frameDataSize={8} maxTime={6} frameTimeIndex={0}
+          fallback={<Canvas style={{width:canvasWidth,height:canvasHeight}}><Fill><Shader source={cursor!} uniforms={cursorUniforms}>{image}</Shader></Fill></Canvas>}>
+          <CursorText />
+        </GPUShader>
+      </View>
       {step >= 5 && <View style={{ position: "absolute", top: 95, left: 0, width: 1696 }}>
         <FrameTitle icon={icon} revealDelay={5700} />
       </View>}

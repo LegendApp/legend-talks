@@ -4,10 +4,9 @@ import { Image, Text, View } from "react-native";
 import { GlassPanels } from "slides:materials/GlassPanels";
 import { rootRibbonShader } from "./SharedRoots";
 import { MovingTitle } from "./MovingTitle";
-import { createGlassStrikeShader } from "slides:materials/GlassStrike";
+import { GlassStrike, type GlassStrikeGeometry } from "slides:materials/GlassStrike";
 
-const effect = Skia.RuntimeEffect.Make(createGlassStrikeShader({ strokePoints: [[-302,-65],[306,65],[298,-65],[-309,65]] }));
-if (!effect) throw new Error("Could not compile Spark foundation reveal");
+const strikeGeometry:GlassStrikeGeometry = { strokePoints:[[-302,-65],[306,65],[298,-65],[-309,65]] };
 const imports = [
   ["useNativeMenu", "menus"],
   ["createTray", "tray"],
@@ -97,7 +96,6 @@ function FoundationBox({ title }: { title: string }) {
 export function FrameFoundations({ icon }: { icon: string }) {
   const step = usePresentationValue("stepIndex");
   const branchUniforms = useAnimatedShaderUniforms({ offsetX: 656 }, 5);
-  const uniforms = useAnimatedShaderUniforms({ panelHalfHeight: 8, resolveToCheck: 0, broken: 1, settled: 0, phase: 0, centerX: 848 }, 6, { clock: 1, maxTime: 4.5 });
   return <View style={{ width: 1696, height: 980, alignSelf: "center" }}>
     <FrameTitle icon={icon} />
     <View style={{ position: "absolute", left: 656, top: 0, width: 384, height: 980 }}><PresentationCanvas width={384} height={980} maxPixelDensity={1}><Fill><Shader source={branches!} uniforms={branchUniforms} /></Fill></PresentationCanvas></View>
@@ -109,7 +107,8 @@ export function FrameFoundations({ icon }: { icon: string }) {
     </PlaybackKeyframeView>}
     {step > 0 && <>
     <PlaybackKeyframeView keyframes={[{ time: 0, x: 0, y: 0, opacity: 1 }]} delay={0} previewTime={6} clock="step" style={{ position: "absolute", left: 0, top: 603, width: 1696, height: 1080 }}>
-      <PresentationCanvas width={1696} height={1080} maxPixelDensity={1}><Fill><Shader source={effect!} uniforms={uniforms} /></Fill></PresentationCanvas>
+      <GlassStrike crossed resolveToCheck={false} centerX={848} panelHalfHeight={8} geometry={strikeGeometry}
+        trigger={1} maxTime={4.5} width={1696} height={1080} />
     </PlaybackKeyframeView>
     <PlaybackKeyframeView keyframes={hide} delay={0} previewTime={6} clock="step" style={{ position: "absolute", left: 592, top: 875, width: 512 }}><Text style={{ textAlign: "center", fontSize: 40, fontWeight: "600", color: "white" }}>WebView</Text></PlaybackKeyframeView>
     <PlaybackKeyframeView keyframes={boxReveal} delay={1500} previewTime={6} clock="step" style={{ position: "absolute", left: 592, top: 850 }}>

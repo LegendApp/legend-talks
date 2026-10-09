@@ -17,7 +17,12 @@ import { createFallingSpritesGPU } from "../../test-support/legend-apps/packages
 import { portalProgram } from "../ExpoDesktopPortalGPU";
 import { titleBubblesProgram } from "../TitleBubblesGPU";
 import { expoDesktopGeometry } from "../reactcon-scenes/ExpoDesktopGeometryGPU";
+import { createGlassStrikeGPU } from "../../test-support/legend-apps/packages/slides-effects/packs/materials/GlassStrikeGPU";
+import { sparkCursorProgram } from "../reactcon-scenes/SparkParticlesGPU";
 const programs = { sidebarStorm, gpuConstellation, gpuInterfaceReveal, portalProgram, titleBubblesProgram,
+  glassStrike: createGlassStrikeGPU(1920,1080),
+  narrowStrike: createGlassStrikeGPU(1696,1080,{ strokePoints:[[-302,-65],[306,65],[298,-65],[-309,65]] }),
+  sparkCursorProgram,
   shatter: createImageShatterGPU({ imageWidth:1040,imageHeight:710.638,centerX:960,centerY:600 },1920,1180,1),
   sprites: createFallingSpritesGPU(368,30,800).code,
   mobilePipes: expoDesktopGeometry(false).code, desktopPipes: expoDesktopGeometry(true).code };

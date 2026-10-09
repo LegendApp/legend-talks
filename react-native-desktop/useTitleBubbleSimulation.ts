@@ -25,7 +25,7 @@ export function useTitleBubbleSimulation(base: { readonly value: Record<string, 
     }
     frame.value={simulation,uniforms:visual};
   },[targets,hasByline]);
-  return useDerivedValue(()=>{
+  return useDerivedValue<Record<string, number | number[]>>(()=>{
     "worklet";
     const snapshot=frame.value;
     const state=snapshot.simulation;
