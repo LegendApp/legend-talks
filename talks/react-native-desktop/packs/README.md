@@ -1,42 +1,25 @@
-# Effect packs
+# Effect examples and optional source packs
 
-These folders are local pack prototypes. They keep reusable visuals separate from
-the talk's content while the plugin resolver is designed.
+Reusable effects live in `legend-apps/packages/slides-effects/packs`. These local
+folders retain example content and advanced scenes whose geometry/choreography
+has not yet been generalized. They are not installed public packs.
 
-The proposed installed-pack namespace is `slides:`:
+Import a public entry explicitly, for example:
 
-- `slides:backgrounds/ambient-aurora`
-- `slides:reveal/native-layers`
-- `slides:transform/code-to-ui`
-- `slides:data/native-window`
-- `slides:charts/arrival`
-- `slides:automation/device-scan`
-- `slides:transitions/window-portal`
-- `slides:comparison/chrome-conveyor`
-- `slides:data/gpu-constellation`
-- `slides:performance/latency-race`
-- `slides:performance/memory-gravity`
-- `slides:performance/frame-budget`
-- `slides:animation/lottie`
-- `slides:transform/platform-metamorphosis`
-- `slides:performance/thread-pressure`
-- `slides:typography/shader`
-- `slides:interaction/magnetic-cursor`
-- `slides:reveal/component-xray`
-- `slides:glass/material-sampler`
-- `slides:data/gpu-interface-reveal`
-- `slides:transform/code-to-pixels`
-- `slides:motion/physics-layout`
-- `slides:reveal/focus-spotlight`
-- `slides:depth/infinite-desktop`
-- `slides:distortion/prismatic-tear`
-- `slides:glass/liquid`
-- `slides:jay/absurd-glass` for a third-party pack
+```tsx
+import { AnimatedTitle } from "slides:typography/AnimatedTitle";
+import { Droplets } from "slides:backgrounds/Droplets";
+import { LottiePlayer } from "slides:animation/LottiePlayer";
+import { prismaticTear, distortionTiming } from "slides:materials/Distortion";
+import { createConstellation } from "slides:particles/Constellation";
+```
 
-`slides:` is a virtual import prefix, not an npm scope. A future plugin resolver
-can map it to trusted installed pack roots and bundle the selected modules into a
-deck. These local prototypes use relative imports today, so they need no install
-step or native rebuild.
+`slides:` is a compiler namespace, not an npm scope. Only entries declared in a
+pack's `pack.json` are public. The compiler uses the source checkout during local
+development; a distributed app requires the selected source packs to be installed
+before opening the deck. There is no download/catalog UI yet. See the
+[host pack guide](../../../../legend-apps/packages/slides-effects/README.md)
+and the [extraction audit](../../../docs/effect-extraction-audit.md).
 
 Distortion shaders accept timing uniforms from `distortionTiming()`:
 

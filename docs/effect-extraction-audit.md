@@ -4,15 +4,63 @@ Audited on 2026-10-09 against `legend-talks` source revision
 `2591ea85712d68ddac270eae5819e146b89caccd`, together with the current Slides host
 and presentation compiler in the sibling `legend-apps` checkout. This is a source
 and architecture audit, not a new frame-rate benchmark or an implementation of
-downloads. No effects have been moved by this audit.
+downloads. The inventory below records that baseline; the extraction status
+records the subsequent approved implementation.
 
 Both talks live under [talks/react-native-desktop](../talks/react-native-desktop).
 The resolved local TS/TSX import graphs, including frontmatter templates and
-transitions, contain 82 modules for `reactcon.mdx`, 72 for `rnconnection.mdx`, and
-88 unique modules across both. These counts include imported helpers that do not
+transitions, contained 82 modules for `reactcon.mdx`, 72 for `rnconnection.mdx`,
+and 88 unique modules across both at that revision. These counts include imported helpers that do not
 appear as rendered tags; they do not represent simultaneously mounted effects.
 I also inspected the adjacent effect gallery and pack prototypes so an extraction
 does not recreate reusable code that already exists.
+
+## Implemented extraction
+
+Reusable implementations now live in `legend-apps/packages/slides-effects/packs`,
+independent of the app entrypoint. React Conf, RN Connection, the original talk,
+the effect gallery and diagnostic/archived decks import the selected public
+entrypoints through `slides:<family>/<Entry>`. The current families are:
+
+| Family | Extracted mechanisms | Caller-owned content |
+| --- | --- | --- |
+| typography | Animated titles, 16 entrance presets | Text, font, width, palette, slide/step trigger |
+| backgrounds | Aurora, droplets, fluid, smoke, wireframe, glass, TypeGPU glass | Background selection, intensity, dimensions; liquid-title feeding stays local |
+| presenting | Measured attention/callouts, freeze/annotate, detail, comparison, layers, swaps, code walkthrough | Content, targets, explanations, steps and layout |
+| charts | Animated bars/rows and number timing | Data, grouping, thresholds, metrics, formatting and shared IDs |
+| media | Configurable carousel/filmstrip, blur/poster handoff, recorded video continuity | Recordings, screenshots, captions, item IDs and overlay choreography |
+| animation | Shared-clock Lottie player | JSON assets and demo scene |
+| materials | Glass panels/branches, strike/X-to-check, image shatter, upward fire/falling sprites, distortion and refraction shaders | Objection wording, sprites, images, region bounds and effect timeline |
+| particles | Glow field, window storm, constellation, interface reveal, native trajectory emitter | Counts, speed, cloud scale, palette, routes and emitted content |
+| diagrams | Configurable downward branch fan | Topology, canvas geometry, nodes/labels and narrative |
+
+Each source pack has a versioned public-export manifest and host capability
+requirements. The compiler resolves only exported entries, retains local/pack
+containment, tracks sources/manifests for reload, and applies React Compiler,
+TypeGPU and Reanimated transforms. Cross-pack imports require an exact declared
+installed version; the branch fan depends on the materials pack. The app and
+shipped compiler do not import or bundle a pack catalog. Runtime pack entries
+contain no recordings, images or Lottie JSON from the talks.
+
+In source development, the compiler locates the sibling packs directory. In a
+distributed app, install source folders under
+`~/Library/Application Support/Legend Slides/effects/` (or configure
+`LEGEND_SLIDES_EFFECT_PACKS`) before opening a migrated talk. Downloads, a catalog,
+installer UI, deck version pins and renderer/capability negotiation remain future
+work. This prepares a source distribution boundary; it does not ship a downloader.
+
+Advanced scenes remain local: liquid-title glyph feeding/absorption, measured
+word-to-card morphs, device/content morphs, atlas-based typography and the Spark/
+Expo portal and network choreography. Those still require the geometry/content
+APIs and audience-resolution profiles described below. They reuse the extracted
+primitives where applicable, without pretending fixed talk scenes are public APIs.
+
+Validation covers pack isolation, configurable geometry at two stage sizes,
+real Skia material rasterization, native Dawn compilation of default/configured
+particle programs, and host-clock lifecycle behavior with no React renders on
+animation ticks. This is correctness evidence, not a new production FPS claim.
+See the [pack guide](../../legend-apps/packages/slides-effects/README.md) for
+public imports and the individual family contracts.
 
 ## Recommended boundary
 
@@ -22,10 +70,10 @@ shared elements, focus/cameras, native video, capture scheduling and bounded
 image caches. Keep the generic `Effect`, shader and TypeGPU renderers in Slides.
 Those are the execution facilities used by optional packs.
 
-Put the visual implementations in an isolated, app-owned source area such as
+Put the visual implementations in an isolated, app-owned source area at
 `legend-apps/packages/slides-effects/packs/`. Ownership belongs to Slides, but
 the app entrypoint must not import a pack catalog or all pack implementations.
-The proposed directory is an extraction destination, not an existing resolver.
+The compiler now resolves this directory through the `slides:` namespace.
 
 ```text
 packages/slides-effects/
@@ -38,8 +86,10 @@ packages/slides-effects/
     particles/     # trails, emitters and GPU particle reveals
     media/         # carousel, focus blur and recorded-media compositions
     diagrams/      # connections, branches and layer diagrams
-    morphs/        # advanced shape/device/content transformations
-  test-support/
+    animation/     # shared-clock player, caller-supplied assets
+  tests/
+
+# Advanced morph scenes stay in legend-talks until generalized.
 ```
 
 Each family should contain independently addressable entrypoints, a small manifest,
@@ -48,7 +98,7 @@ entrypoints. Share private helpers within a pack; avoid creating another runtime
 or publishing every internal helper as an API. Dependencies between packs should
 be explicit and small.
 
-## Best first extractions
+## Baseline extraction candidates
 
 | Pack | Existing source | Reusable part | Work before extraction |
 | --- | --- | --- | --- |
@@ -68,8 +118,9 @@ The 16 typography presets are `soft-rise`, `word-lift`, `letter-wave`,
 
 ## Remaining talk effects and animation compositions
 
-These have reusable mechanisms, but their current exports are talk scenes rather
-than general-purpose components.
+The following source names refer to the audited baseline. The implementation
+status above supersedes rows whose mechanisms have since moved; the remaining
+exports are talk scenes requiring further generalization.
 
 | Source | Extractable mechanism | Keep local / required generalization |
 | --- | --- | --- |
@@ -129,19 +180,16 @@ prototypes, not proof of a production-ready API.
   serialization on imported React source. Packs should use that same path and
   the host's existing React/Reanimated/Skia/WebGPU instances.
 - Keep one runtime entry per effect. Avoid a root barrel with eager shader
-  compilation, atlas creation or sample imports. `AnimatedAtmosphere` currently
-  compiles all variants when its module loads; `LottiePlayer` imports its demo
-  JSON; `AppCarousel` imports showcase recordings. These are concrete boundaries
-  to fix before distribution.
+  compilation, atlas creation or sample imports. The audit found eager atmosphere
+  shader compilation, a Lottie player coupled to demo JSON, and a carousel coupled
+  to showcase recordings. Those boundaries are now separated.
 - A small manifest can declare `id`, `version`, entrypoints, required host API
   version/capabilities, supported renderers/platforms and asset files. Installed
   versions should be pinned by a deck so a future update does not alter a talk.
-- The proposed `slides:` import prefix is currently documentation only. The
-  compiler accepts whitelisted host modules and local files inside the deck
-  directory; copying a pack into `packages/` alone will not make it importable.
-  A future resolver needs separate installed-pack roots, pack-relative assets,
-  dependency tracking and cache invalidation. Keep current deck containment for
-  ordinary local imports.
+- The `slides:` resolver now maps public manifest entries to installed source
+  roots and tracks their dependencies. Ordinary local deck imports retain their
+  original containment. Runtime packs have no assets today; future distribution
+  still needs an installer, deck version pins and exported dependency closure.
 - Offline playback should use installed/pinned packs; downloading should happen
   before a presentation. Export should include the selected pack dependencies and
   assets. Native and static-web capabilities need separate declarations/fallbacks;
@@ -151,7 +199,8 @@ prototypes, not proof of a production-ready API.
   A pack needing another native runtime must declare that requirement rather
   than bundle a duplicate runtime.
 
-Raw source size in this deck directory is about **0.74 MB**; all files in
+At the audited baseline, raw source size in this deck directory was about
+**0.74 MB**; all files in
 `rnconnection-assets/` total about **144.8 MB**. These are filesystem source/asset
 totals, not application download size or compiled bundle measurements. The
 typography entrance implementation is about 12.5 KB, `GlassPanels` about 4.4 KB,

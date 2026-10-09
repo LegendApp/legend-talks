@@ -28,6 +28,14 @@ bun run slides run macos -- /absolute/path/to/legend-talks/talks/react-native-de
 The application supplies React Native, presentation APIs, and native dependencies.
 Playing a deck does not require installing dependencies in this repository.
 
+The desktop talks use optional source packs via `slides:<family>/<Entry>`.
+Development checkouts resolve them from the sibling Legend Apps repository.
+For an installed app, place the selected pack folders under
+`~/Library/Application Support/Legend Slides/effects/`, or configure
+`LEGEND_SLIDES_EFFECT_PACKS`. Keep them available offline before presenting.
+Downloading and installation UI are future work. See the
+[effect extraction audit](docs/effect-extraction-audit.md) for the boundary.
+
 ## Validate and test
 
 Install Legend Apps dependencies using that repository's instructions. Put the
