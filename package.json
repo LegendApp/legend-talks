@@ -1,0 +1,10 @@
+{
+  "name": "@legendapp/talks",
+  "private": true,
+  "scripts": {
+    "setup": "bun scripts/setup.ts",
+    "test": "bun scripts/test.ts",
+    "validate": "bun scripts/validate.ts",
+    "typecheck": "bun scripts/typecheck.ts"
+  }
+}

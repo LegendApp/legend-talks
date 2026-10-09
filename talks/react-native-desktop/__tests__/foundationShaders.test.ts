@@ -11,7 +11,7 @@ function shader(file, name, dependencies = {}) {
 }
 
 test("the narrow Spark ribbon canvas preserves its full-size pixels throughout the reveal", async () => {
-  const require = createRequire(new URL("../../../package.json", import.meta.url));
+  const require = createRequire(new URL("../../../test-support/legend-apps/apps/slides/package.json", import.meta.url));
   const skiaRequire = createRequire(require.resolve("@shopify/react-native-skia"));
   const entry = skiaRequire.resolve("canvaskit-wasm");
   const kit = await skiaRequire("canvaskit-wasm")({ locateFile: file => join(dirname(entry), file) });
@@ -61,7 +61,7 @@ test("the narrow Spark ribbon canvas preserves its full-size pixels throughout t
 }, 30000);
 
 test("glass strikes retain falling shards and live checks but finish transparent when crossed out", async () => {
-  const require = createRequire(new URL("../../../package.json", import.meta.url));
+  const require = createRequire(new URL("../../../test-support/legend-apps/apps/slides/package.json", import.meta.url));
   const skiaRequire = createRequire(require.resolve("@shopify/react-native-skia"));
   const entry = skiaRequire.resolve("canvaskit-wasm");
   const kit = await skiaRequire("canvaskit-wasm")({ locateFile: file => join(dirname(entry), file) });

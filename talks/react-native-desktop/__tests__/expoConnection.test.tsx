@@ -2,8 +2,8 @@
 import { expect, mock, test } from "bun:test";
 import React, { useEffect } from "react";
 import { act, create } from "react-test-renderer";
-import { advancePlayback, createPlaybackState, transitionPlayback } from "../../../../../packages/presentation/src/playbackState";
-import "../../../src/__tests__/nativeMock";
+import { advancePlayback, createPlaybackState, transitionPlayback } from "../../../test-support/legend-apps/packages/presentation/src/playbackState";
+import "../../../test-support/legend-apps/apps/slides/src/__tests__/nativeMock";
 
 let runtime = { stepIndex: 0, isActive: true, isPreview: false, isPreparing: false };
 let time = 7;

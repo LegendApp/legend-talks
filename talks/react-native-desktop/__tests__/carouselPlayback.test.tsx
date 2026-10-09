@@ -1,5 +1,5 @@
 // @ts-nocheck One shared tween; UI settlement and React state are exercised explicitly.
-import "../../../src/__tests__/nativeMock";
+import "../../../test-support/legend-apps/apps/slides/src/__tests__/nativeMock";
 import { expect, mock, test } from "bun:test";
 import React, { useState } from "react";
 import { act, create } from "react-test-renderer";

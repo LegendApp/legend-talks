@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { compileDeck } from "../../../../../packages/presentation/src/compiler";
+import { compileDeck } from "../../../test-support/legend-apps/packages/presentation/src/compiler";
 
 test("compiled number timing captures functions without cyclic host modules", async () => {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), "music-number-worklet-"));

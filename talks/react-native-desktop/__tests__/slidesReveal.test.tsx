@@ -1,5 +1,5 @@
 // @ts-nocheck Native drawing is mocked; presentation subscriptions stay real.
-import "../../../src/__tests__/nativeMock";
+import "../../../test-support/legend-apps/apps/slides/src/__tests__/nativeMock";
 import { expect, test } from "bun:test";
 import { observable } from "@legendapp/state";
 import { PresentationProvider, ScenePositionView } from "@legend-apps/presentation";
@@ -12,7 +12,7 @@ import { AnimatedTitle } from "../AnimatedTitle";
 import { MovingTitle } from "../MovingTitle";
 import { GlassPanels } from "../GlassPanels";
 
-const { transformSync } = createRequire(new URL("../../../../../packages/presentation/package.json", import.meta.url))("esbuild");
+const { transformSync } = createRequire(new URL("../../../test-support/legend-apps/packages/presentation/package.json", import.meta.url))("esbuild");
 function load(filename, mocks) {
   const require = createRequire(filename);
   const module = { exports: {} };

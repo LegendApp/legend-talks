@@ -1,6 +1,6 @@
 // @ts-nocheck Actual resampling and poster composition with controlled native surfaces.
 import { expect, mock, test } from "bun:test";
-const { createSnapshotImageCache } = await import("../../../../../packages/presentation/src/snapshotImageCache");
+const { createSnapshotImageCache } = await import("../../../test-support/legend-apps/packages/presentation/src/snapshotImageCache");
 mock.module("@legend-apps/presentation", () => ({ createSnapshotImageCache }));
 const surfaces = [], draws = [], scales = [], clips = [], labels = [], fonts = [];
 let available = true, fail = false, dataDisposals = 0, posterDisposals = 0;

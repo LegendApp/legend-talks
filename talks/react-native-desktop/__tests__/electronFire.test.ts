@@ -1,5 +1,5 @@
 // @ts-nocheck Native module loading is mocked; the shader renders in real Skia.
-import "../../../src/__tests__/nativeMock";
+import "../../../test-support/legend-apps/apps/slides/src/__tests__/nativeMock";
 import { expect, test } from "bun:test";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
@@ -11,7 +11,7 @@ import { act, create } from "react-test-renderer";
 import * as skia from "@shopify/react-native-skia";
 
 const deckRequire = createRequire(new URL("../ElectronFire.tsx", import.meta.url));
-const { transformSync } = createRequire(new URL("../../../../../packages/presentation/package.json", import.meta.url))("esbuild");
+const { transformSync } = createRequire(new URL("../../../test-support/legend-apps/packages/presentation/package.json", import.meta.url))("esbuild");
 const module = { exports: {} };
 const code = transformSync(readFileSync(new URL("../ElectronFire.tsx", import.meta.url), "utf8"), { loader: "tsx", format: "cjs", jsx: "automatic" }).code;
 Function("require", "module", "exports", code)(name => name === "@shopify/react-native-skia"
@@ -20,7 +20,7 @@ Function("require", "module", "exports", code)(name => name === "@shopify/react-
 const { ElectronFire, electronFireShader } = module.exports;
 
 test("fire builds over five seconds while varied poop emojis fall, splash, and keep accumulating", async () => {
-  const require = createRequire(new URL("../../../package.json", import.meta.url));
+  const require = createRequire(new URL("../../../test-support/legend-apps/apps/slides/package.json", import.meta.url));
   const skiaRequire = createRequire(require.resolve("@shopify/react-native-skia"));
   const entry = skiaRequire.resolve("canvaskit-wasm");
   const kit = await skiaRequire("canvaskit-wasm")({ locateFile: file => join(dirname(entry), file) });

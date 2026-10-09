@@ -4,7 +4,7 @@ import { observable } from "@legendapp/state";
 import React from "react";
 import { act, create } from "react-test-renderer";
 import { PresentationProvider } from "@legend-apps/presentation";
-import "../../../src/__tests__/nativeMock";
+import "../../../test-support/legend-apps/apps/slides/src/__tests__/nativeMock";
 const { GlassCaption } = await import("../GlassCaption");
 
 test("glass acknowledges the trigger immediately and resets on backward navigation", async () => {

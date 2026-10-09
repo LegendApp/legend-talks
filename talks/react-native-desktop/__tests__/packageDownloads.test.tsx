@@ -1,5 +1,5 @@
 // @ts-nocheck Native rows expose whether a changing color animation is needed.
-import "../../../src/__tests__/nativeMock";
+import "../../../test-support/legend-apps/apps/slides/src/__tests__/nativeMock";
 import { expect, mock, test } from "bun:test";
 import React from "react";
 import { act, create } from "react-test-renderer";

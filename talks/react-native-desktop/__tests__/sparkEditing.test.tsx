@@ -1,14 +1,14 @@
 // @ts-nocheck Native drawing is mocked; compiled worklets and playback transitions stay real.
-import "../../../src/__tests__/nativeMock";
+import "../../../test-support/legend-apps/apps/slides/src/__tests__/nativeMock";
 import { expect, test } from "bun:test";
 import React from "react";
 import { act, create } from "react-test-renderer";
 import { mkdtempSync, copyFileSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { compileDeck } from "../../../../../packages/presentation/src/compiler";
-import { samplePlayback } from "../../../../../packages/presentation/src/playback";
-import { createPlaybackState, advancePlayback, transitionPlayback } from "../../../../../packages/presentation/src/playbackState";
+import { compileDeck } from "../../../test-support/legend-apps/packages/presentation/src/compiler";
+import { samplePlayback } from "../../../test-support/legend-apps/packages/presentation/src/playback";
+import { createPlaybackState, advancePlayback, transitionPlayback } from "../../../test-support/legend-apps/packages/presentation/src/playbackState";
 import { sampleSparkEdit, sparkEditDuration, sparkEditLoopDuration, sparkEditPrompt } from "../sparkEditingTimeline";
 
 test("prompt finishes typing before three seconds of generation, then the real result fades in", () => {

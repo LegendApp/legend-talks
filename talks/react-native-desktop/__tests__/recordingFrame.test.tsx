@@ -1,5 +1,5 @@
 // @ts-nocheck Resource state belongs to the provider, never the carousel consumer.
-import "../../../src/__tests__/nativeMock";
+import "../../../test-support/legend-apps/apps/slides/src/__tests__/nativeMock";
 import { expect, mock, test } from "bun:test";
 import React, { useRef, useState } from "react";
 import { act, create } from "react-test-renderer";

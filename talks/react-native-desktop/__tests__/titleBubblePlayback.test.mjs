@@ -2,9 +2,9 @@ import { test, expect } from "bun:test";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import * as simulation from "../titleBubbleSimulation";
-import { createPlaybackState, transitionPlayback, advancePlayback } from "../../../../../packages/presentation/src/playbackState";
+import { createPlaybackState, transitionPlayback, advancePlayback } from "../../../test-support/legend-apps/packages/presentation/src/playbackState";
 
-const { transformSync } = createRequire(new URL("../../../../../packages/presentation/package.json", import.meta.url))("esbuild");
+const { transformSync } = createRequire(new URL("../../../test-support/legend-apps/packages/presentation/package.json", import.meta.url))("esbuild");
 
 function harness() {
   const clock = { value: createPlaybackState({ phase: "playing", slideKey: "title", stepKey: "absorb", stepIndex: 1 }) };

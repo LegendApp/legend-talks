@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 
-const { transformSync } = createRequire(new URL("../../../../../packages/presentation/package.json", import.meta.url))("esbuild");
+const { transformSync } = createRequire(new URL("../../../test-support/legend-apps/packages/presentation/package.json", import.meta.url))("esbuild");
 
 function load(file, imports = {}) {
   const module = { exports: {} };
@@ -11,8 +11,8 @@ function load(file, imports = {}) {
   Function("require", "module", "exports", code)(name => imports[name], module, module.exports);
   return module.exports;
 }
-const state = load(new URL("../../../../../packages/presentation/src/playbackState.ts", import.meta.url));
-const { samplePlayback } = load(new URL("../../../../../packages/presentation/src/playback.tsx", import.meta.url), {
+const state = load(new URL("../../../test-support/legend-apps/packages/presentation/src/playbackState.ts", import.meta.url));
+const { samplePlayback } = load(new URL("../../../test-support/legend-apps/packages/presentation/src/playback.tsx", import.meta.url), {
   react: { createContext: () => ({}) }, "@legendapp/state/react": {}, "react-native-reanimated": {},
 });
 const { numberFlowTiming } = load(new URL("../numberFlowTiming.ts", import.meta.url), {
@@ -123,7 +123,7 @@ test("the patched digit hook reverses an in-flight roll from the displayed digit
     useAnimatedReaction() {}, runOnJS: fn => fn,
     withTiming() { throw new Error("NumberFlow bypassed the shared presentation clock"); },
   };
-  const core = new URL("../../../node_modules/number-flow-react-native/src/core/", import.meta.url);
+  const core = new URL("../../../test-support/legend-apps/apps/slides/node_modules/number-flow-react-native/src/core/", import.meta.url);
   const utils = load(new URL("utils.ts", core), { "./constants": { DIGIT_COUNT: 10 } });
   const opacity = load(new URL("useSlotOpacity.ts", core), { react, "react-native-reanimated": reanimated });
   const { useDigitAnimation } = load(new URL("useDigitAnimation.ts", core), {

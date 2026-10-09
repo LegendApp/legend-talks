@@ -16,7 +16,7 @@ test("detached bubbles stay foreground until absorption",()=>{
 });
 
 test("deck compiler preserves title and carousel worklets", async()=>{
- const {compileDeck}=await import("../../../../../packages/presentation/src/compiler/index.ts");
+ const {compileDeck}=await import("../../../test-support/legend-apps/packages/presentation/src/compiler/index.ts");
  const {fileURLToPath}=await import("node:url");
  for (const deck of ["rnconnection.mdx", "talk.mdx"]) {
   const result=await compileDeck(fileURLToPath(new URL("../"+deck,import.meta.url)));

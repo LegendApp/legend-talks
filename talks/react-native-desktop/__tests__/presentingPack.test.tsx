@@ -7,7 +7,7 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { transformSync } from "@babel/core";
 import { PresentationProvider } from "@legend-apps/presentation";
-import "../../../src/__tests__/nativeMock";
+import "../../../test-support/legend-apps/apps/slides/src/__tests__/nativeMock";
 import { relativeBounds, calloutBounds } from "../packs/presenting/geometry";
 
 function loadComponent(file, overrides = {}) {

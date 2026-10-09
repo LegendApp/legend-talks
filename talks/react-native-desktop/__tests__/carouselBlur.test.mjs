@@ -2,11 +2,11 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
-const { transformSync } = createRequire(new URL("../../../../../packages/presentation/package.json", import.meta.url))("esbuild");
+const { transformSync } = createRequire(new URL("../../../test-support/legend-apps/packages/presentation/package.json", import.meta.url))("esbuild");
 import React from "react";
-import { createSnapshotCaptureQueue } from "../../../../../packages/presentation/src/snapshotCaptureQueue.ts";
+import { createSnapshotCaptureQueue } from "../../../test-support/legend-apps/packages/presentation/src/snapshotCaptureQueue.ts";
 
-const require = createRequire(new URL("../../../package.json", import.meta.url));
+const require = createRequire(new URL("../../../test-support/legend-apps/apps/slides/package.json", import.meta.url));
 const { act, create } = require("react-test-renderer");
 
 test("carousel blur captures once per layout, preserves live fallback, and cancels late captures", async () => {

@@ -7,8 +7,8 @@ import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
 import React from "react";
 import { act, create } from "react-test-renderer";
-import { compileDeck } from "../../../../../packages/presentation/src/compiler";
-import { createPlaybackState, advancePlayback, transitionPlayback } from "../../../../../packages/presentation/src/playbackState";
+import { compileDeck } from "../../../test-support/legend-apps/packages/presentation/src/compiler";
+import { createPlaybackState, advancePlayback, transitionPlayback } from "../../../test-support/legend-apps/packages/presentation/src/playbackState";
 import { sampleTitleEntrance, titleEntranceDuration, titleEntranceEffects } from "../titleEntrancePresets";
 
 test("every entrance begins hidden and settles without residual distortion", () => {
@@ -85,9 +85,9 @@ test("compiled title worklets serialize and obey preparation, preview, steps, ex
       if (name === "@legend-apps/presentation") return presentation;
       return {};
     }, module, module.exports);
-    const { transformSync } = createRequire(new URL("../../../../../packages/presentation/package.json", import.meta.url))("esbuild");
+    const { transformSync } = createRequire(new URL("../../../test-support/legend-apps/packages/presentation/package.json", import.meta.url))("esbuild");
     const steps = { exports: {} as any };
-    const stepCode = transformSync(fs.readFileSync(fileURLToPath(new URL("../../../src/steps.tsx", import.meta.url)), "utf8"),
+    const stepCode = transformSync(fs.readFileSync(fileURLToPath(new URL("../../../test-support/legend-apps/apps/slides/src/steps.tsx", import.meta.url)), "utf8"),
       { loader: "tsx", format: "cjs", jsx: "automatic" }).code;
     Function("require", "module", "exports", stepCode)((name: string) => {
       if (name === "react") return React;

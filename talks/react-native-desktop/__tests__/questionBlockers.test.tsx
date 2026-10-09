@@ -1,5 +1,5 @@
 // @ts-nocheck Native drawing is mocked; presentation subscriptions stay real.
-import "../../../src/__tests__/nativeMock";
+import "../../../test-support/legend-apps/apps/slides/src/__tests__/nativeMock";
 import { expect, test } from "bun:test";
 import { observable } from "@legendapp/state";
 import { PresentationProvider, SceneMotionView, ScenePositionView, FocusStage, FocusSurfaceContext,

@@ -1,5 +1,5 @@
 // @ts-nocheck Native readbacks complete independently of React rendering.
-import "../../../src/__tests__/nativeMock";
+import "../../../test-support/legend-apps/apps/slides/src/__tests__/nativeMock";
 import { expect, mock, test } from "bun:test";
 import React, { Profiler } from "react";
 import { act, create } from "react-test-renderer";
@@ -11,7 +11,7 @@ mock.module("@legend-apps/presentation", () => ({ snapshotCaptureQueue: {
 mock.module("@shopify/react-native-skia", () => ({ Canvas: "canvas", Image: "sk-image", Blur: "blur", Group: "group", Paint: "paint",
   makeImageFromView: () => { nativeCaptures++; return new Promise(resolve => { resolveCapture = resolve; }); },
 }));
-const { createSnapshotImageCache } = await import("../../../../../packages/presentation/src/snapshotImageCache");
+const { createSnapshotImageCache } = await import("../../../test-support/legend-apps/packages/presentation/src/snapshotImageCache");
 const cache = createSnapshotImageCache({ dispose: image => image.dispose() });
 mock.module("../carouselBlurImages", () => ({ blurImages: cache, resizeBlurImage: image => image, disposeBlurImage: image => image.dispose(), loadPosterBlurImage: () => { posterLoads++; return new Promise(resolve => { resolveCapture = resolve; }); } }));
 const { CarouselBlurView } = await import("../CarouselBlurView");

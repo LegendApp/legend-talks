@@ -1,10 +1,10 @@
 // @ts-nocheck Native drawing is mocked; the playback clock and tween run unchanged.
-import "../../../src/__tests__/nativeMock";
+import "../../../test-support/legend-apps/apps/slides/src/__tests__/nativeMock";
 import { expect, mock, test } from "bun:test";
 import { observable } from "@legendapp/state";
 import React from "react";
 import { act, create } from "react-test-renderer";
-import { frames, flushUI } from "../../../src/__tests__/uiClockMock";
+import { frames, flushUI } from "../../../test-support/legend-apps/apps/slides/src/__tests__/uiClockMock";
 import { PresentationProvider, SceneMotionView } from "@legend-apps/presentation";
 
 mock.module("../BenchmarkTitle", () => ({ BenchmarkTitle: () => null }));

@@ -1,5 +1,5 @@
 // @ts-nocheck Native drawing is mocked; navigation and keyframe sampling stay real.
-import "../../../src/__tests__/nativeMock";
+import "../../../test-support/legend-apps/apps/slides/src/__tests__/nativeMock";
 import { expect, test } from "bun:test";
 import { observable } from "@legendapp/state";
 import * as presentation from "@legend-apps/presentation";
@@ -8,10 +8,10 @@ import { createRequire } from "node:module";
 import React from "react";
 import { act, create } from "react-test-renderer";
 import * as reanimated from "react-native-reanimated";
-import { samplePlayback } from "../../../../../packages/presentation/src/playback";
+import { samplePlayback } from "../../../test-support/legend-apps/packages/presentation/src/playback";
 import { MovingTitle } from "../MovingTitle";
 
-const { transformSync } = createRequire(new URL("../../../../../packages/presentation/package.json", import.meta.url))("esbuild");
+const { transformSync } = createRequire(new URL("../../../test-support/legend-apps/packages/presentation/package.json", import.meta.url))("esbuild");
 
 function load(filename, mocks) {
   const require = createRequire(filename);
@@ -24,7 +24,7 @@ function load(filename, mocks) {
 test("reaction letters remain visible through stagger delays and fade before arrival, including replay", async () => {
   globalThis.IS_REACT_ACT_ENVIRONMENT = true;
   const clock = { value: { phase: "playing", stepTime: 0 } };
-  const { PlaybackKeyframeView } = load(`${import.meta.dir}/../../../../../packages/presentation/src/PlaybackKeyframeView.tsx`, {
+  const { PlaybackKeyframeView } = load(`${import.meta.dir}/../../../test-support/legend-apps/packages/presentation/src/PlaybackKeyframeView.tsx`, {
     "./playback": { usePlayback: () => clock, samplePlayback },
     "react-native-reanimated": { ...reanimated, __esModule: true },
   });
