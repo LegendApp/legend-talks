@@ -26,8 +26,9 @@ const { SlidesHeader } = load(`${import.meta.dir}/../StoryDiagrams.tsx`, {
   "./GitHubLink": links, "./RendererWindows": {}, "./ExpoDesktopScene": {}, "./ModuleCompatibility": {},
 });
 const { WebsiteIcon } = load(`${import.meta.dir}/../WebsiteIcon.tsx`, { "@shopify/react-native-skia": drawing });
+const { ImageShatter } = load(`${import.meta.dir}/../../../test-support/legend-apps/packages/slides-effects/packs/materials/ImageShatter.tsx`, { "@shopify/react-native-skia": drawing });
 const { SlidesReveal } = load(`${import.meta.dir}/../SlidesReveal.tsx`, {
-  "@shopify/react-native-skia": drawing, "./StoryDiagrams": { SlidesHeader }, "./GitHubLink": links, "./WebsiteIcon": { WebsiteIcon },
+  "slides:materials/ImageShatter": { ImageShatter }, "@shopify/react-native-skia": drawing, "./StoryDiagrams": { SlidesHeader }, "./GitHubLink": links, "./WebsiteIcon": { WebsiteIcon },
 });
 
 for (const showLinks of [true, false]) test(`Slides reveals stay aligned with the screenshot shader with links ${showLinks ? "included" : "removed"}`, async () => {
@@ -52,7 +53,7 @@ for (const showLinks of [true, false]) test(`Slides reveals stay aligned with th
       expect(tree.root.findAllByType("features")).toHaveLength(step === screenshotStep + 1 ? 1 : 0);
       expect(tree.root.findAllByType("authoring")).toHaveLength(step === screenshotStep + 2 ? 1 : 0);
       expect(tree.root.findAllByType("github-link")).toHaveLength(showLinks && step === 1 ? 1 : 0);
-      expect(tree.root.findByType("shader").props.uniforms.value.screenshotStep).toBe(screenshotStep);
+      expect(tree.root.findByType("shader").props.uniforms.value.revealAtStep).toBe(screenshotStep);
     }
     await act(() => tree.update(render(undefined)));
     expect(tree.root.findAllByType(AnimatedTitle)).toHaveLength(0);

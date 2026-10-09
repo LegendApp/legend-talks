@@ -3,8 +3,10 @@ import { expect, test } from "bun:test";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { readFileSync } from "node:fs";
+import { glassStrikeShader } from "slides:materials/GlassStrike";
 
 function shader(file, name, dependencies = {}) {
+  if (file === "DesktopObjections.tsx") return glassStrikeShader;
   const source = readFileSync(new URL(file === "GlassPanels.tsx" ? "../../../test-support/legend-apps/packages/slides-effects/packs/materials/GlassPanels.tsx" : `../${file}`, import.meta.url), "utf8");
   const expression = source.match(new RegExp("export const " + name + " = (`[\\s\\S]*?`);"))[1];
   return Function(...Object.keys(dependencies), `return ${expression}`)(...Object.values(dependencies));

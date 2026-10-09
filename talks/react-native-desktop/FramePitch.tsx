@@ -4,12 +4,9 @@ import { Image, Text, View } from "react-native";
 import { GlassPanels } from "slides:materials/GlassPanels";
 import { rootRibbonShader } from "./SharedRoots";
 import { MovingTitle } from "./MovingTitle";
-import { objectionGlassShader } from "./DesktopObjections";
+import { createGlassStrikeShader } from "slides:materials/GlassStrike";
 
-const effect = Skia.RuntimeEffect.Make(objectionGlassShader
-  .replace("float elapsed = min(mix(time,6.0,settled),6.0);", "float elapsed = clamp(time,0.0,6.0);")
-  .replaceAll("-240.0", "-65.0").replaceAll("238.0", "65.0")
-  .replaceAll("-245.0", "-65.0").replaceAll("246.0", "65.0"));
+const effect = Skia.RuntimeEffect.Make(createGlassStrikeShader({ strokePoints: [[-302,-65],[306,65],[298,-65],[-309,65]] }));
 if (!effect) throw new Error("Could not compile Spark foundation reveal");
 const imports = [
   ["useNativeMenu", "menus"],

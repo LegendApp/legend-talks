@@ -13,11 +13,16 @@ import * as skia from "@shopify/react-native-skia";
 const deckRequire = createRequire(new URL("../ElectronFire.tsx", import.meta.url));
 const { transformSync } = createRequire(new URL("../../../test-support/legend-apps/packages/presentation/package.json", import.meta.url))("esbuild");
 const module = { exports: {} };
+const fireFile = new URL("../../../test-support/legend-apps/packages/slides-effects/packs/materials/Fire.tsx", import.meta.url);
+const fireCode = transformSync(readFileSync(fireFile, "utf8"), { loader: "tsx", format: "cjs", jsx: "automatic" }).code;
+const fire = { exports: {} };
+Function("require", "module", "exports", fireCode)(name => name === "@shopify/react-native-skia"
+  ? { ...skia, ImageShader: "image-shader", useImage: () => ({}) } : deckRequire(name), fire, fire.exports);
 const code = transformSync(readFileSync(new URL("../ElectronFire.tsx", import.meta.url), "utf8"), { loader: "tsx", format: "cjs", jsx: "automatic" }).code;
-Function("require", "module", "exports", code)(name => name === "@shopify/react-native-skia"
-  ? { ...skia, ImageShader: "image-shader", useImage: () => ({}) }
+Function("require", "module", "exports", code)(name => name === "slides:materials/Fire" ? fire.exports
   : name.endsWith(".png") ? name : deckRequire(name), module, module.exports);
-const { ElectronFire, electronFireShader } = module.exports;
+const { ElectronFire } = module.exports;
+const electronFireShader = fire.exports.spriteFireShader;
 
 test("fire builds over five seconds while varied poop emojis fall, splash, and keep accumulating", async () => {
   const require = createRequire(new URL("../../../test-support/legend-apps/apps/slides/package.json", import.meta.url));
