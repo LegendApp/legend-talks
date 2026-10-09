@@ -2,8 +2,11 @@ import { FrameView, FrameLabel } from "./packs/shared/FrameView";
 import type { SharedValue } from "react-native-reanimated";
 import { StyleSheet, Text, View } from "react-native";
 import { BenchmarkChart } from "./Scene";
-import { AttentionStage, AttentionTarget, Callout, CodeWalkthrough, ComparisonWipe, ContentSwap, ExplodedLayers, FreezeFrame, ProgressiveDetail, Spotlight } from "./packs/presenting";
-import { useMotion } from "./packs/presenting/motion";
+import { AttentionStage, AttentionTarget, Callout, Spotlight } from "slides:presenting/Attention";
+import { CodeWalkthrough } from "slides:presenting/CodeWalkthrough";
+import { ComparisonWipe, ContentSwap, ExplodedLayers, ProgressiveDetail } from "slides:presenting/Composition";
+import { FreezeFrame } from "slides:presenting/FreezeFrame";
+import { useMotion } from "slides:presenting/Motion";
 const ideas = [{
   id: "react",
   title: "React",

@@ -2,7 +2,7 @@ import { Blur, Canvas, Fill, Group, ImageShader, Paint, RuntimeShader, Shader, S
 import { liquidGlassShader, useLiquidGlassPlayback, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { View } from "react-native";
 import { FrameTitle } from "./FramePitch";
-import { glassPanelMaterial } from "./GlassPanels";
+import { glassPanelMaterial } from "slides:materials/GlassPanels";
 
 const capabilities = ["Windows", "Native menus", "Keyboard shortcuts", "Files & folders", "Open / save dialogs",
   "Drag & drop", "Clipboard", "Notifications", "Tray / menu bar", "Media controls",

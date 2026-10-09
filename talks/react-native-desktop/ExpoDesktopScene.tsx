@@ -1,5 +1,5 @@
-import { glassPanelMaterial } from "./GlassPanels";
-import { branchMaterialShader } from "./BranchMaterial";
+import { glassPanelMaterial } from "slides:materials/GlassPanels";
+import { branchMaterialShader } from "slides:materials/BranchMaterial";
 import { Canvas, Fill, ImageShader, Path, Shader, Skia, matchFont } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";

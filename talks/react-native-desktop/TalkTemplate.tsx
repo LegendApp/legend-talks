@@ -2,7 +2,7 @@ import { Background, type PresentationTemplateProps } from "@legend-apps/present
 import { Children, isValidElement } from "react";
 import { Text, View } from "react-native";
 import { Scene } from "./Scene";
-import { AmbientAurora } from "./packs/backgrounds";
+import { AmbientAurora } from "slides:backgrounds/AmbientAurora";
 
 export default function TalkTemplate({ children, slide }: PresentationTemplateProps) {
   const customScene = Children.toArray(children).some((child) => isValidElement(child) && child.type === Scene);

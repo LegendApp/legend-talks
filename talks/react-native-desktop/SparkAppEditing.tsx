@@ -1,6 +1,6 @@
 import { SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
-import { GlassPanels } from "./GlassPanels";
+import { GlassPanels } from "slides:materials/GlassPanels";
 
 const promptPanel = [{ x: 0, y: 0, width: 1696, height: 140, radius: 28 }];
 

@@ -92,7 +92,7 @@ official exporter still needs to produce the `.riv` file.
 
 ## Presenting tools
 
-The [presenting pack](presenting/README.md) adds measured spotlights and callouts,
+The presenting pack in `legend-apps/packages/slides-effects/packs/presenting` adds measured spotlights and callouts,
 a pausable animation clock with annotations, progressive detail, comparison wipes,
 code walkthroughs, exploded layers and content replacement. Each has a dedicated
 step-driven demo at the end of `talk.mdx`. These tools take ordinary props such as

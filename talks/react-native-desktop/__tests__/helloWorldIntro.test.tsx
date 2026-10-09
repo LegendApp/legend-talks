@@ -5,7 +5,7 @@ import { observable } from "@legendapp/state";
 import { PresentationProvider, SceneMotionView, SharedElement } from "@legend-apps/presentation";
 import React from "react";
 import { act, create } from "react-test-renderer";
-import { AnimatedTitle } from "../AnimatedTitle";
+import { AnimatedTitle } from "slides:typography/AnimatedTitle";
 import { MovingTitle } from "../MovingTitle";
 import { BenchmarkTitle } from "../BenchmarkTitle";
 

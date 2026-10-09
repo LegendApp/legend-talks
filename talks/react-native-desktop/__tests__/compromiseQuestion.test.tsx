@@ -5,7 +5,7 @@ import { observable } from "@legendapp/state";
 import { PresentationProvider, SceneMotionView } from "@legend-apps/presentation";
 import React from "react";
 import { act, create } from "react-test-renderer";
-import { AnimatedTitle } from "../AnimatedTitle";
+import { AnimatedTitle } from "slides:typography/AnimatedTitle";
 import { CompromiseQuestion } from "../reactcon-scenes/CompromiseQuestion";
 
 test("statement entrance stays mounted while the next step rearranges into a question", async () => {

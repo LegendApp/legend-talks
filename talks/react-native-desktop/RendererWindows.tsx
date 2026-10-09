@@ -1,7 +1,7 @@
 import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
-import { glassPanelMaterial } from "./GlassPanels";
+import { glassPanelMaterial } from "slides:materials/GlassPanels";
 
 // Illustrative controls, not embedded OS widgets. All motion is evaluated in SkSL.
 export const rendererShader = `

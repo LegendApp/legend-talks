@@ -1,6 +1,6 @@
 import { usePresentation$, type PresentationTemplateProps } from "@legend-apps/presentation";
 import { Pressable, Text, View } from "react-native";
-import { titleEntranceEffects } from "./titleEntrancePresets";
+import { titleEntranceEffects } from "slides:typography/TitleEntrances";
 
 export default function TitleTestFrame({ children, slide }: PresentationTemplateProps) {
   return <View style={{ flex: 1, backgroundColor: "#0b0d14", paddingHorizontal: 112, paddingVertical: 96, justifyContent: "center" }}>

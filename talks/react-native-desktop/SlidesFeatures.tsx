@@ -2,7 +2,7 @@ import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
 import { PlaybackKeyframeView, useAnimatedShaderUniforms } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 import type { ReactNode } from "react";
-import { GlassPanels } from "./GlassPanels";
+import { GlassPanels } from "slides:materials/GlassPanels";
 import { SlidesHeader } from "./StoryDiagrams";
 
 const panels = [0, 584, 1168].map(x => ({ x: x + 4, y: 240, width: 520, height: 600, radius: 28 }));

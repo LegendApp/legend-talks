@@ -11,8 +11,20 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "ES2022",
-    "types": ["node"]
+    "types": [
+      "node"
+    ],
+    "paths": {
+      "slides:*": [
+        "./test-support/legend-apps/packages/slides-effects/packs/*"
+      ]
+    }
   },
-  "include": ["talks", "uniwind-env.d.ts"],
-  "exclude": ["talks/**/__tests__"]
+  "include": [
+    "talks",
+    "uniwind-env.d.ts"
+  ],
+  "exclude": [
+    "talks/**/__tests__"
+  ]
 }

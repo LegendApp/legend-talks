@@ -3,7 +3,7 @@ import { PlaybackKeyframeView, SceneMotionView, useAnimatedShaderUniforms, usePr
 import { Text, View } from "react-native";
 import { MovingTitle } from "./MovingTitle";
 
-import { branchMaterialShader } from "./BranchMaterial";
+import { branchMaterialShader } from "slides:materials/BranchMaterial";
 
 const implementations = ["iOS", "Android", "Mac", "Windows", "Web"];
 const branchX = (index: number) => 168 + index * 340;

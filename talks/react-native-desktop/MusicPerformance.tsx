@@ -1,7 +1,7 @@
 import { Image, Text, View } from "react-native";
 import type { ReactNode } from "react";
 import { SceneMotionView, SharedElement } from "@legend-apps/presentation";
-import { GlassPanels } from "./GlassPanels";
+import { GlassPanels } from "slides:materials/GlassPanels";
 import { MovingTitle } from "./MovingTitle";
 
 // Historical measurements from the RNL 2025 deck, not the current Music build.

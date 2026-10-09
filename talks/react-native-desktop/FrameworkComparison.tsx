@@ -1,7 +1,7 @@
 import { SceneMotionView } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 import { ChartBar } from "./ChartBar";
-import { GlassPanels } from "./GlassPanels";
+import { GlassPanels } from "slides:materials/GlassPanels";
 import { bucketIndex, metrics } from "./MetricBucketDefinitions";
 import { frameworkCoverage, platforms } from "./FrameworkCoverage";
 import benchmarks from "./rnconnection-assets/benchmarks.json";

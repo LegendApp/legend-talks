@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { GlassPanels } from "./GlassPanels";
+import { GlassPanels } from "slides:materials/GlassPanels";
 
 // npm latest dist-tags, verified September 23, 2026. Preview/RC tags excluded.
 const platforms = [

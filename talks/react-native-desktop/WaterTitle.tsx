@@ -1,12 +1,12 @@
 import { useTitleBubbleSimulation } from "./useTitleBubbleSimulation";
-import { dropletMaterial } from "./packs/backgrounds/dropletMaterial";
+import { dropletMaterial } from "slides:backgrounds/DropletMaterial";
 import { titleDripAnchors } from "./titleDripAnchors";
 import { AlphaType, ColorType, Fill, Shader, ImageShader, Skia, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
 import { PresentationCanvas, Background, useBackgroundSize, useBackgroundIntensity, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
-import { AnimatedAtmosphere } from "./packs/backgrounds/AnimatedAtmosphere";
-import { dropletGeometry } from "./packs/backgrounds/dropletGeometry";
+import { AnimatedAtmosphere } from "slides:backgrounds/AnimatedAtmosphere";
+import { dropletGeometry } from "slides:backgrounds/DropletGeometry";
 import { TitleByline } from "./TitleByline";
 
 export const waterTitleShader = `

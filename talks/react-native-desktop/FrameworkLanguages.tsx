@@ -2,8 +2,8 @@ import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { useState } from "react";
 import { Text, View } from "react-native";
-import { GlassPanels } from "./GlassPanels";
-import { branchMaterialShader } from "./BranchMaterial";
+import { GlassPanels } from "slides:materials/GlassPanels";
+import { branchMaterialShader } from "slides:materials/BranchMaterial";
 
 const rows = [
   ["React Native", "TypeScript"],

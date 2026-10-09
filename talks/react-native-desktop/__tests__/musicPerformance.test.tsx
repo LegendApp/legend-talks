@@ -8,7 +8,7 @@ import React from "react";
 import { act, create } from "react-test-renderer";
 import { MovingTitle } from "../MovingTitle";
 
-mock.module("../GlassPanels", () => ({ GlassPanels: () => null }));
+mock.module("slides:materials/GlassPanels", () => ({ GlassPanels: () => null }));
 const { MusicPerformance, MusicPerformanceTitle } = await import("../MusicPerformance");
 
 test("CPU and memory keep the same frame and title prefix through forward and reverse navigation", async () => {

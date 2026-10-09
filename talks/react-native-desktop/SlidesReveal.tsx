@@ -5,7 +5,7 @@ import { Linking, Pressable, Text, View } from "react-native";
 import { SlidesHeader } from "./StoryDiagrams";
 import { GitHubLink } from "./GitHubLink";
 import { WebsiteIcon } from "./WebsiteIcon";
-import type { TitleEntranceEffect } from "./titleEntrancePresets";
+import type { TitleEntranceEffect } from "slides:typography/TitleEntrances";
 
 // @ts-ignore Local deck screenshot resolves to a file URL.
 import screenshotAsset from "./rnconnection-assets/legend-slides-screenshot.png";

@@ -1,7 +1,7 @@
 import { Canvas, Fill, Shader, Skia } from "@shopify/react-native-skia";
 import { SceneMotionView, SharedElement, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { ExistingModulesTitle } from "./ModuleCompatibility";
-import { glassPanelMaterial } from "./GlassPanels";
+import { glassPanelMaterial } from "slides:materials/GlassPanels";
 import { Text, View } from "react-native";
 
 // One bounded GPU surface per panel. Reflections, cracks, and

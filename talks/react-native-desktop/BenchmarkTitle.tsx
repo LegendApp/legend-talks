@@ -1,7 +1,7 @@
 import { SceneMotionView } from "@legend-apps/presentation";
 import { useState } from "react";
 import { Text, View } from "react-native";
-import { AnimatedTitle } from "./AnimatedTitle";
+import { AnimatedTitle } from "slides:typography/AnimatedTitle";
 import { MovingTitle } from "./MovingTitle";
 
 const titleTextStyle = { color: "#f8fafc", fontFamily: "Helvetica Neue", fontSize: 72, lineHeight: 90, fontWeight: "600", letterSpacing: -1.8 } as const;

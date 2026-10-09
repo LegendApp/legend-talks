@@ -3,7 +3,7 @@ import { Canvas, Fill, Group, Path, Rect, RoundedRect, Shader, Skia, matchFont }
 import { useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 import { AppCarousel } from "./AppCarousel";
-import { GlassPanels } from "./GlassPanels";
+import { GlassPanels } from "slides:materials/GlassPanels";
 
 const containerPanels = [{ x: 5, y: 5, width: 1170, height: 650, radius: 28 }];
 const examples = ["Platform Fit", "OS Integration", "Latest OS Features"] as const;

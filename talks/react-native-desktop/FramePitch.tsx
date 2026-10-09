@@ -1,7 +1,7 @@
 import { Fill, Shader, Skia } from "@shopify/react-native-skia";
 import { PlaybackKeyframeView, PresentationCanvas, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Image, Text, View } from "react-native";
-import { GlassPanels } from "./GlassPanels";
+import { GlassPanels } from "slides:materials/GlassPanels";
 import { rootRibbonShader } from "./SharedRoots";
 import { MovingTitle } from "./MovingTitle";
 import { objectionGlassShader } from "./DesktopObjections";

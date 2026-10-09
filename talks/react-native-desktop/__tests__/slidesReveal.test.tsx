@@ -8,9 +8,9 @@ import { act, create } from "react-test-renderer";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import * as skia from "@shopify/react-native-skia";
-import { AnimatedTitle } from "../AnimatedTitle";
+import { AnimatedTitle } from "slides:typography/AnimatedTitle";
 import { MovingTitle } from "../MovingTitle";
-import { GlassPanels } from "../GlassPanels";
+import { GlassPanels } from "slides:materials/GlassPanels";
 
 const { transformSync } = createRequire(new URL("../../../test-support/legend-apps/packages/presentation/package.json", import.meta.url))("esbuild");
 function load(filename, mocks) {

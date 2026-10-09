@@ -1,7 +1,7 @@
 import { Canvas, Fill, Path, Shader, Skia } from "@shopify/react-native-skia";
 import { SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
-import { GlassPanels } from "./GlassPanels";
+import { GlassPanels } from "slides:materials/GlassPanels";
 
 const nodes = [
   { x: 155, y: 95, label: "Find chat files", icon: "M -20 -12 L -6 -12 L 0 -6 L 22 -6 L 22 18 L -20 18 Z" },

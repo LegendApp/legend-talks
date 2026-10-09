@@ -1,8 +1,8 @@
 import { GitHubLink } from "./GitHubLink";
 import { SceneMotionView, usePresentationValue } from "@legend-apps/presentation";
 import { MovingTitle } from "./MovingTitle";
-import { AnimatedTitle } from "./AnimatedTitle";
-import type { TitleEntranceEffect } from "./titleEntrancePresets";
+import { AnimatedTitle } from "slides:typography/AnimatedTitle";
+import type { TitleEntranceEffect } from "slides:typography/TitleEntrances";
 import type { ReactNode } from "react";
 import { Image, Text, View } from "react-native";
 
