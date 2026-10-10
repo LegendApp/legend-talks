@@ -4,7 +4,7 @@ import { useTitleBubbleSimulation } from "./useTitleBubbleSimulation";
 import { dropletMaterial } from "slides:backgrounds/DropletMaterial";
 import { titleDripAnchors } from "./titleDripAnchors";
 import { AlphaType, ColorType, Fill, Shader, ImageShader, Skia, makeImageFromView, type SkImage } from "@shopify/react-native-skia";
-import { GPUShader, useGPUShaderAvailable, PresentationCanvas, Background, useBackgroundSize, useBackgroundIntensity, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
+import { GPUShader, PresentationCanvas, Background, useBackgroundSize, useBackgroundIntensity, useAdvanceAfterStep, useAnimatedShaderUniforms, usePresentationValue, snapshotCaptureQueue } from "@legend-apps/presentation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
 import { Droplets } from "slides:backgrounds/Droplets";
@@ -96,7 +96,6 @@ const waterEffect = Skia.RuntimeEffect.Make(waterTitleShader);
 if (!waterEffect) throw new Error("Could not compile title water effect");
 
 export const liquidTypeShader = `
-uniform float gpuBubbles;
 uniform shader image;
 half4 sourceInk(float2 p) { return image.eval(p); }
 uniform float lineSplit;
@@ -175,7 +174,7 @@ half4 main(float2 p) {
     if(before.x<bestRect.x || before.x>bestRect.x+bestRect.z || p.y>lineSplit) result+=title(p)*(1.0-smoothstep(0.0,1.0,t))*(1.0-result.a);
     for(int i=0;i<72;i++) {
       float4 drop=drops[i],neck=necks[i];
-      if(drop.z<.1 || (gpuBubbles>0.5 && drop.w==4.0))continue;
+      if(drop.z<.1 || drop.w==4.0)continue;
       float2 size=float2(drop.z);
       if(drop.w==5.0) size=(drop.x<=10.0 || drop.x>=1910.0)?float2(drop.z*(1.0-.55*neck.w),drop.z*(1.0+2.3*neck.w)):float2(drop.z*(1.0+2.3*neck.w),drop.z*(1.0-.55*neck.w));
       float d=(length((p-drop.xy)/size)-1.0)*min(size.x,size.y);
@@ -231,7 +230,6 @@ half4 main(float2 p) {
   return half4(color,clamp(ink.a+glow,0.0,1.0))*fade;
 }`;
 export const cosmicShader = `
-uniform float gpuBubbles;
 ${dropletGeometry}
 uniform float2 resolution;
 uniform float4 drops[72];
@@ -259,23 +257,7 @@ half4 main(float2 p) {
     alpha=max(alpha,rings*0.45);
 
   }
-  // Detached drops render independently above the background; they cannot
-  // disappear into another parent after pinch-off.
-  if(gpuBubbles<0.5 && stepIndex==1.0) for(int i=0;i<18;i++) {
-    float4 drop=drops[i];
-    if(drop.w<1.0 || drop.w==6.0 || drop.z<0.1) continue;
-    float distance=length(p-drop.xy);
-    float fill=1.0-smoothstep(drop.z-1.0,drop.z+1.0,distance);
-    float2 normal=(p-drop.xy)/max(distance,0.001);
-    float3 glass=shadeDroplet((p-float2(960,540))/1080.0,(distance-drop.z)/1080.0,normal)*brightness;
-    float edge=exp(-abs(distance-drop.z)/2.8);
-    float lit=max(0.0,dot(normal,normalize(float2(-.6,-.8))));
-    float3 white=float3(.93-edge*.20+edge*lit*.27);
-    float blend=smoothstep(0.0,1.0,whiten[i]);
-    float3 color=mix(glass,white,blend);
-    light=mix(light,color,fill);
-    alpha=max(alpha,fill);
-  }
+
   alpha=clamp(alpha,0.0,1.0)*ending;
   return half4(clamp(light,0.0,1.0)*alpha,alpha);
 }`;
@@ -286,7 +268,6 @@ const typeEffect = Skia.RuntimeEffect.Make(liquidTypeShader);
 if (!typeEffect) throw new Error("Could not compile liquid title typography");
 
 export default function WaterTitle({ children, closing = false, byline = false }: { children?: import("react").ReactNode; closing?: boolean; byline?: boolean }) {
-  const gpu = useGPUShaderAvailable();
   const step = usePresentationValue("stepIndex");
   useAdvanceAfterStep(closing ? -1 : 2, 4.45);
   const [sources, setSources] = useState({ leftSource: [460, 650], rightSource: [1450, 650], thirdSource: [1520, 650], desktopSource: [800, 650], lineSplit: 540, bestInkRect: [1190,400,255,128], glyphCount: 0, glyphs: Array(256).fill(0) as number[], bestRect: [1190, 400, 255, 128], bylineEnabled: 0, bylineSources: [0,0,0,0] });
@@ -294,7 +275,7 @@ export default function WaterTitle({ children, closing = false, byline = false }
     setSources(old => ({ ...old, bylineEnabled: 1, bylineSources: points }));
   }, []);
   const [targets,setTargets]=useState<number[][]>([]);
-  const visualUniforms = useAnimatedShaderUniforms({ ...sources, gpuBubbles: gpu ? 1 : 0 }, 14, { clocks: { feedTime: 1 } });
+  const visualUniforms = useAnimatedShaderUniforms({ ...sources }, 14, { clocks: { feedTime: 1 } });
   const { width, height } = useBackgroundSize();
   const intensity = useBackgroundIntensity();
   const speed = step >= 1 ? 1.8 : 0.6;
@@ -362,7 +343,7 @@ export default function WaterTitle({ children, closing = false, byline = false }
       {!closing && <PresentationCanvas width={1920} height={1080}>
         <Fill><Shader source={cosmicEffect!} uniforms={uniforms} /></Fill>
       </PresentationCanvas>}
-      {!closing && gpu && <View style={{position:"absolute",inset:0}}>
+      {!closing && <View style={{position:"absolute",inset:0}}>
         <GPUShader code={titleBubblesProgram} width={1920} height={1080} particles particleCount={72} particleBlend="over"
           frameData={bubbleData} frameDataSize={580} borderRadius={0} previewTime={14} clock="slide" />
       </View>}

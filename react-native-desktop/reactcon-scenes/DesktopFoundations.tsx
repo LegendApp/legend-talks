@@ -131,59 +131,9 @@ half4 main(float2 p) {
 // Its Gaussian blur and deformation share one host-owned playback tween.
 export const foundationsRippleShader = liquidGlassShader;
 
-export const frameCursorShader = `
-uniform shader labels;
-uniform float padding;
-uniform float time;
-uniform float stepIndex;
-${geometry}
-half4 main(float2 p) {
-  p -= float2(padding);
-  if(stepIndex<5.0) return half4(0);
-  float2 hub=float2(848,330);
-  float morph=smoothstep(2.0,3.0,time);
-  float charge=smoothstep(0.65,1.15,time);
-  float typed=clamp(floor((time-3.6)*17.0),0.0,${command.length}.0);
-  float cell=${atlas.cell.toFixed(6)};
-  // The cursor forms at the center; the typed prefix grows around that center.
-  float left=848.0-cell*typed*0.5;
-  float2 cursor=float2(848.0+typed*cell*0.5,330.0);
-  float d=mix(length(p-cursor)-25.0,box(p-cursor,float2(2.5,35.0),1.5),morph);
-  float glow=exp(-abs(d)*(0.10+morph*0.15))*charge;
-  float core=(1.0-smoothstep(-1.0,1.0,d))*charge;
-  float3 light=float3(0.55,0.9,1.0)*(glow*0.7+core);
-  float burst=max(0.0,time-1.12);
-  float flash=exp(-pow((time-1.3)*6.0,2.0));
-  light+=float3(0.55,0.88,1.0)*exp(-length(p-hub)*0.006)*flash*5.0;
-  float shockRadius=burst*750.0;
-  float shock=exp(-pow((length(p-hub)-shockRadius)/24.0,2.0));
-  light+=float3(0.24,0.75,1.0)*shock*exp(-burst*1.1)*charge*(1.0-morph);
-  // Once the explosion has become the cursor, none of its 96 particles remain.
-  // This also keeps the static command preview cheap when navigating backward.
-  if(morph<1.0 && charge>0.0) for(int i=0;i<96;i++) {
-    float id=float(i);
-    float angle=id*2.39996;
-    float expansion=1.0-exp(-burst*3.0);
-    float radius=expansion*(180.0+mod(id*17.0,67.0)*9.0);
-    float2 destination=hub+float2(cos(angle),sin(angle))*radius;
-    float2 point=mix(destination,cursor,morph);
-    float size=2.0+mod(id,4.0);
-    float spark=exp(-length(p-point)/size);
-    float trail=exp(-segment(p,point,mix(hub,point,0.86))/1.8);
-    light+=float3(0.38,0.8,1.0)*(spark*2.4+trail*0.45)*(1.0-morph)*charge;
-  }
-  float alpha=clamp(max(light.r,max(light.g,light.b)),0.0,1.0);
-  half4 result=half4(min(light,float3(alpha)),alpha);
-  if(abs(p.y-330.0)<49.0 && p.x>=left && p.x<left+typed*cell) {
-    half4 text=labels.eval(float2(p.x-left+800.0-cell*${command.length}.0*0.5,p.y-330.0+2650.0));
-    result=text+result*(1.0-text.a);
-  }
-  return result;
-}`;
 const network = Skia.RuntimeEffect.Make(foundationsNetworkShader);
 const ripple = Skia.RuntimeEffect.Make(foundationsRippleShader);
-const cursor = Skia.RuntimeEffect.Make(frameCursorShader);
-if (!network || !ripple || !cursor) throw new Error("Could not compile the Spark reveal");
+if (!network || !ripple) throw new Error("Could not compile the Spark reveal");
 
 // Leave transparent space for the 24px blur kernel, refraction, and panel glow.
 // Keep the logical stage fixed; only the raster surface and filter bounds grow.
@@ -238,8 +188,7 @@ export function DesktopFoundationsJourney({ icon }: { icon: string }) {
       </Canvas>
       <View style={{position:"absolute",left:-canvasPadding,top:-canvasPadding,width:canvasWidth,height:canvasHeight}}>
         <GPUShader code={cursorProgram} width={canvasWidth} height={canvasHeight} borderRadius={0}
-          particles particleCount={96} composite active={step>=5} frameData={cursorData} frameDataSize={8} maxTime={6} frameTimeIndex={0}
-          fallback={<Canvas style={{width:canvasWidth,height:canvasHeight}}><Fill><Shader source={cursor!} uniforms={cursorUniforms}>{image}</Shader></Fill></Canvas>}>
+          particles particleCount={96} composite active={step>=5} frameData={cursorData} frameDataSize={8} maxTime={6} frameTimeIndex={0}>
           <CursorText />
         </GPUShader>
       </View>

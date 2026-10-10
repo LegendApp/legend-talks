@@ -2,12 +2,13 @@
 import "../../test-support/legend-apps/apps/slides/src/__tests__/nativeMock";
 import { expect, test } from "bun:test";
 import { observable } from "@legendapp/state";
-import { PresentationProvider, SceneMotionView, ScenePositionView, FocusStage, FocusSurfaceContext,
+import { GPUShaderProvider, PresentationProvider, SceneMotionView, ScenePositionView, FocusStage, FocusSurfaceContext,
   createFocusSurface, prepareFocusSurface, measureFocusSurface } from "@legend-apps/presentation";
 import React from "react";
 import { act, create } from "react-test-renderer";
 import { ObjectionCard } from "../DesktopObjections";
 import { MovingTitle } from "../MovingTitle";
+const GPURenderer = props => <gpu {...props} />;
 import { QuestionBlockers } from "../reactcon-scenes/StoryScenes";
 
 test("title changes while rising with blockers, then strike and zoom advance without an extra step", async () => {
@@ -16,9 +17,9 @@ test("title changes while rising with blockers, then strike and zoom advance wit
     slideIndex: 0, stepIndex: 0, stepCount: 4, stepEpochs: {} });
   let tree;
   try {
-    await act(() => { tree = create(<PresentationProvider value={runtime$}><QuestionBlockers /></PresentationProvider>); });
-    const canvases = tree.root.findAllByType("canvas");
-    expect(canvases).toHaveLength(3);
+    await act(() => { tree = create(<PresentationProvider value={runtime$}><GPUShaderProvider renderer={GPURenderer}><QuestionBlockers /></GPUShaderProvider></PresentationProvider>); });
+    const layers = tree.root.findAllByType("gpu");
+    expect(layers).toHaveLength(3);
     let revealedPoses;
     for (const step of [0, 1, 2, 3, 2, 1, 0, 3, 1]) {
       await act(() => runtime$.stepIndex.set(step));
@@ -28,8 +29,8 @@ test("title changes while rising with blockers, then strike and zoom advance wit
       expect(cards.map(card => card.props.crossed)).toEqual([step >= 2, false, false]);
       expect(cards.map(card => card.props.zoomTarget)).toEqual([step >= 3 ? 2 : null, step >= 3 ? 2 : null, step >= 3 ? 2 : null]);
       expect(cards[0].props.resolvedAt).toBe(2);
-      expect(tree.root.findAllByType("shader").map(shader => shader.props.uniforms.value.broken)).toEqual([step >= 2 ? 1 : 0, 0, 0]);
-      tree.root.findAllByType("canvas").forEach((canvas, index) => expect(canvas).toBe(canvases[index]));
+      expect(tree.root.findAllByType("gpu").map(gpu => gpu.props.frameData.value[4])).toEqual([step >= 2 ? 1 : 0, 0, 0]);
+      tree.root.findAllByType("gpu").forEach((layer, index) => expect(layer).toBe(layers[index]));
       const poses = cards.map(card => card.findByType(SceneMotionView).props.pose);
       if (step === 1) revealedPoses = poses;
       if (step === 2) expect(poses).toEqual(revealedPoses);
@@ -62,7 +63,7 @@ test("shared title measurement includes its centered position and follows the ra
   try {
     await act(() => {
       tree = create(<PresentationProvider value={runtime$}><FocusSurfaceContext.Provider value={{ surface }}>
-        <FocusStage><QuestionBlockers /></FocusStage>
+        <FocusStage><GPUShaderProvider renderer={GPURenderer}><QuestionBlockers /></GPUShaderProvider></FocusStage>
       </FocusSurfaceContext.Provider></PresentationProvider>, { createNodeMock: () => ({
         measureLayout: (_root, done) => done(112, (1080 - 850) / 2, 1696, 90),
       }) });

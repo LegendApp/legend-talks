@@ -1,13 +1,16 @@
 // Generate inputs for the browser's GPU timer benchmark without importing native UI.
-import { readFileSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { createImageShatterGPU } from "../../legend-apps/packages/slides-effects/packs/materials/ImageShatterGPU";
 import { createFallingSpritesGPU } from "../../legend-apps/packages/slides-effects/packs/materials/FallingSpritesGPU";
 import { portalProgram, portalParticles } from "../react-native-desktop/ExpoDesktopPortalGPU";
 import { expoDesktopGeometry } from "../react-native-desktop/reactcon-scenes/ExpoDesktopGeometryGPU";
 import { titleBubblesProgram } from "../react-native-desktop/TitleBubblesGPU";
-const packs = "../legend-apps/packages/slides-effects/packs/";
+import { execFileSync } from "node:child_process";
+import { host, root } from "./setup";
+const packs = "packages/slides-effects/packs/";
 function shader(file: string, name: string): string {
-  const text = readFileSync(file,"utf8");
+  const apps = file.startsWith(packs);
+  const text = execFileSync("git",["show",`${apps ? "2d61811a" : "d592abd"}:${file}`],{cwd:apps ? host : root,encoding:"utf8"});
   const source = text.match(new RegExp(`(?:export )?const ${name} = \u0060([\\s\\S]*?)\u0060;`))?.[1];
   if (!source) throw new Error(`Missing ${name} in ${file}`);
   return source;

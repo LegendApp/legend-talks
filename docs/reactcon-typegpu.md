@@ -4,8 +4,10 @@ The screenshot shatter, falling sprites, portal particle stream, branching pipes
 and detached title bubbles use TypeGPU instances. Text, attached/merging liquid,
 flames, device glass and labels retain their existing Skia rendering. Title
 physics still run in the existing UI worklet; positions and visual clocks reach
-the GPU as one snapshot. Unsupported web contexts retain the original Skia
-versions, including the screenshot content.
+the GPU as one snapshot. Migrated effects require TypeGPU; unsupported contexts
+and GPU setup failures produce slide errors. The alternate Skia renderers were
+removed October 10, 2026. Analytic programs no longer allocate simulation buffers
+or submit empty compute passes; genuine simulations retain their compute path.
 
 ## GPU timer measurements
 
@@ -43,8 +45,13 @@ its simulation and text work have not been benchmarked.
 Raw samples and playback checks are in [reactcon-typegpu-results.json](reactcon-typegpu-results.json).
 The host baseline reference is `352a30389f4a7fd3184ca53f8d7d4b10bff0b5fb` and
 the talk baseline is `ca23c7c` (root-folder move). The baseline shader strings
-are preserved as unsupported-context fallbacks; the pipe baseline sets
-`gpuGeometry=0`. Candidate inputs are the task's source changes plus generated
+were present in the original measured artifact; the pipe baseline sets
+`gpuGeometry=0`. These October 9 measurements are historical. The reproduction
+script now reads those original shaders from immutable Git revisions
+`2d61811aef542129d9929541cab0175e09a3bca8` (apps) and
+`d592abd26dfe5f97c994f9ab7c8894454b8941ad` (talks), rather than retaining
+legacy renderers in production. Candidate inputs for the October 9 run were the
+task's source changes plus generated
 fixtures with SHA-256
 `fa803744603cd54e186a4271190c10614a3b7d9fac7a9324c66f4bad9abface4`.
 The tested production bundle is

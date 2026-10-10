@@ -1,14 +1,12 @@
 import { expoDesktopGeometry } from "./ExpoDesktopGeometryGPU";
 import { glassPanelMaterial } from "slides:materials/GlassPanels";
-import { branchMaterialShader } from "slides:materials/BranchMaterial";
 import { Canvas, Fill, ImageShader, Path, Shader, Skia, matchFont } from "@shopify/react-native-skia";
-import { GPUShader, useGPUShaderAvailable, SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
+import { GPUShader, SceneMotionView, useAnimatedShaderUniforms, usePresentationValue } from "@legend-apps/presentation";
 import { Text, View } from "react-native";
 
 // Analytic glass pipes and devices. A shared UI-thread clock moves the light
 // particles; no per-frame captures, texture uploads, or JS geometry updates.
 export const expoDesktopShader = `
-${branchMaterialShader}
 const float pulse = 0.0;
 const float edgeMotion = 0.0;
 ${glassPanelMaterial}
@@ -18,7 +16,6 @@ uniform float stepTime;
 uniform float stepIndex;
 float elapsed() { return stepTime; }
 uniform float desktop;
-uniform float gpuGeometry;
 float connection() { return stepIndex>=1.0 ? 1.0 : 0.0; }
 float roundedBox(float2 p, float2 size, float radius) {
   float2 q=abs(p)-size+radius;
@@ -47,27 +44,6 @@ float pathX(float t,float i) {
   float ease=t*t*(3.0-2.0*t);
   return mix(start,end,ease);
 }
-// Distance to the curved centerline, rather than its local tangent. The
-// tangent approximation flares out at the tight bend below the project tile.
-float pipeDistance(float2 p,float i) {
-  float distanceSquared=1e10;
-  float side=1.0;
-  float2 a=float2(pathX(0.0,i),188.0);
-  for(int segment=1;segment<=32;segment++) {
-    float t=float(segment)/32.0;
-    float2 b=float2(pathX(t,i),188.0+t*320.0);
-    float2 ab=b-a;
-    float h=clamp(dot(p-a,ab)/dot(ab,ab),0.0,1.0);
-    float2 delta=p-(a+h*ab);
-    float candidate=dot(delta,delta);
-    if(candidate<distanceSquared) {
-      distanceSquared=candidate;
-      side=sign(delta.x*ab.y-delta.y*ab.x);
-    }
-    a=b;
-  }
-  return sqrt(distanceSquared)*side;
-}
 float3 wallpaper(float2 p,float2 size,float seed) {
   float2 uv=p/size;
   float curve=0.34*sin(uv.x*2.0+seed)-uv.x*0.45;
@@ -95,51 +71,7 @@ half4 main(float2 p) {
       float endpoint=160.0+i*376.0;
       float outage=desktop*(1.0-latch());
       float3 tint=mix(float3(0.08,0.58,1.0),float3(1.0,0.08,0.14),outage);
-      float3 light=mix(float3(0.6,0.91,1.0),float3(1.0,0.65,0.65),outage);
-      // The same tapered, paired ribbons as the AI maintenance tree.
-      if(gpuGeometry<0.5 && p.y>=187.0 && p.y<=511.0 &&
-        p.x>=min(912.0+(i-2.0)*70.0,endpoint)-110.0 &&
-        p.x<=max(912.0+(i-2.0)*70.0,endpoint)+110.0) {
-        float t=clamp((p.y-188.0)/320.0,0.0,1.0);
-        float d=pipeDistance(p,i);
-        float3 pipe=float3(0);
-        for(int strand=0;strand<2;strand++) {
-          float phase=i*0.7+float(strand)*3.14159;
-          float offset=sin(t*8.0+phase)*sin(t*3.14159)*13.0;
-          pipe=max(pipe,branchRibbon(d-offset,t,phase,time,tint,light));
-        }
-        float gap=desktop*(1.0-latch());
-        float reveal=1.0-gap*(smoothstep(0.33,0.35,t)*(1.0-smoothstep(0.64,0.66,t)));
-        float power=desktop<0.5 ? 1.0 : mix(0.65,1.0,connection()*smoothstep(1.6,2.6,elapsed()));
-        if(desktop>0.5 && t<0.35) power=1.0;
-        // Use the uninterrupted scene clock: connecting must not replay entrance.
-        float growth=smoothstep(0.12+i*0.045,1.5+i*0.045,time);
-        float grown=1.0-smoothstep(growth-0.02,growth+0.02,t);
-        float fade=smoothstep(185.0,193.0,p.y)*(1.0-smoothstep(499.0,511.0,p.y))*reveal*grown;
-        float surge=desktop*hit*exp(-pow((t-mix(0.35,1.12,clamp((elapsed()-1.5)/1.15,0.0,1.0)))*18.0,2.0))
-          *(1.0-smoothstep(2.6,3.0,elapsed()));
-        pipe=pipe*power+float3(0.60,0.94,1.0)*surge*exp(-abs(d)*0.12)*1.8;
-        float alpha=clamp(max(pipe.r,max(pipe.g,pipe.b)),0.0,1.0)*fade;
-        outColor=over(float4(min(pipe*fade,float3(alpha)),alpha),outColor);
-        // Stable size/brightness variation gives each light its own identity
-        // while all particles continue down the same project-to-device path.
-        for(int j=0;j<16;j++) {
-          float travel=fract(float(j)/16.0+(min(time,3.0)+max(0.0,time-3.0)*0.25)*0.18+i*0.071);
-          float2 dotPosition=float2(pathX(travel,i),188.0+travel*320.0);
-          float seed=fract(sin(float(j)*127.1+i*71.7+19.3)*43758.5453);
-          float brightness=fract(sin(float(j)*53.9+i*143.3+7.1)*17341.17);
-          float particleSlope=(pathX(min(1.0,travel+0.001),i)-pathX(max(0.0,travel-0.001),i))/0.640;
-          dotPosition+=normalize(float2(1.0,-particleSlope))*(seed-0.5)*19.0;
-          float distance=length(p-dotPosition);
-          float size=mix(1.6,5.7,seed);
-          float intensity=mix(0.38,1.45,brightness)*(0.88+0.12*sin(time*2.0+float(j)));
-          float spark=(exp(-distance*distance/(size*size))+exp(-distance/(size*2.6))*0.40)*intensity;
-          float flowing=desktop<0.5 ? 1.0 : (1.0-step(0.35,travel))
-            +step(0.35,travel)*connection()*smoothstep(1.5,2.6,elapsed());
-          float alpha=clamp(spark,0.0,0.96)*fade*flowing;
-          outColor=over(float4(mix(float3(0.90,0.97,1.0),float3(1.0,0.35,0.25),outage)*alpha,alpha),outColor);
-        }
-      }
+
       if(desktop>0.5 && outage>0.001) {
         // Both sides of each severed pipe spit staggered red-hot sparks.
         for(int end=0;end<2;end++) {
@@ -151,16 +83,7 @@ half4 main(float2 p) {
             float flare=exp(-length(p-broken)/22.0)*outage*reached*(0.45+0.15*sin(time*13.0+i));
             float heat=clamp(cap+flare,0.0,0.95);
             outColor=over(float4(float3(1.0,0.18,0.08)*heat,heat),outColor);
-            for(int j=0;j<18;j++) {
-              if(gpuGeometry>0.5) break;
-              float age=fract(time*1.25+float(j)*0.618+i*0.37+float(end)*0.23);
-              float direction=sin(float(j)*17.3+i*4.0);
-              float2 sparkPos=broken+float2(direction*age*155.0,(end==0 ? 55.0 : -125.0)*age+age*age*145.0);
-              float size=2.0+mod(float(j),4.0);
-              float distance=length(p-sparkPos);
-              float light=clamp(exp(-distance/size)+0.3*exp(-distance/(size*3.0)),0.0,1.0)*(1.0-age)*outage*reached;
-              outColor=over(float4(float3(1.0,0.36,0.13)*light,light),outColor);
-            }
+
           }
         }
       }
@@ -237,20 +160,7 @@ half4 main(float2 p) {
     float flash=exp(-length(p-float2(1476,350))/190.0)*hit*exp(-impact*10.0)*0.8;
     float energy=clamp(ring+flash,0.0,0.95);
     outColor=over(float4(float3(0.55,0.91,1.0)*energy,energy),outColor);
-    // Glass fragments burst away from the broken connection and fall out.
-    if(gpuGeometry<0.5 && hit>0.5 && impact<2.2) {
-      for(int j=0;j<20;j++) {
-        float angle=float(j)*2.39996;
-        float speed=130.0+float(j)*13.0;
-        float2 debris=float2(1476,350)+float2(cos(angle)*speed*impact,sin(angle)*speed*impact+250.0*impact*impact);
-        float2 delta=p-debris;
-        float rotation=angle+impact*5.0;
-        delta=float2(delta.x*cos(rotation)-delta.y*sin(rotation),delta.x*sin(rotation)+delta.y*cos(rotation));
-        float shard=exp(-max(roundedBox(delta,float2(3.0+mod(float(j),3.0),9.0),1.0),0.0)*0.7)
-          *(1.0-smoothstep(1.1,2.2,impact))*0.75;
-        outColor=over(float4(float3(0.47,0.86,1.0)*shard,shard),outColor);
-      }
-    }
+
     float halo=exp(-abs(roundedBox(q,float2(221,41),31.0))*0.045)*0.42*appear;
     outColor=over(float4(float3(0.04,0.72,1.0)*halo,halo),outColor);
     outColor=over(material(q,float2(221,41),29.0)*appear,outColor);
@@ -293,13 +203,12 @@ const mobileGeometry = expoDesktopGeometry(false), desktopGeometry = expoDesktop
 function GlassNetwork({ desktop, connected = false }: { desktop: boolean; connected?: boolean }) {
   // The connection and its clock are both sampled from the controller by the
   // shader. No JS timestamp reads, local reset effects or duplicated step state.
-  const gpu = useGPUShaderAvailable();
   const program = desktop ? desktopGeometry : mobileGeometry;
-  const uniforms = useAnimatedShaderUniforms({ desktop: desktop ? 1 : 0, gpuGeometry: gpu ? 1 : 0 }, 4);
+  const uniforms = useAnimatedShaderUniforms({ desktop: desktop ? 1 : 0 }, 4);
   return <>
-    {gpu && <View style={{ position:"absolute",left:0,top:-240,width:1824,height:1080 }}>
+    <View style={{ position:"absolute",left:0,top:-240,width:1824,height:1080 }}>
       <GPUShader {...program} particles particleBlend="over" width={1824} height={1080} clock="slide" borderRadius={0} />
-    </View>}
+    </View>
     <Canvas pointerEvents="none" accessibilityLabel={desktop && connected ? "Expo Desktop connects macOS and Windows" : undefined} style={{ position: "absolute", left: 0, top: -240, width: 1824, height: 1080 }}>
     <Fill><Shader source={effect!} uniforms={uniforms}>
       <ImageShader image={bridgeLabelImage} x={0} y={0} width={884} height={84} fit="fill" tx="decal" ty="decal" />

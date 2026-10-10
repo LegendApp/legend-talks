@@ -2,7 +2,7 @@
 import "../../test-support/legend-apps/apps/slides/src/__tests__/nativeMock";
 import { expect, test } from "bun:test";
 import { observable } from "@legendapp/state";
-import { PresentationProvider, ScenePositionView } from "@legend-apps/presentation";
+import { GPUShaderProvider, PresentationProvider, ScenePositionView } from "@legend-apps/presentation";
 import React from "react";
 import { act, create } from "react-test-renderer";
 import { readFileSync } from "node:fs";
@@ -35,8 +35,8 @@ for (const showLinks of [true, false]) test(`Slides reveals stay aligned with th
   globalThis.IS_REACT_ACT_ENVIRONMENT = true;
   const runtime$ = observable({ isActive: true, isPreview: false, isPreparing: false,
     slideIndex: 0, stepIndex: 0, stepCount: showLinks ? 5 : 4, stepEpochs: {} });
-  const render = entrance => <PresentationProvider value={runtime$}><SlidesReveal icon="slides.png"
-    titleEntrance={entrance} showLinks={showLinks} authoring={<authoring />}><features /></SlidesReveal></PresentationProvider>;
+  const render = entrance => <PresentationProvider value={runtime$}><GPUShaderProvider renderer={props=><gpu {...props} />}><SlidesReveal icon="slides.png"
+    titleEntrance={entrance} showLinks={showLinks} authoring={<authoring />}><features /></SlidesReveal></GPUShaderProvider></PresentationProvider>;
   let tree;
   try {
     await act(() => { tree = create(render("letter-wave")); });
@@ -53,7 +53,8 @@ for (const showLinks of [true, false]) test(`Slides reveals stay aligned with th
       expect(tree.root.findAllByType("features")).toHaveLength(step === screenshotStep + 1 ? 1 : 0);
       expect(tree.root.findAllByType("authoring")).toHaveLength(step === screenshotStep + 2 ? 1 : 0);
       expect(tree.root.findAllByType("github-link")).toHaveLength(showLinks && step === 1 ? 1 : 0);
-      expect(tree.root.findByType("shader").props.uniforms.value.revealAtStep).toBe(screenshotStep);
+      expect(tree.root.findByType(ImageShatter).props.revealAtStep).toBe(screenshotStep);
+      expect(tree.root.findByType("gpu").props.image).toBeTruthy();
     }
     await act(() => tree.update(render(undefined)));
     expect(tree.root.findAllByType(AnimatedTitle)).toHaveLength(0);

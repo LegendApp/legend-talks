@@ -11,7 +11,7 @@ let desktopUniforms;
 let mounts = 0;
 mock.module("@legend-apps/presentation", () => ({
   usePresentationValue: (key) => runtime[key],
-  SceneMotionView: "motion", GPUShader: "gpu", useGPUShaderAvailable: () => false,
+  SceneMotionView: "motion", GPUShader: "gpu",
   PresentationCanvas: () => { useEffect(() => { mounts++; }, []); return null; },
   useAnimatedShaderUniforms: (values) => {
     if (values.desktop) desktopUniforms = values;
@@ -31,12 +31,12 @@ mock.module("@shopify/react-native-skia", () => ({
   },
 }));
 const { expoDesktopShader } = await import("../ExpoDesktopScene");
-const { ExpoDesktopLayers, expoDesktopShader: reactconShader } = await import("../reactcon-scenes/ExpoDesktopScene");
+const { ExpoDesktopLayers } = await import("../reactcon-scenes/ExpoDesktopScene");
 
 test("ambient Expo particles preserve their phase when the impact step starts or reverses", () => {
   const navigation = { phase: "playing", slideKey: "expo", stepKey: "initial", stepIndex: 0 };
   let clock = advancePlayback(advancePlayback(createPlaybackState(navigation), 1000), 13000);
-  for (const shader of [expoDesktopShader, reactconShader]) {
+  for (const shader of [expoDesktopShader]) {
     for (const name of ["travel", "age"]) {
       const expression = shader.match(new RegExp(`float ${name}=([^;]+);`))[1].replace(/float\((\w+)\)/g, "$1");
       const evaluate = Function("time", "elapsed", "j", "i", "end", "fract", "min", "max", `return ${expression};`);
@@ -58,13 +58,13 @@ test("Expo connection delegates timing to the shared controller without remounti
   let tree;
   try {
     await act(() => { tree = create(<ExpoDesktopLayers />); });
-    expect(desktopUniforms).toEqual({ desktop: 1, gpuGeometry: 0 });
+    expect(desktopUniforms).toEqual({ desktop: 1 });
     expect(mounts).toBe(2);
     for (const stepIndex of [1, 0, 1]) {
       runtime = { ...runtime, stepIndex };
       await act(() => tree.update(<ExpoDesktopLayers />));
       // No JS timestamp snapshots or independently reset connection uniforms.
-      expect(desktopUniforms).toEqual({ desktop: 1, gpuGeometry: 0 });
+      expect(desktopUniforms).toEqual({ desktop: 1 });
       expect(mounts).toBe(2);
     }
   } finally {

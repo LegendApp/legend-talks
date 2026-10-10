@@ -3,10 +3,8 @@ import { expect, test } from "bun:test";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { readFileSync } from "node:fs";
-import { glassStrikeShader } from "slides:materials/GlassStrike";
 
 function shader(file, name, dependencies = {}) {
-  if (file === "DesktopObjections.tsx") return glassStrikeShader;
   const source = readFileSync(new URL(file === "GlassPanels.tsx" ? "../../test-support/legend-apps/packages/slides-effects/packs/materials/GlassPanels.tsx" : `../${file}`, import.meta.url), "utf8");
   const expression = source.match(new RegExp("export const " + name + " = (`[\\s\\S]*?`);"))[1];
   return Function(...Object.keys(dependencies), `return ${expression}`)(...Object.values(dependencies));
@@ -62,49 +60,16 @@ test("the narrow Spark ribbon canvas preserves its full-size pixels throughout t
   }
 }, 30000);
 
-test("glass strikes retain falling shards and live checks but finish transparent when crossed out", async () => {
+test("the retained Expo device material compiles alongside its GPU geometry", async () => {
   const require = createRequire(new URL("../../test-support/legend-apps/apps/slides/package.json", import.meta.url));
   const skiaRequire = createRequire(require.resolve("@shopify/react-native-skia"));
   const entry = skiaRequire.resolve("canvaskit-wasm");
   const kit = await skiaRequire("canvaskit-wasm")({ locateFile: file => join(dirname(entry), file) });
   const errors = [];
-  const effect = kit.RuntimeEffect.Make(shader("DesktopObjections.tsx", "objectionGlassShader", {
+  const effect = kit.RuntimeEffect.Make(shader("reactcon-scenes/ExpoDesktopScene.tsx", "expoDesktopShader", {
     glassPanelMaterial: shader("GlassPanels.tsx", "glassPanelMaterial"),
   }), error => errors.push(error));
   expect(errors).toEqual([]);
   expect(effect).not.toBeNull();
-  const width = 240, height = 135;
-  const surface = kit.MakeSurface(width, height), paint = new kit.Paint();
-  function render(time, resolve, settled = 0, halfHeight = 151) {
-    const canvas = surface.getCanvas();
-    canvas.clear(kit.TRANSPARENT);
-    canvas.save();
-    canvas.scale(1 / 8, 1 / 8);
-    const material = effect.makeShader([time, time + 10, 1, resolve, settled, 0, 848, halfHeight]);
-    paint.setShader(material);
-    canvas.drawRect(kit.XYWHRect(0, 0, 1920, 1080), paint);
-    canvas.restore();
-    surface.flush();
-    const image = surface.makeImageSnapshot();
-    const pixels = Uint8Array.from(image.readPixels(0, 0, { width, height, alphaType: kit.AlphaType.Premul,
-      colorType: kit.ColorType.RGBA_8888, colorSpace: kit.ColorSpace.SRGB }));
-    image.delete(); paint.setShader(null); material.delete();
-    return pixels;
-  }
-  try {
-    for (const halfHeight of [8, 151]) {
-      const striking = render(.17, 0, 0, halfHeight);
-      const falling = render(1, 0, 0, halfHeight);
-      expect(striking.some(byte => byte > 0)).toBe(true);
-      expect(falling.some(byte => byte > 0)).toBe(true);
-      expect(falling).not.toEqual(striking);
-      expect(render(4.38, 0, 0, halfHeight).every(byte => byte === 0)).toBe(true);
-      expect(render(6, 0, 0, halfHeight).every(byte => byte === 0)).toBe(true);
-    }
-    const check = render(6, 1, 1);
-    expect(check.some(byte => byte > 0)).toBe(true);
-    expect(render(6.2, 1, 1)).not.toEqual(check);
-  } finally {
-    paint.delete(); surface.delete(); effect.delete();
-  }
+  effect?.delete();
 }, 30000);

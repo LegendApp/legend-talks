@@ -7,7 +7,6 @@ export const portalProgram=tgpu.resolve({ externals:{Frame}, template:`
 @group(1) @binding(1) var fieldTexture: texture_2d<f32>;
 const resolution=vec2f(1696,650);
 fn hash(p:vec2f)->f32 {return fract(sin(dot(p,vec2f(127.1,311.7)))*43758.5453);}
-@compute @workgroup_size(64) fn simulate() {}
 struct Surface { @builtin(position) position:vec4f,@location(0) uv:vec2f }
 @vertex fn vertexMain(@builtin(vertex_index) i:u32)->Surface {
  let uv=vec2f(f32((i<<1u)&2u),f32(i&2u));return Surface(vec4f(uv*vec2f(2,-2)+vec2f(-1,1),0,1),uv);
