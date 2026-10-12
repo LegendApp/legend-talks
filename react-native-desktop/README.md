@@ -72,7 +72,7 @@ installation. Every slide uses the slowly drifting ambient aurora. The opening
 assumption uses a configurable brief fault with explicit delay, duration and
 interval controls.
 
-Slides 32–54 form an optional effect gallery. They demonstrate a native-layer
+Slides 30–52 form an optional effect gallery. They demonstrate a native-layer
 peel, code-to-interface transformation, native-data boundary, benchmark arrival,
 agent-device scan, desktop-window portal, platform-chrome conveyor and TypeGPU
 data constellation. Three performance effects add a latency race, memory gravity
@@ -96,14 +96,15 @@ The offline previews approximate native layout. Rehearse native playback, font
 metrics and timing on the actual presentation display before presenting.
 
 Earlier native macOS verification, before the two slides were removed: a debug
-rebuild, 21 slide visits covering glass (15), ripple (17), TypeGPU (18), glitch (2),
-closing ripple (31), and their neighboring slides. Both windows were captured on every visit;
-the effects remained visible on repeated forward and backward navigation.
+rebuild, 21 slide visits covering glass (15), ripple (17), TypeGPU (18),
+glitch (2), closing ripple (31), and their neighboring slides. Both windows were
+captured on every visit; the effects remained visible on repeated forward and
+backward navigation.
 Each glass visit ran for 31 seconds, and ripple returns included presenter
 resizing. Current and audience showed the same glass escalation stage.
-The workspace typecheck, Slides/macOS verification, and capture/clock regression
-tests pass. The Skia native patch requires rebuilding the app; Metro reload alone
-cannot apply it.
+In that run, the workspace typecheck, Slides/macOS verification, and capture/clock
+regression tests passed. The Skia native patch requires rebuilding the app;
+Metro reload alone cannot apply it.
 
 The first eight gallery slides were also played in the native macOS app from a temporary
 copy outside Documents. Every opening and completed state rendered, and reverse
