@@ -17,12 +17,12 @@ bun run slides run macos -- /absolute/path/to/legend-talks/react-native-desktop/
 
 ## Standalone effects gallery
 
-Open [effects.mdx](./effects.mdx) for **40 slides, one effect demonstration per
+Open [effects.mdx](./effects.mdx) for **39 slides, one effect demonstration per
 slide**. It includes all 32 gallery demos from the talk, the four built-in shader
-presets, ambient aurora, prismatic tear, escalating glass, and the TypeGPU sidebar
-storm. Step-driven demos retain their forward/back controls and presenter notes.
+presets, ambient aurora, prismatic tear, and escalating glass. Step-driven demos
+retain their forward/back controls and presenter notes.
 A plain background and cut transitions isolate each effect; the aurora demo
-explicitly enables its own background. `talk.mdx` remains unchanged.
+explicitly enables its own background.
 
 ```sh
 bun run slides run macos -- /absolute/path/to/legend-talks/react-native-desktop/effects.mdx
@@ -46,7 +46,6 @@ The Chat History artwork is synthetic. It is not a screenshot of the real app.
 - `benchmark.ts`: measured values, chart labels and sorting.
 - `packs/`: reusable backgrounds, shaders, reveals, transformations, charts and transitions.
 - `GlassCaption.tsx`: automatic glass escalation copy.
-- `sidebarStorm.ts`: the TypeGPU scene.
 
 No dependencies, host changes or native module changes are needed by this deck.
 Do not copy the entire talk into another generated deck: edit the MDX directly.

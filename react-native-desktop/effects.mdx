@@ -18,7 +18,6 @@ import { Text, View } from "react-native"
 import { AmbientAurora } from "slides:backgrounds/AmbientAurora"
 import { Scene, BigStatement, ChatIllustration, GlassChatControls } from "./Scene"
 import { GlassCaption } from "./GlassCaption"
-import { sidebarStorm, sidebarCount } from "slides:particles/WindowStorm"
 import { AgentDeviceScan } from "./packs/automation"
 import { NativeOrbitLottie } from "./packs/animation"
 import { BenchmarkArrival } from "./packs/charts"
@@ -120,14 +119,6 @@ import { SpotlightDemo, FreezeDemo, ProgressiveDemo, WipeDemo, CalloutDemo, Code
 <!-- 1: Start with restrained glass surfaces.
 
 2: Advance once to begin the escalating shader and caption sequence. Let it run for 24 seconds to reach the peak. Back returns to the restrained material. The controls remain sharp above the captured backdrop. -->
-
----
-
-<Scene eyebrow="TypeGPU" title="Sidebar storm" footer="384 illustrated sidebars · one instanced draw · shader-driven motion">
-  <TypeGPUShader code={sidebarStorm} particles particleCount={sidebarCount} width={1680} height={580} previewTime={6} />
-</Scene>
-
-<!-- 384 illustrated sidebars move in one instanced TypeGPU draw. A visual demonstration, not a throughput benchmark. -->
 
 ---
 

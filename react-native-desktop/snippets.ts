@@ -7,7 +7,6 @@ export const snippets = {
   glass: `if #available(macOS 26.0, *) {\n    let glassView = NSGlassEffectView(frame: bounds)\n    glassView.autoresizingMask = [.width, .height]\n    glassView.contentView = contentContainer\n    // Remaining setup omitted\n}`,
   glassReact: `<GlassEffectView glassStyle="regular">\n  <Text>Actually the platform material</Text>\n</GlassEffectView>`,
   accessibility: `<Pressable\n  accessibilityLabel={entry.summary.title}\n  accessibilityRole="button"\n  accessibilityState={{ selected }}\n  onPress={handlePress}\n  // Styling omitted\n>`,
-  gpu: `let angle = phase + clock.time * (0.12 + depth * 0.16);\nlet cx = cos(angle) * radius * 1.4;\nlet cy = sin(angle) * radius * 0.82;\n\n// The host submits one instanced particle draw per frame.`,
   agent: `agent-device open "Legend Chat History" \\\n  --platform macos --surface app --session talk\n\nagent-device snapshot -i --session talk\n\nagent-device screenshot ./chat-history.png --session talk`,
-  deck: `<Scene title="We have enough sidebars now" ...>\n  <TypeGPUShader\n    code={sidebarStorm}\n    particles particleCount={sidebarCount}\n    width={1680}\n    height={580}\n  />\n</Scene>`,
+  deck: `<Scene title="1,024 fragments become visible rows" ...>\n  <TypeGPUShader\n    code={gpuConstellation}\n    particles particleCount={gpuConstellationCount}\n    width={1680}\n    height={580}\n  />\n</Scene>`,
 } as const;

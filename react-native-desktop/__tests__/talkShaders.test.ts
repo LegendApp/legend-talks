@@ -5,7 +5,6 @@ import os from "node:os";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { spawnSync } from "node:child_process";
-import { sidebarStorm } from "slides:particles/WindowStorm";
 import { gpuConstellation } from "slides:particles/Constellation";
 import { gpuInterfaceReveal } from "slides:particles/InterfaceReveal";
 import { compileDeck } from "../../test-support/legend-apps/packages/presentation/src/compiler";
@@ -19,7 +18,7 @@ import { titleBubblesProgram } from "../TitleBubblesGPU";
 import { expoDesktopGeometry } from "../reactcon-scenes/ExpoDesktopGeometryGPU";
 import { createGlassStrikeGPU } from "../../test-support/legend-apps/packages/slides-effects/packs/materials/GlassStrikeGPU";
 import { sparkCursorProgram } from "../reactcon-scenes/SparkParticlesGPU";
-const programs = { sidebarStorm, gpuConstellation, gpuInterfaceReveal, portalProgram, titleBubblesProgram,
+const programs = { gpuConstellation, gpuInterfaceReveal, portalProgram, titleBubblesProgram,
   glassStrike: createGlassStrikeGPU(1920,1080),
   narrowStrike: createGlassStrikeGPU(1696,1080,{ strokePoints:[[-302,-65],[306,65],[298,-65],[-309,65]] }),
   sparkCursorProgram,

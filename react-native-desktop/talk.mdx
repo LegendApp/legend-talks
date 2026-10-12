@@ -18,7 +18,6 @@ import { Scene, BigStatement, Frameworks, BenchmarkChart, ChatIllustration, Glas
 import { CodePanel, SidebarGallery, NativeLayers } from "./Content"
 import { snippets } from "./snippets"
 import { GlassCaption } from "./GlassCaption"
-import { sidebarStorm, sidebarCount } from "slides:particles/WindowStorm"
 import { AgentDeviceScan } from "./packs/automation"
 import { NativeOrbitLottie } from "./packs/animation"
 import { BenchmarkArrival } from "./packs/charts"
@@ -207,21 +206,6 @@ transition: none
 
 ---
 
-<Scene eyebrow="TypeGPU" title="We have enough sidebars now" footer="384 illustrated sidebars · one instanced draw · shader-driven motion">
-  <TypeGPUShader code={sidebarStorm} particles particleCount={sidebarCount} width={1680} height={580} previewTime={6} />
-</Scene>
-
-<!-- 10:20–10:55. “The design review asked for more sidebar.” Pause while the 384 little windows move. This is a WebGPU shader program rendered by the shared-clock host. One instanced draw renders 384 quads; their motion comes from the vertex shader. It is not a boids compute simulation and I have not benchmarked its throughput. It shows another available tool in the same RN app. Source: sidebarStorm.ts; https://docs.swmansion.com/TypeGPU/. -->
-
----
-
-<Scene eyebrow="TypeGPU" title="The shader stays on the GPU">
-  <CodePanel code={snippets.gpu} label="sidebarStorm.ts · vertex shader excerpt" detail="React owns the scene. The shared clock drives vertex-shader motion." />
-</Scene>
-
-<!-- 10:55–11:20. “React owns the content; the GPU owns the motion.” The deck supplies WGSL to the host renderer, which owns frame submission on the shared playback clock. This arithmetic executes on the GPU, not as 384 React component updates. Point out the vertex arithmetic and move on; this is not a shader programming workshop. The host handles the GPU context and timing. Do not imply any arbitrary TypeScript API can execute on the GPU. Source: sidebarStorm.ts and TypeGPU docs. -->
-
----
 eyebrow: "Development"
 ---
 
@@ -344,7 +328,7 @@ eyebrow: "Your next project"
   <CodePanel code={snippets.deck} label="This presentation · talk.mdx · abbreviated JSX" detail="MDX + React Native + Skia + TypeGPU" />
 </Scene>
 
-<!-- 17:00–17:40. “The presentation has been the demo.” Reveal that the same app hosts the deck, presenter notes, audience window, custom React components, Skia effects and TypeGPU scenes. The excerpt is the actual shape of the sidebar slide. Optionally show the presenter window; the slide stands on its own if switching windows would interrupt the ending. The app's local authoring setup is not being offered as a finished standalone distribution product. Source: apps/slides/README.md and this deck. -->
+<!-- 17:00–17:40. “The presentation has been the demo.” Reveal that the same app hosts the deck, presenter notes, audience window, custom React components, Skia effects and TypeGPU scenes. The excerpt shows the TypeGPU effect gallery slide. Optionally show the presenter window; the slide stands on its own if switching windows would interrupt the ending. The app's local authoring setup is not being offered as a finished standalone distribution product. Source: apps/slides/README.md and this deck. -->
 
 ---
 

@@ -41,8 +41,7 @@ in `snippets.ts`; it does not import code outside the deck at runtime.
 | `glass` | `packages/glass-effect-view/ios/GlassEffectView.swift` | Selected `setupView` lines; remaining setup omitted. |
 | `glassReact` | `packages/glass-effect-view/src/GlassEffectView.ts` | An authored usage example of the exported API, not an app source excerpt. |
 | `accessibility` | `apps/chat-history/src/App.tsx` | `ChatSidebarRow` accessibility props; styling and children omitted. |
-| `gpu` | This deck's `sidebarStorm.ts` | Actual vertex arithmetic and terminal draw call, shown as excerpts. |
-| `deck` | This deck's `talk.mdx` | Abbreviated TypeGPU slide JSX. |
+| `deck` | This deck's `talk.mdx` | Abbreviated TypeGPU effect gallery slide JSX. |
 
 The native app structure also uses
 `packages/appkit-split-view/ios/RNSidebarSplitViewComponent.mm`.
