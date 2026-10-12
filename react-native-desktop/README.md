@@ -1,8 +1,8 @@
 # React Native is the best way to build desktop apps
 
-A complete first draft for Legend Slides: **31 main slides + 23 effect-gallery
-slides + 11 backups**, with speaker notes on every slide. The main running order
-budgets **18 minutes**, plus two minutes for laughter and transitions. The
+A complete first draft for Legend Slides: **29 main slides + 23 effect-gallery
+slides + 20 backups**, with speaker notes on every slide. The main running order
+budgets **17 minutes**, plus three minutes for laughter and transitions. The
 audience is React Native developers who mostly do not know about desktop support.
 
 Open `talk.mdx` in Legend Slides. From the Legend Apps checkout:
