@@ -88,16 +88,16 @@ instanced draw. No effect-performance measurements are claimed.
 ## Validation and rehearsal
 
 The deck files pass a focused TypeScript check and the MDX compiles with no
-warnings. All 65 slides have speaker notes. Validation covers SkSL compilation,
+warnings. All 72 slides have speaker notes. Validation covers SkSL compilation,
 TypeGPU shader generation, a headless WebGPU render pass, glass caption timing,
 cleanup, restart and static preview behavior.
 
 The offline previews approximate native layout. Rehearse native playback, font
 metrics and timing on the actual presentation display before presenting.
 
-Native macOS verification after the effects fixes: a debug rebuild, 21 slide
-visits covering glass (15), ripple (17), TypeGPU (18), glitch (2), closing ripple
-(31), and their neighboring slides. Both windows were captured on every visit;
+Earlier native macOS verification, before the two slides were removed: a debug
+rebuild, 21 slide visits covering glass (15), ripple (17), TypeGPU (18), glitch (2),
+closing ripple (31), and their neighboring slides. Both windows were captured on every visit;
 the effects remained visible on repeated forward and backward navigation.
 Each glass visit ran for 31 seconds, and ripple returns included presenter
 resizing. Current and audience showed the same glass escalation stage.
