@@ -7,7 +7,7 @@ The Slides application and presentation engine live in [Legend Apps](https://git
 
 | Event | Talk | Deck |
 | --- | --- | --- |
-| React Conf | React Native is the best way to build desktop apps | [Open deck](react-native-desktop/reactcon.mdx) |
+| reactCon | React Native is the best way to build desktop apps | [Open deck](react-native-desktop/reactcon.mdx) |
 | RNConnection | React Native is the best way to build desktop apps | [Open deck](react-native-desktop/rnconnection.mdx) |
 
 Other versions and demos: [original desktop talk](react-native-desktop/talk.mdx)

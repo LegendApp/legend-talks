@@ -1,4 +1,4 @@
-# ReactCon native GPU effects
+# reactCon native GPU effects
 
 The RN app is the primary target. GlassStrike shards/chips/sparks and the Spark
 explosion/shockwave/cursor use TypeGPU instances through the existing native
@@ -81,7 +81,7 @@ and timing samples. It preserves no custom rendering infrastructure in the app.
 
 ## Export compatibility
 
-The 50-slide ReactCon deck compiles without warnings and exports successfully.
+The 50-slide reactCon deck compiles without warnings and exports successfully.
 The October 10 single-renderer export checked portal, pipes, Spark, strikes and
 opening-title navigation without runtime errors. Browser instrumentation observed
 zero compute pipeline creations; the portal allocated only its 32-byte clock

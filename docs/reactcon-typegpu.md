@@ -1,4 +1,4 @@
-# ReactCon TypeGPU migration
+# reactCon TypeGPU migration
 
 The screenshot shatter, falling sprites, portal particle stream, branching pipes
 and detached title bubbles use TypeGPU instances. Text, attached/merging liquid,

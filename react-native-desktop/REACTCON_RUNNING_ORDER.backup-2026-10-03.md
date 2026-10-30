@@ -1,4 +1,4 @@
-# ReactCon running order
+# reactCon running order
 
 The talk has 36 slides and ends at the closing. There is no appendix. Step
 counts include the initial state. Speaker-note comments follow this route, with

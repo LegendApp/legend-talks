@@ -1,4 +1,4 @@
-# ReactCon review deck
+# reactCon review deck
 
 `reactcon.mdx` starts again from the original 48-slide `rnconnection.mdx`.
 All original slides, speaker comments, reveal counts, and relative ordering are

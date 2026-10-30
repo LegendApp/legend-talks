@@ -1,4 +1,4 @@
-# React Conf and RN Connection effect extraction audit
+# reactCon and RN Connection effect extraction audit
 
 Audited on 2026-10-09 against `legend-talks` source revision
 `2591ea85712d68ddac270eae5819e146b89caccd`, together with the current Slides host
@@ -18,7 +18,7 @@ does not recreate reusable code that already exists.
 ## Implemented extraction
 
 Reusable implementations now live in `legend-apps/packages/slides-effects/packs`,
-independent of the app entrypoint. React Conf, RN Connection, the original talk,
+independent of the app entrypoint. reactCon, RN Connection, the original talk,
 the effect gallery and diagnostic/archived decks import the selected public
 entrypoints through `slides:<family>/<Entry>`. The current families are:
 
@@ -125,7 +125,7 @@ exports are talk scenes requiring further generalization.
 | Source | Extractable mechanism | Keep local / required generalization |
 | --- | --- | --- |
 | `WaterTitle.tsx`, `TitleByline.tsx`, `titleBubbleSimulation.ts`, `useTitleBubbleSimulation.ts`, `titleDripAnchors.ts`, `bylineDotSources.ts` | Liquid typography, droplets feeding glyphs, absorption/release, cosmic burst, liquid separators | Hardcoded heading, author/company names, selected word/rect, two-line assumptions, 1920×1080 geometry and automatic step advance belong to the talk. Supply text/target spans, author content, stage bounds and triggers. This is an advanced pack, not a generic wrapper yet. |
-| `NativeReactions.tsx`, `reactcon-scenes/NativeReactions.tsx` | Letters scatter/morph into a collage of image cards | Supply arbitrary text, destinations, cards and timing. Prefer the React Conf version's actual native glyph measurements over RN Connection's estimated letter widths. Keep the quoted reactions/assets local. |
+| `NativeReactions.tsx`, `reactcon-scenes/NativeReactions.tsx` | Letters scatter/morph into a collage of image cards | Supply arbitrary text, destinations, cards and timing. Prefer the reactCon version's actual native glyph measurements over RN Connection's estimated letter widths. Keep the quoted reactions/assets local. |
 | `CompromiseQuestion.tsx`, `reactcon-scenes/CompromiseQuestion.tsx` | Measured word rearrangement, replacement and punctuation reveal | Supply tokens and poses; keep the specific sentence local. Share text measurement with typography rather than extracting a compromise-specific component. |
 | `ElectronFire.tsx` | Upward fire, falling image/emoji particles, impact splash and accumulation | Split flame and falling-particle exports; supply sprite/tint, emission geometry and floor bounds. Remove Electron naming and the poop asset. Retain the shader's bounds/nearby-row optimizations. |
 | `AIMaintenance.tsx` | A branching flow with pulses; repeated particles following paths | Extract a data-driven branch diagram and a trajectory emitter. Platform labels, crying emoji and feature/bug narrative are inputs/examples. |
@@ -135,12 +135,12 @@ exports are talk scenes requiring further generalization.
 | `DesktopFoundations.tsx`, `reactcon-scenes/DesktopFoundations.tsx` | Network-to-command morph, cursor/typing sequence, label atlas | Generic diagram/typing pieces only. Spark feature lists and command stay local. Reuse host `liquidGlassShader` / `useLiquidGlassPlayback`; that blur/refraction mechanism is already extracted. |
 | `ExpoDesktopPortal.tsx` | Glowing portal, refraction and a stream crossing it | Supply entry/exit paths, palette and content. Expo logos, labels and repository link stay local. |
 | `EverywhereMorph.tsx` | Phone/tablet/browser/desktop frame morph | Supply screen content, device sequence, bounds and durations. Currently draws a fixed Chat History illustration, not arbitrary child UI. |
-| `RendererWindows.tsx`, `FrameworkLanguages.tsx`, `CrossPlatformLanes.tsx`, React Conf lanes variant | Window layering, branches and animated coverage dots | Extract window/layer/connection primitives or a configurable matrix. Framework names, coverage assessments and language comparisons remain local. |
+| `RendererWindows.tsx`, `FrameworkLanguages.tsx`, `CrossPlatformLanes.tsx`, reactCon lanes variant | Window layering, branches and animated coverage dots | Extract window/layer/connection primitives or a configurable matrix. Framework names, coverage assessments and language comparisons remain local. |
 | `BalanceDiagram.tsx` | Animated glass Venn circles, refracted text and curved labels | Supply circles, labels, label arcs and item positions. Existing native/canvas framework classifications remain talk data. |
 | `NativeUIMatters.tsx` | Window/menu/media overlays, stage focus and glass shapes | Reuse generic window/attention/media pieces. The macOS integration narrative and recordings remain local. |
 | `ComposerGlassTakeover.tsx` | Refraction/dispersion over a live video texture | Supply texture and region/camera geometry. Current coordinates derive from a specific chat composer screenshot and tour. Avoid a second video decoder by retaining shared frame ownership. |
 | `FakeGlassTakeover.tsx` | Zoom/expand a simulated glass region | Adjacent helper, not reached by current decks' imports. Reuse material plus camera primitives; remove composer-specific geometry. |
-| `ReactNativeTitleDemo.tsx`, React Conf variant | Synchronized typing/code change and window-label change from an atlas | Generalize to caller-provided strings, source and keyframes; no real native window update is performed by this illustrated scene. |
+| `ReactNativeTitleDemo.tsx`, reactCon variant | Synchronized typing/code change and window-label change from an atlas | Generalize to caller-provided strings, source and keyframes; no real native window update is performed by this illustrated scene. |
 | `SparkAppEditingScreenshots.tsx`, `sparkEditingTimeline.ts` | Screenshot zoom, typed prompt, caret/spinner, before/after fade | Supply screenshots, input/button regions, prompt and timeline. Keep Spark branding and generated example text local. |
 | `MeasurementTimeline.tsx` | Click/window/content visual sequence with step emphasis | Configurable illustrated measurement sequence if needed; adjacent imported helper not rendered in either current deck. |
 | `SlidesFeatureParticles.ts` | TypeGPU glow/particle field | Move the program with its host frame contract; expose density, palette and bounds. Keep the three-library showcase in `SlidesFeatures` local. |
@@ -224,7 +224,7 @@ liquid-title simulation need profiles at audience resolution before becoming
 default effects; GPU execution alone does not establish a frame-time budget.
 
 The closest duplicate pairs are cross-platform lanes, Expo network,
-DesktopFoundations and the window-title demo. Their React Conf variants mostly
+DesktopFoundations and the window-title demo. Their reactCon variants mostly
 change pacing, emphasis or one connection pulse; make those options in one
 implementation. NativeReactions and CompromiseQuestion have larger behavior and
 measurement differences and need an explicit shared design.
